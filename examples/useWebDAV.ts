@@ -4,7 +4,9 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
-import { AISPWebDAVClient, WebDAVClientConfig, WebDAVFileInfo, WebDAVError } from './aisp-integration';
+import { AISPWebDAVClient } from './aisp-integration';
+import type { WebDAVClientConfig, WebDAVFileInfo } from '../types/aisp-webdav';
+import { WebDAVError } from '../types/aisp-webdav';
 
 /**
  * WebDAV 操作状态
