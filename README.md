@@ -111,9 +111,6 @@ aisp-cors-proxy/
 
 - **[完整 API 文档](./API_DOCUMENTATION.md)** - 详细的 API 使用说明
 - **[快速开始指南](./QUICK_START.md)** - 5分钟快速集成
-- **[TypeScript 类型定义](./types/aisp-webdav.d.ts)** - 完整的类型定义
-- **[集成示例](./examples/aisp-integration.ts)** - 完整的客户端实现
-- **[React Hook 示例](./examples/useWebDAV.ts)** - React 应用集成
 
 ### 请求格式
 
