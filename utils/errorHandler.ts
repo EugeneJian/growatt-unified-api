@@ -268,3 +268,4 @@ export function getRetryDelay(attempt: number): number {
   // 指数退避：1s, 2s, 4s, 8s...
   return Math.min(1000 * Math.pow(2, attempt - 1), 10000);
 }
+

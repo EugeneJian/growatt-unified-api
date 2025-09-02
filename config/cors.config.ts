@@ -78,3 +78,4 @@ export function validateCorsConfig(): boolean {
     return false;
   }
 }
+

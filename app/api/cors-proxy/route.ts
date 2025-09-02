@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
     
     // 构造并转发请求
     // 这是《架构设计》中的"请求转发模块"
-    const targetUrl = `${proxyConfig.webdavBaseUrl}${cleanPath}`;
+    // 对于空路径（根目录），直接使用 baseUrl
+    const targetUrl = cleanPath ? `${proxyConfig.webdavBaseUrl}${cleanPath}` : proxyConfig.webdavBaseUrl;
     
     logProxyRequestStart(logger, targetUrl, options.method || 'GET');
     

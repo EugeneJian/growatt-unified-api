@@ -65,3 +65,4 @@ export function validateConfig(): boolean {
     return false;
   }
 }
+

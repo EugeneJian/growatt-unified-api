@@ -20,9 +20,9 @@ export function validateProxyRequest(body: any): { valid: boolean; error?: strin
       return { valid: false, error: 'Missing or invalid "path" field' };
     }
 
-    // 检查 path 字段格式
-    if (body.path.length === 0 || body.path.length > 1000) {
-      return { valid: false, error: 'Path must be between 1 and 1000 characters' };
+    // 检查 path 字段格式（允许空字符串表示根目录）
+    if (body.path.length > 1000) {
+      return { valid: false, error: 'Path must be less than 1000 characters' };
     }
 
     // 检查 path 是否包含危险字符（路径遍历攻击）
