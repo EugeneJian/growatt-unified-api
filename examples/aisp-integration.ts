@@ -7,10 +7,9 @@ import type {
   IWebDAVClient, 
   WebDAVClientConfig, 
   WebDAVFileInfo, 
-  ProxyResponse,
-  WebDAVError,
-  WebDAVErrorType 
+  ProxyResponse
 } from '../types/aisp-webdav';
+import { WebDAVError, WebDAVErrorType } from '../types/aisp-webdav';
 
 /**
  * AISP WebDAV 客户端实现
