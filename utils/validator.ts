@@ -143,6 +143,11 @@ export function validateRequestSize(contentLength: string | null): { valid: bool
  * 清理和标准化路径
  */
 export function sanitizePath(path: string): string {
+  // 如果是完整URL，直接返回
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  
   // 移除多余的斜杠
   let cleanPath = path.replace(/\/+/g, '/');
   
