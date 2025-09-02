@@ -15,8 +15,8 @@ export function validateProxyRequest(body: any): { valid: boolean; error?: strin
       return { valid: false, error: 'Request body must be a valid JSON object' };
     }
 
-    // 检查必需的 path 字段
-    if (!body.path || typeof body.path !== 'string') {
+    // 检查必需的 path 字段（允许空字符串表示根目录）
+    if (body.path === undefined || body.path === null || typeof body.path !== 'string') {
       return { valid: false, error: 'Missing or invalid "path" field' };
     }
 
