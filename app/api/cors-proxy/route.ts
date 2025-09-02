@@ -108,7 +108,14 @@ export async function POST(request: NextRequest) {
 
       // 将 WebDAV 服务器的响应状态码和响应体返回给前端
       const responseBody = await response.arrayBuffer();
-      const proxyResponse = new NextResponse(Buffer.from(responseBody), {
+      
+      // 处理空响应体的情况（如204 No Content）
+      let responseData = null;
+      if (responseBody.byteLength > 0) {
+        responseData = Buffer.from(responseBody);
+      }
+      
+      const proxyResponse = new NextResponse(responseData, {
         status: response.status,
         headers: responseHeaders,
       });
