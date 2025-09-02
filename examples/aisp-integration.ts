@@ -57,7 +57,7 @@ export class AISPWebDAVClient implements IWebDAVClient {
       return response;
     } catch (error) {
       clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
+      if (error instanceof Error && error.name === 'AbortError') {
         throw new WebDAVError('请求超时', WebDAVErrorType.TIMEOUT_ERROR, 504);
       }
       throw error;
