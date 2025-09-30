@@ -57,6 +57,38 @@ export default function ApiProxyTestPage() {
     }
   };
 
+  const testSpecificApi = async () => {
+    setLoading(true);
+    setResult('');
+
+    try {
+      // 使用图片中提供的测试代码
+      const testUrl = 'http://20.6.1.140:8081/v4/new-api/queryDeviceInfo';
+      const testToken = 't9ws43729x4046b490981072dv1g4j42';
+      
+      const params = new URLSearchParams({ 
+        url: testUrl,
+        token: testToken
+      });
+
+      const response = await fetch(`/api/api-proxy?${params}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json'
+        },
+        body: 'deviceSn=DLP9E64001&deviceType=min'
+      });
+
+      const responseText = await response.text();
+      setResult(`Status: ${response.status}\nHeaders: ${JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2)}\n\nResponse: ${responseText}`);
+    } catch (error) {
+      setResult(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <h1>API 代理服务测试页面</h1>
@@ -133,6 +165,22 @@ export default function ApiProxyTestPage() {
         >
           {loading ? '测试中...' : '测试 POST 请求'}
         </button>
+
+        <button 
+          onClick={testSpecificApi}
+          disabled={loading}
+          style={{ 
+            padding: '10px 20px',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            marginLeft: '10px'
+          }}
+        >
+          {loading ? '测试中...' : '测试特定API'}
+        </button>
       </div>
 
       {result && (
@@ -156,9 +204,10 @@ export default function ApiProxyTestPage() {
           <li><strong>OPTIONS 测试</strong>：测试 CORS 预检请求是否正常工作</li>
           <li><strong>GET 测试</strong>：测试 GET 请求代理功能</li>
           <li><strong>POST 测试</strong>：测试 POST 请求代理功能（包含请求体）</li>
+          <li><strong>测试特定API</strong>：使用图片中提供的测试代码验证CORS修复</li>
           <li><strong>URL 格式</strong>：支持相对路径（如 /api/test）和绝对URL（如 https://api.example.com/test）</li>
           <li><strong>Token</strong>：如果提供token，会自动添加到请求头中</li>
-          <li><strong>相对路径</strong>：会自动添加基础URL前缀</li>
+          <li><strong>Content-Type</strong>：默认使用 application/x-www-form-urlencoded</li>
         </ul>
         
         <h3>示例URL：</h3>
