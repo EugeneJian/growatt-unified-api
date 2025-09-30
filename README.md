@@ -26,10 +26,14 @@
 aisp-cors-proxy/
 ├── app/
 │   ├── api/
-│   │   └── cors-proxy/
-│   │       └── route.ts          # 主代理 API
-│   └── test/
-│       └── page.tsx              # 测试页面
+│   │   ├── cors-proxy/
+│   │   │   └── route.ts          # WebDAV 代理 API
+│   │   └── api-proxy/
+│   │       └── route.ts          # 通用 API 代理
+│   ├── test/
+│   │   └── page.tsx              # WebDAV 测试页面
+│   └── api-proxy-test/
+│       └── page.tsx              # API 代理测试页面
 ├── config/
 │   ├── proxy.config.ts           # 代理配置
 │   └── cors.config.ts            # CORS 配置
@@ -40,7 +44,8 @@ aisp-cors-proxy/
 ├── types/
 │   └── proxy.types.ts            # 类型定义
 ├── __tests__/
-│   ├── cors-proxy.test.ts        # API 测试
+│   ├── cors-proxy.test.ts        # WebDAV API 测试
+│   ├── api-proxy.test.ts         # API 代理测试
 │   └── utils.test.ts             # 工具函数测试
 ├── vercel.json                   # Vercel 配置
 └── package.json
@@ -81,7 +86,8 @@ aisp-cors-proxy/
    ```
 
 5. **访问测试页面**
-   打开浏览器访问 `http://localhost:3000/test`
+   - WebDAV 测试: `http://localhost:3000/test`
+   - API 代理测试: `http://localhost:3000/api-proxy-test`
 
 ### 部署到 Vercel
 
@@ -102,10 +108,37 @@ aisp-cors-proxy/
 
 ## 📖 API 使用说明
 
-### 端点
+### WebDAV 代理端点
 
 - **URL**: `https://aisp-cors-proxy.vercel.app/api/cors-proxy`
 - **方法**: `POST`, `OPTIONS`
+- **用途**: WebDAV 文件同步功能
+
+### API 代理端点
+
+- **URL**: `https://aisp-cors-proxy.vercel.app/api/api-proxy`
+- **方法**: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
+- **用途**: 通用 API 代理功能
+
+### API 代理使用示例
+
+```typescript
+// 基本使用
+async function apiRequest(url: string, token?: string) {
+  const params = new URLSearchParams({ url });
+  if (token) params.append('token', token);
+  
+  const response = await fetch(`https://aisp-cors-proxy.vercel.app/api/api-proxy?${params}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+  
+  return response.json();
+}
+
+// 使用示例
+const data = await apiRequest('/api/user/profile', 'your-token');
+```
 
 ### 📚 详细文档
 
@@ -174,7 +207,8 @@ npm run test:watch
 
 ### 测试覆盖
 
-- ✅ API 路由测试
+- ✅ WebDAV API 路由测试
+- ✅ API 代理路由测试
 - ✅ 请求验证测试
 - ✅ 错误处理测试
 - ✅ 工具函数测试

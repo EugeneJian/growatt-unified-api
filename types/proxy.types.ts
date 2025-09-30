@@ -4,6 +4,32 @@
  */
 
 /**
+ * API代理请求参数
+ */
+export interface ApiProxyRequest {
+  /** 目标API URL */
+  url: string;
+  /** 认证token（可选） */
+  token?: string;
+}
+
+/**
+ * API代理响应结构
+ */
+export interface ApiProxyResponse {
+  /** 响应状态码 */
+  status: number;
+  /** 响应头 */
+  headers: Record<string, string>;
+  /** 响应体 */
+  body: string;
+  /** 是否成功 */
+  success: boolean;
+  /** 错误信息（如果有） */
+  error?: string;
+}
+
+/**
  * 代理请求体结构
  */
 export interface ProxyRequest {

@@ -140,6 +140,50 @@ export function validateRequestSize(contentLength: string | null): { valid: bool
 }
 
 /**
+ * 验证API代理请求
+ */
+export function validateApiProxyRequest(params: any): { valid: boolean; error?: string } {
+  try {
+    // 检查参数是否为对象
+    if (!params || typeof params !== 'object') {
+      return { valid: false, error: 'Request parameters must be a valid object' };
+    }
+
+    // 检查必需的 url 字段
+    if (!params.url || typeof params.url !== 'string') {
+      return { valid: false, error: 'Missing or invalid "url" parameter' };
+    }
+
+    // 检查URL长度
+    if (params.url.length > 2000) {
+      return { valid: false, error: 'URL must be less than 2000 characters' };
+    }
+
+    // 检查URL格式（基本验证）
+    if (params.url.includes('..')) {
+      return { valid: false, error: 'URL contains invalid characters' };
+    }
+    
+    // 对于绝对URL，允许双斜杠（如 https://）
+    if (!params.url.startsWith('http') && params.url.includes('//')) {
+      return { valid: false, error: 'URL contains invalid characters' };
+    }
+
+    // 验证token字段（如果存在）
+    if (params.token !== undefined && typeof params.token !== 'string') {
+      return { valid: false, error: 'Token must be a string' };
+    }
+
+    return { valid: true };
+  } catch (error) {
+    return { 
+      valid: false, 
+      error: `API proxy validation error: ${error instanceof Error ? error.message : 'Unknown error'}` 
+    };
+  }
+}
+
+/**
  * 清理和标准化路径
  */
 export function sanitizePath(path: string): string {

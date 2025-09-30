@@ -2,7 +2,7 @@
  * 工具函数测试
  */
 
-import { validateProxyRequest, sanitizePath, validateOrigin, validateRequestSize } from '@/utils/validator';
+import { validateProxyRequest, validateApiProxyRequest, sanitizePath, validateOrigin, validateRequestSize } from '@/utils/validator';
 import { createLogger, generateRequestId } from '@/utils/logger';
 import { 
   createErrorResponse, 
@@ -51,6 +51,68 @@ describe('Validator Utils', () => {
       const result = validateProxyRequest(invalidRequest);
       expect(result.valid).toBe(false);
       expect(result.error).toContain('invalid characters');
+    });
+  });
+
+  describe('validateApiProxyRequest', () => {
+    it('should validate correct API proxy request', () => {
+      const validRequest = {
+        url: '/api/test',
+        token: 'test-token'
+      };
+
+      const result = validateApiProxyRequest(validRequest);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should validate request without token', () => {
+      const validRequest = {
+        url: '/api/test'
+      };
+
+      const result = validateApiProxyRequest(validRequest);
+      expect(result.valid).toBe(true);
+    });
+
+    it('should reject request without url', () => {
+      const invalidRequest = {
+        token: 'test-token'
+      };
+
+      const result = validateApiProxyRequest(invalidRequest);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('url');
+    });
+
+    it('should reject request with invalid url', () => {
+      const invalidRequest = {
+        url: '../etc/passwd'
+      };
+
+      const result = validateApiProxyRequest(invalidRequest);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('invalid characters');
+    });
+
+    it('should reject request with invalid token type', () => {
+      const invalidRequest = {
+        url: '/api/test',
+        token: 123
+      };
+
+      const result = validateApiProxyRequest(invalidRequest);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('Token must be a string');
+    });
+
+    it('should reject request with too long url', () => {
+      const invalidRequest = {
+        url: 'a'.repeat(2001)
+      };
+
+      const result = validateApiProxyRequest(invalidRequest);
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain('less than 2000 characters');
     });
   });
 
