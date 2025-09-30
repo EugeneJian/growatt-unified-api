@@ -2,6 +2,7 @@
 
 这是一个为 GitHub Pages 托管的 AISP 应用提供 WebDAV 同步功能的 CORS 代理服务。
 
+
 ## 🚀 项目概述
 
 **问题**：GitHub Pages 托管的静态网站无法直接访问 WebDAV 服务器，因为浏览器的同源策略限制。
