@@ -29,8 +29,10 @@ aisp-cors-proxy/
 │   ├── api/
 │   │   ├── cors-proxy/
 │   │   │   └── route.ts          # WebDAV 代理 API
-│   │   └── api-proxy/
-│   │       └── route.ts          # 通用 API 代理
+│   │   ├── api-proxy/
+│   │   │   └── route.ts          # 通用 API 代理
+│   │   └── ai-proxy/
+│   │       └── route.ts          # AI 代理 API (DeepSeek/OpenAI)
 │   ├── test/
 │   │   └── page.tsx              # WebDAV 测试页面
 │   └── api-proxy-test/
@@ -47,6 +49,7 @@ aisp-cors-proxy/
 ├── __tests__/
 │   ├── cors-proxy.test.ts        # WebDAV API 测试
 │   ├── api-proxy.test.ts         # API 代理测试
+│   ├── ai-proxy.test.ts          # AI 代理测试
 │   └── utils.test.ts             # 工具函数测试
 ├── vercel.json                   # Vercel 配置
 └── package.json
@@ -121,6 +124,13 @@ aisp-cors-proxy/
 - **方法**: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
 - **用途**: 通用 API 代理功能
 
+### AI 代理端点
+
+- **URL**: `https://aisp-cors-proxy.vercel.app/api/ai-proxy`
+- **方法**: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
+- **用途**: AI 服务代理（DeepSeek、OpenAI 等）
+- **超时**: 60 秒
+
 ### API 代理使用示例
 
 ```typescript
@@ -144,6 +154,7 @@ const data = await apiRequest('/api/user/profile', 'your-token');
 ### 📚 详细文档
 
 - **[完整 API 文档](./API_DOCUMENTATION.md)** - 详细的 API 使用说明
+- **[AI 代理使用指南](./AI_PROXY_GUIDE.md)** - DeepSeek/OpenAI 代理使用指南
 - **[快速开始指南](./QUICK_START.md)** - 5分钟快速集成
 
 ### 请求格式
@@ -210,6 +221,7 @@ npm run test:watch
 
 - ✅ WebDAV API 路由测试
 - ✅ API 代理路由测试
+- ✅ AI 代理路由测试
 - ✅ 请求验证测试
 - ✅ 错误处理测试
 - ✅ 工具函数测试

@@ -85,7 +85,7 @@ async function handleApiProxyRequest(request: NextRequest, method: string) {
     if (method !== 'GET' && method !== 'DELETE') {
       try {
         requestBody = await request.text();
-      } catch (error) {
+      } catch {
         // 忽略请求体解析错误，继续处理
       }
     }
