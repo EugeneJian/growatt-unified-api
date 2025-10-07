@@ -8,11 +8,18 @@ import { createErrorResponse, handleProxyError, logError } from '@/utils/errorHa
  * 支持 DeepSeek、OpenAI 等 AI 服务的代理访问
  */
 
-export async function OPTIONS() {
+export async function OPTIONS(request: NextRequest) {
   console.log('🔄 处理AI代理CORS预检请求 (OPTIONS)');
   
+  // 创建响应并设置所有必要的 CORS 头部
   const response = new NextResponse(null, { status: 204 });
-  setCorsHeaders(response.headers);
+  
+  // 手动设置 CORS 头部，确保预检请求通过
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+  response.headers.set('Access-Control-Max-Age', '86400');
+  
   return response;
 }
 
@@ -33,7 +40,10 @@ export async function POST(request: NextRequest) {
         message: '请提供目标API URL',
         requestId
       }, { status: 400 });
-      setCorsHeaders(errorResponse.headers);
+      // 确保错误响应也有CORS头部
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*');
+      errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
       return errorResponse;
     }
 
@@ -101,8 +111,11 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // 添加CORS头部
-    setCorsHeaders(responseHeaders);
+    // 添加CORS头部（确保所有响应都有CORS头）
+    responseHeaders.set('Access-Control-Allow-Origin', '*');
+    responseHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    responseHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+    responseHeaders.set('Access-Control-Max-Age', '86400');
 
     // 返回响应
     const proxyResponse = new NextResponse(responseData, {
@@ -137,7 +150,10 @@ export async function POST(request: NextRequest) {
       createErrorResponse(proxyError, requestId), 
       { status: proxyError.statusCode }
     );
-    setCorsHeaders(errorResponse.headers);
+    // 确保错误响应也有CORS头部
+    errorResponse.headers.set('Access-Control-Allow-Origin', '*');
+    errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
     return errorResponse;
   }
 }
@@ -169,7 +185,10 @@ async function handleGenericRequest(request: NextRequest, method: string) {
         message: '请提供目标API URL',
         requestId
       }, { status: 400 });
-      setCorsHeaders(errorResponse.headers);
+      // 确保错误响应也有CORS头部
+      errorResponse.headers.set('Access-Control-Allow-Origin', '*');
+      errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
       return errorResponse;
     }
 
@@ -200,7 +219,10 @@ async function handleGenericRequest(request: NextRequest, method: string) {
       }
     });
 
-    setCorsHeaders(responseHeaders);
+    // 添加CORS头部
+    responseHeaders.set('Access-Control-Allow-Origin', '*');
+    responseHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    responseHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
 
     return new NextResponse(responseData, {
       status: response.status,
@@ -219,7 +241,10 @@ async function handleGenericRequest(request: NextRequest, method: string) {
       createErrorResponse(proxyError, requestId),
       { status: proxyError.statusCode }
     );
-    setCorsHeaders(errorResponse.headers);
+    // 确保错误响应也有CORS头部
+    errorResponse.headers.set('Access-Control-Allow-Origin', '*');
+    errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
     return errorResponse;
   }
 }
