@@ -25,7 +25,7 @@ describe('AI Proxy API', () => {
         }
       });
 
-      const response = await OPTIONS();
+      const response = await OPTIONS(request);
       
       expect(response.status).toBe(204);
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*');
@@ -234,6 +234,88 @@ describe('AI Proxy API', () => {
       expect(response.status).toBe(200);
       const responseBody = await response.json();
       expect(responseBody.choices[0].message.content).toBe('OpenAI response');
+    });
+
+    it('should stream via SSE when upstream returns event-stream', async () => {
+      // 构造一个可读流模拟 SSE
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode('data: {"delta":"hello"}\n\n'));
+          controller.close();
+        }
+      });
+
+      const mockResponse = new Response(stream, {
+        status: 200,
+        headers: { 'Content-Type': 'text/event-stream; charset=utf-8' }
+      });
+
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai-proxy?url=https%3A%2F%2Fapi.deepseek.com%2Fchat%2Fcompletions',
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'authorization': 'Bearer sk-test123',
+            'accept': 'text/event-stream',
+            'origin': 'http://localhost:3000'
+          },
+          body: JSON.stringify({ model: 'deepseek-chat', stream: true, messages: [{ role: 'user', content: 'Hi' }] })
+        }
+      );
+
+      const response = await POST(request);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toContain('text/event-stream');
+
+      // 读取返回的 ReadableStream 以确认是流
+      const reader = (response.body as ReadableStream).getReader();
+      const { value, done } = await reader.read();
+      expect(done).toBe(false);
+      expect(new TextDecoder().decode(value)).toContain('data:');
+      reader.releaseLock();
+    });
+
+    it('should stream when query param stream=true is provided', async () => {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode('data: ping\n\n'));
+          controller.close();
+        }
+      });
+
+      const mockResponse = new Response(stream, {
+        status: 200,
+        headers: { 'Content-Type': 'text/plain' } // 非 event-stream，但强制通过 query 启用
+      });
+
+      (global.fetch as jest.Mock).mockResolvedValue(mockResponse);
+
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai-proxy?url=https%3A%2F%2Fapi.openai.com%2Fv1%2Fchat%2Fcompletions&stream=true',
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'authorization': 'Bearer sk-openai-token',
+            'origin': 'http://localhost:3000'
+          },
+          body: JSON.stringify({ model: 'gpt-4', stream: true, messages: [{ role: 'user', content: 'Hello' }] })
+        }
+      );
+
+      const response = await POST(request);
+      expect(response.status).toBe(200);
+      expect(response.headers.get('content-type')).toContain('text/event-stream');
+      const reader = (response.body as ReadableStream).getReader();
+      const { value, done } = await reader.read();
+      expect(done).toBe(false);
+      expect(new TextDecoder().decode(value)).toContain('data: ping');
+      reader.releaseLock();
     });
   });
 

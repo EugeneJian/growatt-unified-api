@@ -35,6 +35,63 @@ async function chatWithAI(messages: Array<{role: string, content: string}>) {
 }
 ```
 
+### 流式（SSE）用法
+
+支持将上游 `text/event-stream` 透传为流式响应，客户端可通过以下任一方式启用：
+
+- 在请求头设置 `Accept: text/event-stream`
+- 或在代理 URL 上添加查询参数 `stream=true`
+
+以下是两种常见客户端读取方式：
+
+```typescript
+// 方式一：使用 Fetch + ReadableStream（推荐现代浏览器）
+async function chatStreamWithFetch() {
+  const targetUrl = 'https://api.openai.com/v1/chat/completions';
+  const proxyUrl = 'https://aisp-cors-proxy.vercel.app/api/ai-proxy';
+  const url = `${proxyUrl}?url=${encodeURIComponent(targetUrl)}&stream=true`;
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer sk-your-openai-key',
+      'Accept': 'text/event-stream'
+    },
+    body: JSON.stringify({
+      model: 'gpt-4',
+      stream: true,
+      messages: [{ role: 'user', content: 'Hello' }]
+    })
+  });
+
+  const reader = (resp.body as ReadableStream<Uint8Array>).getReader();
+  const decoder = new TextDecoder();
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    // 形如: "data: {\"id\":..., \"choices\":[{\"delta\":{\"content\":\"...\"}}]}\n\n"
+    console.log(chunk);
+  }
+}
+
+// 方式二：使用 EventSource（仅 GET，可用于上游 GET 流）
+function listenWithEventSource() {
+  const targetUrl = 'https://example.com/sse-endpoint';
+  const proxyUrl = 'https://aisp-cors-proxy.vercel.app/api/ai-proxy';
+  const url = `${proxyUrl}?url=${encodeURIComponent(targetUrl)}&stream=true`;
+  const es = new EventSource(url);
+  es.onmessage = (ev) => {
+    console.log('event:', ev.data);
+  };
+  es.onerror = (err) => {
+    console.error('sse error:', err);
+    es.close();
+  };
+}
+```
+
 ## 🔧 支持的 AI 服务
 
 ### 1. DeepSeek

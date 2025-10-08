@@ -3,40 +3,42 @@
  * 根据《设计文档》的安全要求
  */
 
-import { ProxyRequest, RequestOptions } from '@/types/proxy.types';
+import { RequestOptions } from '@/types/proxy.types';
 
 /**
  * 验证代理请求格式
  */
-export function validateProxyRequest(body: any): { valid: boolean; error?: string } {
+export function validateProxyRequest(body: unknown): { valid: boolean; error?: string } {
   try {
     // 检查请求体是否为对象
     if (!body || typeof body !== 'object') {
       return { valid: false, error: 'Request body must be a valid JSON object' };
     }
 
+    const b = body as Record<string, unknown>;
+
     // 检查必需的 path 字段（允许空字符串表示根目录）
-    if (body.path === undefined || body.path === null || typeof body.path !== 'string') {
+    if (b.path === undefined || b.path === null || typeof b.path !== 'string') {
       return { valid: false, error: 'Missing or invalid "path" field' };
     }
 
     // 检查 path 字段格式（允许空字符串表示根目录）
-    if (body.path.length > 1000) {
+    if ((b.path as string).length > 1000) {
       return { valid: false, error: 'Path must be less than 1000 characters' };
     }
 
     // 检查 path 是否包含危险字符（路径遍历攻击）
-    if (body.path.includes('..')) {
+    if ((b.path as string).includes('..')) {
       return { valid: false, error: 'Path contains invalid characters' };
     }
 
     // 检查 options 字段
-    if (!body.options || typeof body.options !== 'object') {
+    if (!('options' in b) || !b.options || typeof b.options !== 'object') {
       return { valid: false, error: 'Missing or invalid "options" field' };
     }
 
     // 验证 options 内容
-    const optionsValidation = validateRequestOptions(body.options);
+    const optionsValidation = validateRequestOptions((b as { options: RequestOptions }).options);
     if (!optionsValidation.valid) {
       return optionsValidation;
     }
@@ -142,7 +144,7 @@ export function validateRequestSize(contentLength: string | null): { valid: bool
 /**
  * 验证API代理请求
  */
-export function validateApiProxyRequest(params: any): { valid: boolean; error?: string } {
+export function validateApiProxyRequest(params: unknown): { valid: boolean; error?: string } {
   try {
     // 检查参数是否为对象
     if (!params || typeof params !== 'object') {
@@ -150,27 +152,28 @@ export function validateApiProxyRequest(params: any): { valid: boolean; error?: 
     }
 
     // 检查必需的 url 字段
-    if (!params.url || typeof params.url !== 'string') {
+    const p = params as { url?: string; token?: unknown };
+    if (!p.url || typeof p.url !== 'string') {
       return { valid: false, error: 'Missing or invalid "url" parameter' };
     }
 
     // 检查URL长度
-    if (params.url.length > 2000) {
+    if (p.url.length > 2000) {
       return { valid: false, error: 'URL must be less than 2000 characters' };
     }
 
     // 检查URL格式（基本验证）
-    if (params.url.includes('..')) {
+    if (p.url.includes('..')) {
       return { valid: false, error: 'URL contains invalid characters' };
     }
     
     // 对于绝对URL，允许双斜杠（如 https://）
-    if (!params.url.startsWith('http') && params.url.includes('//')) {
+    if (!p.url.startsWith('http') && p.url.includes('//')) {
       return { valid: false, error: 'URL contains invalid characters' };
     }
 
     // 验证token字段（如果存在）
-    if (params.token !== undefined && typeof params.token !== 'string') {
+    if (p.token !== undefined && typeof p.token !== 'string') {
       return { valid: false, error: 'Token must be a string' };
     }
 

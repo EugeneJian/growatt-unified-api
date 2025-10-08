@@ -26,7 +26,7 @@ export function createLogEntry(
   level: LogLevel,
   message: string,
   requestId?: string,
-  data?: any
+  data?: Record<string, unknown> | string
 ): LogEntry {
   return {
     level,
@@ -50,35 +50,35 @@ export class Logger {
   /**
    * 记录调试日志
    */
-  debug(message: string, data?: any): void {
+  debug(message: string, data?: Record<string, unknown> | string): void {
     this.log('debug', message, data);
   }
 
   /**
    * 记录信息日志
    */
-  info(message: string, data?: any): void {
+  info(message: string, data?: Record<string, unknown> | string): void {
     this.log('info', message, data);
   }
 
   /**
    * 记录警告日志
    */
-  warn(message: string, data?: any): void {
+  warn(message: string, data?: Record<string, unknown> | string): void {
     this.log('warn', message, data);
   }
 
   /**
    * 记录错误日志
    */
-  error(message: string, data?: any): void {
+  error(message: string, data?: Record<string, unknown> | string): void {
     this.log('error', message, data);
   }
 
   /**
    * 记录日志
    */
-  private log(level: LogLevel, message: string, data?: any): void {
+  private log(level: LogLevel, message: string, data?: Record<string, unknown> | string): void {
     const logEntry = createLogEntry(level, message, this.requestId, data);
     
     // 在开发环境中输出到控制台

@@ -35,6 +35,45 @@ async function chatWithAI(messages: Array<{role: string, content: string}>) {
 }
 ```
 
+### 流式（SSE）用法
+
+当目标 AI 服务（如 DeepSeek/OpenAI）开启 `stream: true` 时，代理将透传 `text/event-stream`：
+
+- 在请求头加入 `Accept: text/event-stream`，或
+- 在代理 URL 添加 `stream=true`（`?url=...&stream=true`）
+
+示例（Fetch + ReadableStream）：
+
+```typescript
+async function chatStream() {
+  const targetUrl = 'https://api.deepseek.com/chat/completions';
+  const proxyUrl = 'https://aisp-cors-proxy.vercel.app/api/ai-proxy';
+  const url = `${proxyUrl}?url=${encodeURIComponent(targetUrl)}&stream=true`;
+
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer sk-your-deepseek-key',
+      'Accept': 'text/event-stream'
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      stream: true,
+      messages: [{ role: 'user', content: 'Hello' }]
+    })
+  });
+
+  const reader = (resp.body as ReadableStream<Uint8Array>).getReader();
+  const decoder = new TextDecoder();
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    console.log(decoder.decode(value, { stream: true }));
+  }
+}
+```
+
 ## 🔧 支持的 AI 服务
 
 ### 1. DeepSeek

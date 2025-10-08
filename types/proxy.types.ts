@@ -49,8 +49,10 @@ export interface RequestOptions {
   headers?: Record<string, string>;
   /** 请求体 */
   body?: string | ArrayBuffer | FormData;
-  /** 其他 fetch 选项 */
-  [key: string]: any;
+  /** 其他 fetch 选项（受限键值，避免 any） */
+  // 允许附加可选字段，但限制为 string/number/boolean/undefined
+  // 对于更复杂的场景，可在调用侧扩展专用类型
+  [key: string]: string | number | boolean | undefined | HeadersInit | ArrayBuffer | FormData;
 }
 
 /**
@@ -100,8 +102,8 @@ export interface LogEntry {
   timestamp: string;
   /** 请求 ID */
   requestId?: string;
-  /** 额外数据 */
-  data?: any;
+  /** 额外数据（结构化对象或字符串） */
+  data?: Record<string, unknown> | string;
 }
 
 /**

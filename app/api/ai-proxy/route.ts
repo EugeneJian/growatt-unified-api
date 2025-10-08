@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { setCorsHeaders } from '@/config/cors.config';
 import { createLogger, generateRequestId } from '@/utils/logger';
 import { createErrorResponse, handleProxyError, logError } from '@/utils/errorHandler';
+import { applyCorsHeaders, buildProxyResponseHeaders, buildSseHeaders } from '@/utils/headers';
 
 /**
  * AI API 代理服务
@@ -14,11 +15,8 @@ export async function OPTIONS(request: NextRequest) {
   // 创建响应并设置所有必要的 CORS 头部
   const response = new NextResponse(null, { status: 204 });
   
-  // 手动设置 CORS 头部，确保预检请求通过
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
-  response.headers.set('Access-Control-Max-Age', '86400');
+  // 统一使用封装的 CORS 头设置
+  applyCorsHeaders(response.headers);
   
   return response;
 }
@@ -41,9 +39,7 @@ export async function POST(request: NextRequest) {
         requestId
       }, { status: 400 });
       // 确保错误响应也有CORS头部
-      errorResponse.headers.set('Access-Control-Allow-Origin', '*');
-      errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+      applyCorsHeaders(errorResponse.headers);
       return errorResponse;
     }
 
@@ -96,34 +92,37 @@ export async function POST(request: NextRequest) {
       responseTime 
     });
 
-    // 获取响应数据
+    // 检测并处理 SSE 流式响应
+    const acceptHeader = request.headers.get('accept') || '';
+    const respContentType = response.headers.get('content-type') || '';
+    const streamParam = searchParams.get('stream');
+    const isSSE = (
+      respContentType.includes('text/event-stream') ||
+      acceptHeader.includes('text/event-stream') ||
+      streamParam === 'true'
+    );
+
+    if (isSSE && response.body) {
+      const streamHeaders = buildSseHeaders(response.headers);
+      logger.info('以SSE方式透传响应');
+      return new NextResponse(response.body, {
+        status: response.status,
+        headers: streamHeaders,
+      });
+    }
+
+    // 非流式：读取完整文本
     const responseData = await response.text();
     logger.info('响应数据长度', { length: responseData.length });
 
     // 设置响应头
-    const responseHeaders = new Headers();
-    
-    // 复制原始响应的重要头部
-    ['content-type', 'cache-control', 'x-request-id'].forEach(header => {
-      const value = response.headers.get(header);
-      if (value) {
-        responseHeaders.set(header, value);
-      }
-    });
-
-    // 添加CORS头部（确保所有响应都有CORS头）
-    responseHeaders.set('Access-Control-Allow-Origin', '*');
-    responseHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    responseHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
-    responseHeaders.set('Access-Control-Max-Age', '86400');
+    const responseHeaders = buildProxyResponseHeaders(response.headers);
 
     // 返回响应
-    const proxyResponse = new NextResponse(responseData, {
+    return new NextResponse(responseData, {
       status: response.status,
       headers: responseHeaders,
     });
-
-    return proxyResponse;
 
   } catch (error) {
     const responseTime = Date.now() - startTime;
@@ -209,6 +208,31 @@ async function handleGenericRequest(request: NextRequest, method: string) {
       signal: AbortSignal.timeout(60000)
     });
 
+    // 检测 SSE
+    const acceptHeader = request.headers.get('accept') || '';
+    const respContentType = response.headers.get('content-type') || '';
+    const streamParam = searchParams.get('stream');
+    const isSSE = (
+      respContentType.includes('text/event-stream') ||
+      acceptHeader.includes('text/event-stream') ||
+      streamParam === 'true'
+    );
+
+    if (isSSE && response.body) {
+      const streamHeaders = new Headers();
+      streamHeaders.set('Content-Type', respContentType || 'text/event-stream; charset=utf-8');
+      streamHeaders.set('Cache-Control', 'no-cache');
+      streamHeaders.set('X-Accel-Buffering', 'no');
+      // CORS 头
+      streamHeaders.set('Access-Control-Allow-Origin', '*');
+      streamHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      streamHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+      return new NextResponse(response.body, {
+        status: response.status,
+        headers: streamHeaders,
+      });
+    }
+
     const responseData = await response.text();
     const responseHeaders = new Headers();
     
@@ -242,9 +266,7 @@ async function handleGenericRequest(request: NextRequest, method: string) {
       { status: proxyError.statusCode }
     );
     // 确保错误响应也有CORS头部
-    errorResponse.headers.set('Access-Control-Allow-Origin', '*');
-    errorResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    errorResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+    applyCorsHeaders(errorResponse.headers);
     return errorResponse;
   }
 }
