@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { setCorsHeaders } from '@/config/cors.config';
 import { createLogger, generateRequestId } from '@/utils/logger';
 import { createErrorResponse, handleProxyError, logError } from '@/utils/errorHandler';
 import { applyCorsHeaders, buildProxyResponseHeaders, buildSseHeaders } from '@/utils/headers';
@@ -9,7 +8,7 @@ import { applyCorsHeaders, buildProxyResponseHeaders, buildSseHeaders } from '@/
  * 支持 DeepSeek、OpenAI 等 AI 服务的代理访问
  */
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   console.log('🔄 处理AI代理CORS预检请求 (OPTIONS)');
   
   // 创建响应并设置所有必要的 CORS 头部
