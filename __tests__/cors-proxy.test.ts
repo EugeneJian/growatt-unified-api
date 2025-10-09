@@ -16,6 +16,7 @@ describe('CORS Proxy API', () => {
 
   describe('OPTIONS request', () => {
     it('should handle OPTIONS preflight request', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const request = new NextRequest('http://localhost:3000/api/cors-proxy', {
         method: 'OPTIONS',
         headers: {
@@ -25,7 +26,7 @@ describe('CORS Proxy API', () => {
         }
       });
 
-      const response = await OPTIONS(request);
+      const response = await OPTIONS();
       
       expect(response.status).toBe(204);
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*');
