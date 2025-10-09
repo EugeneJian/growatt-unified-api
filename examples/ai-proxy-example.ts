@@ -137,6 +137,7 @@ class AIProxyClient {
 
 // ====== 使用示例 ======
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function examples() {
   // 示例 1: 使用 DeepSeek
   const deepseekClient = new AIProxyClient(
@@ -193,6 +194,7 @@ async function examples() {
 
 // ====== 错误处理示例 ======
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function errorHandlingExample() {
   const client = new AIProxyClient(
     'https://aisp-cors-proxy.vercel.app/api/ai-proxy',

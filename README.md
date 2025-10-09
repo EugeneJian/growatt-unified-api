@@ -1,7 +1,6 @@
 # AISP CORS 代理服务
 
-这是一个为 GitHub Pages 托管的 AISP 应用提供 WebDAV 同步功能的 CORS 代理服务。
-
+这是一个为 GitHub Pages 托管的 AISP 应用提供 WebDAV 同步功能的 CORS 代理服务，部署在 Vercel 上。
 
 ## 🚀 项目概述
 

@@ -1,7 +1,18 @@
 {
   "name": "aisp-cors-proxy",
   "version": "0.1.0",
+  "description": "AISP CORS Proxy Service for Vercel - 为 GitHub Pages 托管的 AISP 应用提供 WebDAV 同步功能的 CORS 代理服务",
   "private": true,
+  "keywords": [
+    "cors-proxy",
+    "webdav",
+    "aisp",
+    "vercel",
+    "nextjs",
+    "proxy"
+  ],
+  "author": "AISP Team",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
