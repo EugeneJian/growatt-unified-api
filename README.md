@@ -110,17 +110,52 @@ aisp-cors-proxy/
    vercel --prod
    ```
 
+### 部署到 Cloudflare Workers
+
+1. 进入 Worker 目录并安装依赖
+   ```bash
+   cd my-worker
+   npm install
+   ```
+
+2. 本地开发（Wrangler）
+   ```bash
+   npm run dev
+   # 默认 http://localhost:8787
+   ```
+
+3. 登录并发布
+   ```bash
+   npx wrangler login
+   npm run deploy
+   ```
+
+4. 配置环境变量（可选）
+   - 在 `my-worker/wrangler.jsonc` 的 `vars` 中配置：
+     - `WEBDAV_BASE_URL`：WebDAV 基础地址
+     - `CORS_ALLOW_ORIGIN`：允许的前端来源（建议生产指定域名）
+     - `REQUEST_TIMEOUT`：超时毫秒数（默认 30000）
+     - `USER_AGENT`：User-Agent 字符串
+
+5. 生产调用 URL
+   - 部署成功后，使用：`https://<name>.<子域>.workers.dev`
+   - 示例端点：
+     - `GET/POST/PUT/DELETE /api/api-proxy?url=...&token=...`
+     - `POST /api/cors-proxy`（JSON: `{ path, options }`）
+
 ## 📖 API 使用说明
 
 ### WebDAV 代理端点
 
-- **URL**: `https://aisp-cors-proxy.vercel.app/api/cors-proxy`
+- **URL（Vercel示例）**: `https://aisp-cors-proxy.vercel.app/api/cors-proxy`
+- **URL（Cloudflare示例）**: `https://<name>.<子域>.workers.dev/api/cors-proxy`
 - **方法**: `POST`, `OPTIONS`
 - **用途**: WebDAV 文件同步功能
 
 ### API 代理端点
 
-- **URL**: `https://aisp-cors-proxy.vercel.app/api/api-proxy`
+- **URL（Vercel示例）**: `https://aisp-cors-proxy.vercel.app/api/api-proxy`
+- **URL（Cloudflare示例）**: `https://<name>.<子域>.workers.dev/api/api-proxy`
 - **方法**: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
 - **用途**: 通用 API 代理功能
 
@@ -139,6 +174,7 @@ async function apiRequest(url: string, token?: string) {
   const params = new URLSearchParams({ url });
   if (token) params.append('token', token);
   
+  // Vercel
   const response = await fetch(`https://aisp-cors-proxy.vercel.app/api/api-proxy?${params}`, {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
@@ -149,6 +185,15 @@ async function apiRequest(url: string, token?: string) {
 
 // 使用示例
 const data = await apiRequest('/api/user/profile', 'your-token');
+
+// Cloudflare Workers
+async function apiRequestCF(url: string, token?: string) {
+  const params = new URLSearchParams({ url });
+  if (token) params.append('token', token);
+
+  const response = await fetch(`https://<name>.<子域>.workers.dev/api/api-proxy?${params}`);
+  return response.json();
+}
 ```
 
 ### 📚 详细文档
