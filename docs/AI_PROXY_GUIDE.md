@@ -37,17 +37,16 @@ async function chatWithAI(messages: Array<{role: string, content: string}>) {
 
 ### 流式（SSE）用法
 
-支持将上游 `text/event-stream` 透传为流式响应，客户端可通过以下任一方式启用：
+当目标 AI 服务（如 DeepSeek/OpenAI）开启 `stream: true` 时，代理将透传 `text/event-stream`：
 
-- 在请求头设置 `Accept: text/event-stream`
-- 或在代理 URL 上添加查询参数 `stream=true`
+- 在请求头加入 `Accept: text/event-stream`，或
+- 在代理 URL 添加 `stream=true`（`?url=...&stream=true`）
 
-以下是两种常见客户端读取方式：
+示例（Fetch + ReadableStream）：
 
 ```typescript
-// 方式一：使用 Fetch + ReadableStream（推荐现代浏览器）
-async function chatStreamWithFetch() {
-  const targetUrl = 'https://api.openai.com/v1/chat/completions';
+async function chatStream() {
+  const targetUrl = 'https://api.deepseek.com/chat/completions';
   const proxyUrl = 'https://aisp-cors-proxy.vercel.app/api/ai-proxy';
   const url = `${proxyUrl}?url=${encodeURIComponent(targetUrl)}&stream=true`;
 
@@ -55,11 +54,11 @@ async function chatStreamWithFetch() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer sk-your-openai-key',
+      'Authorization': 'Bearer sk-your-deepseek-key',
       'Accept': 'text/event-stream'
     },
     body: JSON.stringify({
-      model: 'gpt-4',
+      model: 'deepseek-chat',
       stream: true,
       messages: [{ role: 'user', content: 'Hello' }]
     })
@@ -70,25 +69,8 @@ async function chatStreamWithFetch() {
   while (true) {
     const { value, done } = await reader.read();
     if (done) break;
-    const chunk = decoder.decode(value, { stream: true });
-    // 形如: "data: {\"id\":..., \"choices\":[{\"delta\":{\"content\":\"...\"}}]}\n\n"
-    console.log(chunk);
+    console.log(decoder.decode(value, { stream: true }));
   }
-}
-
-// 方式二：使用 EventSource（仅 GET，可用于上游 GET 流）
-function listenWithEventSource() {
-  const targetUrl = 'https://example.com/sse-endpoint';
-  const proxyUrl = 'https://aisp-cors-proxy.vercel.app/api/ai-proxy';
-  const url = `${proxyUrl}?url=${encodeURIComponent(targetUrl)}&stream=true`;
-  const es = new EventSource(url);
-  es.onmessage = (ev) => {
-    console.log('event:', ev.data);
-  };
-  es.onerror = (err) => {
-    console.error('sse error:', err);
-    es.close();
-  };
 }
 ```
 
