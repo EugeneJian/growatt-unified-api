@@ -51,6 +51,16 @@ function generateRequestId(): string {
 	return `req_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
+type LogLevel = 'info' | 'error' | 'debug' | 'warn';
+function log(level: LogLevel, message: string, requestId: string, data?: any): void {
+	const entry = { level, message, requestId, timestamp: new Date().toISOString(), ...(data ? { data } : {}) };
+	if (level === 'error' || level === 'warn') {
+		console.error(JSON.stringify(entry));
+	} else {
+		console.log(JSON.stringify(entry));
+	}
+}
+
 function buildCorsHeaders(config: ProxyConfig): HeadersInit {
 	return {
 		'Access-Control-Allow-Origin': config.allowOrigin,
@@ -91,6 +101,20 @@ function jsonError(status: number, message: string, requestId: string, config: P
 	return res;
 }
 
+function validateOrigin(origin: string | null, allowOrigin: string): boolean {
+	if (allowOrigin === '*') return true;
+	if (!origin) return false;
+	return origin === allowOrigin;
+}
+
+function validateRequestSize(contentLength: string | null, maxBytes: number = 10 * 1024 * 1024): { valid: boolean; error?: string } {
+	if (!contentLength) return { valid: true };
+	const size = Number.parseInt(contentLength);
+	if (!Number.isFinite(size) || size < 0) return { valid: false, error: 'Invalid content length' };
+	if (size > maxBytes) return { valid: false, error: 'Request too large' };
+	return { valid: true };
+}
+
 async function handleOptions(config: ProxyConfig): Promise<Response> {
 	const res = new Response(null, { status: 204 });
 	applyCors(res.headers, config);
@@ -109,6 +133,14 @@ async function handleApiProxy(request: Request, config: ProxyConfig, requestId: 
 
 	const targetUrl = decodeURIComponent(targetParam);
 	const method = request.method.toUpperCase();
+
+	// 可选：请求体大小校验（与 Vercel 逻辑保持一致的上限）
+	const sizeValidation = validateRequestSize(request.headers.get('content-length'));
+	if (!sizeValidation.valid) {
+		return jsonError(413, sizeValidation.error || 'Request too large', requestId, config);
+	}
+
+	log('info', 'api-proxy start', requestId, { method, targetUrl });
 
 	let body: BodyInit | null = null;
 	if (method !== 'GET' && method !== 'DELETE') {
@@ -130,19 +162,33 @@ async function handleApiProxy(request: Request, config: ProxyConfig, requestId: 
 	try {
 		upstream = await fetch(targetUrl, { method, headers: forwardHeaders, body, signal: controller });
 	} catch (err) {
-		console.error(`[${requestId}] api-proxy fetch error`, err);
+		log('error', 'api-proxy fetch error', requestId, { error: err instanceof Error ? err.message : String(err) });
 		return jsonError(502, 'Proxy error', requestId, config);
 	}
 
 	const responseHeaders = pickForwardHeaders(upstream.headers);
 	applyCors(responseHeaders, config);
 	const text = await upstream.text();
-	return new Response(text, { status: upstream.status, headers: responseHeaders });
+	const res = new Response(text, { status: upstream.status, headers: responseHeaders });
+	log('info', 'api-proxy complete', requestId, { status: upstream.status });
+	return res;
 }
 
 async function handleCorsProxy(request: Request, config: ProxyConfig, requestId: string): Promise<Response> {
 	if (request.method === 'OPTIONS') return handleOptions(config);
 	if (request.method !== 'POST') return jsonError(405, 'Method Not Allowed', requestId, config);
+
+	// 来源校验
+	const origin = request.headers.get('origin');
+	if (!validateOrigin(origin, config.allowOrigin)) {
+		return jsonError(403, 'Origin not allowed', requestId, config);
+	}
+
+	// 请求体大小校验
+	const sizeValidation = validateRequestSize(request.headers.get('content-length'));
+	if (!sizeValidation.valid) {
+		return jsonError(413, sizeValidation.error || 'Request too large', requestId, config);
+	}
 
 	let payload: any;
 	try {
@@ -162,6 +208,7 @@ async function handleCorsProxy(request: Request, config: ProxyConfig, requestId:
 	const targetUrl = isAbsolute ? cleanPath : (cleanPath ? `${config.webdavBaseUrl}${cleanPath}` : config.webdavBaseUrl);
 
 	const method = typeof options.method === 'string' ? options.method.toUpperCase() : 'GET';
+	log('info', 'cors-proxy start', requestId, { method, targetUrl });
 	const outHeaders = new Headers(options.headers || {});
 	outHeaders.set('User-Agent', config.userAgent);
 
@@ -180,14 +227,16 @@ async function handleCorsProxy(request: Request, config: ProxyConfig, requestId:
 	try {
 		upstream = await fetch(targetUrl, { method, headers: outHeaders, body, signal: controller });
 	} catch (err) {
-		console.error(`[${requestId}] cors-proxy fetch error`, err);
+		log('error', 'cors-proxy fetch error', requestId, { error: err instanceof Error ? err.message : String(err) });
 		return jsonError(503, 'Network request failed', requestId, config);
 	}
 
 	const responseHeaders = pickForwardHeaders(upstream.headers);
 	applyCors(responseHeaders, config);
 	const buf = await upstream.arrayBuffer();
-	return new Response(buf.byteLength ? buf : null, { status: upstream.status, headers: responseHeaders });
+	const res = new Response(buf.byteLength ? buf : null, { status: upstream.status, headers: responseHeaders });
+	log('info', 'cors-proxy complete', requestId, { status: upstream.status });
+	return res;
 }
 
 export default {
