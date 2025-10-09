@@ -143,6 +143,16 @@ aisp-cors-proxy/
      - `GET/POST/PUT/DELETE /api/api-proxy?url=...&token=...`
      - `POST /api/cors-proxy`（JSON: `{ path, options }`）
 
+6. 机密变量（Secrets）配置（推荐）
+   - 使用 Cloudflare Secrets 存储敏感信息，例如上游凭据、Token：
+     ```bash
+     cd my-worker
+     npx wrangler secret put MY_API_TOKEN
+     # 按提示输入密钥值
+     ```
+   - 在代码中通过 `env.MY_API_TOKEN` 访问（`fetch(request, env)` 的 `env` 参数）。
+   - GitHub Actions 无需暴露明文，部署时由 Cloudflare 端注入。
+
 ## 📖 API 使用说明
 
 ### WebDAV 代理端点
@@ -194,6 +204,50 @@ async function apiRequestCF(url: string, token?: string) {
   const response = await fetch(`https://<name>.<子域>.workers.dev/api/api-proxy?${params}`);
   return response.json();
 }
+```
+
+### 将前端调用地址替换为 Cloudflare 域名
+
+当从 Vercel 迁移到 Cloudflare 后，你可以批量替换代码中的 API 根地址。
+
+- PowerShell（Windows）示例：
+```powershell
+$old = 'https://aisp-cors-proxy.vercel.app'
+$new = 'https://<name>.<子域>.workers.dev'
+Get-ChildItem -Recurse -Include *.ts,*.tsx,*.js,*.jsx,*.md | ForEach-Object {
+  (Get-Content $_.FullName) -replace [regex]::Escape($old), $new | Set-Content $_.FullName
+}
+```
+
+- Node.js 脚本示例（保存为 `scripts/replace-endpoints.mjs`）：
+```javascript
+import { readdirSync, statSync, readFileSync, writeFileSync } from 'node:fs';
+import { join, extname } from 'node:path';
+
+const root = process.cwd();
+const exts = new Set(['.ts', '.tsx', '.js', '.jsx', '.md']);
+const oldBase = 'https://aisp-cors-proxy.vercel.app';
+const newBase = 'https://<name>.<子域>.workers.dev';
+
+function walk(dir) {
+  for (const name of readdirSync(dir)) {
+    const p = join(dir, name);
+    const s = statSync(p);
+    if (s.isDirectory()) walk(p);
+    else if (exts.has(extname(p))) {
+      const src = readFileSync(p, 'utf8');
+      const out = src.split(oldBase).join(newBase);
+      if (out !== src) writeFileSync(p, out, 'utf8');
+    }
+  }
+}
+
+walk(root);
+console.log('Endpoint replaced:', oldBase, '->', newBase);
+```
+执行：
+```bash
+node scripts/replace-endpoints.mjs
 ```
 
 ### 📚 详细文档
