@@ -12,7 +12,7 @@
 	},
 	"vars": {
 		"WEBDAV_BASE_URL": "https://dav.jianguoyun.com/dav/",
-		"CORS_ALLOW_ORIGIN": "*",
+		"CORS_ALLOW_ORIGIN": "https://your-frontend.example.com",
 		"REQUEST_TIMEOUT": "30000",
 		"USER_AGENT": "AISP-CORS-Proxy/1.0"
 	}
