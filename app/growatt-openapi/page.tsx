@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { GrowattDocsShell } from "./docs-shell";
 import "./docs.css";
-import { getGrowattDocMetas, getGrowattOverview } from "@/lib/growatt-docs";
+import {
+  GROWATT_QUICK_GUIDE_SLUG,
+  getGrowattDocMetas,
+  getGrowattOverview,
+} from "@/lib/growatt-docs";
 
 export const metadata: Metadata = {
   title: "Growatt Open API Docs",
@@ -19,6 +23,7 @@ export default async function GrowattOpenApiOverviewPage() {
   return (
     <GrowattDocsShell
       docs={docs}
+      quickGuide={{ slug: GROWATT_QUICK_GUIDE_SLUG, label: "Quick Guide" }}
       activeSlug={null}
       heading={overview.title}
       subheading="Rendered from README.md. All API docs are statically generated from OPENAPI markdown files."

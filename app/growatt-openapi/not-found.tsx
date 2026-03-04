@@ -8,7 +8,7 @@ export default function GrowattDocsNotFoundPage() {
         <main className="growatt-docs-main">
           <header className="growatt-docs-header">
             <h2>Document Not Found</h2>
-            <p>The requested API document does not exist in the current OPENAPI set.</p>
+            <p>The requested page does not exist in the current Growatt docs set (overview, quick guide, or OPENAPI docs).</p>
           </header>
           <p>
             Return to{" "}

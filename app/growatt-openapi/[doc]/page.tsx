@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { GrowattDocsShell } from "../docs-shell";
 import "../docs.css";
-import { getGrowattDocBySlug, getGrowattDocMetas } from "@/lib/growatt-docs";
+import {
+  GROWATT_QUICK_GUIDE_SLUG,
+  getGrowattDocBySlug,
+  getGrowattDocMetas,
+} from "@/lib/growatt-docs";
 
 interface GrowattDocPageProps {
   params: Promise<{ doc: string }>;
@@ -50,6 +54,7 @@ export default async function GrowattOpenApiDocPage({
   return (
     <GrowattDocsShell
       docs={docs}
+      quickGuide={{ slug: GROWATT_QUICK_GUIDE_SLUG, label: "Quick Guide" }}
       activeSlug={currentDoc.slug}
       heading={currentDoc.title}
       subheading={`Source file: ${currentDoc.fileName}`}

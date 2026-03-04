@@ -20,7 +20,12 @@ jest.mock("@/lib/growatt-docs/markdown", () => {
   };
 });
 
-import { getGrowattDocBySlug, getGrowattDocMetas, getGrowattOverview } from "@/lib/growatt-docs";
+import {
+  getGrowattDocBySlug,
+  getGrowattDocMetas,
+  getGrowattOverview,
+  getGrowattQuickGuide,
+} from "@/lib/growatt-docs";
 
 describe("growatt docs source-of-truth loader", () => {
   it("discovers numbered OPENAPI docs and excludes README from doc list", async () => {
@@ -49,5 +54,15 @@ describe("growatt docs source-of-truth loader", () => {
     expect(page?.fileName).toBe(firstDoc.fileName);
     expect(page?.html).toContain("<article>");
     expect(page?.html).toContain("/growatt-openapi/04_api_device_auth");
+  });
+
+  it("loads and renders quick guide markdown from Growatt API root", async () => {
+    const quickGuide = await getGrowattQuickGuide();
+
+    expect(quickGuide.slug).toBe("quick-guide");
+    expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.md");
+    expect(quickGuide.title).toBe("Quick Guide");
+    expect(quickGuide.html).toContain("<article>");
+    expect(quickGuide.html).toContain("Quick-Start Checklist");
   });
 });

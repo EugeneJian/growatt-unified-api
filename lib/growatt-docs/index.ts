@@ -4,9 +4,16 @@ import { cache } from "react";
 import { buildGrowattSlugByFileName, toGrowattDocSlug } from "./link-rewriter";
 import { extractMarkdownTitle, renderGrowattMarkdownToHtml } from "./markdown";
 
-const OPENAPI_ROOT_DIR = path.join(process.cwd(), "Growatt API", "OPENAPI");
+const GROWATT_API_ROOT_DIR = path.join(process.cwd(), "Growatt API");
+const OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI");
 const README_FILE_NAME = "README.md";
+const QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
+export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
+export const QUICK_GUIDE_PATH = path.join(
+  GROWATT_API_ROOT_DIR,
+  QUICK_GUIDE_FILE_NAME,
+);
 
 export interface GrowattDocMeta {
   fileName: string;
@@ -16,6 +23,14 @@ export interface GrowattDocMeta {
 }
 
 export interface GrowattDocPage extends GrowattDocMeta {
+  markdown: string;
+  html: string;
+}
+
+export interface GrowattQuickGuidePage {
+  slug: string;
+  fileName: string;
+  title: string;
   markdown: string;
   html: string;
 }
@@ -114,6 +129,28 @@ export const getGrowattDocBySlug = cache(
 
     return {
       ...currentDoc,
+      markdown,
+      html,
+    };
+  },
+);
+
+export const getGrowattQuickGuide = cache(
+  async (): Promise<GrowattQuickGuidePage> => {
+    const [docMetas, markdown] = await Promise.all([
+      getGrowattDocMetas(),
+      fs.readFile(QUICK_GUIDE_PATH, "utf8"),
+    ]);
+
+    const slugByFileName = buildGrowattSlugByFileName(
+      docMetas.map((doc) => doc.fileName),
+    );
+    const html = await renderGrowattMarkdownToHtml(markdown, { slugByFileName });
+
+    return {
+      slug: GROWATT_QUICK_GUIDE_SLUG,
+      fileName: QUICK_GUIDE_FILE_NAME,
+      title: extractMarkdownTitle(markdown, "Quick Guide"),
       markdown,
       html,
     };

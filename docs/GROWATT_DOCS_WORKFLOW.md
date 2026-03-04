@@ -6,12 +6,14 @@ Keep a single source of truth (SSOT) for Growatt API docs while publishing a cus
 
 ## SSOT Rules
 
-1. The only editable source for Growatt API docs is:
+1. The primary editable source for Growatt API docs is:
    - `Growatt API/OPENAPI/*.md`
-2. `Growatt API/Growatt Unified API.md` is reference-only and must not be edited as the primary source.
-3. Add new API docs with the file naming pattern:
+2. The editable source for Quick Guide is:
+   - `Growatt API/Growatt Open API Professional Integration Guide.md`
+3. `Growatt API/Growatt Unified API.md` is reference-only and must not be edited as the primary source.
+4. Add new API docs with the file naming pattern:
    - `NN_descriptive_name.md` (example: `11_api_new_feature.md`)
-4. Keep `Growatt API/OPENAPI/README.md` updated with:
+5. Keep `Growatt API/OPENAPI/README.md` updated with:
    - Version
    - Release Date
    - Full document index links
@@ -38,7 +40,7 @@ npm run build
 
 ## Publish Flow (Cloudflare Pages)
 
-1. Commit changes to `Growatt API/OPENAPI/*.md` and related docs code.
+1. Commit changes to `Growatt API/OPENAPI/*.md`, quick guide markdown, and related docs code.
 2. Open PR and ensure `growatt-docs-check` CI is green.
 3. Merge to `main`.
 4. Cloudflare Pages 自动构建并发布（或使用 Wrangler 手动发布）。
@@ -49,8 +51,8 @@ npm run build
 
 ## Content Update Checklist
 
-1. Edit or add markdown files in `Growatt API/OPENAPI`.
+1. Edit or add API markdown files in `Growatt API/OPENAPI` and/or edit quick guide markdown in `Growatt API/Growatt Open API Professional Integration Guide.md`.
 2. Verify cross-document markdown links (`./xx.md` or `../xx.md`) are valid.
-3. Update `README.md` in the same folder with any new files.
+3. Update `Growatt API/OPENAPI/README.md` when API file inventory changes.
 4. Run local checks.
 5. Merge and publish.

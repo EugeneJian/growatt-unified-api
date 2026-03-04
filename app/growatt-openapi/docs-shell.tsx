@@ -2,8 +2,14 @@ import Link from "next/link";
 import type { GrowattDocMeta } from "@/lib/growatt-docs";
 import { MermaidRenderer } from "./mermaid-renderer";
 
+interface QuickGuideNavMeta {
+  slug: string;
+  label: string;
+}
+
 interface GrowattDocsShellProps {
   docs: GrowattDocMeta[];
+  quickGuide: QuickGuideNavMeta;
   activeSlug: string | null;
   heading: string;
   subheading: string;
@@ -12,9 +18,11 @@ interface GrowattDocsShellProps {
 
 function DocsNav({
   docs,
+  quickGuide,
   activeSlug,
 }: {
   docs: GrowattDocMeta[];
+  quickGuide: QuickGuideNavMeta;
   activeSlug: string | null;
 }) {
   return (
@@ -24,6 +32,12 @@ function DocsNav({
         href="/growatt-openapi"
       >
         Overview
+      </Link>
+      <Link
+        className={`growatt-docs-nav-link ${activeSlug === quickGuide.slug ? "active" : ""}`.trim()}
+        href={`/growatt-openapi/${quickGuide.slug}`}
+      >
+        {quickGuide.label}
       </Link>
       {docs.map((doc) => (
         <Link
@@ -40,6 +54,7 @@ function DocsNav({
 
 export function GrowattDocsShell({
   docs,
+  quickGuide,
   activeSlug,
   heading,
   subheading,
@@ -50,14 +65,14 @@ export function GrowattDocsShell({
       <div className="growatt-docs-shell">
         <aside className="growatt-docs-sidebar">
           <h1>Growatt Open API</h1>
-          <p>Single source of truth: Growatt API/OPENAPI/*.md</p>
-          <DocsNav docs={docs} activeSlug={activeSlug} />
+          <p>Primary docs: Growatt API/OPENAPI/*.md | Quick Guide: Growatt API/*.md</p>
+          <DocsNav docs={docs} quickGuide={quickGuide} activeSlug={activeSlug} />
         </aside>
 
         <main className="growatt-docs-main">
           <details className="growatt-docs-mobile-nav">
             <summary>Browse API Docs</summary>
-            <DocsNav docs={docs} activeSlug={activeSlug} />
+            <DocsNav docs={docs} quickGuide={quickGuide} activeSlug={activeSlug} />
           </details>
 
           <header className="growatt-docs-header">
