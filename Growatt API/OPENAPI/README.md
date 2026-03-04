@@ -80,6 +80,10 @@ When your access token expires, use the [OAuth2-refresh API](./03_api_refresh.md
 - `access_token`: 2 hours (7200 seconds)
 - `refresh_token`: 30 days (2592000 seconds)
 
+## Quick Guide
+
+For a quick start guide with simpler examples, see: [/growatt-openapi/quick-guide](/growatt-openapi/quick-guide)
+
 ## Original Documentation
 
 For the complete unified document, see: [../Growatt Unified API.md](../Growatt Unified API.md)

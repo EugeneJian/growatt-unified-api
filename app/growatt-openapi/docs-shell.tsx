@@ -12,7 +12,7 @@ interface GrowattDocsShellProps {
   quickGuide: QuickGuideNavMeta;
   activeSlug: string | null;
   heading: string;
-  subheading: string;
+  subheading?: string;
   contentHtml: string;
 }
 
@@ -65,7 +65,6 @@ export function GrowattDocsShell({
       <div className="growatt-docs-shell">
         <aside className="growatt-docs-sidebar">
           <h1>Growatt Open API</h1>
-          <p>Primary docs: Growatt API/OPENAPI/*.md | Quick Guide: Growatt API/*.md</p>
           <DocsNav docs={docs} quickGuide={quickGuide} activeSlug={activeSlug} />
         </aside>
 
@@ -77,7 +76,7 @@ export function GrowattDocsShell({
 
           <header className="growatt-docs-header">
             <h2>{heading}</h2>
-            <p>{subheading}</p>
+            {subheading && <p>{subheading}</p>}
           </header>
 
           <article className="growatt-docs-content">
