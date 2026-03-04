@@ -12,6 +12,22 @@
 - The `ContentType` of the request must be `application/x-www-form-urlencoded;`
 - The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
 
+## Dispatch Control Flow (Mermaid)
+
+```mermaid
+flowchart TD
+    A[Create dispatch command] --> B[Generate unique requestId]
+    B --> C[Throttle per device to 1 request per 5 seconds]
+    C --> D[POST /auth2/deviceDispatch]
+    D --> E{Response code}
+    E -->|0| F[Mark successful]
+    E -->|5 Device Offline| G[Fallback and alert]
+    E -->|16 Timeout| H[Retry with backoff]
+    E -->|Other| I[Log and manual handling]
+    F --> J[Optional read-back verification]
+    H --> D
+```
+
 ---
 
 ## Http Body Parameters

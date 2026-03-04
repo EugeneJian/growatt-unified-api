@@ -15,14 +15,15 @@ export function MermaidRenderer({ content }: MermaidRendererProps) {
       startOnLoad: false,
       theme: "base",
       themeVariables: {
-        // Light mode colors
+        // Light mode colors - Force white background
+        darkMode: false,
+        background: "#ffffff",
         primaryColor: "#e0f2fe",
         primaryTextColor: "#0f172a",
         primaryBorderColor: "#0ea5e9",
         lineColor: "#64748b",
         secondaryColor: "#f1f5f9",
         tertiaryColor: "#f8fafc",
-        background: "#ffffff",
         mainBkg: "#e0f2fe",
         nodeBorder: "#0ea5e9",
         clusterBkg: "#f8fafc",
@@ -52,6 +53,19 @@ export function MermaidRenderer({ content }: MermaidRendererProps) {
         actor2Border: "#0ea5e9",
         actor2Bkg: "#e0f2fe",
         actor2TextColor: "#0f172a",
+        // Override dark background
+        fillType0: "#e0f2fe",
+        fillType1: "#f1f5f9",
+        fillType2: "#f8fafc",
+        fillType3: "#f1f5f9",
+        fillType4: "#e0f2fe",
+        fillType5: "#f8fafc",
+        fillType6: "#f1f5f9",
+        fillType7: "#e0f2fe",
+        border1: "#0ea5e9",
+        border2: "#e2e8f0",
+        border3: "#e2e8f0",
+        border4: "#0ea5e9",
       },
       securityLevel: "loose",
     });

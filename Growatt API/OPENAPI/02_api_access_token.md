@@ -12,6 +12,21 @@
 - `POST`
 - In the request header, `ContentType` must be `application/x-www-form-urlencoded;`
 
+## Token Exchange Flow (Mermaid)
+
+```mermaid
+flowchart TD
+    A[Prepare request body] --> B{grant_type}
+    B -->|authorization_code| C[Fill code + client_id + client_secret + redirect_uri]
+    B -->|client_credentials| D[Fill client_id + client_secret + redirect_uri]
+    C --> E[POST /oauth2/token]
+    D --> E
+    E --> F{code == 0 or HTTP 200}
+    F -->|Yes| G[Save access_token and refresh_token]
+    F -->|No| H[Check credentials and grant_type]
+    G --> I[Use Bearer token for next APIs]
+```
+
 ---
 
 ## Request Parameter Description

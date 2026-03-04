@@ -12,6 +12,19 @@
 - The request header must carry a valid `access_token`.
 - Placed in the `Authorization` parameter of the request header, and must include the prefix `Bearer `.
 
+## Device Info Query Flow (Mermaid)
+
+```mermaid
+flowchart TD
+    A[User selects device] --> B[Attach Bearer access_token]
+    B --> C[POST /oauth2/getDeviceInfo]
+    C --> D{code}
+    D -->|0| E[Render model battery and datalog fields]
+    D -->|2| F[Refresh token and retry]
+    D -->|12| G[Check device authorization list]
+    E --> H[Use info for monitoring and dispatch eligibility]
+```
+
 ---
 
 ## HTTP Header Parameters

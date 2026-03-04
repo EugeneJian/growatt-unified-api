@@ -4,8 +4,28 @@ Version: V1.0 | Release Date: March 4, 2026
 
 ## Table of Contents
 
+- [Recommended Integration Flow](#recommended-integration-flow)
 - [OAuth2.0 Authorization Mode Description](#1-oauth20-authorization-mode-description)
 - [OAuth2.0 Authorization Flow Overview](#2-oauth20-authorization-flow-overview)
+
+## Recommended Integration Flow
+
+```mermaid
+flowchart TD
+    A[Start Integration] --> B[Choose OAuth Mode]
+    B -->|Authorization Code| C[Open Growatt Login]
+    B -->|Client Credentials| D[Call /oauth2/token]
+    C --> E[Receive authorization code]
+    E --> F[Exchange code for access_token]
+    D --> G[Get access_token]
+    F --> H[Call device authorization APIs]
+    G --> H
+    H --> I[Call business APIs]
+    I --> J{Token expired}
+    J -->|Yes| K[Call /oauth2/refresh]
+    K --> I
+    J -->|No| L[Continue operations]
+```
 
 ---
 

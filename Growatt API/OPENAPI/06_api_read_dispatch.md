@@ -11,6 +11,21 @@
 - `POST`
 - The `ContentType` of the request must be `application/x-www-form-urlencoded;`
 
+## Read-Back Verification Flow (Mermaid)
+
+```mermaid
+flowchart TD
+    A[Need current parameter value] --> B[Build request with deviceSn setType requestId]
+    B --> C[POST /auth2/readDdeviceDispatch]
+    C --> D{Response code}
+    D -->|0| E[Parse data array]
+    D -->|5 or 16| F[Retry with delay]
+    D -->|7 or other| G[Stop and inspect device type or permission]
+    E --> H[Compare with expected dispatch plan]
+    H --> I[Continue control loop]
+    F --> C
+```
+
 ---
 
 ## HTTP Header Parameters

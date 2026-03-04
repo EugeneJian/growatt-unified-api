@@ -11,6 +11,19 @@
 - `POST`
 - In the request header, `ContentType` must be `application/x-www-form-urlencoded;`
 
+## Refresh Lifecycle (Mermaid)
+
+```mermaid
+flowchart TD
+    A[API call with access_token] --> B{Token valid}
+    B -->|Yes| C[Continue business API calls]
+    B -->|No| D[POST /oauth2/refresh]
+    D --> E{Refresh success}
+    E -->|Yes| F[Store new access_token and refresh_token]
+    F --> C
+    E -->|No| G[Trigger re-authorization flow]
+```
+
 ---
 
 ## Request Parameter Description

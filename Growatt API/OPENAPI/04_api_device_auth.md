@@ -4,10 +4,25 @@ This section covers APIs for managing device authorization.
 
 ## Table of Contents
 
+- [Authorization Lifecycle](#authorization-lifecycle)
 - [Get Authorizable Device List](#331-get-authorizable-device-list)
 - [Authorize Device](#332-authorize-device)
 - [Get Authorized Device List](#333-get-authorized-device-list)
 - [Unauthorize Device](#334-unauthorize-device)
+
+## Authorization Lifecycle
+
+```mermaid
+flowchart TD
+    A[Get access_token] --> B[POST /oauth2/getApiDeviceList]
+    B --> C[Show candidate devices]
+    C --> D[POST /oauth2/bindDevice]
+    D --> E[POST /oauth2/getApiDeviceListAuthed]
+    E --> F[Operate only authorized devices]
+    F --> G{Need revoke access}
+    G -->|Yes| H[POST /oauth2/unbindDevice]
+    G -->|No| I[Keep authorization]
+```
 
 ---
 

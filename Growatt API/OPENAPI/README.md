@@ -4,6 +4,22 @@ Version: V1.0 | Release Date: March 4, 2026
 
 This folder contains structured documentation for the Growatt Open API.
 
+## Integration Roadmap (Mermaid)
+
+```mermaid
+flowchart LR
+    A[01 Authentication] --> B[02 Get access_token]
+    B --> C[03 Refresh token lifecycle]
+    C --> D[04 Device Authorization]
+    D --> E[07 Device Information]
+    D --> F[08 Device Data Query]
+    D --> G[09 Device Data Push]
+    F --> H[05 Device Dispatch]
+    H --> I[06 Read Dispatch Parameters]
+    G --> H
+    I --> J[10 Global Parameters]
+```
+
 ## Documentation Structure
 
 | File | Description |

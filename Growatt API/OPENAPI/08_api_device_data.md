@@ -10,6 +10,20 @@
 - `POST`
 - `Content-Type`: `application/x-www-form-urlencoded`
 
+## Telemetry Consumption Flow (Mermaid)
+
+```mermaid
+flowchart TD
+    A[Scheduler triggers poll] --> B[Build request with deviceSn]
+    B --> C[POST /auth2/getDeviceData]
+    C --> D{code}
+    D -->|0| E[Parse core metrics and batteryList]
+    D -->|2 or 12| F[Refresh token or re-authorize device]
+    E --> G[Store time-series data]
+    G --> H[Run alerting and control logic]
+    H --> I[Optional call /auth2/deviceDispatch]
+```
+
 ---
 
 ## HTTP Header Parameters
