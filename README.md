@@ -1,415 +1,59 @@
-# AISP CORS 代理服务
+# Growatt OpenAPI Docs Site
 
-这是一个为 GitHub Pages 托管的 AISP 应用提供 WebDAV 同步功能的 CORS 代理服务，部署在 Vercel 上。
+本项目已重构为纯文档站，不再包含任何 Vercel/代理 API 能力。
 
-## 🚀 项目概述
+## 目标
 
-**问题**：GitHub Pages 托管的静态网站无法直接访问 WebDAV 服务器，因为浏览器的同源策略限制。
+1. 使用 `Growatt API/OPENAPI/*.md` 作为唯一 SSOT。
+2. 将 Markdown 在构建期渲染为可读 HTML 文档站。
+3. 部署到 Cloudflare Pages（静态输出目录：`out`）。
 
-**解决方案**：通过部署在 Vercel 上的 CORS 代理服务，将前端的 WebDAV 请求转发到目标服务器，并添加必要的 CORS 头部。
+## 路由
 
-## 🏗️ 架构设计
+1. `/`：项目首页（文档入口）
+2. `/growatt-openapi`：文档总览
+3. `/growatt-openapi/{docSlug}`：API 详情页（静态生成）
 
-```
-前端应用 (GitHub Pages) → CORS 代理服务 (Vercel) → WebDAV 服务器 (坚果云)
-```
-
-### 数据流程
-1. 前端发送 WebDAV 请求到代理服务
-2. 代理服务验证请求并转发到 WebDAV 服务器
-3. 代理服务接收响应并添加 CORS 头部
-4. 前端接收带有 CORS 头部的响应
-
-## 📁 项目结构
-
-```
-aisp-cors-proxy/
-├── app/
-│   ├── api/
-│   │   ├── cors-proxy/
-│   │   │   └── route.ts          # WebDAV 代理 API
-│   │   ├── api-proxy/
-│   │   │   └── route.ts          # 通用 API 代理
-│   │   └── ai-proxy/
-│   │       └── route.ts          # AI 代理 API (DeepSeek/OpenAI)
-│   ├── test/
-│   │   └── page.tsx              # WebDAV 测试页面
-│   └── api-proxy-test/
-│       └── page.tsx              # API 代理测试页面
-├── config/
-│   ├── proxy.config.ts           # 代理配置
-│   └── cors.config.ts            # CORS 配置
-├── utils/
-│   ├── logger.ts                 # 日志工具
-│   ├── validator.ts              # 请求验证
-│   └── errorHandler.ts           # 错误处理
-├── types/
-│   └── proxy.types.ts            # 类型定义
-├── __tests__/
-│   ├── cors-proxy.test.ts        # WebDAV API 测试
-│   ├── api-proxy.test.ts         # API 代理测试
-│   ├── ai-proxy.test.ts          # AI 代理测试
-│   └── utils.test.ts             # 工具函数测试
-├── vercel.json                   # Vercel 配置
-└── package.json
-```
-
-## 🔧 技术栈
-
-- **运行时**: Node.js 18+
-- **框架**: Next.js 15 (App Router)
-- **语言**: TypeScript
-- **部署**: Vercel
-- **测试**: Jest
-
-## 🚀 快速开始
-
-### 本地开发
-
-1. **克隆项目**
-   ```bash
-   git clone <repository-url>
-   cd aisp-cors-proxy
-   ```
-
-2. **安装依赖**
-   ```bash
-   npm install
-   ```
-
-3. **配置环境变量**
-   ```bash
-   cp env.example .env.local
-   # 编辑 .env.local 文件，配置你的环境变量
-   ```
-
-4. **启动开发服务器**
-   ```bash
-   npm run dev
-   ```
-
-5. **访问测试页面**
-   - WebDAV 测试: `http://localhost:3000/test`
-   - API 代理测试: `http://localhost:3000/api-proxy-test`
-
-### 部署到 Vercel
-
-1. **安装 Vercel CLI**
-   ```bash
-   npm install -g vercel
-   ```
-
-2. **登录 Vercel**
-   ```bash
-   vercel login
-   ```
-
-3. **部署项目**
-   ```bash
-   vercel --prod
-   ```
-
-### 部署到 Cloudflare Workers
-
-1. 进入 Worker 目录并安装依赖
-   ```bash
-   cd my-worker
-   npm install
-   ```
-
-2. 本地开发（Wrangler）
-   ```bash
-   npm run dev
-   # 默认 http://localhost:8787
-   ```
-
-3. 登录并发布
-   ```bash
-   npx wrangler login
-   npm run deploy
-   ```
-
-4. 配置环境变量（可选）
-   - 在 `my-worker/wrangler.jsonc` 的 `vars` 中配置：
-     - `WEBDAV_BASE_URL`：WebDAV 基础地址
-     - `CORS_ALLOW_ORIGIN`：允许的前端来源（建议生产指定域名）
-     - `REQUEST_TIMEOUT`：超时毫秒数（默认 30000）
-     - `USER_AGENT`：User-Agent 字符串
-
-5. 生产调用 URL
-   - 部署成功后，使用：`https://<name>.<子域>.workers.dev`
-   - 示例端点：
-     - `GET/POST/PUT/DELETE /api/api-proxy?url=...&token=...`
-     - `POST /api/cors-proxy`（JSON: `{ path, options }`）
-
-6. 机密变量（Secrets）配置（推荐）
-   - 使用 Cloudflare Secrets 存储敏感信息，例如上游凭据、Token：
-     ```bash
-     cd my-worker
-     npx wrangler secret put MY_API_TOKEN
-     # 按提示输入密钥值
-     ```
-   - 在代码中通过 `env.MY_API_TOKEN` 访问（`fetch(request, env)` 的 `env` 参数）。
-   - GitHub Actions 无需暴露明文，部署时由 Cloudflare 端注入。
-
-## 📖 API 使用说明
-
-### WebDAV 代理端点
-
-- **URL（Vercel示例）**: `https://aisp-cors-proxy.vercel.app/api/cors-proxy`
-- **URL（Cloudflare示例）**: `https://<name>.<子域>.workers.dev/api/cors-proxy`
-- **方法**: `POST`, `OPTIONS`
-- **用途**: WebDAV 文件同步功能
-
-### API 代理端点
-
-- **URL（Vercel示例）**: `https://aisp-cors-proxy.vercel.app/api/api-proxy`
-- **URL（Cloudflare示例）**: `https://<name>.<子域>.workers.dev/api/api-proxy`
-- **方法**: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
-- **用途**: 通用 API 代理功能
-
-### AI 代理端点
-
-- **URL**: `https://aisp-cors-proxy.vercel.app/api/ai-proxy`
-- **方法**: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
-- **用途**: AI 服务代理（DeepSeek、OpenAI 等）
-- **超时**: 60 秒
-
-### API 代理使用示例
-
-```typescript
-// 基本使用
-async function apiRequest(url: string, token?: string) {
-  const params = new URLSearchParams({ url });
-  if (token) params.append('token', token);
-  
-  // Vercel
-  const response = await fetch(`https://aisp-cors-proxy.vercel.app/api/api-proxy?${params}`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' }
-  });
-  
-  return response.json();
-}
-
-// 使用示例
-const data = await apiRequest('/api/user/profile', 'your-token');
-
-// Cloudflare Workers
-async function apiRequestCF(url: string, token?: string) {
-  const params = new URLSearchParams({ url });
-  if (token) params.append('token', token);
-
-  const response = await fetch(`https://<name>.<子域>.workers.dev/api/api-proxy?${params}`);
-  return response.json();
-}
-```
-
-### 将前端调用地址替换为 Cloudflare 域名
-
-当从 Vercel 迁移到 Cloudflare 后，你可以批量替换代码中的 API 根地址。
-
-- PowerShell（Windows）示例：
-```powershell
-$old = 'https://aisp-cors-proxy.vercel.app'
-$new = 'https://<name>.<子域>.workers.dev'
-Get-ChildItem -Recurse -Include *.ts,*.tsx,*.js,*.jsx,*.md | ForEach-Object {
-  (Get-Content $_.FullName) -replace [regex]::Escape($old), $new | Set-Content $_.FullName
-}
-```
-
-- Node.js 脚本示例（保存为 `scripts/replace-endpoints.mjs`）：
-```javascript
-import { readdirSync, statSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, extname } from 'node:path';
-
-const root = process.cwd();
-const exts = new Set(['.ts', '.tsx', '.js', '.jsx', '.md']);
-const oldBase = 'https://aisp-cors-proxy.vercel.app';
-const newBase = 'https://<name>.<子域>.workers.dev';
-
-function walk(dir) {
-  for (const name of readdirSync(dir)) {
-    const p = join(dir, name);
-    const s = statSync(p);
-    if (s.isDirectory()) walk(p);
-    else if (exts.has(extname(p))) {
-      const src = readFileSync(p, 'utf8');
-      const out = src.split(oldBase).join(newBase);
-      if (out !== src) writeFileSync(p, out, 'utf8');
-    }
-  }
-}
-
-walk(root);
-console.log('Endpoint replaced:', oldBase, '->', newBase);
-```
-执行：
-```bash
-node scripts/replace-endpoints.mjs
-```
-
-### 📚 详细文档
-
-- **[完整 API 文档](./API_DOCUMENTATION.md)** - 详细的 API 使用说明
-- **[AI 代理使用指南](./AI_PROXY_GUIDE.md)** - DeepSeek/OpenAI 代理使用指南
-- **[快速开始指南](./QUICK_START.md)** - 5分钟快速集成
-
-### 请求格式
-
-```typescript
-POST /api/cors-proxy
-Content-Type: application/json
-
-{
-  "path": "目标路径",
-  "options": {
-    "method": "HTTP方法",
-    "headers": {
-      "Authorization": "Basic base64编码的凭据",
-      "其他头部": "值"
-    },
-    "body": "请求体（可选）"
-  }
-}
-```
-
-### 响应格式
-
-成功响应会返回 WebDAV 服务器的原始响应，并添加 CORS 头部：
-
-```http
-HTTP/1.1 200 OK
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, PROPFIND, MKCOL, MOVE, COPY
-Access-Control-Allow-Headers: Authorization, Content-Type, Depth, If-None-Match, Etag
-Access-Control-Expose-Headers: Etag, DAV
-Access-Control-Max-Age: 86400
-
-[WebDAV 服务器响应体]
-```
-
-### 错误响应
-
-```json
-{
-  "error": "错误描述",
-  "details": "详细错误信息",
-  "timestamp": "2025-09-02T13:59:08.000Z",
-  "requestId": "req_1756821548259_abc123"
-}
-```
-
-## 🧪 测试
-
-### 运行测试
+## 本地开发
 
 ```bash
-# 运行所有测试
-npm test
-
-# 运行测试并生成覆盖率报告
-npm run test:coverage
-
-# 监视模式运行测试
-npm run test:watch
+npm install
+npm run dev
 ```
 
-### 测试覆盖
+访问 `http://localhost:3000/growatt-openapi`。
 
-- ✅ WebDAV API 路由测试
-- ✅ API 代理路由测试
-- ✅ AI 代理路由测试
-- ✅ 请求验证测试
-- ✅ 错误处理测试
-- ✅ 工具函数测试
-- ✅ CORS 头部测试
+## 质量检查
 
-## ⚙️ 配置选项
+```bash
+npm run docs:check
+npm run build
+```
 
-### 环境变量
+`docs:check` 包含：
 
-| 变量名 | 描述 | 默认值 |
-|--------|------|--------|
-| `WEBDAV_BASE_URL` | WebDAV 服务器基础 URL | `https://dav.jianguoyun.com/dav/` |
-| `CORS_ALLOW_ORIGIN` | 允许的来源 | `*` |
-| `REQUEST_TIMEOUT` | 请求超时时间（毫秒） | `30000` |
-| `USER_AGENT` | 用户代理字符串 | `AISP-CORS-Proxy/1.0` |
+1. 文档命名与链接校验（`docs:lint:growatt`）
+2. 文档渲染相关单元测试（`docs:test:growatt`）
 
-### Vercel 配置
+## Cloudflare Pages 部署
 
-项目包含 `vercel.json` 配置文件，用于：
-- 设置函数超时时间
-- 配置 CORS 头部
-- 设置环境变量
+### 方式一：Cloudflare Dashboard
 
-## 🔒 安全考虑
+1. 连接 Git 仓库
+2. Build command: `npm run build`
+3. Build output directory: `out`
+4. Node version: 20
 
-1. **请求验证**: 验证请求格式和来源
-2. **路径清理**: 防止路径遍历攻击
-3. **大小限制**: 限制请求体大小
-4. **错误处理**: 不暴露敏感信息
-5. **日志记录**: 记录所有请求和错误
+### 方式二：Wrangler CLI
 
-## 📊 监控和日志
+```bash
+npm run build
+npx wrangler pages deploy out --project-name <your-project-name>
+```
 
-- **Vercel Analytics**: 性能监控
-- **Vercel Functions Logs**: 错误日志
-- **自定义日志**: 结构化日志记录
+## 文档维护约束
 
-## 🚨 故障排除
-
-### 常见问题
-
-1. **CORS 错误**
-   - 检查 `Access-Control-Allow-Origin` 头部
-   - 确认预检请求（OPTIONS）正常工作
-
-2. **超时错误**
-   - 检查 `REQUEST_TIMEOUT` 配置
-   - 确认 WebDAV 服务器响应时间
-
-3. **认证失败**
-   - 验证 Authorization 头部格式
-   - 确认 WebDAV 服务器凭据正确
-
-### 调试方法
-
-1. **查看测试页面**: 访问 `/test` 页面进行功能测试
-2. **检查日志**: 查看 Vercel 函数日志
-3. **使用 curl**: 直接测试 API 端点
-
-## 🔄 更新和维护
-
-### 版本更新
-
-1. 修改代码
-2. 运行测试确保功能正常
-3. 重新部署到 Vercel
-
-### 监控指标
-
-- 响应时间
-- 成功率
-- 错误率
-- 请求量
-
-## 📝 许可证
-
-MIT License
-
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 📞 支持
-
-如有问题，请通过以下方式联系：
-- 提交 GitHub Issue
-- 发送邮件到项目维护者
-
----
-
-**部署状态**: ✅ 已部署到 Vercel  
-**测试状态**: ✅ 所有测试通过  
-**文档状态**: ✅ 文档完整
+1. 仅编辑 `Growatt API/OPENAPI/*.md`
+2. `Growatt API/Growatt Unified API.md` 仅作为参考，不作为主编辑源
+3. 新文档命名必须符合 `NN_descriptive_name.md`
+4. 更新文档时同步维护 `Growatt API/OPENAPI/README.md` 的版本和目录
