@@ -1,175 +1,319 @@
+/* Growatt Docs - Premium UX Styles */
+
+:root {
+  --docs-bg-primary: #f8fafc;
+  --docs-bg-card: #ffffff;
+  --docs-text-primary: #0f172a;
+  --docs-text-secondary: #475569;
+  --docs-text-muted: #64748b;
+  --docs-accent: #0ea5e9;
+  --docs-accent-hover: #0284c7;
+  --docs-border: #e2e8f0;
+  --docs-border-light: #f1f5f9;
+  --docs-code-bg: #1e293b;
+  --docs-code-text: #e2e8f0;
+  --docs-sidebar-width: 280px;
+}
+
 .growatt-docs-page {
   min-height: 100vh;
-  background: radial-gradient(circle at top left, #f7fbff 0%, #ffffff 45%, #eef5ff 100%);
-  color: #1a2433;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0f9ff 100%);
+  color: var(--docs-text-primary);
 }
 
 .growatt-docs-shell {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 32px 20px 56px;
+  padding: 40px 24px 64px;
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
-  gap: 28px;
+  grid-template-columns: var(--docs-sidebar-width) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
 }
 
+/* Sidebar Styles */
 .growatt-docs-sidebar {
   position: sticky;
-  top: 20px;
-  align-self: start;
-  border: 1px solid #d5deea;
-  background: rgba(255, 255, 255, 0.92);
+  top: 24px;
+  background: var(--docs-bg-card);
+  border: 1px solid var(--docs-border);
   border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 8px 24px rgba(11, 36, 67, 0.08);
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
 }
 
 .growatt-docs-sidebar h1 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 700;
-  color: #10223f;
+  color: var(--docs-text-primary);
+  letter-spacing: -0.025em;
 }
 
 .growatt-docs-sidebar p {
-  margin: 8px 0 16px;
-  font-size: 0.84rem;
-  color: #43536c;
+  margin: 8px 0 20px;
+  font-size: 0.8125rem;
+  color: var(--docs-text-muted);
+  line-height: 1.5;
 }
 
+/* Navigation */
 .growatt-docs-nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 2px;
 }
 
 .growatt-docs-nav-link {
-  display: block;
-  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
   border-radius: 8px;
   text-decoration: none;
-  color: #1d3558;
-  font-size: 0.9rem;
-  line-height: 1.3;
+  color: var(--docs-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  transition: all 0.15s ease;
 }
 
 .growatt-docs-nav-link:hover {
-  background: #ecf3ff;
+  background: var(--docs-bg-primary);
+  color: var(--docs-text-primary);
 }
 
 .growatt-docs-nav-link.active {
-  background: #dce9ff;
-  color: #0f2d55;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  color: var(--docs-accent-hover);
   font-weight: 600;
 }
 
+/* Mobile Navigation */
 .growatt-docs-mobile-nav {
   display: none;
-  border: 1px solid #d5deea;
+  background: var(--docs-bg-card);
+  border: 1px solid var(--docs-border);
   border-radius: 12px;
-  background: #ffffff;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .growatt-docs-mobile-nav summary {
   cursor: pointer;
   font-weight: 600;
-  padding: 12px 14px;
+  padding: 14px 16px;
+  color: var(--docs-text-primary);
 }
 
 .growatt-docs-mobile-nav .growatt-docs-nav {
-  padding: 0 10px 10px;
+  padding: 0 12px 12px;
 }
 
+/* Main Content Area */
 .growatt-docs-main {
-  border: 1px solid #d5deea;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 8px 24px rgba(11, 36, 67, 0.08);
-  padding: 24px;
+  background: var(--docs-bg-card);
+  border: 1px solid var(--docs-border);
+  border-radius: 20px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+  padding: 32px 40px;
   min-width: 0;
 }
 
 .growatt-docs-header {
-  margin-bottom: 22px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e4ebf5;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--docs-border-light);
 }
 
 .growatt-docs-header h2 {
   margin: 0;
-  font-size: 1.55rem;
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--docs-text-primary);
+  letter-spacing: -0.03em;
   line-height: 1.2;
-  color: #112643;
 }
 
 .growatt-docs-header p {
-  margin: 8px 0 0;
-  font-size: 0.95rem;
-  color: #4a5a72;
+  margin: 10px 0 0;
+  font-size: 1rem;
+  color: var(--docs-text-muted);
+  line-height: 1.6;
 }
 
+/* Markdown Content Styles */
 .growatt-docs-content {
-  line-height: 1.68;
-  color: #1f2f45;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--docs-text-primary);
 }
 
+/* Headings */
 .growatt-docs-content h1,
 .growatt-docs-content h2,
 .growatt-docs-content h3,
 .growatt-docs-content h4 {
   scroll-margin-top: 80px;
-  line-height: 1.25;
-  color: #122947;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  font-weight: 600;
+  color: var(--docs-text-primary);
+  letter-spacing: -0.02em;
 }
 
+.growatt-docs-content h1 { font-size: 1.75rem; }
+.growatt-docs-content h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--docs-border-light);
+}
+.growatt-docs-content h3 { font-size: 1.25rem; }
+.growatt-docs-content h4 { font-size: 1.125rem; }
+
+.growatt-docs-content h1:first-child,
+.growatt-docs-content h2:first-child,
+.growatt-docs-content h3:first-child {
+  margin-top: 0;
+}
+
+/* Paragraphs */
+.growatt-docs-content p {
+  margin: 1em 0;
+  line-height: 1.7;
+}
+
+/* Lists */
+.growatt-docs-content ul,
+.growatt-docs-content ol {
+  margin: 1em 0;
+  padding-left: 1.5em;
+}
+
+.growatt-docs-content li {
+  margin: 0.5em 0;
+  line-height: 1.6;
+}
+
+.growatt-docs-content li::marker {
+  color: var(--docs-accent);
+}
+
+/* Tables */
 .growatt-docs-content table {
   width: 100%;
   display: block;
   overflow-x: auto;
-  border-collapse: collapse;
-  margin: 14px 0 18px;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 20px 0 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--docs-border);
 }
 
 .growatt-docs-content th,
 .growatt-docs-content td {
-  border: 1px solid #d5deea;
-  padding: 8px 10px;
+  padding: 14px 16px;
+  text-align: left;
   vertical-align: top;
-  min-width: 120px;
 }
 
 .growatt-docs-content th {
-  background: #eef4ff;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--docs-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--docs-border);
 }
 
+.growatt-docs-content td {
+  border-bottom: 1px solid var(--docs-border-light);
+  font-size: 0.9375rem;
+}
+
+.growatt-docs-content tr:last-child td {
+  border-bottom: none;
+}
+
+.growatt-docs-content tr:hover td {
+  background: #f8fafc;
+}
+
+/* Code Blocks */
 .growatt-docs-content pre {
   overflow-x: auto;
-  background: #0f1e33;
-  color: #eaf2ff;
-  padding: 12px 14px;
-  border-radius: 10px;
+  background: var(--docs-code-bg);
+  color: var(--docs-code-text);
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 }
 
+.growatt-docs-content pre code {
+  font-family: var(--font-mono);
+  font-feature-settings: "liga" 1;
+}
+
+/* Inline Code */
 .growatt-docs-content code {
-  font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
 }
 
 .growatt-docs-content :not(pre) > code {
-  background: #edf3fc;
+  background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
   border-radius: 6px;
-  padding: 1px 6px;
+  padding: 2px 8px;
+  color: #0f172a;
+  font-weight: 500;
 }
 
+/* Links */
 .growatt-docs-content a {
-  color: #0f4ea5;
+  color: var(--docs-accent);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
 }
 
-@media (max-width: 900px) {
+.growatt-docs-content a:hover {
+  color: var(--docs-accent-hover);
+  border-bottom-color: var(--docs-accent-hover);
+}
+
+/* Blockquotes */
+.growatt-docs-content blockquote {
+  margin: 20px 0;
+  padding: 16px 20px;
+  border-left: 4px solid var(--docs-accent);
+  background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 0 8px 8px 0;
+  color: var(--docs-text-secondary);
+  font-style: italic;
+}
+
+.growatt-docs-content blockquote p {
+  margin: 0;
+}
+
+/* Horizontal Rule */
+.growatt-docs-content hr {
+  margin: 32px 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--docs-border), transparent);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
   .growatt-docs-shell {
     grid-template-columns: minmax(0, 1fr);
-    padding: 20px 14px 40px;
+    padding: 20px 16px 48px;
   }
 
   .growatt-docs-sidebar {
@@ -181,6 +325,18 @@
   }
 
   .growatt-docs-main {
-    padding: 16px;
+    padding: 24px;
+    border-radius: 16px;
   }
+}
+
+/* Selection */
+.growatt-docs-page ::selection {
+  background: #bae6fd;
+  color: #0c4a6e;
+}
+
+/* Smooth scroll */
+.growatt-docs-page {
+  scroll-behavior: smooth;
 }
