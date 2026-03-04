@@ -340,3 +340,19 @@
 .growatt-docs-page {
   scroll-behavior: smooth;
 }
+
+/* Mermaid Diagrams */
+.growatt-docs-content .mermaid-diagram {
+  margin: 24px 0;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid var(--docs-border);
+  overflow-x: auto;
+  text-align: center;
+}
+
+.growatt-docs-content .mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}

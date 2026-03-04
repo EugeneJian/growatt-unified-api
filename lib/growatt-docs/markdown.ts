@@ -15,6 +15,7 @@ interface HastNode {
   tagName?: string;
   properties?: Record<string, unknown>;
   children?: HastNode[];
+  value?: string;
 }
 
 function rehypeExternalLinksTargetBlank() {
@@ -46,6 +47,39 @@ function rehypeExternalLinksTargetBlank() {
   };
 }
 
+function rehypeMarkMermaidBlocks() {
+  return (tree: unknown) => {
+    const visit = (node: unknown): void => {
+      if (!node || typeof node !== "object") {
+        return;
+      }
+
+      const hastNode = node as HastNode;
+
+      // Check for code blocks with language mermaid
+      if (
+        hastNode.type === "element" &&
+        hastNode.tagName === "code"
+      ) {
+        const className = hastNode.properties?.className;
+        if (Array.isArray(className) && className.includes("language-mermaid")) {
+          // Add mermaid class for client-side detection
+          hastNode.properties = {
+            ...hastNode.properties,
+            className: [...className, "mermaid"],
+          };
+        }
+      }
+
+      if (Array.isArray(hastNode.children)) {
+        hastNode.children.forEach((child) => visit(child));
+      }
+    };
+
+    visit(tree);
+  };
+}
+
 export async function renderGrowattMarkdownToHtml(
   markdown: string,
   options: RenderMarkdownOptions,
@@ -59,6 +93,7 @@ export async function renderGrowattMarkdownToHtml(
     .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeSlug)
+    .use(rehypeMarkMermaidBlocks)
     .use(rehypeExternalLinksTargetBlank)
     .use(rehypeStringify)
     .process(rewrittenMarkdown);

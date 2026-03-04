@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { GrowattDocMeta } from "@/lib/growatt-docs";
+import { MermaidRenderer } from "./mermaid-renderer";
 
 interface GrowattDocsShellProps {
   docs: GrowattDocMeta[];
@@ -64,10 +65,9 @@ export function GrowattDocsShell({
             <p>{subheading}</p>
           </header>
 
-          <article
-            className="growatt-docs-content"
-            dangerouslySetInnerHTML={{ __html: contentHtml }}
-          />
+          <article className="growatt-docs-content">
+            <MermaidRenderer content={contentHtml} />
+          </article>
         </main>
       </div>
     </div>
