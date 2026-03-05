@@ -474,3 +474,26 @@
     display: none;
   }
 }
+
+/* Build Info Header Meta - positioned below title */
+.growatt-docs-header-meta {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--docs-text-muted);
+}
+
+@media (max-width: 640px) {
+  .growatt-docs-header-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .growatt-docs-header-meta .build-info-divider {
+    display: none;
+  }
+}
