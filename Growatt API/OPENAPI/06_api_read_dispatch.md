@@ -14,15 +14,16 @@
 ## Read-Back Verification Flow (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Need current parameter value] --> B[Build request with deviceSn setType requestId]
-    B --> C[POST /auth2/readDdeviceDispatch]
-    C --> D{Response code}
-    D -->|0| E[Parse data array]
-    D -->|5 or 16| F[Retry with delay]
-    D -->|7 or other| G[Stop and inspect device type or permission]
-    E --> H[Compare with expected dispatch plan]
-    H --> I[Continue control loop]
+    A["Need current parameter value"] --> B["Build request with device sn set type and request id"]
+    B --> C["Call readDdeviceDispatch API"]
+    C --> D{"Response code"}
+    D -->|"0"| E["Parse data array"]
+    D -->|"5 or 16"| F["Retry with delay"]
+    D -->|"7 or other"| G["Stop and inspect permission or device type"]
+    E --> H["Compare with expected dispatch plan"]
+    H --> I["Continue control loop"]
     F --> C
 ```
 

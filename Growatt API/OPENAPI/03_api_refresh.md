@@ -14,14 +14,15 @@
 ## Refresh Lifecycle (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[API call with access_token] --> B{Token valid}
-    B -->|Yes| C[Continue business API calls]
-    B -->|No| D[POST /oauth2/refresh]
-    D --> E{Refresh success}
-    E -->|Yes| F[Store new access_token and refresh_token]
+    A["API call with access token"] --> B{"Token valid"}
+    B -->|"Yes"| C["Continue business API calls"]
+    B -->|"No"| D["Call oauth2 refresh API"]
+    D --> E{"Refresh success"}
+    E -->|"Yes"| F["Store new access token and refresh token"]
     F --> C
-    E -->|No| G[Trigger re-authorization flow]
+    E -->|"No"| G["Trigger re authorization flow"]
 ```
 
 ---

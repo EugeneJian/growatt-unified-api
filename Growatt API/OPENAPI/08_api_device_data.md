@@ -13,15 +13,16 @@
 ## Telemetry Consumption Flow (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Scheduler triggers poll] --> B[Build request with deviceSn]
-    B --> C[POST /auth2/getDeviceData]
-    C --> D{code}
-    D -->|0| E[Parse core metrics and batteryList]
-    D -->|2 or 12| F[Refresh token or re-authorize device]
-    E --> G[Store time-series data]
-    G --> H[Run alerting and control logic]
-    H --> I[Optional call /auth2/deviceDispatch]
+    A["Scheduler triggers poll"] --> B["Build request with device sn"]
+    B --> C["Call getDeviceData API"]
+    C --> D{"Response code"}
+    D -->|"0"| E["Parse metrics and battery list"]
+    D -->|"2 or 12"| F["Refresh token or re authorize device"]
+    E --> G["Store time series data"]
+    G --> H["Run alerting and control logic"]
+    H --> I["Optional call deviceDispatch API"]
 ```
 
 ---

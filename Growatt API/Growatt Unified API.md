@@ -66,26 +66,27 @@ This mode is for scenarios where the third-party platform directly connects to t
 ### Client Credentials Mode Flowchart
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant User as End User
-    participant App as Third-Party App
-    participant Server as Third-Party Server
-    participant Growatt as Growatt API Server
+    participant User as "End User"
+    participant App as "Third Party App"
+    participant Server as "Third Party Server"
+    participant Growatt as "Growatt API Server"
 
-    User->>App: Operate Growatt Device
-    App->>Server: Not logged in / refresh_token expired
-    Server-->>App: Return to Growatt login page
-    App->>Growatt: Login to Growatt personal account
-    Growatt-->>App: Verify Growatt account & password
-    App->>Server: Confirm authorization account OAuth2.0--auth, carry corresponding clientId
-    Server->>Growatt: Redirect with authorization code (OAuth2.0--token, exchange code for token, carry clientId)
-    Growatt-->>Server: Return available token
-    Server->>Growatt: Carry access_token, request Growatt API
-    Growatt-->>Server: Return operation result
-    Server-->>App: Return operation result
-    App-->>User: Display operation result
-    
-    Note over Server, Growatt: OAuth2.0--refresh, refresh access_token
+    User->>App: "Operate Growatt device"
+    App->>Server: "Not logged in or refresh token expired"
+    Server-->>App: "Return to Growatt login page"
+    App->>Growatt: "Login to Growatt personal account"
+    Growatt-->>App: "Verify Growatt account and password"
+    App->>Server: "Confirm authorization account and client id"
+    Server->>Growatt: "Exchange authorization code for token"
+    Growatt-->>Server: "Return available token"
+    Server->>Growatt: "Request Growatt API with access token"
+    Growatt-->>Server: "Return operation result"
+    Server-->>App: "Return operation result"
+    App-->>User: "Display operation result"
+
+    Note over Server,Growatt: "Use oauth2 refresh API to refresh access token"
 ```
 
 ### Client Credentials Mode

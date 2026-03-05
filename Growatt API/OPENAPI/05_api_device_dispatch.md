@@ -15,16 +15,17 @@
 ## Dispatch Control Flow (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Create dispatch command] --> B[Generate unique requestId]
-    B --> C[Throttle per device to 1 request per 5 seconds]
-    C --> D[POST /auth2/deviceDispatch]
-    D --> E{Response code}
-    E -->|0| F[Mark successful]
-    E -->|5 Device Offline| G[Fallback and alert]
-    E -->|16 Timeout| H[Retry with backoff]
-    E -->|Other| I[Log and manual handling]
-    F --> J[Optional read-back verification]
+    A["Create dispatch command"] --> B["Generate unique request id"]
+    B --> C["Throttle one request per five seconds per device"]
+    C --> D["Call deviceDispatch API"]
+    D --> E{"Response code"}
+    E -->|"0"| F["Mark successful"]
+    E -->|"5 device offline"| G["Apply fallback and alert"]
+    E -->|"16 timeout"| H["Retry with backoff"]
+    E -->|"Other"| I["Log and manual handling"]
+    F --> J["Optional read back verification"]
     H --> D
 ```
 

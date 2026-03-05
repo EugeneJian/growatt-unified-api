@@ -12,17 +12,18 @@
 ## Environment and Parameter Decision Flow (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Start API call] --> B{Environment}
-    B -->|Production| C[Use opencloud.growatt.com or opencloud-au.growatt.com]
-    B -->|Test| D[Use opencloud-test.growatt.com]
-    C --> E[Attach Bearer token]
+    A["Start API call"] --> B{"Environment"}
+    B -->|"Production"| C["Use production domain"]
+    B -->|"Test"| D["Use test domain"]
+    C --> E["Attach bearer token"]
     D --> E
-    E --> F{Permission result}
-    F -->|TOKEN_IS_INVALID| G[Refresh token]
-    F -->|DEVICE_SN_DOES_NOT_HAVE_PERMISSION| H[Bind device first]
-    F -->|OK| I[Select setType from parameter table]
-    I --> J[Call dispatch or read APIs]
+    E --> F{"Permission result"}
+    F -->|"TOKEN_IS_INVALID"| G["Refresh token"]
+    F -->|"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"| H["Bind device first"]
+    F -->|"OK"| I["Select set type from parameter table"]
+    I --> J["Call dispatch or read APIs"]
 ```
 
 ---

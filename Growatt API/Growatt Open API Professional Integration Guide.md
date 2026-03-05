@@ -28,22 +28,23 @@ Core references:
 ### 2. End-to-End Integration Flow
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Apply client_id and client_secret] --> B[Choose OAuth mode]
-    B --> C[POST /oauth2/token]
-    C --> D[Store access_token and refresh_token]
-    D --> E[POST /oauth2/getApiDeviceList]
-    E --> F[POST /oauth2/bindDevice]
-    F --> G[Call business APIs]
-    G --> H[/oauth2/getDeviceInfo]
-    G --> I[/auth2/getDeviceData]
-    G --> J[/auth2/deviceDispatch]
-    J --> K[/auth2/readDdeviceDispatch]
-    G --> L[Receive push from Growatt webhook]
-    G --> M{Token expired}
-    M -->|Yes| N[POST /oauth2/refresh]
+    A["Apply client credentials"] --> B{"Choose OAuth mode"}
+    B --> C["Call oauth2 token API"]
+    C --> D["Store access token and refresh token"]
+    D --> E["Get authorizable device list"]
+    E --> F["Bind devices"]
+    F --> G["Call business APIs"]
+    G --> H["Get device info"]
+    G --> I["Get device data"]
+    G --> J["Dispatch device command"]
+    J --> K["Read dispatch value"]
+    G --> L["Receive push webhook data"]
+    G --> M{"Token expired"}
+    M -->|"Yes"| N["Call oauth2 refresh API"]
     N --> G
-    M -->|No| O[Continue]
+    M -->|"No"| O["Continue"]
 ```
 
 ---
@@ -67,13 +68,14 @@ Token validity (from SSOT):
 - `refresh_token`: 2592000 seconds
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart LR
-    A[Use access_token] --> B{Still valid}
-    B -->|Yes| C[Call API]
-    B -->|No| D[Call /oauth2/refresh]
-    D --> E{Refresh success}
-    E -->|Yes| F[Rotate tokens and continue]
-    E -->|No| G[Re-authorize user]
+    A["Use access token"] --> B{"Still valid"}
+    B -->|"Yes"| C["Call API"]
+    B -->|"No"| D["Call oauth2 refresh API"]
+    D --> E{"Refresh success"}
+    E -->|"Yes"| F["Rotate tokens and continue"]
+    E -->|"No"| G["Re authorize user"]
 ```
 
 Header convention:
@@ -125,19 +127,17 @@ Dispatch rate limit (SSOT):
 Recommended control loop:
 
 ```mermaid
-stateDiagram-v2
-    [*] --> BuildCommand
-    BuildCommand --> SendDispatch
-    SendDispatch --> CheckResult
-    CheckResult --> ReadBack: code = 0
-    CheckResult --> Retry: code = 16
-    CheckResult --> OfflineFallback: code = 5
-    CheckResult --> StopAndInspect: code = 7 or code = 12
-    Retry --> SendDispatch
-    ReadBack --> CompareExpected
-    CompareExpected --> [*]
-    OfflineFallback --> [*]
-    StopAndInspect --> [*]
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["Build command"] --> B["Send dispatch request"]
+    B --> C{"Response code"}
+    C -->|"0"| D["Read back current value"]
+    C -->|"16"| E["Retry with backoff"]
+    C -->|"5"| F["Apply offline fallback"]
+    C -->|"7 or 12"| G["Stop and inspect permission or device type"]
+    D --> H["Compare expected value"]
+    H --> I["Complete control cycle"]
+    E --> B
 ```
 
 Key response codes to handle:

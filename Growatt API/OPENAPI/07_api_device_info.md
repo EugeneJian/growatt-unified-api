@@ -15,14 +15,15 @@
 ## Device Info Query Flow (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[User selects device] --> B[Attach Bearer access_token]
-    B --> C[POST /oauth2/getDeviceInfo]
-    C --> D{code}
-    D -->|0| E[Render model battery and datalog fields]
-    D -->|2| F[Refresh token and retry]
-    D -->|12| G[Check device authorization list]
-    E --> H[Use info for monitoring and dispatch eligibility]
+    A["User selects device"] --> B["Attach bearer access token"]
+    B --> C["Call getDeviceInfo API"]
+    C --> D{"Response code"}
+    D -->|"0"| E["Render model battery and datalog fields"]
+    D -->|"2"| F["Refresh token and retry"]
+    D -->|"12"| G["Check device authorization list"]
+    E --> H["Use info for monitoring and dispatch eligibility"]
 ```
 
 ---

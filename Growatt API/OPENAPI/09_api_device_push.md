@@ -7,15 +7,16 @@
 ## Webhook Processing Flow (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Growatt pushes dfcData payload] --> B[Receive at webhook endpoint]
-    B --> C[Validate JSON and required fields]
-    C --> D{Valid payload}
-    D -->|Yes| E[Persist raw event]
-    D -->|No| F[Return 4xx and log]
-    E --> G[Transform to internal telemetry model]
-    G --> H[Trigger monitoring and dispatch rules]
-    H --> I[Return 200 quickly]
+    A["Growatt pushes dfcData payload"] --> B["Receive at webhook endpoint"]
+    B --> C["Validate json and required fields"]
+    C --> D{"Valid payload"}
+    D -->|"Yes"| E["Persist raw event"]
+    D -->|"No"| F["Return four xx and log"]
+    E --> G["Transform to internal telemetry model"]
+    G --> H["Trigger monitoring and dispatch rules"]
+    H --> I["Return 200 quickly"]
 ```
 
 ---

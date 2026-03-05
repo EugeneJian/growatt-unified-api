@@ -13,15 +13,16 @@ This section covers APIs for managing device authorization.
 ## Authorization Lifecycle
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Get access_token] --> B[POST /oauth2/getApiDeviceList]
-    B --> C[Show candidate devices]
-    C --> D[POST /oauth2/bindDevice]
-    D --> E[POST /oauth2/getApiDeviceListAuthed]
-    E --> F[Operate only authorized devices]
-    F --> G{Need revoke access}
-    G -->|Yes| H[POST /oauth2/unbindDevice]
-    G -->|No| I[Keep authorization]
+    A["Get access token"] --> B["Call getApiDeviceList"]
+    B --> C["Show candidate devices"]
+    C --> D["Call bindDevice"]
+    D --> E["Call getApiDeviceListAuthed"]
+    E --> F["Operate only authorized devices"]
+    F --> G{"Need revoke access"}
+    G -->|"Yes"| H["Call unbindDevice"]
+    G -->|"No"| I["Keep authorization"]
 ```
 
 ---

@@ -15,16 +15,17 @@
 ## Token Exchange Flow (Mermaid)
 
 ```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A[Prepare request body] --> B{grant_type}
-    B -->|authorization_code| C[Fill code + client_id + client_secret + redirect_uri]
-    B -->|client_credentials| D[Fill client_id + client_secret + redirect_uri]
-    C --> E[POST /oauth2/token]
+    A["Prepare request body"] --> B{"grant type"}
+    B -->|"authorization_code"| C["Fill code and client credentials"]
+    B -->|"client_credentials"| D["Fill client credentials"]
+    C --> E["Call oauth2 token API"]
     D --> E
-    E --> F{code == 0 or HTTP 200}
-    F -->|Yes| G[Save access_token and refresh_token]
-    F -->|No| H[Check credentials and grant_type]
-    G --> I[Use Bearer token for next APIs]
+    E --> F{"code equals 0 or http 200"}
+    F -->|"Yes"| G["Save access token and refresh token"]
+    F -->|"No"| H["Check credentials and grant type"]
+    G --> I["Use bearer token for next APIs"]
 ```
 
 ---
