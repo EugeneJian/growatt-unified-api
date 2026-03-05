@@ -46,6 +46,50 @@ const MERMAID_THEME_VARIABLES = {
 const MERMAID_SVG_ENFORCED_STYLE = `
   svg { background: #ffffff !important; color: #0f172a !important; }
   .background, rect.background { fill: #ffffff !important; }
+  rect, polygon, circle, ellipse {
+    stroke: #334155;
+  }
+  .cluster rect,
+  .stateGroup rect,
+  .statediagram rect,
+  .statediagram-cluster rect {
+    fill: #ffffff !important;
+    stroke: #2563eb !important;
+  }
+  .sequenceDiagram .actor,
+  .sequenceDiagram .actor rect,
+  .sequenceDiagram .labelBox,
+  .sequenceDiagram .note {
+    fill: #f8fafc !important;
+    stroke: #2563eb !important;
+  }
+  .sequenceDiagram .actor-line,
+  .sequenceDiagram .messageLine0,
+  .sequenceDiagram .messageLine1,
+  .sequenceDiagram .loopLine,
+  .sequenceDiagram .sequenceNumber {
+    stroke: #334155 !important;
+    stroke-width: 1.8px !important;
+  }
+  .sequenceDiagram .messageText,
+  .sequenceDiagram .labelText,
+  .sequenceDiagram .actor text,
+  .sequenceDiagram text,
+  .statediagram text,
+  .stateLabel text,
+  .state-title,
+  .flowchart-label text {
+    fill: #0f172a !important;
+    color: #0f172a !important;
+  }
+  .statediagram .transition,
+  .statediagram .relation,
+  .statediagram .line,
+  .statediagram path,
+  .statediagram line {
+    stroke: #334155 !important;
+    stroke-width: 1.8px !important;
+  }
   .edgePath .path, .flowchart-link, .messageLine0, .messageLine1, .loopLine {
     stroke: #334155 !important;
     stroke-width: 1.8px !important;
@@ -59,6 +103,50 @@ const MERMAID_SVG_ENFORCED_STYLE = `
     color: #0f172a !important;
   }
 `;
+
+function parseSize(value: string | null): number {
+  if (!value) {
+    return 0;
+  }
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function forceLightDiagramBackground(svgElement: SVGSVGElement): void {
+  const rects = Array.from(svgElement.querySelectorAll("rect"));
+  let largestRect: SVGRectElement | null = null;
+  let largestArea = 0;
+
+  for (const rect of rects) {
+    const width = parseSize(rect.getAttribute("width"));
+    const height = parseSize(rect.getAttribute("height"));
+    const area = width * height;
+    if (area > largestArea) {
+      largestArea = area;
+      largestRect = rect;
+    }
+  }
+
+  if (largestRect) {
+    largestRect.setAttribute("fill", "#ffffff");
+    largestRect.style.fill = "#ffffff";
+    largestRect.setAttribute("stroke", "#dbe6f0");
+    largestRect.style.stroke = "#dbe6f0";
+  }
+
+  // Additional fallback for non-rect background shapes used by some Mermaid types.
+  const bgCandidates = Array.from(
+    svgElement.querySelectorAll("path.background, .background path, .statediagram path.rect"),
+  );
+  for (const candidate of bgCandidates) {
+    candidate.setAttribute("fill", "#ffffff");
+    candidate.setAttribute("stroke", "#dbe6f0");
+    if (candidate instanceof SVGElement) {
+      candidate.style.fill = "#ffffff";
+      candidate.style.stroke = "#dbe6f0";
+    }
+  }
+}
 
 export function MermaidRenderer({ content }: MermaidRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,6 +196,8 @@ export function MermaidRenderer({ content }: MermaidRendererProps) {
             );
             styleElement.textContent = MERMAID_SVG_ENFORCED_STYLE;
             svgElement.prepend(styleElement);
+
+            forceLightDiagramBackground(svgElement);
           }
 
           if (bindFunctions) {
