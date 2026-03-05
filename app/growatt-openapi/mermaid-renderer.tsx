@@ -53,9 +53,14 @@ const MERMAID_THEME_VARIABLES = {
 
 const MERMAID_SVG_ENFORCED_STYLE = `
   svg { background: #ffffff !important; color: #0f172a !important; }
-  .background, rect.background { fill: #ffffff !important; }
-  rect, polygon, circle, ellipse {
-    stroke: #334155;
+  .background, rect.background, path.background {
+    fill: #ffffff !important;
+    stroke: none !important;
+    stroke-width: 0 !important;
+  }
+  svg > rect:first-child {
+    stroke: none !important;
+    stroke-width: 0 !important;
   }
   .cluster rect,
   .stateGroup rect,
@@ -148,8 +153,10 @@ function forceLightDiagramBackground(svgElement: SVGSVGElement): void {
   if (largestRect) {
     largestRect.setAttribute("fill", "#ffffff");
     largestRect.style.fill = "#ffffff";
-    largestRect.setAttribute("stroke", "#dbe6f0");
-    largestRect.style.stroke = "#dbe6f0";
+    largestRect.setAttribute("stroke", "none");
+    largestRect.style.stroke = "none";
+    largestRect.setAttribute("stroke-width", "0");
+    largestRect.style.strokeWidth = "0";
   }
 
   // Additional fallback for non-rect background shapes used by some Mermaid types.
@@ -158,10 +165,12 @@ function forceLightDiagramBackground(svgElement: SVGSVGElement): void {
   );
   for (const candidate of bgCandidates) {
     candidate.setAttribute("fill", "#ffffff");
-    candidate.setAttribute("stroke", "#dbe6f0");
+    candidate.setAttribute("stroke", "none");
+    candidate.setAttribute("stroke-width", "0");
     if (candidate instanceof SVGElement) {
       candidate.style.fill = "#ffffff";
-      candidate.style.stroke = "#dbe6f0";
+      candidate.style.stroke = "none";
+      candidate.style.strokeWidth = "0";
     }
   }
 
@@ -172,7 +181,11 @@ function forceLightDiagramBackground(svgElement: SVGSVGElement): void {
   bgRect.setAttribute("width", "100%");
   bgRect.setAttribute("height", "100%");
   bgRect.setAttribute("fill", "#ffffff");
+  bgRect.setAttribute("stroke", "none");
+  bgRect.setAttribute("stroke-width", "0");
   bgRect.style.fill = "#ffffff";
+  bgRect.style.stroke = "none";
+  bgRect.style.strokeWidth = "0";
   svgElement.insertBefore(bgRect, svgElement.firstChild);
 }
 
