@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { GrowattDocMeta } from "@/lib/growatt-docs";
+import type { BuildInfo } from "@/lib/build-info";
 import { MermaidRenderer } from "./mermaid-renderer";
 
 interface QuickGuideNavMeta {
@@ -14,6 +15,7 @@ interface GrowattDocsShellProps {
   heading: string;
   subheading?: string;
   contentHtml: string;
+  buildInfo?: BuildInfo;
 }
 
 function DocsNav({
@@ -59,7 +61,24 @@ export function GrowattDocsShell({
   heading,
   subheading,
   contentHtml,
+  buildInfo,
 }: GrowattDocsShellProps) {
+  const formatBuildTime = (isoString: string) => {
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZoneName: "short",
+      });
+    } catch {
+      return isoString;
+    }
+  };
+
   return (
     <div className="growatt-docs-page">
       <div className="growatt-docs-shell">
@@ -82,6 +101,25 @@ export function GrowattDocsShell({
           <article className="growatt-docs-content">
             <MermaidRenderer content={contentHtml} />
           </article>
+
+          {buildInfo && (
+            <footer className="growatt-docs-footer">
+              <span className="build-info">
+                <span className="build-info-label">Version:</span>{" "}
+                <code>{buildInfo.gitVersion}</code>
+              </span>
+              <span className="build-info-divider">|</span>
+              <span className="build-info">
+                <span className="build-info-label">Commit:</span>{" "}
+                <code>{buildInfo.gitCommit}</code>
+              </span>
+              <span className="build-info-divider">|</span>
+              <span className="build-info">
+                <span className="build-info-label">Last Update:</span>{" "}
+                <code>{formatBuildTime(buildInfo.buildTime)}</code>
+              </span>
+            </footer>
+          )}
         </main>
       </div>
     </div>

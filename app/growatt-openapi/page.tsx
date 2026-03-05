@@ -6,6 +6,7 @@ import {
   getGrowattDocMetas,
   getGrowattOverview,
 } from "@/lib/growatt-docs";
+import { getBuildInfo } from "@/lib/build-info";
 
 export const metadata: Metadata = {
   title: "Growatt Open API Docs",
@@ -15,9 +16,10 @@ export const metadata: Metadata = {
 export const dynamic = "force-static";
 
 export default async function GrowattOpenApiOverviewPage() {
-  const [docs, overview] = await Promise.all([
+  const [docs, overview, buildInfo] = await Promise.all([
     getGrowattDocMetas(),
     getGrowattOverview(),
+    getBuildInfo(),
   ]);
 
   return (
@@ -27,6 +29,7 @@ export default async function GrowattOpenApiOverviewPage() {
       activeSlug={null}
       heading={overview.title}
       contentHtml={overview.html}
+      buildInfo={buildInfo}
     />
   );
 }

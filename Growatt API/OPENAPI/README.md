@@ -8,7 +8,7 @@ This folder contains structured documentation for the Growatt Open API.
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart LR
+flowchart TD
     A["01 Authentication"] --> B["02 Get access token"]
     B --> C["03 Refresh token lifecycle"]
     C --> D["04 Device Authorization"]
