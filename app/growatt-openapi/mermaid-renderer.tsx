@@ -125,6 +125,51 @@ function parseSize(value: string | null): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function parseCssColorToRgb(color: string): [number, number, number] | null {
+  const value = color.trim().toLowerCase();
+  if (!value || value === "none" || value === "transparent" || value === "currentcolor") {
+    return null;
+  }
+
+  const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (hexMatch) {
+    const raw = hexMatch[1];
+    if (raw.length === 3) {
+      return [
+        Number.parseInt(raw[0] + raw[0], 16),
+        Number.parseInt(raw[1] + raw[1], 16),
+        Number.parseInt(raw[2] + raw[2], 16),
+      ];
+    }
+    return [
+      Number.parseInt(raw.slice(0, 2), 16),
+      Number.parseInt(raw.slice(2, 4), 16),
+      Number.parseInt(raw.slice(4, 6), 16),
+    ];
+  }
+
+  const rgbMatch = value.match(/^rgba?\(([^)]+)\)$/);
+  if (rgbMatch) {
+    const parts = rgbMatch[1]
+      .split(",")
+      .slice(0, 3)
+      .map((part) => Number.parseFloat(part.trim()));
+    if (parts.length === 3 && parts.every((part) => Number.isFinite(part))) {
+      return [parts[0], parts[1], parts[2]];
+    }
+  }
+
+  return null;
+}
+
+function getRelativeLuminance([r, g, b]: [number, number, number]): number {
+  const toLinear = (channel: number) => {
+    const normalized = channel / 255;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
 function normalizeMermaidDefinition(raw: string): string {
   return raw
     .replace(/\r\n?/g, "\n")
@@ -136,41 +181,71 @@ function normalizeMermaidDefinition(raw: string): string {
 }
 
 function forceLightDiagramBackground(svgElement: SVGSVGElement): void {
-  const rects = Array.from(svgElement.querySelectorAll("rect"));
-  let largestRect: SVGRectElement | null = null;
-  let largestArea = 0;
+  svgElement.style.backgroundColor = "#ffffff";
 
-  for (const rect of rects) {
-    const width = parseSize(rect.getAttribute("width"));
-    const height = parseSize(rect.getAttribute("height"));
-    const area = width * height;
-    if (area > largestArea) {
-      largestArea = area;
-      largestRect = rect;
+  const viewBox = svgElement.viewBox?.baseVal;
+  let canvasWidth = viewBox?.width || 0;
+  let canvasHeight = viewBox?.height || 0;
+
+  if (!canvasWidth || !canvasHeight) {
+    const widthAttr = parseSize(svgElement.getAttribute("width"));
+    const heightAttr = parseSize(svgElement.getAttribute("height"));
+    canvasWidth = widthAttr;
+    canvasHeight = heightAttr;
+  }
+
+  if (!canvasWidth || !canvasHeight) {
+    try {
+      const bbox = svgElement.getBBox();
+      canvasWidth = bbox.width;
+      canvasHeight = bbox.height;
+    } catch {
+      canvasWidth = 1200;
+      canvasHeight = 800;
     }
   }
 
-  if (largestRect) {
-    largestRect.setAttribute("fill", "#ffffff");
-    largestRect.style.fill = "#ffffff";
-    largestRect.setAttribute("stroke", "none");
-    largestRect.style.stroke = "none";
-    largestRect.setAttribute("stroke-width", "0");
-    largestRect.style.strokeWidth = "0";
-  }
+  const backgroundCandidates = Array.from(
+    svgElement.querySelectorAll("rect, path, polygon, ellipse, circle"),
+  ).filter((element) => element instanceof SVGGraphicsElement) as SVGGraphicsElement[];
 
-  // Additional fallback for non-rect background shapes used by some Mermaid types.
-  const bgCandidates = Array.from(
-    svgElement.querySelectorAll("path.background, .background path, .statediagram path.rect"),
-  );
-  for (const candidate of bgCandidates) {
-    candidate.setAttribute("fill", "#ffffff");
-    candidate.setAttribute("stroke", "none");
-    candidate.setAttribute("stroke-width", "0");
-    if (candidate instanceof SVGElement) {
-      candidate.style.fill = "#ffffff";
-      candidate.style.stroke = "none";
-      candidate.style.strokeWidth = "0";
+  for (const candidate of backgroundCandidates) {
+    const tagName = candidate.tagName.toLowerCase();
+    const className = candidate.getAttribute("class") || "";
+    const fillAttr = candidate.getAttribute("fill");
+    const inlineFill = (candidate as SVGElement).style?.fill;
+    const color = parseCssColorToRgb(fillAttr || inlineFill || "");
+
+    let bboxWidth = 0;
+    let bboxHeight = 0;
+    try {
+      const bbox = candidate.getBBox();
+      bboxWidth = bbox.width;
+      bboxHeight = bbox.height;
+    } catch {
+      // Ignore elements without measurable bbox.
+    }
+
+    const area = bboxWidth * bboxHeight;
+    const widthRatio = canvasWidth ? bboxWidth / canvasWidth : 0;
+    const heightRatio = canvasHeight ? bboxHeight / canvasHeight : 0;
+    const isLargeCover = area > 0 && (
+      area >= canvasWidth * canvasHeight * 0.35 ||
+      (widthRatio >= 0.8 && heightRatio >= 0.6)
+    );
+    const isLikelyBackgroundClass = /background|root/i.test(className);
+    const isDarkFill = color ? getRelativeLuminance(color) < 0.2 : false;
+
+    if (
+      isLikelyBackgroundClass ||
+      (isLargeCover && isDarkFill && (tagName === "rect" || tagName === "path" || tagName === "polygon"))
+    ) {
+      candidate.setAttribute("fill", "#ffffff");
+      candidate.setAttribute("stroke", "none");
+      candidate.setAttribute("stroke-width", "0");
+      (candidate as SVGElement).style.fill = "#ffffff";
+      (candidate as SVGElement).style.stroke = "none";
+      (candidate as SVGElement).style.strokeWidth = "0";
     }
   }
 
