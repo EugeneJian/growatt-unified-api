@@ -18,14 +18,15 @@
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Client as Client
-    participant OAuth as OAuth Server
-    participant App as Integration Service
+    participant OAuth as OAuthServer
+    participant App as IntegrationService
 
     Client->>App: Build token request
     App->>OAuth: POST /oauth2/token
     OAuth-->>App: Return token pair
     App-->>Client: Save token pair
-    Client->>App: Use bearer token for next APIs```
+    Client->>App: Use bearer token for next APIs
+```
 
 ---
 

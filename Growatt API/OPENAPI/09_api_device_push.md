@@ -9,10 +9,10 @@
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Growatt as Push Service
-    participant Webhook as Webhook Endpoint
-    participant Storage as Event Storage
-    participant RuleEngine as Rule Engine
+    participant Growatt as PushService
+    participant Webhook as WebhookEndpoint
+    participant Storage as EventStorage
+    participant RuleEngine as RuleEngine
 
     Growatt->>Webhook: Push dfcData
     Webhook->>Webhook: Validate payload
@@ -22,7 +22,8 @@ sequenceDiagram
         Webhook-->>Growatt: Return 200
     else Payload invalid
         Webhook-->>Growatt: Return 4xx
-    end```
+    end
+```
 
 ---
 

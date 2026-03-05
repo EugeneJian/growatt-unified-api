@@ -45,7 +45,8 @@ This mode is for scenarios where the third-party platform directly connects to t
 *   After receiving the OAuth2.0 authorization code via the redirect URL, the third-party platform exchanges the authorization code for the Growatt end-user's authorization information:
     `access_token` (access credential), `refresh_token` (refresh credential), `expire_time` (validity period of the access credential, in seconds), `refresh_expires_in` (validity period of the refresh credential, in seconds).
 *   Example:
-    ```json
+    
+```json
     {
         "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
         "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
@@ -53,7 +54,8 @@ This mode is for scenarios where the third-party platform directly connects to t
         "token_type": "Bearer",
         "expires_in": 7200
     }
-    ```
+    
+```
 *   The third-party platform independently develops features to save and maintain the OAuth2.0 authorization information of the Growatt end-user. It establishes a mapping between the third-party platform user and the Growatt end-user's authorization information.
 *   When calling this API, the third-party platform includes the Growatt end-user's authorization information in the request header. If the authorization information is correct and within its validity period, the call will be successful.
 *   The Growatt end-user's authorization information has a limited validity period and will expire after a certain time. The third-party platform needs to self-maintain the validity period of the authorization information.
@@ -68,10 +70,10 @@ This mode is for scenarios where the third-party platform directly connects to t
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant User as User
-    participant App as App
-    participant Server as Server
-    participant Growatt as Growatt API
+    participant User as EndUser
+    participant App as ClientApp
+    participant Server as BackendServer
+    participant Growatt as GrowattAPI
 
     User->>App: Start operation
     App->>Server: Need valid token
@@ -86,14 +88,16 @@ sequenceDiagram
     Server-->>App: Return result
     App-->>User: Show result
 
-    Note over Server,Growatt: Refresh token on expiry```
+    Note over Server,Growatt: Refresh token on expiry
+```
 
 ### Client Credentials Mode
 
 *   The third-party platform calls the authorization interface using `client_id` and `client_secret` to obtain the `access_token`. The server returns the following:
     `access_token` (access credential), `refresh_token` (refresh credential), `expire_time` (validity period of the access credential, in seconds), `refresh_expires_in` (validity period of the refresh credential, in seconds).
 *   Example:
-    ```json
+    
+```json
     {
         "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
         "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
@@ -101,7 +105,8 @@ sequenceDiagram
         "token_type": "Bearer",
         "expires_in": 7200
     }
-    ```
+    
+```
 *   When calling the API, the third-party platform includes the authorization information in the request header. If the authorization information is correct and within its validity period, the call will be successful.
 *   The Growatt end-user's authorization information has a limited validity period and will expire after a certain time. The third-party platform needs to self-maintain the validity period of the authorization information.
     *   *After the `access_token` expires, you can use the `refresh_token` to request the `OAuth2.0--refresh` interface to refresh the `access_token`.*

@@ -54,10 +54,10 @@ flowchart TD
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Platform as Platform
-    participant OAuth as OAuth API
-    participant Device as Device API
-    participant Push as Webhook
+    participant Platform as PlatformApp
+    participant OAuth as OAuthAPI
+    participant Device as DeviceAPI
+    participant Push as WebhookAPI
 
     Platform->>OAuth: POST /oauth2/token
     OAuth-->>Platform: Return token pair
@@ -68,7 +68,8 @@ sequenceDiagram
     Platform->>Device: Call deviceDispatch then read back
     Device-->>Platform: Return dispatch result
     Push-->>Platform: Push dfcData webhook payload
-    Platform->>OAuth: POST /oauth2/refresh on expiry```
+    Platform->>OAuth: POST /oauth2/refresh on expiry
+```
 
 ---
 
@@ -104,8 +105,8 @@ flowchart LR
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Service as Service
-    participant OAuth as OAuth API
+    participant Service as ServiceAPI
+    participant OAuth as OAuthAPI
     participant API as API
 
     Service->>API: Call API with access token
@@ -122,7 +123,8 @@ sequenceDiagram
             OAuth-->>Service: Return refresh error
             Service-->>Service: Trigger re-authorization
         end
-    end```
+    end
+```
 
 Header convention:
 - Most APIs require `Authorization: Bearer {access_token}`.

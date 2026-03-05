@@ -30,8 +30,8 @@ flowchart TD
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Service as Service
-    participant OAuth as OAuth Server
+    participant Service as ServiceAPI
+    participant OAuth as OAuthServer
     participant API as API
 
     Service->>API: Call API with access token
@@ -48,7 +48,8 @@ sequenceDiagram
             OAuth-->>Service: Return refresh error
             Service-->>Service: Trigger re-authorization
         end
-    end```
+    end
+```
 
 ---
 

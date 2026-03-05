@@ -32,9 +32,9 @@ flowchart TD
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Scheduler as Scheduler
-    participant API as OAuth API
-    participant Verifier as Verifier
+    participant Scheduler as DispatchScheduler
+    participant API as OAuthAPI
+    participant Verifier as DispatchVerifier
 
     Scheduler->>API: POST readDdeviceDispatch
     API-->>Scheduler: Return code and data
@@ -46,7 +46,8 @@ sequenceDiagram
         Scheduler->>API: Retry readDdeviceDispatch
     else Code 7 or other
         Scheduler-->>Scheduler: Stop and inspect cause
-    end```
+    end
+```
 
 ---
 

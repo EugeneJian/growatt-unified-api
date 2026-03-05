@@ -26,10 +26,10 @@ flowchart LR
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Platform as Platform
-    participant OAuth as OAuth API
-    participant Device as Device API
-    participant Push as Webhook
+    participant Platform as PlatformApp
+    participant OAuth as OAuthAPI
+    participant Device as DeviceAPI
+    participant Push as WebhookAPI
 
     Platform->>OAuth: POST /oauth2/token
     OAuth-->>Platform: Return token pair
@@ -40,7 +40,8 @@ sequenceDiagram
     Platform->>Device: Dispatch and read back
     Device-->>Platform: Return dispatch result
     Push-->>Platform: Push dfcData
-    Platform->>OAuth: POST /oauth2/refresh if needed```
+    Platform->>OAuth: POST /oauth2/refresh if needed
+```
 
 ## Documentation Structure
 

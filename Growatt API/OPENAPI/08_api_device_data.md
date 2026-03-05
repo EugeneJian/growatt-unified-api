@@ -31,9 +31,9 @@ flowchart TD
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Poller as Poller
-    participant API as OAuth API
-    participant Store as Storage
-    participant Engine as Control Engine
+    participant API as OAuthAPI
+    participant Store as StorageDB
+    participant Engine as ControlEngine
 
     Poller->>API: POST getDeviceData
     API-->>Poller: Return code and telemetry
@@ -43,7 +43,8 @@ sequenceDiagram
         Engine-->>Poller: Optional dispatch
     else Code 2 or 12
         Poller-->>Poller: Refresh or re-authorize
-    end```
+    end
+```
 
 ---
 

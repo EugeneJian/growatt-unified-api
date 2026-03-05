@@ -15,9 +15,9 @@ This section covers APIs for managing device authorization.
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant User as User
-    participant Client as Platform
-    participant API as OAuth API
+    participant User as EndUser
+    participant Client as PlatformApp
+    participant API as OAuthAPI
 
     Client->>API: POST getApiDeviceList
     API-->>Client: Return candidate list
@@ -30,7 +30,8 @@ sequenceDiagram
     opt Optional revoke
         Client->>API: POST unbindDevice
         API-->>Client: Return unbind status
-    end```
+    end
+```
 
 ---
 
