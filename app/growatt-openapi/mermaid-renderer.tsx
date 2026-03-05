@@ -41,6 +41,14 @@ const MERMAID_THEME_VARIABLES = {
   noteTextColor: "#7c2d12",
   activationBkgColor: "#dbeafe",
   activationBorderColor: "#2563eb",
+  fillType0: "#f8fafc",
+  fillType1: "#f1f5f9",
+  fillType2: "#ffffff",
+  fillType3: "#f8fafc",
+  fillType4: "#f1f5f9",
+  fillType5: "#ffffff",
+  fillType6: "#f8fafc",
+  fillType7: "#f1f5f9",
 };
 
 const MERMAID_SVG_ENFORCED_STYLE = `
@@ -112,6 +120,16 @@ function parseSize(value: string | null): number {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
+function normalizeMermaidDefinition(raw: string): string {
+  return raw
+    .replace(/\r\n?/g, "\n")
+    .replace(/\u00A0/g, " ")
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("%%"))
+    .join("\n")
+    .trim();
+}
+
 function forceLightDiagramBackground(svgElement: SVGSVGElement): void {
   const rects = Array.from(svgElement.querySelectorAll("rect"));
   let largestRect: SVGRectElement | null = null;
@@ -146,6 +164,16 @@ function forceLightDiagramBackground(svgElement: SVGSVGElement): void {
       candidate.style.stroke = "#dbe6f0";
     }
   }
+
+  // Ultimate fallback: ensure the root svg background is white even when internal theme draws dark layers.
+  const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  bgRect.setAttribute("x", "0");
+  bgRect.setAttribute("y", "0");
+  bgRect.setAttribute("width", "100%");
+  bgRect.setAttribute("height", "100%");
+  bgRect.setAttribute("fill", "#ffffff");
+  bgRect.style.fill = "#ffffff";
+  svgElement.insertBefore(bgRect, svgElement.firstChild);
 }
 
 export function MermaidRenderer({ content }: MermaidRendererProps) {
@@ -154,7 +182,7 @@ export function MermaidRenderer({ content }: MermaidRendererProps) {
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: false,
-      theme: "neutral",
+      theme: "base",
       deterministicIds: true,
       darkMode: false,
       themeVariables: MERMAID_THEME_VARIABLES,
@@ -171,11 +199,21 @@ export function MermaidRenderer({ content }: MermaidRendererProps) {
         const parent = block.parentElement;
         if (!parent) continue;
 
-        const graphDefinition = block.textContent || "";
+        const rawDefinition = block.textContent || "";
+        const graphDefinition = normalizeMermaidDefinition(rawDefinition);
         const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
 
         try {
-          const { svg, bindFunctions } = await mermaid.render(id, graphDefinition);
+          let rendered = await mermaid.render(id, graphDefinition);
+          if (!rendered?.svg) {
+            const fallbackDefinition = graphDefinition
+              .replace(/[“”]/g, "\"")
+              .replace(/[‘’]/g, "'")
+              .replace(/\t/g, "    ");
+            rendered = await mermaid.render(`${id}-fallback`, fallbackDefinition);
+          }
+
+          const { svg, bindFunctions } = rendered;
           const wrapper = document.createElement("figure");
           wrapper.className = "mermaid-diagram";
           wrapper.setAttribute("data-mermaid-theme", "light");
