@@ -63,6 +63,6 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.md");
     expect(quickGuide.title).toBe("Quick Guide");
     expect(quickGuide.html).toContain("<article>");
-    expect(quickGuide.html).toContain("Quick-Start Checklist");
+    expect(quickGuide.html).toContain("Integration Checklist");
   });
 });

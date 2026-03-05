@@ -1,187 +1,188 @@
-
-**For Virtual Power Plant (VPP) Aggregators**  
-**Version 1.0** 
-**Target Audience**: Solution Architects, Backend Developers, Grid Compliance Engineers  
-
----
-
-### 1. Overview
-
-The Growatt Open API is a secure, cloud-to-cloud HTTPS/JSON interface that allows third-party platforms (such as VPP aggregators) to access authorized Growatt user accounts and devices. Your VPP platform communicates exclusively with the Growatt API Gateway — no direct connection to on-site inverters or batteries is required.
-
-Key capabilities for VPP:
-- OAuth 2.0 user consent and device authorization
-- High-frequency telemetry via `queryDfcData` and real-time data push (Webhooks)
-- VPP parameter control via `setVppParameterNew` (scheduling, power limits, reactive support, etc.)
-- Read current VPP parameters and device status
-
-All operations require valid tokens and explicit device authorization.
+**Growatt Open API Quick Guide (SSOT Aligned)**
+**Version 1.1 (Aligned to OPENAPI V1.0, Release Date: March 4, 2026)**  
+**Target Audience**: Solution Architects, Backend Developers, Integration Engineers  
 
 ---
 
-### 2. Preparation
+### 1. Scope and SSOT Rule
 
-1. Contact Growatt staff to obtain `client_id` and `client_secret`.
-2. Provide Growatt with:
-   - Your OAuth 2.0 redirect URI.
-   - A server URL to receive real-time device data pushes (specify expected push interval in minutes).
-3. Growatt supplies a customizable embeddable HTML5 login page for seamless integration into your VPP portal.
+This quick guide is an integration accelerator. The single source of truth (SSOT) is:
+- `Growatt API/OPENAPI/*.md`
+
+If this guide conflicts with endpoint-level docs, always follow OPENAPI docs first.
+
+Core references:
+- [Authentication Guide](./OPENAPI/01_authentication.md)
+- [Get access_token API](./OPENAPI/02_api_access_token.md)
+- [OAuth2-refresh API](./OPENAPI/03_api_refresh.md)
+- [Device Authorization API](./OPENAPI/04_api_device_auth.md)
+- [Device Dispatch API](./OPENAPI/05_api_device_dispatch.md)
+- [Read Device Dispatch Parameters API](./OPENAPI/06_api_read_dispatch.md)
+- [Device Information Query API](./OPENAPI/07_api_device_info.md)
+- [Device Data Query API](./OPENAPI/08_api_device_data.md)
+- [Device Data Push API](./OPENAPI/09_api_device_push.md)
+- [Global Parameter Description](./OPENAPI/10_global_params.md)
 
 ---
 
-### 3. OAuth 2.0 Authorization Flow
+### 2. End-to-End Integration Flow
 
 ```mermaid
-sequenceDiagram
-    participant User as End User
-    participant VPP as VPP Platform
-    participant Growatt as Growatt API
-
-    VPP->>User: Redirect to Growatt Login Page
-    User->>Growatt: Login & Grant Consent
-    Growatt-->>VPP: Redirect with authorization_code
-    VPP->>Growatt: POST /oauth2/token (exchange code)
-    Growatt-->>VPP: access_token (2 hours) + refresh_token (30 days)
+flowchart TD
+    A[Apply client_id and client_secret] --> B[Choose OAuth mode]
+    B --> C[POST /oauth2/token]
+    C --> D[Store access_token and refresh_token]
+    D --> E[POST /oauth2/getApiDeviceList]
+    E --> F[POST /oauth2/bindDevice]
+    F --> G[Call business APIs]
+    G --> H[/oauth2/getDeviceInfo]
+    G --> I[/auth2/getDeviceData]
+    G --> J[/auth2/deviceDispatch]
+    J --> K[/auth2/readDdeviceDispatch]
+    G --> L[Receive push from Growatt webhook]
+    G --> M{Token expired}
+    M -->|Yes| N[POST /oauth2/refresh]
+    N --> G
+    M -->|No| O[Continue]
 ```
 
-**Token Exchange** (`POST /oauth2/token` — `application/x-www-form-urlencoded`):  
-Required parameters: `grant_type=authorization_code`, `code`, `client_id`, `client_secret`, `redirect_uri`.
+---
 
-**Token Refresh** (`POST /oauth2/refresh`):  
-Use `grant_type=refresh_token` + `refresh_token`. Returns new tokens (old refresh_token is invalidated).  
+### 3. Authentication and Token Lifecycle
 
-If refresh_token expires, the user must re-authorize.
+**Token endpoint**: `POST /oauth2/token`  
+Supported `grant_type`:
+- `authorization_code`
+- `client_credentials`
 
-**Every API call** must include:  
-`Authorization: Bearer {access_token}`
+**Refresh endpoint**: `POST /oauth2/refresh`  
+Required:
+- `grant_type=refresh_token`
+- `refresh_token`
+- `client_id`
+- `client_secret`
+
+Token validity (from SSOT):
+- `access_token`: 7200 seconds
+- `refresh_token`: 2592000 seconds
+
+```mermaid
+flowchart LR
+    A[Use access_token] --> B{Still valid}
+    B -->|Yes| C[Call API]
+    B -->|No| D[Call /oauth2/refresh]
+    D --> E{Refresh success}
+    E -->|Yes| F[Rotate tokens and continue]
+    E -->|No| G[Re-authorize user]
+```
+
+Header convention:
+- Most APIs require `Authorization: Bearer {access_token}`.
+- For `/auth2/getDeviceData`, follow SSOT doc header definition (`token`).
 
 ---
 
-### 4. Device Authorization
+### 4. Device Authorization Lifecycle
 
-After OAuth, users must explicitly authorize devices for your VPP platform.
+Use these endpoints in order:
+1. `POST /oauth2/getApiDeviceList` (candidate devices)
+2. `POST /oauth2/bindDevice` (authorize devices)
+3. `POST /oauth2/getApiDeviceListAuthed` (check authorized set)
+4. `POST /oauth2/unbindDevice` (revoke)
 
-**Endpoints** (all POST, Bearer token required):
-- `apiAuth/getApiDeviceList` — List all devices available for authorization
-- `apiAuth/getApiDeviceListAuth` — List already authorized devices
-- `apiAuth/bindDevice` — Authorize devices (`deviceSnList` array)
-- `apiAuth/unbindDevice` — Revoke authorization
-
-Only authorized devices can receive commands and push data.
-
----
-
-### 5. Core VPP Workflows: Telemetry & Dispatch
-
-**High-Frequency Telemetry**  
-**Endpoint**: `POST /v4/new-api/queryDfcData` (`application/x-www-form-urlencoded`)  
-Parameters: `deviceSn`  
-Returns detailed real-time data (example keys):  
-- `soc`, `batteryList[]` (chargePower, dischargePower, ibat, vbat, soc per battery)  
-- `activePower`, `batPower`, `pac`, `ppv`, `reverActivePower`, `payLoadPower`  
-- Status codes (full definitions in Section 8)
-
-**Real-time Data Push (Webhook)**:  
-Growatt pushes `dfcData` to your registered URL at the configured interval. Same data structure as `queryDfcData`.
-
-**VPP Dispatch / Parameter Control**  
-**Endpoint**: `POST /v4/new-api/setVppParameterNew` (`application/x-www-form-urlencoded`)  
-Rate limit: **once every 5 seconds per device**.  
-
-Required parameters:
-- `deviceSn`
-- `setType` (see VPP parameters table below)
-- `value`
-- `requestId` (unique identifier)
-
-**Read Current Parameters**  
-**Endpoint**: `POST /v4/new-api/readVppParameterNew` — same structure, returns current values.
-
-**VPP Use-Case Parameter Mapping** (directly from Growatt VPP parameter table):
-
-| VPP Scenario                  | setType                              | Value Example / Range                  | Notes |
-|-------------------------------|--------------------------------------|----------------------------------------|-------|
-| Wholesale Arbitrage / Time-of-Use | `time_slot_charge_discharge`        | JSON array of {percentage, startTime, endTime} (0-1440 min) | Full-day schedule |
-| Real-time On/Off              | `power_on_off_command`              | 0=Off, 1=On                            | Requires enable_control |
-| Dynamic Export Limits         | `active_power_derating_percentage`  | 0–100 (default 100)                    | Percentage derating |
-| Voltage / Reactive Support    | `reactive_power_mode`               | 0=PF=1, 1=PF value, 4=lag VAR (+), 5=lead VAR (-) | Power factor & VAR control |
-| AC Charging Enable            | `ac_charge_enable`                  | 0/1                                    | Grid charging |
-| Remote Power Control          | `remote_power_control_enable`       | 0/1                                    | + `remote_charge_discharge_power` |
-
-Full list of 30+ parameters (including SOC limits, anti-backfeed, EPS, etc.) is available in the official documentation.
+Notes:
+- In `client_credentials` mode, `bindDevice` may require `pinCode`.
+- Only authorized devices can be operated by downstream APIs.
 
 ---
 
-### 6. Recommended Fault-Tolerant Dispatch Logic
+### 5. Operational API Matrix (SSOT Endpoints)
+
+| Capability | Endpoint | Method | Key Input |
+| :--- | :--- | :--- | :--- |
+| Get token | `/oauth2/token` | POST | `grant_type`, client credentials |
+| Refresh token | `/oauth2/refresh` | POST | `refresh_token` |
+| Device list (candidate) | `/oauth2/getApiDeviceList` | POST | Bearer token |
+| Bind device | `/oauth2/bindDevice` | POST | `deviceSnList` |
+| Authorized device list | `/oauth2/getApiDeviceListAuthed` | POST | Bearer token |
+| Unbind device | `/oauth2/unbindDevice` | POST | `deviceSnList` |
+| Device information | `/oauth2/getDeviceInfo` | POST | `deviceSn` |
+| Device telemetry query | `/auth2/getDeviceData` | POST | `deviceSn` |
+| Device dispatch | `/auth2/deviceDispatch` | POST | `deviceSn`, `setType`, `value`, `requestId` |
+| Read dispatch parameter | `/auth2/readDdeviceDispatch` | POST | `deviceSn`, `setType`, `requestId` |
+
+Push integration:
+- Growatt pushes high-frequency payloads to your webhook URL (see [09_api_device_push.md](./OPENAPI/09_api_device_push.md)).
+- Payload shape is aligned with device data query fields (`dfcData`).
+
+---
+
+### 6. Dispatch and Read-Back Safety Loop
+
+Dispatch rate limit (SSOT):
+- Max **1 command per 5 seconds per device**.
+
+Recommended control loop:
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Idle
-    
-    Idle --> ActiveControl : Dispatch signal / Market event
-    
-    state ActiveControl {
-        [*] --> TokenCheck
-        TokenCheck --> SendCommand : Token valid
-        SendCommand --> WaitingAck
-        WaitingAck --> Success : code = 0
-        WaitingAck --> Retry : code = 16 (Timeout) → exponential backoff
-        WaitingAck --> FailOffline : code = 5 (Device Offline) → abort + fallback
-        Success --> [*]
-    }
-    
-    ActiveControl --> Idle : Event complete
-    Retry --> SendCommand : max 3 attempts
-    FailOffline --> Idle : alert + local TOU schedule
+    [*] --> BuildCommand
+    BuildCommand --> SendDispatch
+    SendDispatch --> CheckResult
+    CheckResult --> ReadBack: code = 0
+    CheckResult --> Retry: code = 16
+    CheckResult --> OfflineFallback: code = 5
+    CheckResult --> StopAndInspect: code = 7 or code = 12
+    Retry --> SendDispatch
+    ReadBack --> CompareExpected
+    CompareExpected --> [*]
+    OfflineFallback --> [*]
+    StopAndInspect --> [*]
 ```
 
-**Critical Error Codes** (from API responses):
-- **code 5** — DEVICE_OFFLINE: Set local fallback schedule on inverter.
-- **code 16** — PARAMETER_SETTING_RESPONSE_TIMEOUT: Exponential backoff.
-- **code 7** — WRONG_DEVICE_TYPE
-- **code 12** — DEVICE_SN_DOES_NOT_HAVE_PERMISSION
-- **code 2** — TOKEN_IS_INVALID
-
-**Always verify**: After `setVppParameterNew`, immediately call `queryDfcData` to confirm actual `chargePower`/`dischargePower` / `soc` matches the setpoint.
-
----
-
-### 7. Production Best Practices for VPP
-
-1. **Rate Limiting**: 1 command per deviceSn every 5 seconds max → implement queuing (e.g. Kafka/RabbitMQ).
-2. **Token Management**: Dedicated background service for refresh + re-authorization.
-3. **Offline Handling**: Pre-configure safe default TOU schedule on every device.
-4. **Idempotency & Verification**: Use unique `requestId`; always poll telemetry after dispatch.
-5. **Security**: Encrypt tokens, HTTPS only, least-privilege device authorization.
-6. **Monitoring**: Track success rate, latency, offline events, token expiry.
+Key response codes to handle:
+- `0`: success
+- `2`: `TOKEN_IS_INVALID`
+- `5`: `DEVICE_OFFLINE`
+- `7`: `WRONG_DEVICE_TYPE`
+- `12`: `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`
+- `16`: `PARAMETER_SETTING_RESPONSE_TIMEOUT`
 
 ---
 
-### 8. Status Code Reference (from PDF)
+### 7. Parameter Usage Quick Picks
 
-**Device Status (status)**: 0=Standby, 1=Self-check, 3=Fault, 5=PV online + battery offline + on-grid, 6=PV offline/online + battery online + on-grid, etc.  
-**Battery Status (batteryStatus)**: 0=Standby, 2=Charging, 3=Discharging, 4=Fault.  
-**Priority (priority)**: 0=Load, 1=Battery, 2=Grid.
+Use `setType` values from SSOT [10_global_params.md](./OPENAPI/10_global_params.md). Commonly used examples:
+- `enable_control`
+- `power_on_off_command`
+- `time_slot_charge_discharge`
+- `active_power_derating_percentage`
+- `reactive_power_mode`
+- `remote_power_control_enable`
+- `remote_charge_discharge_power`
+- `ac_charge_enable`
 
----
-
-### 9. Quick-Start Checklist
-
-- [ ] Obtained `client_id` / `client_secret` + registered redirect & push URLs
-- [ ] Implemented full OAuth 2.0 + token refresh daemon
-- [ ] Integrated device list + bind/unbind
-- [ ] Built `queryDfcData` polling + Webhook handler
-- [ ] Implemented `setVppParameterNew` with state machine & verification
-- [ ] Configured queues, monitoring, and offline fallback
-- [ ] Tested end-to-end with real devices
+Guidance:
+- Validate parameter ranges before sending dispatch.
+- Always perform read-back using `/auth2/readDdeviceDispatch` for critical controls.
 
 ---
 
-**For the complete OpenAPI specification, Postman collection, or domain-specific endpoint URLs**, contact Growatt API technical support with your `client_id`.
+### 8. Integration Checklist
 
-We are committed to enabling fast, secure, and reliable VPP integration for every aggregator.
+- [ ] Obtained `client_id` and `client_secret`
+- [ ] Implemented `/oauth2/token` + `/oauth2/refresh`
+- [ ] Implemented token storage and rotation
+- [ ] Implemented device authorization lifecycle (`getApiDeviceList` / `bindDevice` / `getApiDeviceListAuthed` / `unbindDevice`)
+- [ ] Implemented telemetry pull (`/auth2/getDeviceData`)
+- [ ] Implemented webhook receiver for push payloads
+- [ ] Implemented dispatch + read-back loop (`/auth2/deviceDispatch` + `/auth2/readDdeviceDispatch`)
+- [ ] Added handling for codes `2/5/7/12/16`
+- [ ] Validated parameter values against `10_global_params.md`
+
+---
+
+**Change note**: This quick guide has been corrected to match OPENAPI SSOT endpoints and naming.
 
 **Growatt Open API Team**  
 March 2026
-
----
