@@ -80,7 +80,7 @@ flowchart LR
 
 Header convention:
 - Most APIs require `Authorization: Bearer {access_token}`.
-- For `/auth2/getDeviceData`, follow SSOT doc header definition (`token`).
+- For `/oauth2/getDeviceData`, follow SSOT doc header definition (`token`).
 
 ---
 
@@ -109,9 +109,9 @@ Notes:
 | Authorized device list | `/oauth2/getApiDeviceListAuthed` | POST | Bearer token |
 | Unbind device | `/oauth2/unbindDevice` | POST | `deviceSnList` |
 | Device information | `/oauth2/getDeviceInfo` | POST | `deviceSn` |
-| Device telemetry query | `/auth2/getDeviceData` | POST | `deviceSn` |
-| Device dispatch | `/auth2/deviceDispatch` | POST | `deviceSn`, `setType`, `value`, `requestId` |
-| Read dispatch parameter | `/auth2/readDdeviceDispatch` | POST | `deviceSn`, `setType`, `requestId` |
+| Device telemetry query | `/oauth2/getDeviceData` | POST | `deviceSn` |
+| Device dispatch | `/oauth2/deviceDispatch` | POST | `deviceSn`, `setType`, `value`, `requestId` |
+| Read dispatch parameter | `/oauth2/readDdeviceDispatch` | POST | `deviceSn`, `setType`, `requestId` |
 
 Push integration:
 - Growatt pushes high-frequency payloads to your webhook URL (see [09_api_device_push.md](./OPENAPI/09_api_device_push.md)).
@@ -164,7 +164,7 @@ Use `setType` values from SSOT [10_global_params.md](./OPENAPI/10_global_params.
 
 Guidance:
 - Validate parameter ranges before sending dispatch.
-- Always perform read-back using `/auth2/readDdeviceDispatch` for critical controls.
+- Always perform read-back using `/oauth2/readDdeviceDispatch` for critical controls.
 
 ---
 
@@ -174,9 +174,9 @@ Guidance:
 - [ ] Implemented `/oauth2/token` + `/oauth2/refresh`
 - [ ] Implemented token storage and rotation
 - [ ] Implemented device authorization lifecycle (`getApiDeviceList` / `bindDevice` / `getApiDeviceListAuthed` / `unbindDevice`)
-- [ ] Implemented telemetry pull (`/auth2/getDeviceData`)
+- [ ] Implemented telemetry pull (`/oauth2/getDeviceData`)
 - [ ] Implemented webhook receiver for push payloads
-- [ ] Implemented dispatch + read-back loop (`/auth2/deviceDispatch` + `/auth2/readDdeviceDispatch`)
+- [ ] Implemented dispatch + read-back loop (`/oauth2/deviceDispatch` + `/oauth2/readDdeviceDispatch`)
 - [ ] Added handling for codes `2/5/7/12/16`
 - [ ] Validated parameter values against `10_global_params.md`
 

@@ -631,7 +631,7 @@ sequenceDiagram
 *   Current interface frequency limit: once every 5 seconds per device.
 
 **Request URL**
-*   `/auth2/deviceDispatch`
+*   `/oauth2/deviceDispatch`
 
 **Request Method**
 *   `POST`
@@ -713,7 +713,7 @@ sequenceDiagram
 *   Current interface frequency limit: once every 5 seconds per device.
 
 **Request URL**
-*   `/auth2/readDdeviceDispatch`
+*   `/oauth2/readDdeviceDispatch`
 
 **Request Method**
 *   `POST`
@@ -890,7 +890,7 @@ sequenceDiagram
 *   Query high-frequency data of a specified device based on the device serial number. This interface only returns device data that the secret token has permission to access. Devices without access permission will not be returned.
 
 **Request URL**
-*   `/auth2/getDeviceData`
+*   `/oauth2/getDeviceData`
 
 **Request Method**
 *   `POST`

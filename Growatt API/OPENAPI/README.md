@@ -79,9 +79,9 @@ When your access token expires, use the [OAuth2-refresh API](./03_api_refresh.md
 | `/oauth2/getApiDeviceListAuthed` | POST | Get authorized device list |
 | `/oauth2/unbindDevice` | POST | Unauthorize device |
 | `/oauth2/getDeviceInfo` | POST | Get device information |
-| `/auth2/deviceDispatch` | POST | Set device parameters |
-| `/auth2/readDdeviceDispatch` | POST | Read device parameters |
-| `/auth2/getDeviceData` | POST | Query device data |
+| `/oauth2/deviceDispatch` | POST | Set device parameters |
+| `/oauth2/readDdeviceDispatch` | POST | Read device parameters |
+| `/oauth2/getDeviceData` | POST | Query device data |
 
 ## Domains
 

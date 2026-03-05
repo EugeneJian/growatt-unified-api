@@ -5,7 +5,7 @@
 - Current interface frequency limit: once every 5 seconds per device.
 
 **Request URL**
-- `/auth2/deviceDispatch`
+- `/oauth2/deviceDispatch`
 
 **Request Method**
 - `POST`
