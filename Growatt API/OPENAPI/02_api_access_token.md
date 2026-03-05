@@ -12,21 +12,20 @@
 - `POST`
 - In the request header, `ContentType` must be `application/x-www-form-urlencoded;`
 
-## Token Exchange Flow (Mermaid)
+## Token Exchange Sequence (Mermaid)
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Prepare request body"] --> B{"grant type"}
-    B -->|"authorization_code"| C["Fill code and client credentials"]
-    B -->|"client_credentials"| D["Fill client credentials"]
-    C --> E["Call oauth2 token API"]
-    D --> E
-    E --> F{"code equals 0 or http 200"}
-    F -->|"Yes"| G["Save access token and refresh token"]
-    F -->|"No"| H["Check credentials and grant type"]
-    G --> I["Use bearer token for next APIs"]
-```
+sequenceDiagram
+    participant Client as Client
+    participant OAuth as OAuth Server
+    participant App as Integration Service
+
+    Client->>App: Build token request
+    App->>OAuth: POST /oauth2/token
+    OAuth-->>App: Return token pair
+    App-->>Client: Save token pair
+    Client->>App: Use bearer token for next APIs```
 
 ---
 

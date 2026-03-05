@@ -27,6 +27,8 @@ Core references:
 
 ### 2. End-to-End Integration Flow
 
+#### 2.1 Concept Map
+
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
@@ -46,6 +48,27 @@ flowchart TD
     N --> G
     M -->|"No"| O["Continue"]
 ```
+
+#### 2.2 Operational Sequence
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Platform as Platform
+    participant OAuth as OAuth API
+    participant Device as Device API
+    participant Push as Webhook
+
+    Platform->>OAuth: POST /oauth2/token
+    OAuth-->>Platform: Return token pair
+    Platform->>OAuth: Run getApiDeviceList and bindDevice
+    OAuth-->>Platform: Return authorized set
+    Platform->>Device: Call getDeviceInfo and getDeviceData
+    Device-->>Platform: Return data
+    Platform->>Device: Call deviceDispatch then read back
+    Device-->>Platform: Return dispatch result
+    Push-->>Platform: Push dfcData webhook payload
+    Platform->>OAuth: POST /oauth2/refresh on expiry```
 
 ---
 
@@ -77,6 +100,29 @@ flowchart LR
     E -->|"Yes"| F["Rotate tokens and continue"]
     E -->|"No"| G["Re authorize user"]
 ```
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Service as Service
+    participant OAuth as OAuth API
+    participant API as API
+
+    Service->>API: Call API with access token
+    API-->>Service: Return token state
+    alt Token valid
+        API-->>Service: Return response
+    else Token invalid
+        Service->>OAuth: POST /oauth2/refresh
+        alt Refresh success
+            OAuth-->>Service: Return new token pair
+            Service->>API: Retry API call
+            API-->>Service: Return response
+        else Refresh failed
+            OAuth-->>Service: Return refresh error
+            Service-->>Service: Trigger re-authorization
+        end
+    end```
 
 Header convention:
 - Most APIs require `Authorization: Bearer {access_token}`.
@@ -128,16 +174,28 @@ Recommended control loop:
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Build command"] --> B["Send dispatch request"]
-    B --> C{"Response code"}
-    C -->|"0"| D["Read back current value"]
-    C -->|"16"| E["Retry with backoff"]
-    C -->|"5"| F["Apply offline fallback"]
-    C -->|"7 or 12"| G["Stop and inspect permission or device type"]
-    D --> H["Compare expected value"]
-    H --> I["Complete control cycle"]
-    E --> B
+stateDiagram-v2
+    [*] --> Build
+    state "Build Command" as Build
+    state "Send Dispatch" as Send
+    state "Success Code 0" as Success
+    state "Timeout Code 16" as Timeout
+    state "Offline Code 5" as Offline
+    state "Inspect Code 7 or 12" as Inspect
+    state "Read Back Verify" as Verify
+    state "Complete Cycle" as Complete
+
+    Build --> Send
+    Send --> Success
+    Send --> Timeout
+    Send --> Offline
+    Send --> Inspect
+    Success --> Verify
+    Verify --> Complete
+    Timeout --> Send
+    Offline --> Complete
+    Inspect --> Complete
+    Complete --> [*]
 ```
 
 Key response codes to handle:

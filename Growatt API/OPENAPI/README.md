@@ -4,7 +4,7 @@ Version: V1.0 | Release Date: March 4, 2026
 
 This folder contains structured documentation for the Growatt Open API.
 
-## Integration Roadmap (Mermaid)
+## Integration Roadmap (Concept)
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -20,6 +20,27 @@ flowchart LR
     G --> H
     I --> J["10 Global Parameters"]
 ```
+
+## Integration Roadmap (Request Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Platform as Platform
+    participant OAuth as OAuth API
+    participant Device as Device API
+    participant Push as Webhook
+
+    Platform->>OAuth: POST /oauth2/token
+    OAuth-->>Platform: Return token pair
+    Platform->>OAuth: Run bindDevice flow
+    OAuth-->>Platform: Return authorized set
+    Platform->>Device: Query info and data
+    Device-->>Platform: Return telemetry
+    Platform->>Device: Dispatch and read back
+    Device-->>Platform: Return dispatch result
+    Push-->>Platform: Push dfcData
+    Platform->>OAuth: POST /oauth2/refresh if needed```
 
 ## Documentation Structure
 

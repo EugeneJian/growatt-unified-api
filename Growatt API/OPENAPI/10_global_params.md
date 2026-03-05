@@ -9,7 +9,7 @@
 ### Test Environment
 - `https://opencloud-test.growatt.com`
 
-## Environment and Parameter Decision Flow (Mermaid)
+## Environment and Parameter Decision Flow (Concept)
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -25,6 +25,27 @@ flowchart TD
     F -->|"OK"| I["Select set type from parameter table"]
     I --> J["Call dispatch or read APIs"]
 ```
+
+## Environment and Permission Handling (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Client as Integration Service
+    participant API as OAuth API
+    participant Auth as Auth Logic
+
+    Client->>API: Call API on chosen domain
+    API-->>Client: Return permission code
+    alt Code TOKEN_IS_INVALID
+        Client->>Auth: Refresh and retry
+        Auth-->>Client: Return new token
+    else Code DEVICE_SN_DOES_NOT_HAVE_PERMISSION
+        Client->>Auth: Run bind flow
+        Auth-->>Client: Return bind result
+    else Permission ok
+        Client-->>Client: Continue dispatch or read
+    end```
 
 ---
 

@@ -7,66 +7,69 @@ interface MermaidRendererProps {
   content: string;
 }
 
+const MERMAID_THEME_VARIABLES = {
+  darkMode: false,
+  background: "#ffffff",
+  primaryColor: "#f8fafc",
+  primaryTextColor: "#0f172a",
+  primaryBorderColor: "#2563eb",
+  lineColor: "#334155",
+  secondaryColor: "#f1f5f9",
+  tertiaryColor: "#f8fafc",
+  mainBkg: "#f8fafc",
+  secondBkg: "#ffffff",
+  tertiaryBkg: "#f8fafc",
+  nodeBorder: "#2563eb",
+  clusterBkg: "#ffffff",
+  clusterBorder: "#cbd5e1",
+  titleColor: "#0f172a",
+  edgeLabelBackground: "#ffffff",
+  textColor: "#0f172a",
+  fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif",
+  fontSize: "14px",
+  actorBkg: "#f8fafc",
+  actorBorder: "#2563eb",
+  actorTextColor: "#0f172a",
+  actorLineColor: "#334155",
+  signalColor: "#334155",
+  signalTextColor: "#0f172a",
+  labelBoxBkgColor: "#ffffff",
+  labelBoxBorderColor: "#cbd5e1",
+  labelTextColor: "#0f172a",
+  noteBkgColor: "#fff7ed",
+  noteBorderColor: "#fdba74",
+  noteTextColor: "#7c2d12",
+  activationBkgColor: "#dbeafe",
+  activationBorderColor: "#2563eb",
+};
+
+const MERMAID_SVG_ENFORCED_STYLE = `
+  svg { background: #ffffff !important; color: #0f172a !important; }
+  .background, rect.background { fill: #ffffff !important; }
+  .edgePath .path, .flowchart-link, .messageLine0, .messageLine1, .loopLine {
+    stroke: #334155 !important;
+    stroke-width: 1.8px !important;
+  }
+  marker path, .marker path, .arrowheadPath {
+    fill: #334155 !important;
+    stroke: #334155 !important;
+  }
+  text, tspan, .label, .nodeLabel, .edgeLabel {
+    fill: #0f172a !important;
+    color: #0f172a !important;
+  }
+`;
+
 export function MermaidRenderer({ content }: MermaidRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     mermaid.initialize({
       startOnLoad: false,
-      theme: "base",
-      themeVariables: {
-        // Light mode colors - Force white background
-        darkMode: false,
-        background: "#ffffff",
-        primaryColor: "#e0f2fe",
-        primaryTextColor: "#0f172a",
-        primaryBorderColor: "#0ea5e9",
-        lineColor: "#64748b",
-        secondaryColor: "#f1f5f9",
-        tertiaryColor: "#f8fafc",
-        mainBkg: "#e0f2fe",
-        nodeBorder: "#0ea5e9",
-        clusterBkg: "#f8fafc",
-        clusterBorder: "#e2e8f0",
-        titleColor: "#0f172a",
-        edgeLabelBackground: "#ffffff",
-        // Additional light mode variables
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', sans-serif",
-        fontSize: "14px",
-        textColor: "#334155",
-        nodeTextColor: "#1e293b",
-        arrowheadColor: "#64748b",
-        actorBorder: "#0ea5e9",
-        actorBkg: "#e0f2fe",
-        actorTextColor: "#0f172a",
-        actorLineColor: "#64748b",
-        signalColor: "#64748b",
-        signalTextColor: "#334155",
-        participantBorder: "#0ea5e9",
-        participantBkg: "#e0f2fe",
-        actor0Border: "#0ea5e9",
-        actor0Bkg: "#e0f2fe",
-        actor0TextColor: "#0f172a",
-        actor1Border: "#0ea5e9",
-        actor1Bkg: "#e0f2fe",
-        actor1TextColor: "#0f172a",
-        actor2Border: "#0ea5e9",
-        actor2Bkg: "#e0f2fe",
-        actor2TextColor: "#0f172a",
-        // Override dark background
-        fillType0: "#e0f2fe",
-        fillType1: "#f1f5f9",
-        fillType2: "#f8fafc",
-        fillType3: "#f1f5f9",
-        fillType4: "#e0f2fe",
-        fillType5: "#f8fafc",
-        fillType6: "#f1f5f9",
-        fillType7: "#e0f2fe",
-        border1: "#0ea5e9",
-        border2: "#e2e8f0",
-        border3: "#e2e8f0",
-        border4: "#0ea5e9",
-      },
+      theme: "neutral",
+      deterministicIds: true,
+      darkMode: false,
+      themeVariables: MERMAID_THEME_VARIABLES,
       securityLevel: "loose",
     });
 
@@ -84,10 +87,33 @@ export function MermaidRenderer({ content }: MermaidRendererProps) {
         const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
 
         try {
-          const { svg } = await mermaid.render(id, graphDefinition);
-          const wrapper = document.createElement("div");
+          const { svg, bindFunctions } = await mermaid.render(id, graphDefinition);
+          const wrapper = document.createElement("figure");
           wrapper.className = "mermaid-diagram";
+          wrapper.setAttribute("data-mermaid-theme", "light");
           wrapper.innerHTML = svg;
+
+          const svgElement = wrapper.querySelector("svg");
+          if (svgElement) {
+            svgElement.classList.add("mermaid-svg");
+            svgElement.style.backgroundColor = "#ffffff";
+            svgElement.style.maxWidth = "none";
+            svgElement.style.height = "auto";
+            svgElement.setAttribute("role", "img");
+            svgElement.setAttribute("aria-label", "Mermaid diagram");
+
+            const styleElement = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "style",
+            );
+            styleElement.textContent = MERMAID_SVG_ENFORCED_STYLE;
+            svgElement.prepend(styleElement);
+          }
+
+          if (bindFunctions) {
+            bindFunctions(wrapper);
+          }
+
           parent.replaceWith(wrapper);
         } catch (error) {
           console.error("Mermaid render error:", error);

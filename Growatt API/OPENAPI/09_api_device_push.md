@@ -4,20 +4,25 @@
 - The third-party platform needs to independently develop a functional interface to receive data and provide the corresponding URL to Growatt.
 - Devices belonging to the third-party platform will periodically push specified high-frequency update data to the URL provided to Growatt.
 
-## Webhook Processing Flow (Mermaid)
+## Webhook Processing Sequence (Mermaid)
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Growatt pushes dfcData payload"] --> B["Receive at webhook endpoint"]
-    B --> C["Validate json and required fields"]
-    C --> D{"Valid payload"}
-    D -->|"Yes"| E["Persist raw event"]
-    D -->|"No"| F["Return four xx and log"]
-    E --> G["Transform to internal telemetry model"]
-    G --> H["Trigger monitoring and dispatch rules"]
-    H --> I["Return 200 quickly"]
-```
+sequenceDiagram
+    participant Growatt as Push Service
+    participant Webhook as Webhook Endpoint
+    participant Storage as Event Storage
+    participant RuleEngine as Rule Engine
+
+    Growatt->>Webhook: Push dfcData
+    Webhook->>Webhook: Validate payload
+    alt Payload valid
+        Webhook->>Storage: Save raw event
+        Webhook->>RuleEngine: Run transformation and rules
+        Webhook-->>Growatt: Return 200
+    else Payload invalid
+        Webhook-->>Growatt: Return 4xx
+    end```
 
 ---
 

@@ -12,7 +12,7 @@
 - The request header must carry a valid `access_token`.
 - Placed in the `Authorization` parameter of the request header, and must include the prefix `Bearer `.
 
-## Device Info Query Flow (Mermaid)
+## Device Info Query Flow (Concept)
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -25,6 +25,26 @@ flowchart TD
     D -->|"12"| G["Check device authorization list"]
     E --> H["Use info for monitoring and dispatch eligibility"]
 ```
+
+## Device Info Query Flow (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant User as User
+    participant Service as Service
+    participant API as OAuth API
+
+    User->>Service: Select target device
+    Service->>API: POST getDeviceInfo
+    API-->>Service: Return code and device info
+    alt Code 0
+        Service-->>User: Show device info
+    else Code 2
+        Service-->>Service: Refresh and retry
+    else Code 12
+        Service-->>User: Request authorization update
+    end```
 
 ---
 

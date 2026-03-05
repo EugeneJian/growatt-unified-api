@@ -11,7 +11,7 @@
 - `POST`
 - In the request header, `ContentType` must be `application/x-www-form-urlencoded;`
 
-## Refresh Lifecycle (Mermaid)
+## Refresh Lifecycle (Concept)
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -24,6 +24,31 @@ flowchart TD
     F --> C
     E -->|"No"| G["Trigger re authorization flow"]
 ```
+
+## Refresh Lifecycle (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Service as Service
+    participant OAuth as OAuth Server
+    participant API as API
+
+    Service->>API: Call API with access token
+    alt Token valid
+        API-->>Service: Return response
+    else Token invalid
+        API-->>Service: Return token invalid
+        Service->>OAuth: POST /oauth2/refresh
+        alt Refresh success
+            OAuth-->>Service: Return new token pair
+            Service->>API: Retry API call
+            API-->>Service: Return response
+        else Refresh failed
+            OAuth-->>Service: Return refresh error
+            Service-->>Service: Trigger re-authorization
+        end
+    end```
 
 ---
 

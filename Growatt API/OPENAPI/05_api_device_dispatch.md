@@ -12,21 +12,34 @@
 - The `ContentType` of the request must be `application/x-www-form-urlencoded;`
 - The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
 
-## Dispatch Control Flow (Mermaid)
+## Dispatch Control State (Mermaid)
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Create dispatch command"] --> B["Generate unique request id"]
-    B --> C["Throttle one request per five seconds per device"]
-    C --> D["Call deviceDispatch API"]
-    D --> E{"Response code"}
-    E -->|"0"| F["Mark successful"]
-    E -->|"5 device offline"| G["Apply fallback and alert"]
-    E -->|"16 timeout"| H["Retry with backoff"]
-    E -->|"Other"| I["Log and manual handling"]
-    F --> J["Optional read back verification"]
-    H --> D
+stateDiagram-v2
+    [*] --> Build
+    state "Build Command" as Build
+    state "Throttle Per Device" as Throttle
+    state "Send Dispatch" as Send
+    state "Success Code 0" as Success
+    state "Timeout Code 16" as Timeout
+    state "Offline Code 5" as Offline
+    state "Other Error" as Error
+    state "Read Back Verify" as Verify
+    state "End Cycle" as EndCycle
+
+    Build --> Throttle
+    Throttle --> Send
+    Send --> Success
+    Send --> Timeout
+    Send --> Offline
+    Send --> Error
+    Success --> Verify
+    Verify --> EndCycle
+    Timeout --> Send
+    Offline --> EndCycle
+    Error --> EndCycle
+    EndCycle --> [*]
 ```
 
 ---

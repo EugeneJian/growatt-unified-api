@@ -4,26 +4,33 @@ This section covers APIs for managing device authorization.
 
 ## Table of Contents
 
-- [Authorization Lifecycle](#authorization-lifecycle)
+- [Authorization Sequence](#authorization-sequence)
 - [Get Authorizable Device List](#331-get-authorizable-device-list)
 - [Authorize Device](#332-authorize-device)
 - [Get Authorized Device List](#333-get-authorized-device-list)
 - [Unauthorize Device](#334-unauthorize-device)
 
-## Authorization Lifecycle
+## Authorization Sequence
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Get access token"] --> B["Call getApiDeviceList"]
-    B --> C["Show candidate devices"]
-    C --> D["Call bindDevice"]
-    D --> E["Call getApiDeviceListAuthed"]
-    E --> F["Operate only authorized devices"]
-    F --> G{"Need revoke access"}
-    G -->|"Yes"| H["Call unbindDevice"]
-    G -->|"No"| I["Keep authorization"]
-```
+sequenceDiagram
+    participant User as User
+    participant Client as Platform
+    participant API as OAuth API
+
+    Client->>API: POST getApiDeviceList
+    API-->>Client: Return candidate list
+    Client-->>User: Show candidates
+    User->>Client: Select devices
+    Client->>API: POST bindDevice
+    API-->>Client: Return bind status
+    Client->>API: POST getApiDeviceListAuthed
+    API-->>Client: Return authorized list
+    opt Optional revoke
+        Client->>API: POST unbindDevice
+        API-->>Client: Return unbind status
+    end```
 
 ---
 

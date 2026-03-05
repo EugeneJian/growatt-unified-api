@@ -96,26 +96,25 @@ This mode is for scenarios where the third-party platform directly connects to t
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant User as "End User"
-    participant App as "Third Party App"
-    participant Server as "Third Party Server"
-    participant Growatt as "Growatt API Server"
+    participant User as User
+    participant App as App
+    participant Server as Server
+    participant Growatt as Growatt API
 
-    User->>App: "Operate Growatt device"
-    App->>Server: "Not logged in or refresh token expired"
-    Server-->>App: "Return to Growatt login page"
-    App->>Growatt: "Login to Growatt personal account"
-    Growatt-->>App: "Verify Growatt account and password"
-    App->>Server: "Confirm authorization account and client id"
-    Server->>Growatt: "Exchange authorization code for token"
-    Growatt-->>Server: "Return available token"
-    Server->>Growatt: "Request Growatt API with access token"
-    Growatt-->>Server: "Return operation result"
-    Server-->>App: "Return operation result"
-    App-->>User: "Display operation result"
+    User->>App: Start operation
+    App->>Server: Need valid token
+    Server-->>App: Redirect to login
+    App->>Growatt: User login
+    Growatt-->>App: Verify credentials
+    App->>Server: Send authorization context
+    Server->>Growatt: Exchange code for token
+    Growatt-->>Server: Return token pair
+    Server->>Growatt: Call API with access token
+    Growatt-->>Server: Return API result
+    Server-->>App: Return result
+    App-->>User: Show result
 
-    Note over Server,Growatt: "Use oauth2 refresh API to refresh access token"
-```
+    Note over Server,Growatt: Refresh token on expiry```
 
 ### Client Credentials Mode
 
