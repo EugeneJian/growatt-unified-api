@@ -300,7 +300,10 @@ export function GrowattDocsShell({
           </header>
 
           <article className="growatt-docs-content">
-            <MermaidRenderer content={contentHtml} />
+            <MermaidRenderer
+              key={`${activeSlug ?? "overview"}:${locale}`}
+              content={contentHtml}
+            />
           </article>
         </main>
       </div>
