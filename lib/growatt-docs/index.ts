@@ -9,15 +9,40 @@ import {
 } from "./markdown";
 
 const GROWATT_API_ROOT_DIR = path.join(process.cwd(), "Growatt API");
-const OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI");
+const EN_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI");
+const ZH_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI.zh-CN");
 const README_FILE_NAME = "README.md";
-const QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.md";
+const EN_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.md";
+const ZH_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.zh-CN.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
-export const QUICK_GUIDE_PATH = path.join(
-  GROWATT_API_ROOT_DIR,
-  QUICK_GUIDE_FILE_NAME,
-);
+
+export type GrowattDocLocale = "en" | "zh-CN";
+
+interface LocaleSourceConfig {
+  openApiRootDir: string;
+  quickGuideFileName: string;
+  quickGuidePath: string;
+  overviewFallbackTitle: string;
+  quickGuideFallbackTitle: string;
+}
+
+const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = {
+  en: {
+    openApiRootDir: EN_OPENAPI_ROOT_DIR,
+    quickGuideFileName: EN_QUICK_GUIDE_FILE_NAME,
+    quickGuidePath: path.join(GROWATT_API_ROOT_DIR, EN_QUICK_GUIDE_FILE_NAME),
+    overviewFallbackTitle: "Growatt Open API Documentation",
+    quickGuideFallbackTitle: "Quick Guide",
+  },
+  "zh-CN": {
+    openApiRootDir: ZH_OPENAPI_ROOT_DIR,
+    quickGuideFileName: ZH_QUICK_GUIDE_FILE_NAME,
+    quickGuidePath: path.join(GROWATT_API_ROOT_DIR, ZH_QUICK_GUIDE_FILE_NAME),
+    overviewFallbackTitle: "Growatt Open API 文档",
+    quickGuideFallbackTitle: "快速指南",
+  },
+};
 
 export interface GrowattDocMeta {
   fileName: string;
@@ -68,53 +93,60 @@ function compareDocFiles(a: string, b: string): number {
   return a.localeCompare(b);
 }
 
-async function readOpenApiMarkdownFiles(): Promise<string[]> {
-  const entries = await fs.readdir(OPENAPI_ROOT_DIR, { withFileTypes: true });
+function getLocaleSourceConfig(locale: GrowattDocLocale): LocaleSourceConfig {
+  return GROWATT_DOC_SOURCE_CONFIG[locale];
+}
+
+async function readOpenApiMarkdownFiles(locale: GrowattDocLocale): Promise<string[]> {
+  const entries = await fs.readdir(getLocaleSourceConfig(locale).openApiRootDir, {
+    withFileTypes: true,
+  });
 
   return entries
     .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".md"))
     .map((entry) => entry.name);
 }
 
-async function readOpenApiFile(fileName: string): Promise<string> {
-  const fullPath = path.join(OPENAPI_ROOT_DIR, fileName);
+async function readOpenApiFile(fileName: string, locale: GrowattDocLocale): Promise<string> {
+  const fullPath = path.join(getLocaleSourceConfig(locale).openApiRootDir, fileName);
   return fs.readFile(fullPath, "utf8");
 }
 
-export const getGrowattDocMetas = cache(async (): Promise<GrowattDocMeta[]> => {
-  const markdownFileNames = await readOpenApiMarkdownFiles();
-  const docFileNames = markdownFileNames
-    .filter((fileName) => fileName !== README_FILE_NAME)
-    .sort(compareDocFiles);
+export const getGrowattDocMetas = cache(
+  async (locale: GrowattDocLocale = "en"): Promise<GrowattDocMeta[]> => {
+    const markdownFileNames = await readOpenApiMarkdownFiles(locale);
+    const docFileNames = markdownFileNames
+      .filter((fileName) => fileName !== README_FILE_NAME)
+      .sort(compareDocFiles);
 
-  const docs = await Promise.all(
-    docFileNames.map(async (fileName) => {
-      const markdown = await readOpenApiFile(fileName);
+    const docs = await Promise.all(
+      docFileNames.map(async (fileName) => {
+        const markdown = await readOpenApiFile(fileName, locale);
 
-      return {
-        fileName,
-        slug: toGrowattDocSlug(fileName),
-        order: extractOrder(fileName),
-        title: extractMarkdownTitle(markdown, formatFallbackTitle(fileName)),
-      };
-    }),
-  );
+        return {
+          fileName,
+          slug: toGrowattDocSlug(fileName),
+          order: extractOrder(fileName),
+          title: extractMarkdownTitle(markdown, formatFallbackTitle(fileName)),
+        };
+      }),
+    );
 
-  return docs;
-});
+    return docs;
+  },
+);
 
-export const getGrowattOverview = cache(async () => {
-  const markdown = await readOpenApiFile(README_FILE_NAME);
-  const docMetas = await getGrowattDocMetas();
-  const slugByFileName = buildGrowattSlugByFileName(
-    docMetas.map((doc) => doc.fileName),
-  );
+export const getGrowattOverview = cache(async (locale: GrowattDocLocale = "en") => {
+  const sourceConfig = getLocaleSourceConfig(locale);
+  const markdown = await readOpenApiFile(README_FILE_NAME, locale);
+  const docMetas = await getGrowattDocMetas(locale);
+  const slugByFileName = buildGrowattSlugByFileName(docMetas.map((doc) => doc.fileName));
 
   const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
   const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
   return {
-    title: extractMarkdownTitle(markdown, "Growatt Open API Documentation"),
+    title: extractMarkdownTitle(markdown, sourceConfig.overviewFallbackTitle),
     markdown,
     displayMarkdown,
     html,
@@ -122,17 +154,18 @@ export const getGrowattOverview = cache(async () => {
 });
 
 export const getGrowattDocBySlug = cache(
-  async (slug: string): Promise<GrowattDocPage | null> => {
-    const docs = await getGrowattDocMetas();
+  async (
+    slug: string,
+    locale: GrowattDocLocale = "en",
+  ): Promise<GrowattDocPage | null> => {
+    const docs = await getGrowattDocMetas(locale);
     const currentDoc = docs.find((doc) => doc.slug === slug);
     if (!currentDoc) {
       return null;
     }
 
-    const markdown = await readOpenApiFile(currentDoc.fileName);
-    const slugByFileName = buildGrowattSlugByFileName(
-      docs.map((doc) => doc.fileName),
-    );
+    const markdown = await readOpenApiFile(currentDoc.fileName, locale);
+    const slugByFileName = buildGrowattSlugByFileName(docs.map((doc) => doc.fileName));
     const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
     const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
@@ -146,22 +179,21 @@ export const getGrowattDocBySlug = cache(
 );
 
 export const getGrowattQuickGuide = cache(
-  async (): Promise<GrowattQuickGuidePage> => {
+  async (locale: GrowattDocLocale = "en"): Promise<GrowattQuickGuidePage> => {
+    const sourceConfig = getLocaleSourceConfig(locale);
     const [docMetas, markdown] = await Promise.all([
-      getGrowattDocMetas(),
-      fs.readFile(QUICK_GUIDE_PATH, "utf8"),
+      getGrowattDocMetas(locale),
+      fs.readFile(sourceConfig.quickGuidePath, "utf8"),
     ]);
 
-    const slugByFileName = buildGrowattSlugByFileName(
-      docMetas.map((doc) => doc.fileName),
-    );
+    const slugByFileName = buildGrowattSlugByFileName(docMetas.map((doc) => doc.fileName));
     const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
     const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
     return {
       slug: GROWATT_QUICK_GUIDE_SLUG,
-      fileName: QUICK_GUIDE_FILE_NAME,
-      title: extractMarkdownTitle(markdown, "Quick Guide"),
+      fileName: sourceConfig.quickGuideFileName,
+      title: extractMarkdownTitle(markdown, sourceConfig.quickGuideFallbackTitle),
       markdown,
       displayMarkdown,
       html,
@@ -169,6 +201,6 @@ export const getGrowattQuickGuide = cache(
   },
 );
 
-export function getGrowattOpenApiRootDir(): string {
-  return OPENAPI_ROOT_DIR;
+export function getGrowattOpenApiRootDir(locale: GrowattDocLocale = "en"): string {
+  return getLocaleSourceConfig(locale).openApiRootDir;
 }

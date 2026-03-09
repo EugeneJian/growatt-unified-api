@@ -57,6 +57,55 @@
   line-height: 1.5;
 }
 
+.growatt-docs-language-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.growatt-docs-language-switcher-mobile {
+  padding: 12px 12px 4px;
+}
+
+.growatt-docs-language-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--docs-text-muted);
+}
+
+.growatt-docs-language-options {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.growatt-docs-language-option {
+  border: 1px solid var(--docs-border);
+  background: #fff;
+  color: var(--docs-text-secondary);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.growatt-docs-language-option:hover {
+  border-color: #7dd3fc;
+  color: var(--docs-text-primary);
+}
+
+.growatt-docs-language-option.active {
+  border-color: #38bdf8;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  color: #0369a1;
+}
+
 /* Navigation */
 .growatt-docs-nav {
   display: flex;
@@ -106,6 +155,10 @@
 
 .growatt-docs-mobile-nav .growatt-docs-nav {
   padding: 0 12px 12px;
+}
+
+.growatt-docs-mobile-nav-panel .growatt-docs-nav {
+  padding-top: 0;
 }
 
 /* Main Content Area */

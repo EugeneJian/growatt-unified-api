@@ -24,7 +24,7 @@ export async function generateMetadata({
   params,
 }: GrowattDocPageProps): Promise<Metadata> {
   const { doc } = await params;
-  const currentDoc = await getGrowattDocBySlug(doc);
+  const currentDoc = await getGrowattDocBySlug(doc, "en");
 
   if (!currentDoc) {
     return {
@@ -42,24 +42,35 @@ export default async function GrowattOpenApiDocPage({
   params,
 }: GrowattDocPageProps) {
   const { doc } = await params;
-  const [docs, currentDoc] = await Promise.all([
-    getGrowattDocMetas(),
-    getGrowattDocBySlug(doc),
+  const [docsEn, docsZh, currentDocEn, currentDocZh] = await Promise.all([
+    getGrowattDocMetas("en"),
+    getGrowattDocMetas("zh-CN"),
+    getGrowattDocBySlug(doc, "en"),
+    getGrowattDocBySlug(doc, "zh-CN"),
   ]);
 
-  if (!currentDoc) {
+  if (!currentDocEn || !currentDocZh) {
     notFound();
   }
 
   return (
     <GrowattDocsShell
-      docs={docs}
-      quickGuide={{ slug: GROWATT_QUICK_GUIDE_SLUG, label: "Quick Guide" }}
-      activeSlug={currentDoc.slug}
-      heading={currentDoc.title}
-      subheading={`Source file: ${currentDoc.fileName}`}
-      contentMarkdown={currentDoc.displayMarkdown}
-      contentHtml={currentDoc.html}
+      docsByLocale={{ en: docsEn, "zh-CN": docsZh }}
+      quickGuide={{
+        slug: GROWATT_QUICK_GUIDE_SLUG,
+        labelByLocale: { en: "Quick Guide", "zh-CN": "快速指南" },
+      }}
+      activeSlug={currentDocEn.slug}
+      headingByLocale={{ en: currentDocEn.title, "zh-CN": currentDocZh.title }}
+      subheadingByLocale={{
+        en: `Source file: ${currentDocEn.fileName}`,
+        "zh-CN": `源文件：${currentDocZh.fileName}`,
+      }}
+      contentMarkdownByLocale={{
+        en: currentDocEn.displayMarkdown,
+        "zh-CN": currentDocZh.displayMarkdown,
+      }}
+      contentHtmlByLocale={{ en: currentDocEn.html, "zh-CN": currentDocZh.html }}
     />
   );
 }

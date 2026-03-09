@@ -5,9 +5,10 @@
 ## 目标
 
 1. 使用 `Growatt API/OPENAPI/*.md` 作为 API 文档主 SSOT。
-2. 使用 `Growatt API/Growatt Open API Professional Integration Guide.md` 作为 Quick Guide 源。
-3. 将 Markdown 在构建期渲染为可读 HTML 文档站。
-4. 部署到 Cloudflare Pages（静态输出目录：`out`）。
+2. 使用 `Growatt API/OPENAPI.zh-CN/*.md` 作为中文对齐版文档源。
+3. 使用 `Growatt API/Growatt Open API Professional Integration Guide.md` 作为 Quick Guide 英文源，并使用 `Growatt API/Growatt Open API Professional Integration Guide.zh-CN.md` 作为中文对齐版源。
+4. 将 Markdown 在构建期渲染为可读 HTML 文档站，并支持中英文切换。
+5. 部署到 Cloudflare Pages（静态输出目录：`out`）。
 
 ## 路由
 
@@ -55,8 +56,9 @@ npx wrangler pages deploy out --project-name <your-project-name>
 
 ## 文档维护约束
 
-1. 仅编辑 `Growatt API/OPENAPI/*.md`
-2. Quick Guide 编辑源为 `Growatt API/Growatt Open API Professional Integration Guide.md`
-3. `Growatt API/Growatt Unified API.md` 仅作为参考，不作为主编辑源
-4. 新文档命名必须符合 `NN_descriptive_name.md`（仅适用于 `OPENAPI` 目录）
-5. 更新 API 文档时同步维护 `Growatt API/OPENAPI/README.md` 的版本和目录
+1. 英文主 SSOT 仅编辑 `Growatt API/OPENAPI/*.md`
+2. 中文对齐版编辑源为 `Growatt API/OPENAPI.zh-CN/*.md`
+3. Quick Guide 编辑源分别为 `Growatt API/Growatt Open API Professional Integration Guide.md` 和 `Growatt API/Growatt Open API Professional Integration Guide.zh-CN.md`
+4. `Growatt API/Growatt Unified API.md` 仅作为参考，不作为主编辑源
+5. 新文档命名必须符合 `NN_descriptive_name.md`（适用于 `OPENAPI` 与 `OPENAPI.zh-CN`）
+6. 更新 API 文档时同步维护 `Growatt API/OPENAPI/README.md` 与 `Growatt API/OPENAPI.zh-CN/README.md` 的版本和目录

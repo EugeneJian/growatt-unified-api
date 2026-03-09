@@ -4,6 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 interface CopyMarkdownButtonProps {
   markdown: string;
+  labels: {
+    idle: string;
+    copied: string;
+    error: string;
+    title: string;
+  };
 }
 
 type CopyState = "idle" | "copied" | "error";
@@ -25,7 +31,7 @@ function fallbackCopyText(text: string): boolean {
   }
 }
 
-export function CopyMarkdownButton({ markdown }: CopyMarkdownButtonProps) {
+export function CopyMarkdownButton({ markdown, labels }: CopyMarkdownButtonProps) {
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const resetTimerRef = useRef<number | null>(null);
 
@@ -65,10 +71,10 @@ export function CopyMarkdownButton({ markdown }: CopyMarkdownButtonProps) {
   };
 
   const buttonLabel = copyState === "copied"
-    ? "Copied"
+    ? labels.copied
     : copyState === "error"
-      ? "Copy failed"
-      : "Copy Markdown";
+      ? labels.error
+      : labels.idle;
 
   return (
     <button
@@ -76,7 +82,7 @@ export function CopyMarkdownButton({ markdown }: CopyMarkdownButtonProps) {
       className={`growatt-docs-copy-button ${copyState !== "idle" ? `is-${copyState}` : ""}`.trim()}
       onClick={() => void handleCopy()}
       aria-live="polite"
-      title="Copy this page as Markdown"
+      title={labels.title}
     >
       {buttonLabel}
     </button>

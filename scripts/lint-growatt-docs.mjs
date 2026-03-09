@@ -2,9 +2,18 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-const OPENAPI_DIR = path.join(process.cwd(), "Growatt API", "OPENAPI");
 const README_FILE = "README.md";
 const DOC_FILE_PATTERN = /^(\d{2})_[a-z0-9_]+\.md$/;
+const OPENAPI_DIRS = [
+  {
+    label: "en",
+    dir: path.join(process.cwd(), "Growatt API", "OPENAPI"),
+  },
+  {
+    label: "zh-CN",
+    dir: path.join(process.cwd(), "Growatt API", "OPENAPI.zh-CN"),
+  },
+];
 
 function removeHash(url) {
   const hashIndex = url.indexOf("#");
@@ -31,8 +40,8 @@ async function fileExists(fullPath) {
   }
 }
 
-async function lintGrowattDocs() {
-  const entries = await fs.readdir(OPENAPI_DIR, { withFileTypes: true });
+async function lintGrowattDocsInDir(openApiDir, label) {
+  const entries = await fs.readdir(openApiDir, { withFileTypes: true });
   const markdownFiles = entries
     .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".md"))
     .map((entry) => entry.name)
@@ -44,7 +53,7 @@ async function lintGrowattDocs() {
   for (const fileName of docFiles) {
     if (!DOC_FILE_PATTERN.test(fileName)) {
       errors.push(
-        `Invalid file name "${fileName}". Expected pattern: NN_descriptive_name.md`,
+        `[${label}] Invalid file name "${fileName}". Expected pattern: NN_descriptive_name.md`,
       );
     }
   }
@@ -54,14 +63,14 @@ async function lintGrowattDocs() {
     const slug = toSlug(fileName).toLowerCase();
     if (slugToFile.has(slug)) {
       errors.push(
-        `Duplicate slug detected: "${toSlug(fileName)}" from "${slugToFile.get(slug)}" and "${fileName}"`,
+        `[${label}] Duplicate slug detected: "${toSlug(fileName)}" from "${slugToFile.get(slug)}" and "${fileName}"`,
       );
       continue;
     }
     slugToFile.set(slug, fileName);
   }
 
-  const readmePath = path.join(OPENAPI_DIR, README_FILE);
+  const readmePath = path.join(openApiDir, README_FILE);
   const readmeContent = await fs.readFile(readmePath, "utf8");
   const readmeDocLinks = [...readmeContent.matchAll(/\[[^\]]+\]\(\.\/([^)#\s]+\.md)(?:#[^)]+)?\)/g)]
     .map((match) => match[1]);
@@ -69,18 +78,18 @@ async function lintGrowattDocs() {
   const readmeLinkSet = new Set(readmeDocLinks);
   for (const fileName of docFiles) {
     if (!readmeLinkSet.has(fileName)) {
-      errors.push(`README coverage missing: ${fileName} is not listed as ./<file>.md`);
+      errors.push(`[${label}] README coverage missing: ${fileName} is not listed as ./<file>.md`);
     }
   }
 
   for (const fileName of readmeLinkSet) {
     if (!docFiles.includes(fileName)) {
-      errors.push(`README references unknown doc: ${fileName}`);
+      errors.push(`[${label}] README references unknown doc: ${fileName}`);
     }
   }
 
   for (const fileName of markdownFiles) {
-    const fullPath = path.join(OPENAPI_DIR, fileName);
+    const fullPath = path.join(openApiDir, fileName);
     const content = await fs.readFile(fullPath, "utf8");
     const sourceDir = path.dirname(fullPath);
 
@@ -101,15 +110,27 @@ async function lintGrowattDocs() {
       const directTargetPath = path.resolve(sourceDir, linkWithoutHash);
       const directTargetExists = await fileExists(directTargetPath);
 
-      // Legacy tolerance: some files currently use ../xx.md while source files live in OPENAPI/.
       const basename = linkWithoutHash.replace(/\\/g, "/").split("/").filter(Boolean).pop();
-      const fallbackTargetPath = basename ? path.join(OPENAPI_DIR, basename) : "";
+      const fallbackTargetPath = basename ? path.join(openApiDir, basename) : "";
       const fallbackTargetExists = basename ? await fileExists(fallbackTargetPath) : false;
 
       if (!directTargetExists && !fallbackTargetExists) {
-        errors.push(`Broken markdown link in ${fileName}: ${rawLink}`);
+        errors.push(`[${label}] Broken markdown link in ${fileName}: ${rawLink}`);
       }
     }
+  }
+
+  return { errors, docCount: docFiles.length };
+}
+
+async function lintGrowattDocs() {
+  const errors = [];
+  let totalDocCount = 0;
+
+  for (const { dir, label } of OPENAPI_DIRS) {
+    const result = await lintGrowattDocsInDir(dir, label);
+    errors.push(...result.errors);
+    totalDocCount += result.docCount;
   }
 
   if (errors.length > 0) {
@@ -120,7 +141,7 @@ async function lintGrowattDocs() {
     process.exit(1);
   }
 
-  console.log(`Growatt docs lint passed: ${docFiles.length} docs checked.`);
+  console.log(`Growatt docs lint passed: ${totalDocCount} docs checked.`);
 }
 
 lintGrowattDocs().catch((error) => {

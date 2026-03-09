@@ -16,20 +16,28 @@ export const metadata: Metadata = {
 export const dynamic = "force-static";
 
 export default async function GrowattOpenApiOverviewPage() {
-  const [docs, overview, buildInfo] = await Promise.all([
-    getGrowattDocMetas(),
-    getGrowattOverview(),
+  const [docsEn, docsZh, overviewEn, overviewZh, buildInfo] = await Promise.all([
+    getGrowattDocMetas("en"),
+    getGrowattDocMetas("zh-CN"),
+    getGrowattOverview("en"),
+    getGrowattOverview("zh-CN"),
     getBuildInfo(),
   ]);
 
   return (
     <GrowattDocsShell
-      docs={docs}
-      quickGuide={{ slug: GROWATT_QUICK_GUIDE_SLUG, label: "Quick Guide" }}
+      docsByLocale={{ en: docsEn, "zh-CN": docsZh }}
+      quickGuide={{
+        slug: GROWATT_QUICK_GUIDE_SLUG,
+        labelByLocale: { en: "Quick Guide", "zh-CN": "快速指南" },
+      }}
       activeSlug={null}
-      heading={overview.title}
-      contentMarkdown={overview.displayMarkdown}
-      contentHtml={overview.html}
+      headingByLocale={{ en: overviewEn.title, "zh-CN": overviewZh.title }}
+      contentMarkdownByLocale={{
+        en: overviewEn.displayMarkdown,
+        "zh-CN": overviewZh.displayMarkdown,
+      }}
+      contentHtmlByLocale={{ en: overviewEn.html, "zh-CN": overviewZh.html }}
       buildInfo={buildInfo}
     />
   );
