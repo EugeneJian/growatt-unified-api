@@ -58,6 +58,7 @@ export default async function GrowattOpenApiDocPage({
       activeSlug={currentDoc.slug}
       heading={currentDoc.title}
       subheading={`Source file: ${currentDoc.fileName}`}
+      contentMarkdown={currentDoc.displayMarkdown}
       contentHtml={currentDoc.html}
     />
   );

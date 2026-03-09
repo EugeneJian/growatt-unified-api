@@ -27,6 +27,7 @@ export default async function GrowattOpenApiQuickGuidePage() {
       activeSlug={quickGuide.slug}
       heading={quickGuide.title}
       subheading={`Source file: ${quickGuide.fileName}`}
+      contentMarkdown={quickGuide.displayMarkdown}
       contentHtml={quickGuide.html}
     />
   );

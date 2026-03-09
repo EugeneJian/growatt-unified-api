@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { GrowattDocMeta } from "@/lib/growatt-docs";
 import type { BuildInfo } from "@/lib/build-info";
+import { CopyMarkdownButton } from "./copy-markdown-button";
 import { MermaidRenderer } from "./mermaid-renderer";
 
 interface QuickGuideNavMeta {
@@ -14,6 +15,7 @@ interface GrowattDocsShellProps {
   activeSlug: string | null;
   heading: string;
   subheading?: string;
+  contentMarkdown: string;
   contentHtml: string;
   buildInfo?: BuildInfo;
 }
@@ -60,6 +62,7 @@ export function GrowattDocsShell({
   activeSlug,
   heading,
   subheading,
+  contentMarkdown,
   contentHtml,
   buildInfo,
 }: GrowattDocsShellProps) {
@@ -94,8 +97,13 @@ export function GrowattDocsShell({
           </details>
 
           <header className="growatt-docs-header">
-            <h2>{heading}</h2>
-            {subheading && <p>{subheading}</p>}
+            <div className="growatt-docs-header-top">
+              <div className="growatt-docs-header-copy-content">
+                <h2>{heading}</h2>
+                {subheading && <p>{subheading}</p>}
+              </div>
+              <CopyMarkdownButton markdown={contentMarkdown} />
+            </div>
             {buildInfo && (
               <div className="growatt-docs-header-meta">
                 <span className="build-info">

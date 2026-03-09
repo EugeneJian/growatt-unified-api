@@ -17,6 +17,10 @@ jest.mock("@/lib/growatt-docs/markdown", () => {
       });
       return `<article>${rewritten}</article>`;
     },
+    prepareGrowattMarkdown: (
+      markdown: string,
+      { slugByFileName }: { slugByFileName: Map<string, string> },
+    ) => actualLinkRewriter.rewriteGrowattMarkdownLinks(markdown, { slugByFileName }),
   };
 });
 
@@ -43,6 +47,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(overview.title).toContain("Growatt");
     expect(overview.html).toContain("<article>");
     expect(overview.html).toContain("/growatt-openapi/02_api_access_token");
+    expect(overview.displayMarkdown).toContain("/growatt-openapi/02_api_access_token");
   });
 
   it("loads markdown by slug and rewrites internal markdown links", async () => {
@@ -54,6 +59,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(page?.fileName).toBe(firstDoc.fileName);
     expect(page?.html).toContain("<article>");
     expect(page?.html).toContain("/growatt-openapi/04_api_device_auth");
+    expect(page?.displayMarkdown).toContain("/growatt-openapi/04_api_device_auth");
   });
 
   it("loads and renders quick guide markdown from Growatt API root", async () => {
@@ -64,5 +70,6 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.title).toBe("Quick Guide");
     expect(quickGuide.html).toContain("<article>");
     expect(quickGuide.html).toContain("Integration Checklist");
+    expect(quickGuide.displayMarkdown).toContain("Integration Checklist");
   });
 });

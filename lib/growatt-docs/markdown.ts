@@ -18,6 +18,15 @@ interface HastNode {
   value?: string;
 }
 
+export function prepareGrowattMarkdown(
+  markdown: string,
+  options: RenderMarkdownOptions,
+): string {
+  return rewriteGrowattMarkdownLinks(markdown, {
+    slugByFileName: options.slugByFileName,
+  });
+}
+
 function rehypeExternalLinksTargetBlank() {
   return (tree: unknown) => {
     const visit = (node: unknown): void => {
@@ -84,9 +93,7 @@ export async function renderGrowattMarkdownToHtml(
   markdown: string,
   options: RenderMarkdownOptions,
 ): Promise<string> {
-  const rewrittenMarkdown = rewriteGrowattMarkdownLinks(markdown, {
-    slugByFileName: options.slugByFileName,
-  });
+  const rewrittenMarkdown = prepareGrowattMarkdown(markdown, options);
 
   const result = await unified()
     .use(remarkParse)

@@ -2,7 +2,11 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { cache } from "react";
 import { buildGrowattSlugByFileName, toGrowattDocSlug } from "./link-rewriter";
-import { extractMarkdownTitle, renderGrowattMarkdownToHtml } from "./markdown";
+import {
+  extractMarkdownTitle,
+  prepareGrowattMarkdown,
+  renderGrowattMarkdownToHtml,
+} from "./markdown";
 
 const GROWATT_API_ROOT_DIR = path.join(process.cwd(), "Growatt API");
 const OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI");
@@ -24,6 +28,7 @@ export interface GrowattDocMeta {
 
 export interface GrowattDocPage extends GrowattDocMeta {
   markdown: string;
+  displayMarkdown: string;
   html: string;
 }
 
@@ -32,6 +37,7 @@ export interface GrowattQuickGuidePage {
   fileName: string;
   title: string;
   markdown: string;
+  displayMarkdown: string;
   html: string;
 }
 
@@ -104,11 +110,13 @@ export const getGrowattOverview = cache(async () => {
     docMetas.map((doc) => doc.fileName),
   );
 
-  const html = await renderGrowattMarkdownToHtml(markdown, { slugByFileName });
+  const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
+  const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
   return {
     title: extractMarkdownTitle(markdown, "Growatt Open API Documentation"),
     markdown,
+    displayMarkdown,
     html,
   };
 });
@@ -125,11 +133,13 @@ export const getGrowattDocBySlug = cache(
     const slugByFileName = buildGrowattSlugByFileName(
       docs.map((doc) => doc.fileName),
     );
-    const html = await renderGrowattMarkdownToHtml(markdown, { slugByFileName });
+    const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
+    const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
     return {
       ...currentDoc,
       markdown,
+      displayMarkdown,
       html,
     };
   },
@@ -145,13 +155,15 @@ export const getGrowattQuickGuide = cache(
     const slugByFileName = buildGrowattSlugByFileName(
       docMetas.map((doc) => doc.fileName),
     );
-    const html = await renderGrowattMarkdownToHtml(markdown, { slugByFileName });
+    const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
+    const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
     return {
       slug: GROWATT_QUICK_GUIDE_SLUG,
       fileName: QUICK_GUIDE_FILE_NAME,
       title: extractMarkdownTitle(markdown, "Quick Guide"),
       markdown,
+      displayMarkdown,
       html,
     };
   },

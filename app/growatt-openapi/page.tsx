@@ -28,6 +28,7 @@ export default async function GrowattOpenApiOverviewPage() {
       quickGuide={{ slug: GROWATT_QUICK_GUIDE_SLUG, label: "Quick Guide" }}
       activeSlug={null}
       heading={overview.title}
+      contentMarkdown={overview.displayMarkdown}
       contentHtml={overview.html}
       buildInfo={buildInfo}
     />
