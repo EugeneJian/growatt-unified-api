@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import type { GrowattDocLocale, GrowattDocMeta } from "@/lib/growatt-docs";
 import type { BuildInfo } from "@/lib/build-info";
 import { CopyMarkdownButton } from "./copy-markdown-button";
@@ -164,14 +164,23 @@ export function GrowattDocsShell({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const searchParamLocale = normalizeLocale(searchParams.get("lang"));
-  const [locale, setLocale] = useState<GrowattDocLocale>(searchParamLocale);
+  const hasExplicitLocale = Boolean(searchParams.get("lang"));
+  const locale = normalizeLocale(searchParams.get("lang"));
 
   useEffect(() => {
+    if (hasExplicitLocale) {
+      return;
+    }
+
     const rememberedLocale = normalizeLocale(window.localStorage.getItem("growatt-docs-lang"));
-    const nextLocale = searchParams.get("lang") ? searchParamLocale : rememberedLocale;
-    setLocale(nextLocale);
-  }, [searchParamLocale, searchParams]);
+    if (rememberedLocale === DEFAULT_LOCALE) {
+      return;
+    }
+
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("lang", rememberedLocale);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [hasExplicitLocale, pathname, router, searchParams]);
 
   const localeText = LOCALE_TEXT[locale];
   const heading = headingByLocale[locale];
@@ -188,7 +197,6 @@ export function GrowattDocsShell({
   );
 
   const handleLocaleChange = (nextLocale: GrowattDocLocale) => {
-    setLocale(nextLocale);
     window.localStorage.setItem("growatt-docs-lang", nextLocale);
 
     const params = new URLSearchParams(searchParams.toString());
