@@ -19,6 +19,7 @@ flowchart TD
     H --> I["06 读取下发参数"]
     G --> H
     I --> J["10 全局参数"]
+    J --> K["11 常见问题与排查"]
 ```
 
 ## 集成路线图（请求顺序）
@@ -57,6 +58,7 @@ sequenceDiagram
 | [08_api_device_data.md](./08_api_device_data.md) | 设备高频数据查询接口 |
 | [09_api_device_push.md](./09_api_device_push.md) | 设备数据推送接口 |
 | [10_global_params.md](./10_global_params.md) | 全局参数（域名、权限、设备参数） |
+| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 面向测试环境联调的常见问题与排查 FAQ |
 
 ## 快速开始
 
@@ -89,6 +91,10 @@ sequenceDiagram
 - [设备信息](./07_api_device_info.md) - 查询设备信息
 - [设备数据](./08_api_device_data.md) - 查询设备高频数据
 - [设备数据推送](./09_api_device_push.md) - 接收设备推送数据
+
+### 6. 常见问题与排查
+
+- [常见问题与排查 FAQ](./11_api_troubleshooting.md) - 汇总 `api-test.growatt.com:9290` 联调中已验证的坑点与正确动作
 
 ## API 端点摘要
 

@@ -3,6 +3,18 @@
 **简要说明**
 - 根据设备序列号查询指定设备的高频数据。该接口仅返回当前 secret token 有权限访问的设备数据；无访问权限的设备不会返回。
 
+## 测试环境兼容性说明
+
+> 已在 `https://api-test.growatt.com:9290` 实测通过。
+>
+> - 页面中的设备标识可能显示为 `SPH:xxxx` / `SPM:xxxx`，但请求体里应传纯 SN。
+> - 该测试环境下已验证通过的请求格式：
+>   - `Authorization: Bearer <access_token>`
+>   - `Content-Type: application/json`
+>   - JSON body：`{"deviceSn":"RAW_DEVICE_SN"}`
+> - 正确：`RAW_DEVICE_SN`
+> - 错误：`SPH:RAW_DEVICE_SN`
+
 **请求 URL**
 - `/oauth2/getDeviceData`
 
@@ -77,7 +89,7 @@ sequenceDiagram
 
 ```json
 {
-    "deviceSn": "FDCJQ00003"
+    "deviceSn": "RAW_DEVICE_SN"
 }
 ```
 
@@ -184,6 +196,15 @@ sequenceDiagram
 - 0：负载优先
 - 1：电池优先
 - 2：电网优先
+
+### 常见失败与正确动作
+
+| 返回 / 错误 | 含义 | 正确动作 |
+| :--- | :--- | :--- |
+| `TOKEN_IS_INVALID` | token 已过期或无效 | 刷新 token 或重新获取 token 后重试 |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | 当前设备尚未完成绑定授权 | 先调用 `bindDevice`，再重试 `getDeviceData` |
+| `parameter error` | 常见于传了带前缀 SN 或请求体格式不匹配 | 改为 JSON body，并传不带 `SPH:` / `SPM:` 的纯 SN |
+| `code=400, message=fail` | 在该测试环境中，常见于鉴权头与 body 组合不正确 | 改为 `Authorization: Bearer <access_token>` + JSON body |
 
 ---
 

@@ -19,6 +19,7 @@ flowchart TD
     H --> I["06 Read Dispatch Parameters"]
     G --> H
     I --> J["10 Global Parameters"]
+    J --> K["11 Troubleshooting FAQ"]
 ```
 
 ## Integration Roadmap (Request Sequence)
@@ -57,6 +58,7 @@ sequenceDiagram
 | [08_api_device_data.md](./08_api_device_data.md) | Device Data Query API |
 | [09_api_device_push.md](./09_api_device_push.md) | Device Data Push API |
 | [10_global_params.md](./10_global_params.md) | Global parameters (domains, permissions, device parameters) |
+| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | Troubleshooting FAQ for verified test-environment integration pitfalls |
 
 ## Quick Start
 
@@ -89,6 +91,10 @@ When your access token expires, use the [OAuth2-refresh API](./03_api_refresh.md
 - [Device Information](./07_api_device_info.md) - Query device info
 - [Device Data](./08_api_device_data.md) - Query device data
 - [Device Data Push](./09_api_device_push.md) - Receive pushed data
+
+### 6. Troubleshooting
+
+- [Troubleshooting FAQ](./11_api_troubleshooting.md) - Verified pitfalls and corrective actions for `api-test.growatt.com:9290`
 
 ## API Endpoints Summary
 

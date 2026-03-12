@@ -22,12 +22,56 @@
 - [设备数据查询 API](./OPENAPI/08_api_device_data.md)
 - [设备数据推送 API](./OPENAPI/09_api_device_push.md)
 - [全局参数说明](./OPENAPI/10_global_params.md)
+- [常见问题与排查 FAQ](./OPENAPI/11_api_troubleshooting.md)
 
 ---
 
-### 2. 端到端集成流程
+### 2. 9290 测试环境已验证流程
 
-#### 2.1 概念图
+已在 `https://api-test.growatt.com:9290` 的 `client_credentials` 模式下验证通过：
+
+1. `POST /oauth2/token`
+2. `POST /oauth2/bindDevice`
+3. `POST /oauth2/getDeviceInfo`
+4. `POST /oauth2/getDeviceData`
+
+说明：
+- 测试设备标签可能显示为 `SPH:xxxx` / `SPM:xxxx`，但请求体中应传纯 SN。
+- 该测试环境下，`bindDevice` 的已验证通过请求组合为：
+  - `Authorization: Bearer {access_token}`
+  - `Content-Type: application/json`
+  - JSON body 中传纯 SN 和 `pinCode`
+- 该测试环境下，`getDeviceInfo` 与 `getDeviceData` 的已验证通过请求组合为：
+  - `Authorization: Bearer {access_token}`
+  - `Content-Type: application/json`
+  - JSON body：`{"deviceSn":"RAW_DEVICE_SN"}`
+- 正确：`RAW_DEVICE_SN`
+- 错误：`SPH:RAW_DEVICE_SN`
+
+#### 最小可复制示例
+
+```json
+// bindDevice
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "RAW_DEVICE_SN",
+            "pinCode": "TEST_PIN_CODE"
+        }
+    ]
+}
+
+// getDeviceInfo / getDeviceData
+{
+    "deviceSn": "RAW_DEVICE_SN"
+}
+```
+
+---
+
+### 3. 端到端集成流程
+
+#### 3.1 概念图
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -49,7 +93,7 @@ flowchart TD
     M -->|"否"| O["继续业务处理"]
 ```
 
-#### 2.2 操作顺序
+#### 3.2 操作顺序
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -73,7 +117,7 @@ sequenceDiagram
 
 ---
 
-### 3. 身份认证与 Token 生命周期
+### 4. 身份认证与 Token 生命周期
 
 **Token 接口**：`POST /oauth2/token`  
 支持的 `grant_type`：
@@ -129,10 +173,11 @@ sequenceDiagram
 请求头约定：
 - 大多数接口要求 `Authorization: Bearer {access_token}`。
 - 对于 `/oauth2/getDeviceData`，需遵循 SSOT 文档中的请求头定义（`token`）。
+- 但在 `api-test.growatt.com:9290` 的已验证测试环境中，`getDeviceInfo` 与 `getDeviceData` 使用 `Authorization: Bearer {access_token}` + JSON body 已实测成功。
 
 ---
 
-### 4. 设备授权生命周期
+### 5. 设备授权生命周期
 
 按顺序使用这些端点：
 1. `POST /oauth2/getApiDeviceList`（候选设备列表）
@@ -143,10 +188,11 @@ sequenceDiagram
 注：
 - 在 `client_credentials` 模式下，`bindDevice` 可能需要 `pinCode`。
 - 只有已授权设备才能被后续业务接口操作。
+- 在 `api-test.growatt.com:9290` 的已验证测试环境中，测试设备标签可能带 `SPH:` / `SPM:` 前缀，但接口请求应仅传纯 SN。
 
 ---
 
-### 5. 业务 API 矩阵（SSOT 端点）
+### 6. 业务 API 矩阵（SSOT 端点）
 
 | 能力 | Endpoint | Method | 关键输入 |
 | :--- | :--- | :--- | :--- |
@@ -167,7 +213,7 @@ sequenceDiagram
 
 ---
 
-### 6. 下发与回读安全循环
+### 7. 下发与回读安全循环
 
 下发频率限制（SSOT）：
 - 单设备 **每 5 秒最多 1 条指令**。
@@ -210,7 +256,7 @@ stateDiagram-v2
 
 ---
 
-### 7. 参数使用快速索引
+### 8. 参数使用快速索引
 
 使用 SSOT [10_global_params.md](./OPENAPI/10_global_params.md) 中的 `setType` 值。常用示例：
 - `enable_control`

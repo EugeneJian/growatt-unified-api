@@ -3,6 +3,18 @@
 **Brief Description**
 - Get the information of authorized devices on the Growatt platform.
 
+## Test Environment Compatibility Note
+
+> Verified on `https://api-test.growatt.com:9290`.
+>
+> - Device labels in UI may appear as `SPH:xxxx` / `SPM:xxxx`, but the request body should use the raw SN only.
+> - Verified working request format in this test environment:
+>   - `Authorization: Bearer <access_token>`
+>   - `Content-Type: application/json`
+>   - JSON body: `{"deviceSn":"RAW_DEVICE_SN"}`
+> - Correct: `RAW_DEVICE_SN`
+> - Incorrect: `SPH:RAW_DEVICE_SN`
+
 **Request URL**
 - `/oauth2/getDeviceInfo`
 
@@ -63,6 +75,14 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | Yes | String | Device unique serial number (SN) |
 
+## Verified 9290 Request Example
+
+```json
+{
+    "deviceSn": "RAW_DEVICE_SN"
+}
+```
+
 ---
 
 ## Interface Return Parameters
@@ -114,6 +134,14 @@ sequenceDiagram
     "message": "TOKEN_IS_INVALID"
 }
 ```
+
+### Common Failures and Correct Action
+
+| Response / Error | Meaning | Correct Action |
+| :--- | :--- | :--- |
+| `TOKEN_IS_INVALID` | The token is expired or invalid | Refresh or re-fetch the token, then retry |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | The device has not been bound for the current third party yet | Call `bindDevice` first, then retry `getDeviceInfo` |
+| `parameter error` | Commonly caused by using form-encoded body or passing a prefixed SN in this test environment | Switch to JSON body and pass the raw SN without `SPH:` / `SPM:` |
 
 *(Note: The `data` parameter description table is identical to section 3.3.1).*
 

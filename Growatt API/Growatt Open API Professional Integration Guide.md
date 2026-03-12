@@ -22,12 +22,56 @@ Core references:
 - [Device Data Query API](./OPENAPI/08_api_device_data.md)
 - [Device Data Push API](./OPENAPI/09_api_device_push.md)
 - [Global Parameter Description](./OPENAPI/10_global_params.md)
+- [Troubleshooting FAQ](./OPENAPI/11_api_troubleshooting.md)
 
 ---
 
-### 2. End-to-End Integration Flow
+### 2. Verified 9290 Test Flow
 
-#### 2.1 Concept Map
+Verified on `https://api-test.growatt.com:9290` under `client_credentials` mode:
+
+1. `POST /oauth2/token`
+2. `POST /oauth2/bindDevice`
+3. `POST /oauth2/getDeviceInfo`
+4. `POST /oauth2/getDeviceData`
+
+Notes:
+- Test device labels may appear as `SPH:xxxx` / `SPM:xxxx`, but request bodies should pass the raw SN only.
+- Verified working request combination for `bindDevice`:
+  - `Authorization: Bearer {access_token}`
+  - `Content-Type: application/json`
+  - JSON body with raw SN and `pinCode`
+- Verified working request combination for both `getDeviceInfo` and `getDeviceData` in this test environment:
+  - `Authorization: Bearer {access_token}`
+  - `Content-Type: application/json`
+  - JSON body: `{"deviceSn":"RAW_DEVICE_SN"}`
+- Correct: `RAW_DEVICE_SN`
+- Incorrect: `SPH:RAW_DEVICE_SN`
+
+#### Minimal verified examples
+
+```json
+// bindDevice
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "RAW_DEVICE_SN",
+            "pinCode": "TEST_PIN_CODE"
+        }
+    ]
+}
+
+// getDeviceInfo / getDeviceData
+{
+    "deviceSn": "RAW_DEVICE_SN"
+}
+```
+
+---
+
+### 3. End-to-End Integration Flow
+
+#### 3.1 Concept Map
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -49,7 +93,7 @@ flowchart TD
     M -->|"No"| O["Continue"]
 ```
 
-#### 2.2 Operational Sequence
+#### 3.2 Operational Sequence
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -73,7 +117,7 @@ sequenceDiagram
 
 ---
 
-### 3. Authentication and Token Lifecycle
+### 4. Authentication and Token Lifecycle
 
 **Token endpoint**: `POST /oauth2/token`  
 Supported `grant_type`:
@@ -129,10 +173,11 @@ sequenceDiagram
 Header convention:
 - Most APIs require `Authorization: Bearer {access_token}`.
 - For `/oauth2/getDeviceData`, follow SSOT doc header definition (`token`).
+- In the validated `api-test.growatt.com:9290` environment, `getDeviceInfo` and `getDeviceData` were successfully verified using `Authorization: Bearer {access_token}` together with JSON body.
 
 ---
 
-### 4. Device Authorization Lifecycle
+### 5. Device Authorization Lifecycle
 
 Use these endpoints in order:
 1. `POST /oauth2/getApiDeviceList` (candidate devices)
@@ -143,10 +188,11 @@ Use these endpoints in order:
 Notes:
 - In `client_credentials` mode, `bindDevice` may require `pinCode`.
 - Only authorized devices can be operated by downstream APIs.
+- In the validated `api-test.growatt.com:9290` environment, test device labels may include prefixes such as `SPH:` / `SPM:`, but API requests should pass the raw SN only.
 
 ---
 
-### 5. Operational API Matrix (SSOT Endpoints)
+### 6. Operational API Matrix (SSOT Endpoints)
 
 | Capability | Endpoint | Method | Key Input |
 | :--- | :--- | :--- | :--- |
@@ -167,7 +213,7 @@ Push integration:
 
 ---
 
-### 6. Dispatch and Read-Back Safety Loop
+### 7. Dispatch and Read-Back Safety Loop
 
 Dispatch rate limit (SSOT):
 - Max **1 command per 5 seconds per device**.
@@ -210,7 +256,7 @@ Key response codes to handle:
 
 ---
 
-### 7. Parameter Usage Quick Picks
+### 8. Parameter Usage Quick Picks
 
 Use `setType` values from SSOT [10_global_params.md](./OPENAPI/10_global_params.md). Commonly used examples:
 - `enable_control`

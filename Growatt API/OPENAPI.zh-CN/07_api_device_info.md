@@ -3,6 +3,18 @@
 **简要说明**
 - 获取 Growatt 平台上已授权设备的信息。
 
+## 测试环境兼容性说明
+
+> 已在 `https://api-test.growatt.com:9290` 实测通过。
+>
+> - 页面中的设备标识可能显示为 `SPH:xxxx` / `SPM:xxxx`，但请求体里应传纯 SN。
+> - 该测试环境下已验证通过的请求格式：
+>   - `Authorization: Bearer <access_token>`
+>   - `Content-Type: application/json`
+>   - JSON body：`{"deviceSn":"RAW_DEVICE_SN"}`
+> - 正确：`RAW_DEVICE_SN`
+> - 错误：`SPH:RAW_DEVICE_SN`
+
 **请求 URL**
 - `/oauth2/getDeviceInfo`
 
@@ -63,6 +75,14 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | 是 | String | 设备唯一序列号（SN） |
 
+## 已验证通过的 9290 请求示例
+
+```json
+{
+    "deviceSn": "RAW_DEVICE_SN"
+}
+```
+
 ---
 
 ## 接口返回参数
@@ -114,6 +134,14 @@ sequenceDiagram
     "message": "TOKEN_IS_INVALID"
 }
 ```
+
+### 常见失败与正确动作
+
+| 返回 / 错误 | 含义 | 正确动作 |
+| :--- | :--- | :--- |
+| `TOKEN_IS_INVALID` | token 已过期或无效 | 刷新 token 或重新获取 token 后重试 |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | 当前设备尚未完成绑定授权 | 先调用 `bindDevice`，再重试 `getDeviceInfo` |
+| `parameter error` | 在该测试环境中，常见于仍使用表单体或传了带前缀 SN | 改为 JSON body，并传不带 `SPH:` / `SPM:` 的纯 SN |
 
 *（注：`data` 参数说明表与 3.3.1 小节相同。）*
 

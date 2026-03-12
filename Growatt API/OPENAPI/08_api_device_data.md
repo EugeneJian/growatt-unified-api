@@ -3,6 +3,18 @@
 **Brief Description**
 - Query high-frequency data of a specified device based on the device serial number. This interface only returns device data that the secret token has permission to access. Devices without access permission will not be returned.
 
+## Test Environment Compatibility Note
+
+> Verified on `https://api-test.growatt.com:9290`.
+>
+> - Device labels in UI may appear as `SPH:xxxx` / `SPM:xxxx`, but the request body should use the raw SN only.
+> - Verified working request format in this test environment:
+>   - `Authorization: Bearer <access_token>`
+>   - `Content-Type: application/json`
+>   - JSON body: `{"deviceSn":"RAW_DEVICE_SN"}`
+> - Correct: `RAW_DEVICE_SN`
+> - Incorrect: `SPH:RAW_DEVICE_SN`
+
 **Request URL**
 - `/oauth2/getDeviceData`
 
@@ -77,7 +89,7 @@ sequenceDiagram
 
 ```json
 {
-    "deviceSn": "FDCJQ00003"
+    "deviceSn": "RAW_DEVICE_SN"
 }
 ```
 
@@ -184,6 +196,15 @@ sequenceDiagram
 - 0: Load priority
 - 1: Battery priority
 - 2: Grid priority
+
+### Common Failures and Correct Action
+
+| Response / Error | Meaning | Correct Action |
+| :--- | :--- | :--- |
+| `TOKEN_IS_INVALID` | The token is expired or invalid | Refresh or re-fetch the token, then retry |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | The device has not been bound for the current third party yet | Call `bindDevice` first, then retry `getDeviceData` |
+| `parameter error` | Commonly caused by using a prefixed SN or mismatched body format | Switch to JSON body and pass the raw SN without `SPH:` / `SPM:` |
+| `code=400, message=fail` | Commonly caused by a non-working auth/body combination in this test environment | Use `Authorization: Bearer <access_token>` together with JSON body |
 
 ---
 

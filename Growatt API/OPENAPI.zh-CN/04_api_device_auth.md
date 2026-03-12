@@ -116,6 +116,32 @@ sequenceDiagram
 **简要说明**
 - 将 Growatt 终端用户名下设备授权给第三方平台。
 
+### 测试环境兼容性说明
+
+> 已在 `https://api-test.growatt.com:9290` 实测通过。
+>
+> - 页面、截图或设备列表中展示的设备标识可能带有 `SPH:xxxx` 或 `SPM:xxxx` 前缀。
+> - 实际调用 `bindDevice` 时，`deviceSnList[].deviceSn` 需要传纯 SN，不带设备类型前缀。
+> - 该测试环境下已验证通过的请求格式：
+>   - `Authorization: Bearer <access_token>`
+>   - `Content-Type: application/json`
+>   - JSON body 中传纯 SN
+> - 示例：
+>
+> ```json
+> {
+>     "deviceSnList": [
+>         {
+>             "deviceSn": "RAW_DEVICE_SN",
+>             "pinCode": "TEST_PIN_CODE"
+>         }
+>     ]
+> }
+> ```
+>
+> - 正确：`RAW_DEVICE_SN`
+> - 错误：`SPH:RAW_DEVICE_SN`
+
 **请求 URL**
 - `/oauth2/bindDevice`
 
@@ -151,12 +177,12 @@ sequenceDiagram
 {
     "deviceSnList": [
         {
-            "deviceSn": "LXG1234567",
-            "pinCode": "123"
+            "deviceSn": "RAW_DEVICE_SN",
+            "pinCode": "TEST_PIN_CODE"
         },
         {
-            "deviceSn": "EGM1234567",
-            "pinCode": "456"
+            "deviceSn": "RAW_DEVICE_SN_2",
+            "pinCode": "TEST_PIN_CODE"
         }
     ]
 }
@@ -194,6 +220,14 @@ sequenceDiagram
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
 ```
+
+### 常见失败与正确动作
+
+| 返回 / 错误 | 含义 | 正确动作 |
+| :--- | :--- | :--- |
+| `TOKEN_IS_INVALID` | token 已过期或无效 | 刷新 token 或重新获取 token 后重试 |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | 当前第三方尚未获得该设备权限 | 先调用 `bindDevice`，再重试下游接口 |
+| `parameter error` | 常见于传了带前缀 SN 或请求体格式不匹配 | 改为 JSON body，并传不带 `SPH:` / `SPM:` 的纯 SN |
 
 ---
 

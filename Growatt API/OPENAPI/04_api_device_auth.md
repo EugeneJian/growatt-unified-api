@@ -124,6 +124,32 @@ sequenceDiagram
 **Brief Description**
 - Authorize the devices under the Growatt end-user to a third party.
 
+### Test Environment Compatibility Note
+
+> Verified on `https://api-test.growatt.com:9290`.
+>
+> - Device labels shown in screenshots or UI may include prefixes such as `SPH:xxxx` or `SPM:xxxx`.
+> - For the actual `bindDevice` request, `deviceSnList[].deviceSn` must use the raw SN only, without the device type prefix.
+> - Verified working request format in this test environment:
+>   - `Authorization: Bearer <access_token>`
+>   - `Content-Type: application/json`
+>   - JSON body with raw SN values
+> - Example:
+>
+> ```json
+> {
+>     "deviceSnList": [
+>         {
+>             "deviceSn": "RAW_DEVICE_SN",
+>             "pinCode": "TEST_PIN_CODE"
+>         }
+>     ]
+> }
+> ```
+>
+> - Correct: `RAW_DEVICE_SN`
+> - Incorrect: `SPH:RAW_DEVICE_SN`
+
 **Request URL**
 - `/oauth2/bindDevice`
 
@@ -159,12 +185,12 @@ sequenceDiagram
 {
     "deviceSnList": [
         {
-            "deviceSn": "LXG1234567",
-            "pinCode": "123"
+            "deviceSn": "RAW_DEVICE_SN",
+            "pinCode": "TEST_PIN_CODE"
         },
         {
-            "deviceSn": "EGM1234567",
-            "pinCode": "456"
+            "deviceSn": "RAW_DEVICE_SN_2",
+            "pinCode": "TEST_PIN_CODE"
         }
     ]
 }
@@ -202,6 +228,14 @@ sequenceDiagram
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
 ```
+
+### Common Failures and Correct Action
+
+| Response / Error | Meaning | Correct Action |
+| :--- | :--- | :--- |
+| `TOKEN_IS_INVALID` | The token is expired or invalid | Refresh or re-fetch the token, then retry |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | The device is not yet authorized to the current third party | Call `bindDevice` first, then retry downstream APIs |
+| `parameter error` | Commonly caused by using a prefixed SN or mismatched request body shape | Switch to JSON body and pass the raw SN without `SPH:` / `SPM:` |
 
 ---
 
