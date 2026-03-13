@@ -1,0 +1,6 @@
+interface:
+  display_name: "Growatt 9290 Inspector"
+  short_description: "Inspect Growatt 9290 devices and troubleshoot data access"
+  icon_small: "./assets/growatt-9290-small.svg"
+  icon_large: "./assets/growatt-9290-large.svg"
+  default_prompt: "Use $growatt-9290-inspector to fetch token, bind devices if needed, read device info and telemetry, and explain the full 9290 test-environment workflow."
