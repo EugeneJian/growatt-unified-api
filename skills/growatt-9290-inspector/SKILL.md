@@ -48,6 +48,16 @@ Always follow this order unless the user explicitly wants only one step:
 4. Call `/oauth2/getDeviceData`
 5. Summarize what information is currently available
 
+## One-pass shortcut
+
+If the goal is "give me SN and PINCODE once, then run everything", prefer the repo script:
+
+```bash
+./scripts/run-growatt-9290-flow.sh 'SPH:YRP0N4S00Q=TESTPINCODE753951'
+```
+
+The script already bakes in the verified 9290 `client_credentials` flow and strips `SPH:` / `SPM:` prefixes automatically.
+
 ## Request templates
 
 ### 1. Get token
