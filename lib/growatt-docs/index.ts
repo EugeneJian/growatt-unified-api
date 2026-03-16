@@ -25,6 +25,7 @@ export interface GrowattSpecialPageNavMeta {
   slug: string;
   labelByLocale: Record<GrowattDocLocale, string>;
   placement?: "beforeDocs" | "afterDocs";
+  requiresDocumentNavigation?: boolean;
 }
 
 interface LocaleSourceConfig {
@@ -85,6 +86,7 @@ export function getGrowattSpecialPages(): GrowattSpecialPageNavMeta[] {
       slug: GROWATT_CODES_SLUG,
       labelByLocale: { en: "Appendix: Growatt Codes", "zh-CN": "附录：Growatt Codes" },
       placement: "afterDocs",
+      requiresDocumentNavigation: true,
     },
   ];
 }

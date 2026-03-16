@@ -135,15 +135,25 @@ function DocsNav({
       >
         {localeText.overviewLabel}
       </Link>
-      {beforeDocsPages.map((page) => (
-        <Link
-          key={page.slug}
-          className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
-          href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
-        >
-          {page.labelByLocale[locale]}
-        </Link>
-      ))}
+      {beforeDocsPages.map((page) =>
+        page.requiresDocumentNavigation ? (
+          <a
+            key={page.slug}
+            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
+            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
+          >
+            {page.labelByLocale[locale]}
+          </a>
+        ) : (
+          <Link
+            key={page.slug}
+            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
+            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
+          >
+            {page.labelByLocale[locale]}
+          </Link>
+        ),
+      )}
       {docs.map((doc) => (
         <Link
           key={doc.slug}
@@ -154,15 +164,25 @@ function DocsNav({
         </Link>
       ))}
       {afterDocsPages.length > 0 && <div className="growatt-docs-nav-divider" aria-hidden="true" />}
-      {afterDocsPages.map((page) => (
-        <Link
-          key={page.slug}
-          className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
-          href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
-        >
-          {page.labelByLocale[locale]}
-        </Link>
-      ))}
+      {afterDocsPages.map((page) =>
+        page.requiresDocumentNavigation ? (
+          <a
+            key={page.slug}
+            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
+            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
+          >
+            {page.labelByLocale[locale]}
+          </a>
+        ) : (
+          <Link
+            key={page.slug}
+            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
+            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
+          >
+            {page.labelByLocale[locale]}
+          </Link>
+        ),
+      )}
     </nav>
   );
 }
