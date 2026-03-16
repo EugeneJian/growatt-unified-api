@@ -134,8 +134,8 @@ describe("growatt docs source-of-truth loader", () => {
         expect.objectContaining({
           slug: GROWATT_CODES_SLUG,
           labelByLocale: expect.objectContaining({
-            en: "Appendix: Growatt Codes",
-            "zh-CN": "附录：Growatt Codes",
+            en: "🔒 Appendix: Growatt Codes",
+            "zh-CN": "🔒 附录：Growatt Codes",
           }),
           placement: "afterDocs",
         }),
