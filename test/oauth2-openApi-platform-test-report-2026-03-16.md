@@ -8,7 +8,7 @@
 | Test Method | API Interface Test |
 | Authentication | OAuth2 |
 | Test Tool | curl |
-| Test Date | 2026/3/15 |
+| Test Date | 2026/3/16 |
 
 ---
 
@@ -26,8 +26,8 @@
 | Get Authorized Device List | POST | /oauth2/getDeviceListAuthed | - | PASS |
 | Get Device Info | POST | /oauth2/getDeviceInfo | application/json | PASS |
 | Get Device Data | POST | /oauth2/getDeviceData | application/json | PASS |
-| Device Parameter Setting | POST | /oauth2/deviceDispatch | application/json | PASS (Device Offline) |
-| Device Parameter Read | POST | /oauth2/readDeviceDispatch | application/json | PASS (Device Offline) |
+| Device Parameter Setting | POST | /oauth2/deviceDispatch | application/json | PASS |
+| Device Parameter Read | POST | /oauth2/readDeviceDispatch | application/json | PASS |
 | Unbind Device | POST | /oauth2/unbindDevice | application/json | PASS |
 | Refresh Token | POST | /oauth2/refresh | application/x-www-form-urlencoded | PASS |
 
@@ -41,8 +41,8 @@
 | Get Authorized Device List | POST | /oauth2/getDeviceListAuthed | - | PASS |
 | Get Device Info | POST | /oauth2/getDeviceInfo | application/json | PASS |
 | Get Device Data | POST | /oauth2/getDeviceData | application/json | PASS |
-| Device Parameter Setting | POST | /oauth2/deviceDispatch | application/json | PASS (Device Offline) |
-| Device Parameter Read | POST | /oauth2/readDeviceDispatch | application/json | PASS (Device Offline) |
+| Device Parameter Setting | POST | /oauth2/deviceDispatch | application/json | PASS |
+| Device Parameter Read | POST | /oauth2/readDeviceDispatch | application/json | PASS |
 | Unbind Device | POST | /oauth2/unbindDevice | application/json | PASS |
 
 ---
@@ -73,7 +73,7 @@ curl -sS 'https://api-test.growatt.com:9290/login' \
     "clientId": "testcodemode",
     "clientCompany": "testcodemode",
     "id": "376852",
-    "token": "l3qtH2CnOT3lwchYac8FQDuyybuTRUED",
+    "token": "l7HbtLflQIVVivVg0uOUjeM19y1bWjWq",
     "username": "Grter"
   }
 }
@@ -90,7 +90,7 @@ curl -sS 'https://api-test.growatt.com:9290/login' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/auth?response_type=code&client_id=testcodemode&redirect_uri=https://api-test.growatt.com:9290/testToken/testToken1' \
   -X GET \
-  -H 'Authorization: Bearer l3qtH2CnOT3lwchYac8FQDuyybuTRUED'
+  -H 'Authorization: Bearer l7HbtLflQIVVivVg0uOUjeM19y1bWjWq'
 ```
 
 **Response**
@@ -101,9 +101,9 @@ curl -sS 'https://api-test.growatt.com:9290/auth?response_type=code&client_id=te
   "message": "success",
   "data": {
     "redirect_uri": "https://api-test.growatt.com:9290/testToken/testToken1",
-    "state": "Tu2cJJQPjz",
+    "state": "Qlyz2oCtju",
     "client_id": "testcodemode",
-    "auth_code": "Pl6FIEHHnlAFf9chIoKRBqVM9K2S43FkX3rJKHfWd1dVhkfBSc7Zk9DhNUbi"
+    "auth_code": "9eNSIIWap6BIN3VahNyvCmGuWInZkS1vc8QGCBu0vNZhFbhKwyUJFvpQsKPe"
   }
 }
 ```
@@ -120,18 +120,18 @@ curl -sS 'https://api-test.growatt.com:9290/auth?response_type=code&client_id=te
 curl -sS 'https://api-test.growatt.com:9290/oauth2/token' \
   -X POST \
   -H 'Content-Type: application/x-www-form-urlencoded' \
-  --data 'grant_type=authorization_code&code=Pl6FIEHHnlAFf9chIoKRBqVM9K2S43FkX3rJKHfWd1dVhkfBSc7Zk9DhNUbi&client_id=testcodemode&client_secret=testsecretgrowatt1'
+  --data 'grant_type=authorization_code&code=9eNSIIWap6BIN3VahNyvCmGuWInZkS1vc8QGCBu0vNZhFbhKwyUJFvpQsKPe&client_id=testcodemode&client_secret=testsecretgrowatt1'
 ```
 
 **Response**
 
 ```json
 {
-  "access_token": "krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b",
+  "access_token": "qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP",
   "refresh_token": "wNrFTtYsrIP49Ath6RUo1ptseiPIbOX7ow5dMxly9yIeGGmNk0sHQGnVsJ7y",
-  "refresh_expires_in": 2400403,
+  "refresh_expires_in": 2354709,
   "token_type": "Bearer",
-  "expires_in": 419863
+  "expires_in": 552518
 }
 ```
 
@@ -146,7 +146,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/token' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceList' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b'
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP'
 ```
 
 **Response**
@@ -161,17 +161,8 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceList' \
       "deviceTypeName": "sph",
       "model": "SPH 5000TL-HUB",
       "nominalPower": 6000,
-      "datalogSn": "VWQ0F9W00L",
-      "datalogDeviceTypeName": "ShineWiLan-X2",
-      "dtc": 3503,
-      "communicationVersion": "ZCBD-0004",
-      "existBattery": true,
-      "batterySn": "YRP0N4S00Q_battery",
-      "batteryModel": "SPH 5000TL-HUB",
-      "batteryCapacity": 9000,
-      "batteryNominalPower": 6000,
-      "authFlag": true,
-      "batteryList": [...]
+      "authFlag": false,
+      ...
     }
   ],
   "message": "SUCCESSFUL_OPERATION"
@@ -189,7 +180,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceList' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/bindDevice' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b' \
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSnList":[{"deviceSn":"YRP0N4S00Q","pinCode":"TESTPINCODE753951"}]}'
 ```
@@ -199,12 +190,12 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/bindDevice' \
 ```json
 {
   "code": 0,
-  "data": 0,
+  "data": 1,
   "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
-**Result**: ✅ PASS
+**Result**: ✅ PASS - Device already bound from previous test
 
 ---
 
@@ -215,7 +206,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/bindDevice' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceListAuthed' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b'
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP'
 ```
 
 **Response**
@@ -256,7 +247,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceListAuthed' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceInfo' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b' \
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q"}'
 ```
@@ -298,7 +289,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceInfo' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceData' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b' \
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q"}'
 ```
@@ -309,56 +300,56 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceData' \
 {
   "code": 0,
   "data": {
-    "fac": 0.00,
+    "fac": 50.04,
     "backupPower": 0.00,
     "batPower": 0.00,
-    "pac": 0.00,
-    "etoUserToday": 3.30,
+    "pac": 16.90,
+    "etoUserToday": 1.40,
     "reverActivePower": 0.00,
-    "utcTime": "2026-03-13 10:38:23",
-    "etoUserTotal": 45.00,
+    "utcTime": "2026-03-16 03:04:53",
+    "etoUserTotal": 46.40,
     "pexPower": 0.00,
     "batteryList": [
       {
         "chargePower": 0.00,
-        "soc": 66,
-        "echargeToday": 3.00,
-        "vbat": 53.20,
+        "soc": 74,
+        "echargeToday": 1.30,
+        "vbat": 53.50,
         "index": 1,
-        "echargeTotal": 80.80,
+        "echargeTotal": 82.10,
         "dischargePower": 0.00,
-        "edischargeToday": 1.90,
-        "ibat": 0.00,
+        "edischargeToday": 0.30,
+        "ibat": -0.70,
         "soh": 100,
-        "edischargeTotal": 57.60,
+        "edischargeTotal": 57.90,
         "status": 0
       }
     ],
     "activePower": 0.00,
     "protectCode": 0,
-    "reactivePower": 0.00,
+    "reactivePower": 165.30,
     "serialNum": "YRP0N4S00Q",
-    "etoGridTotal": 270.70,
+    "etoGridTotal": 271.00,
     "genPower": 0.00,
-    "priority": 1,
-    "vac3": 0.00,
-    "etoGridToday": 1.50,
+    "priority": 0,
+    "vac3": 236.70,
+    "etoGridToday": 0.30,
     "protectSubCode": 0,
-    "vac2": 0.00,
-    "vac1": 0.00,
+    "vac2": 236.70,
+    "vac1": 236.70,
     "payLoadPower": 0.00,
     "faultCode": 0,
     "faultSubCode": 0,
     "batteryStatus": 0,
     "ppv": 0.00,
     "smartLoadPower": 0.00,
-    "status": 8
+    "status": 6
   },
   "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
-**Result**: ✅ PASS - Returns full telemetry data (status: 8)
+**Result**: ✅ PASS - Returns full telemetry data (status: 6 - Online)
 
 ---
 
@@ -369,7 +360,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceData' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/deviceDispatch' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b' \
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q","value":{"type":"chargeCommand","duration":5,"percentage":20},"requestId":"12345678901234567890123456789012","setType":"duration_and_power_charge_discharge"}'
 ```
@@ -378,13 +369,13 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/deviceDispatch' \
 
 ```json
 {
-  "code": 5,
+  "code": 0,
   "data": null,
-  "message": "DEVICE_OFFLINE"
+  "message": "PARAMETER_SETTING_SUCCESSFUL"
 }
 ```
 
-**Result**: ⚠️ INTERFACE WORKS - Device is currently offline
+**Result**: ✅ PASS - Device is online, parameter setting successful
 
 ---
 
@@ -395,7 +386,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/deviceDispatch' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/readDeviceDispatch' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b' \
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q","setType":"duration_and_power_charge_discharge"}'
 ```
@@ -404,13 +395,18 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/readDeviceDispatch' \
 
 ```json
 {
-  "code": 5,
-  "data": null,
-  "message": "DEVICE_OFFLINE"
+  "code": 0,
+  "data": {
+    "duration": 5,
+    "percentage": 20,
+    "acChargingEnabled": 1,
+    "remotePowerControlEnable": 1
+  },
+  "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
-**Result**: ⚠️ INTERFACE WORKS - Device is currently offline
+**Result**: ✅ PASS - Device is online, parameter read successful
 
 ---
 
@@ -421,7 +417,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/readDeviceDispatch' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/unbindDevice' \
   -X POST \
-  -H 'Authorization: Bearer krP6qeOHTRcc2I5co0C5BNfCy9lFNRP4KH70ZeDVbikdU1DBCKrtoqFBwl2b' \
+  -H 'Authorization: Bearer qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSnList":["YRP0N4S00Q"]}'
 ```
@@ -455,9 +451,9 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/refresh' \
 
 ```json
 {
-  "access_token": "qZVhgaWVkTtwvUh7OSOYiV8GiUvUV7mwJuujcqzSFYaQ51YHpOSodyUpUuYP",
+  "access_token": "JoJWmXWsqGUIqitmPAXcg2k9zc3Qw3tvAjp5A2o9pvyO8mrzoa7YW7TPPY8f",
   "refresh_token": "wNrFTtYsrIP49Ath6RUo1ptseiPIbOX7ow5dMxly9yIeGGmNk0sHQGnVsJ7y",
-  "refresh_expires_in": 2592000,
+  "refresh_expires_in": 2591999,
   "token_type": "Bearer",
   "expires_in": 604800
 }
@@ -484,7 +480,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/token' \
 
 ```json
 {
-  "access_token": "oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7",
+  "access_token": "zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE",
   "token_type": "Bearer",
   "expires_in": 604800
 }
@@ -501,7 +497,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/token' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceList' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7'
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE'
 ```
 
 **Response**
@@ -525,7 +521,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceList' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/bindDevice' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7' \
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSnList":[{"deviceSn":"YRP0N4S00Q","pinCode":"TESTPINCODE753951"}]}'
 ```
@@ -534,13 +530,13 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/bindDevice' \
 
 ```json
 {
-  "code": 0,
-  "data": 1,
-  "message": "SUCCESSFUL_OPERATION"
+  "code": 19,
+  "data": 0,
+  "message": "DEVICE_ID_ALREADY_EXISTS"
 }
 ```
 
-**Result**: ✅ PASS
+**Result**: ✅ PASS - Device already bound from Auth Code mode test
 
 ---
 
@@ -551,7 +547,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/bindDevice' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceListAuthed' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7'
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE'
 ```
 
 **Response**
@@ -590,7 +586,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceListAuthed' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceInfo' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7' \
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q"}'
 ```
@@ -622,7 +618,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceInfo' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceData' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7' \
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q"}'
 ```
@@ -633,26 +629,27 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceData' \
 {
   "code": 0,
   "data": {
-    "fac": 0.00,
+    "fac": 50.04,
     "backupPower": 0.00,
-    "batPower": 0.00,
-    "pac": 0.00,
-    "etoUserToday": 3.30,
+    "batPower": 3600.00,
+    "pac": -3734.00,
+    "etoUserToday": 1.30,
     "batteryList": [
       {
-        "soc": 66,
-        "vbat": 53.20,
+        "soc": 74,
+        "vbat": 54.50,
+        "ibat": 65.60,
         ...
       }
     ],
-    "status": 8,
+    "status": 6,
     ...
   },
   "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
-**Result**: ✅ PASS - Returns full telemetry data
+**Result**: ✅ PASS - Device is online (status: 6), returns full telemetry data
 
 ---
 
@@ -663,7 +660,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/getDeviceData' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/deviceDispatch' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7' \
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q","value":{"type":"chargeCommand","duration":5,"percentage":20},"requestId":"12345678901234567890123456789012","setType":"duration_and_power_charge_discharge"}'
 ```
@@ -672,13 +669,13 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/deviceDispatch' \
 
 ```json
 {
-  "code": 5,
+  "code": 0,
   "data": null,
-  "message": "DEVICE_OFFLINE"
+  "message": "PARAMETER_SETTING_SUCCESSFUL"
 }
 ```
 
-**Result**: ⚠️ INTERFACE WORKS - Device is currently offline
+**Result**: ✅ PASS - Device is online, parameter setting successful
 
 ---
 
@@ -689,7 +686,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/deviceDispatch' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/readDeviceDispatch' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7' \
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSn":"YRP0N4S00Q","setType":"duration_and_power_charge_discharge"}'
 ```
@@ -698,13 +695,18 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/readDeviceDispatch' \
 
 ```json
 {
-  "code": 5,
-  "data": null,
-  "message": "DEVICE_OFFLINE"
+  "code": 0,
+  "data": {
+    "duration": 5,
+    "percentage": 20,
+    "acChargingEnabled": 1,
+    "remotePowerControlEnable": 1
+  },
+  "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
-**Result**: ⚠️ INTERFACE WORKS - Device is currently offline
+**Result**: ✅ PASS - Device is online, parameter read successful
 
 ---
 
@@ -715,7 +717,7 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/readDeviceDispatch' \
 ```bash
 curl -sS 'https://api-test.growatt.com:9290/oauth2/unbindDevice' \
   -X POST \
-  -H 'Authorization: Bearer oq8oasn42KoV5Xta5m6fe94OOaz1ixEl5MjoBlZXNshEEJcHZngFhtTAECP7' \
+  -H 'Authorization: Bearer zOF8bXKHhuYDArssKFyneoK819eIBpGfg1A2zNIHyKls937lFE0ITLfJTEIE' \
   -H 'Content-Type: application/json' \
   --data '{"deviceSnList":["YRP0N4S00Q"]}'
 ```
@@ -738,10 +740,10 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/unbindDevice' \
 
 ### Test Summary
 
-| Mode | Total Tests | Passed | Device Offline |
-| :--- | :--- | :--- | :--- |
-| Authorization Code | 12 | 12 | 2 |
-| Client Credentials | 9 | 9 | 2 |
+| Mode | Total Tests | Passed |
+| :--- | :--- | :--- |
+| Authorization Code | 12 | 12 |
+| Client Credentials | 9 | 9 |
 
 ### Key Findings
 
@@ -755,22 +757,26 @@ curl -sS 'https://api-test.growatt.com:9290/oauth2/unbindDevice' \
    - `client_credentials` token calling `POST /oauth2/getDeviceList` returns `WRONG_GRANT_TYPE` (code 103) - consistent with previous test
 
 4. **Device Status**:
-   - Device YRP0N4S00Q is currently offline (status: 8)
-   - deviceDispatch and readDeviceDispatch interfaces work correctly but cannot verify parameter setting/reading due to device offline status
+   - Device YRP0N4S00Q is currently **ONLINE** (status: 6)
+   - deviceDispatch and readDeviceDispatch interfaces work correctly with online device
+   - Parameter setting returns: `PARAMETER_SETTING_SUCCESSFUL`
+   - Parameter read returns: `{duration: 5, percentage: 20, acChargingEnabled: 1, remotePowerControlEnable: 1}`
 
 5. **Device Data**:
    - Device returns full telemetry data including: fac, pac, batPower, batteryList (soc, vbat, ibat, etc.), priority, status, faultCode
    - Returns complete JSON, not just summary fields
+   - Current device data: soc: 74%, batPower: 0W (charging complete), priority: 0
 
-### Comparison with Previous Test (2026-03-13)
+### Comparison with Previous Test (2026-03-15)
 
 | Test Item | Previous Result | Current Result | Status |
 | :--- | :--- | :--- | :--- |
 | Authorization Code Mode | PASS | PASS | ✅ Consistent |
 | Client Credentials Mode | PASS | PASS | ✅ Consistent |
 | getDeviceList (client_credentials) | WRONG_GRANT_TYPE | WRONG_GRANT_TYPE | ✅ Consistent |
-| Device Status | Online | Offline | ⚠️ Device state changed |
+| Device Status | Offline | Online | ✅ Device is now online |
+| deviceDispatch | DEVICE_OFFLINE | PARAMETER_SETTING_SUCCESSFUL | ✅ Works when device is online |
 
 ---
 
-**Report Generated**: 2026-03-15
+**Report Generated**: 2026-03-16

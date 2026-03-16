@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { GrowattDocsShell } from "../docs-shell";
 import "../docs.css";
 import {
-  GROWATT_QUICK_GUIDE_SLUG,
   getGrowattDocMetas,
   getGrowattQuickGuide,
+  getGrowattSpecialPages,
 } from "@/lib/growatt-docs";
 
 export const metadata: Metadata = {
@@ -25,10 +25,7 @@ export default async function GrowattOpenApiQuickGuidePage() {
   return (
     <GrowattDocsShell
       docsByLocale={{ en: docsEn, "zh-CN": docsZh }}
-      quickGuide={{
-        slug: GROWATT_QUICK_GUIDE_SLUG,
-        labelByLocale: { en: "Quick Guide", "zh-CN": "快速指南" },
-      }}
+      specialPages={getGrowattSpecialPages()}
       activeSlug={quickGuideEn.slug}
       headingByLocale={{ en: quickGuideEn.title, "zh-CN": quickGuideZh.title }}
       subheadingByLocale={{

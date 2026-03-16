@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import type { GrowattDocLocale, GrowattDocMeta } from "@/lib/growatt-docs";
+import type {
+  GrowattDocLocale,
+  GrowattDocMeta,
+  GrowattSpecialPageNavMeta,
+} from "@/lib/growatt-docs";
 import type { BuildInfo } from "@/lib/build-info";
 import { CopyMarkdownButton } from "./copy-markdown-button";
 import { MermaidRenderer } from "./mermaid-renderer";
@@ -84,14 +88,9 @@ const LOCALE_TEXT: Record<GrowattDocLocale, LocaleText> = {
   },
 };
 
-interface QuickGuideNavMeta {
-  slug: string;
-  labelByLocale: Record<GrowattDocLocale, string>;
-}
-
 interface GrowattDocsShellProps {
   docsByLocale: Record<GrowattDocLocale, GrowattDocMeta[]>;
-  quickGuide: QuickGuideNavMeta;
+  specialPages: GrowattSpecialPageNavMeta[];
   activeSlug: string | null;
   headingByLocale: Record<GrowattDocLocale, string>;
   subheadingByLocale?: Partial<Record<GrowattDocLocale, string>>;
@@ -110,19 +109,23 @@ function normalizeLocale(rawLocale: string | null | undefined): GrowattDocLocale
 
 function DocsNav({
   docsByLocale,
-  quickGuide,
+  specialPages,
   activeSlug,
   locale,
   withLocaleHref,
 }: {
   docsByLocale: Record<GrowattDocLocale, GrowattDocMeta[]>;
-  quickGuide: QuickGuideNavMeta;
+  specialPages: GrowattSpecialPageNavMeta[];
   activeSlug: string | null;
   locale: GrowattDocLocale;
   withLocaleHref: (href: string) => string;
 }) {
   const docs = docsByLocale[locale];
   const localeText = LOCALE_TEXT[locale];
+  const beforeDocsPages = specialPages.filter(
+    (page) => (page.placement ?? "beforeDocs") === "beforeDocs",
+  );
+  const afterDocsPages = specialPages.filter((page) => page.placement === "afterDocs");
 
   return (
     <nav className="growatt-docs-nav" aria-label={localeText.navAriaLabel}>
@@ -132,12 +135,15 @@ function DocsNav({
       >
         {localeText.overviewLabel}
       </Link>
-      <Link
-        className={`growatt-docs-nav-link ${activeSlug === quickGuide.slug ? "active" : ""}`.trim()}
-        href={withLocaleHref(`/growatt-openapi/${quickGuide.slug}`)}
-      >
-        {quickGuide.labelByLocale[locale]}
-      </Link>
+      {beforeDocsPages.map((page) => (
+        <Link
+          key={page.slug}
+          className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
+          href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
+        >
+          {page.labelByLocale[locale]}
+        </Link>
+      ))}
       {docs.map((doc) => (
         <Link
           key={doc.slug}
@@ -147,13 +153,23 @@ function DocsNav({
           {doc.fileName} · {doc.title}
         </Link>
       ))}
+      {afterDocsPages.length > 0 && <div className="growatt-docs-nav-divider" aria-hidden="true" />}
+      {afterDocsPages.map((page) => (
+        <Link
+          key={page.slug}
+          className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
+          href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
+        >
+          {page.labelByLocale[locale]}
+        </Link>
+      ))}
     </nav>
   );
 }
 
 export function GrowattDocsShell({
   docsByLocale,
-  quickGuide,
+  specialPages,
   activeSlug,
   headingByLocale,
   subheadingByLocale,
@@ -224,30 +240,32 @@ export function GrowattDocsShell({
     <div className="growatt-docs-page">
       <div className="growatt-docs-shell">
         <aside className="growatt-docs-sidebar">
-          <h1>{localeText.sidebarTitle}</h1>
-          <p>{localeText.sidebarDescription}</p>
-          <div className="growatt-docs-language-switcher">
-            <span className="growatt-docs-language-label">{localeText.languageLabel}</span>
-            <div className="growatt-docs-language-options">
-              {SUPPORTED_LOCALES.map((supportedLocale) => (
-                <button
-                  key={supportedLocale}
-                  type="button"
-                  className={`growatt-docs-language-option ${locale === supportedLocale ? "active" : ""}`.trim()}
-                  onClick={() => handleLocaleChange(supportedLocale)}
-                >
-                  {localeText.languageOptions[supportedLocale]}
-                </button>
-              ))}
+          <div className="growatt-docs-sidebar-inner">
+            <h1>{localeText.sidebarTitle}</h1>
+            <p>{localeText.sidebarDescription}</p>
+            <div className="growatt-docs-language-switcher">
+              <span className="growatt-docs-language-label">{localeText.languageLabel}</span>
+              <div className="growatt-docs-language-options">
+                {SUPPORTED_LOCALES.map((supportedLocale) => (
+                  <button
+                    key={supportedLocale}
+                    type="button"
+                    className={`growatt-docs-language-option ${locale === supportedLocale ? "active" : ""}`.trim()}
+                    onClick={() => handleLocaleChange(supportedLocale)}
+                  >
+                    {localeText.languageOptions[supportedLocale]}
+                  </button>
+                ))}
+              </div>
             </div>
+            <DocsNav
+              docsByLocale={docsByLocale}
+              specialPages={specialPages}
+              activeSlug={activeSlug}
+              locale={locale}
+              withLocaleHref={withLocaleHref}
+            />
           </div>
-          <DocsNav
-            docsByLocale={docsByLocale}
-            quickGuide={quickGuide}
-            activeSlug={activeSlug}
-            locale={locale}
-            withLocaleHref={withLocaleHref}
-          />
         </aside>
 
         <main className="growatt-docs-main">
@@ -271,7 +289,7 @@ export function GrowattDocsShell({
               </div>
               <DocsNav
                 docsByLocale={docsByLocale}
-                quickGuide={quickGuide}
+                specialPages={specialPages}
                 activeSlug={activeSlug}
                 locale={locale}
                 withLocaleHref={withLocaleHref}

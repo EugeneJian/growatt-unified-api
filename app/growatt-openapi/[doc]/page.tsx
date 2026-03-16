@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { GrowattDocsShell } from "../docs-shell";
 import "../docs.css";
 import {
-  GROWATT_QUICK_GUIDE_SLUG,
   getGrowattDocBySlug,
   getGrowattDocMetas,
+  getGrowattSpecialPages,
 } from "@/lib/growatt-docs";
 
 interface GrowattDocPageProps {
@@ -56,10 +56,7 @@ export default async function GrowattOpenApiDocPage({
   return (
     <GrowattDocsShell
       docsByLocale={{ en: docsEn, "zh-CN": docsZh }}
-      quickGuide={{
-        slug: GROWATT_QUICK_GUIDE_SLUG,
-        labelByLocale: { en: "Quick Guide", "zh-CN": "快速指南" },
-      }}
+      specialPages={getGrowattSpecialPages()}
       activeSlug={currentDocEn.slug}
       headingByLocale={{ en: currentDocEn.title, "zh-CN": currentDocZh.title }}
       subheadingByLocale={{

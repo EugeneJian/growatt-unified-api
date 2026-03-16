@@ -35,11 +35,20 @@
 .growatt-docs-sidebar {
   position: sticky;
   top: 24px;
+  max-height: calc(100vh - 48px);
   background: var(--docs-bg-card);
   border: 1px solid var(--docs-border);
   border-radius: 16px;
   padding: 24px;
+  overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+}
+
+.growatt-docs-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: calc(100vh - 96px);
 }
 
 .growatt-docs-sidebar h1 {
@@ -111,6 +120,15 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.growatt-docs-nav-divider {
+  height: 1px;
+  margin: 10px 6px;
+  background: linear-gradient(90deg, transparent, var(--docs-border), transparent);
 }
 
 .growatt-docs-nav-link {
@@ -159,6 +177,7 @@
 
 .growatt-docs-mobile-nav-panel .growatt-docs-nav {
   padding-top: 0;
+  max-height: min(60vh, 520px);
 }
 
 /* Main Content Area */
@@ -408,6 +427,188 @@
   background: linear-gradient(90deg, transparent, var(--docs-border), transparent);
 }
 
+.growatt-codes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.growatt-codes-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.growatt-codes-intro {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--docs-text-secondary);
+}
+
+.growatt-codes-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.growatt-codes-summary-card {
+  border: 1px solid var(--docs-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.growatt-codes-summary-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--docs-text-muted);
+}
+
+.growatt-codes-summary-value {
+  font-size: 1.5rem;
+  color: var(--docs-text-primary);
+}
+
+.growatt-codes-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.growatt-codes-meta div {
+  border-left: 3px solid #bae6fd;
+  padding-left: 12px;
+}
+
+.growatt-codes-meta dt {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--docs-text-muted);
+}
+
+.growatt-codes-meta dd {
+  margin: 6px 0 0;
+  color: var(--docs-text-secondary);
+}
+
+.growatt-codes-toc ul {
+  margin: 0.75em 0 0;
+}
+
+.growatt-codes-toc > ul {
+  padding-left: 1.25em;
+}
+
+.growatt-codes-toc-count {
+  margin-left: 8px;
+  color: var(--docs-text-muted);
+  font-size: 0.875rem;
+}
+
+.growatt-codes-severity {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.growatt-codes-category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.growatt-codes-table-wrap {
+  overflow-x: auto;
+}
+
+.growatt-codes-code-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.growatt-codes-code-cell code {
+  width: fit-content;
+}
+
+.growatt-codes-badge {
+  width: fit-content;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.growatt-codes-badge-reserved {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fdba74;
+}
+
+.growatt-codes-detail-row td {
+  background: #fbfdff;
+}
+
+.growatt-codes-record-details {
+  border: 1px solid var(--docs-border);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.growatt-codes-record-details summary {
+  cursor: pointer;
+  padding: 12px 14px;
+  font-weight: 600;
+  color: var(--docs-text-secondary);
+}
+
+.growatt-codes-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  padding: 0 14px 14px;
+}
+
+.growatt-codes-detail-block {
+  border: 1px solid var(--docs-border-light);
+  border-radius: 10px;
+  padding: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.growatt-codes-detail-block h5 {
+  margin: 0 0 10px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--docs-text-primary);
+}
+
+.growatt-codes-detail-block ul,
+.growatt-codes-detail-block ol {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.growatt-codes-detail-block li {
+  margin: 0.35em 0;
+}
+
+.growatt-codes-detail-block pre {
+  margin: 0;
+  padding: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .growatt-docs-shell {
@@ -530,6 +731,11 @@
 
   .growatt-docs-content .mermaid-diagram svg {
     min-width: 640px;
+  }
+
+  .growatt-codes-detail-grid,
+  .growatt-codes-meta {
+    grid-template-columns: 1fr;
   }
 }
 

@@ -2,11 +2,13 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { cache } from "react";
 import { buildGrowattSlugByFileName, toGrowattDocSlug } from "./link-rewriter";
+import { GROWATT_CODES_SLUG } from "./growatt-codes";
 import {
   extractMarkdownTitle,
   prepareGrowattMarkdown,
   renderGrowattMarkdownToHtml,
 } from "./markdown";
+export { GROWATT_CODES_SLUG, getGrowattCodesPage } from "./growatt-codes";
 
 const GROWATT_API_ROOT_DIR = path.join(process.cwd(), "Growatt API");
 const EN_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI");
@@ -18,6 +20,12 @@ const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
 
 export type GrowattDocLocale = "en" | "zh-CN";
+
+export interface GrowattSpecialPageNavMeta {
+  slug: string;
+  labelByLocale: Record<GrowattDocLocale, string>;
+  placement?: "beforeDocs" | "afterDocs";
+}
 
 interface LocaleSourceConfig {
   openApiRootDir: string;
@@ -64,6 +72,21 @@ export interface GrowattQuickGuidePage {
   markdown: string;
   displayMarkdown: string;
   html: string;
+}
+
+export function getGrowattSpecialPages(): GrowattSpecialPageNavMeta[] {
+  return [
+    {
+      slug: GROWATT_QUICK_GUIDE_SLUG,
+      labelByLocale: { en: "Quick Guide", "zh-CN": "快速指南" },
+      placement: "beforeDocs",
+    },
+    {
+      slug: GROWATT_CODES_SLUG,
+      labelByLocale: { en: "Appendix: Growatt Codes", "zh-CN": "附录：Growatt Codes" },
+      placement: "afterDocs",
+    },
+  ];
 }
 
 function formatFallbackTitle(fileName: string): string {

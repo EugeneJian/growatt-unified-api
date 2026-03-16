@@ -129,6 +129,10 @@ When your access token expires, use the [OAuth2-refresh API](./03_api_refresh.md
 
 For a quick start guide with simpler examples, see: [/growatt-openapi/quick-guide](/growatt-openapi/quick-guide)
 
+## Appendix
+
+- [Growatt Codes](/growatt-openapi/growatt-codes) - External VPP reference for Growatt fault, protect, and warning codes generated from the enterprise SSOT
+
 ## Original Documentation
 
 For the complete unified document, see: [../Growatt Unified API.md](../Growatt Unified API.md)

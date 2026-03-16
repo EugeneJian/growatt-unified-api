@@ -1,0 +1,5888 @@
+spec_version: 1.0.0
+title: Growatt Fault Code Enterprise SSOT
+vendor: Growatt
+source_workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+scope: External English fault / protect / warning code publication for enterprise integration
+last_generated_from_source: '2026-03-16'
+design_principles:
+- Single source of truth for external-facing fault metadata
+- Stable machine-readable schema for cloud, VPP, API, portal, and AI assistant integration
+- Preserve original workbook wording while adding enterprise normalization fields
+- Separate device raw semantics from platform default actions
+schema:
+  record_key: severity + code (+ optional code_range_end)
+  fields:
+    id: Stable record id
+    severity: error | protect | warning
+    severity_rank: 3=error, 2=protect, 1=warning
+    family: Original code family prefix
+    code: Numeric start code
+    code_range_end: Optional range end for reserved blocks
+    code_text: Original external code text
+    category: Normalized external category
+    category_key: Machine-friendly category key
+    sub_code: Original external sub-code text
+    lcd_display: Customer-visible LCD display text
+    inverter_state: Original inverter state from source
+    fault_description: External description
+    troubleshooting_steps: Normalized list of external troubleshooting steps
+    reserved: Whether record is a reserved code/range placeholder
+    auto_recover_default: Default platform assumption
+    affects_dispatch_default: Default enterprise/VPP dispatch impact assumption
+    recommended_vpp_action: Default enterprise action recommendation
+    external_visibility: Publication scope
+    source: Workbook traceability
+enums:
+  severity:
+  - error
+  - protect
+  - warning
+  external_visibility:
+  - public_external
+  recommended_vpp_action_examples:
+  - block_dispatch
+  - pause_dispatch
+  - raise_alarm
+  - notify_operator
+  - require_manual_check
+  - allow_auto_recover_check
+  - log_only
+  - monitor_trend
+governance:
+  owner: Product / Device Platform
+  consumers:
+  - OpenAPI
+  - VPP mapping
+  - Portal UI
+  - Service tooling
+  - AI ops assistant
+  change_rules:
+  - Do not change code_text or fault_description without source workbook review
+  - Enterprise action defaults can be tuned per market or partner profile
+  - New battery-specific records should replace reserved ranges with explicit codes
+summary:
+  total_records: 180
+  by_severity:
+    error: 94
+    protect: 85
+    warning: 1
+  by_category:
+    PV side: 26
+    AC side: 28
+    Inside the system: 61
+    Battery side: 27
+    Off-grid side: 21
+    Backup box: 9
+    ANTI PID-X: 8
+  reserved_records: 3
+records:
+- id: error_200
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 200
+  code_range_end: null
+  code_text: Error 200
+  category: PV side
+  category_key: pv_side
+  sub_code: '0：Arc fault
+
+    1：PV1 arc fault
+
+    2：PV2 arc fault
+
+    3：PV3 arc fault
+
+    4：PV4 arc fault'
+  lcd_display: AFCI Fault
+  inverter_state: Error/Off
+  fault_description: DC arc fault has been detected
+  troubleshooting_steps:
+  - After shutdown, check the connection of the PV string.
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 2
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_201
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 201
+  code_range_end: null
+  code_text: Error 201
+  category: PV side
+  category_key: pv_side
+  sub_code: '1. GFCI 30 mA abrupt-change protection
+
+    2. GFCI 60 mA abrupt-change protection
+
+    3. GFCI 150 mA abrupt-change protection
+
+    4. GFCI  slow-change protection'
+  lcd_display: Residual I High
+  inverter_state: Error/Off
+  fault_description: An excessively high leakage current has been detected
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 3
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_202
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 202
+  code_range_end: null
+  code_text: Error 202
+  category: PV side
+  category_key: pv_side
+  sub_code: '0：PV Voltage High
+
+    Bit0:PV1 Voltage High
+
+    Bit1:PV2 Voltage High
+
+    Bit2:PV3 Voltage High
+
+    Bit3:PV4 Voltage High'
+  lcd_display: PV Voltage High
+  inverter_state: Error/Off
+  fault_description: PV input voltage exceeds the upper threshold
+  troubleshooting_steps:
+  - Disconnect the DC switch immediately and check the voltage.
+  - If  the PV input voltage is within the permissible range and the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 4
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_203
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 203
+  code_range_end: null
+  code_text: Error 203
+  category: PV side
+  category_key: pv_side
+  sub_code: '0. PV Isolation low
+
+    200. Realtime PV Isolation low'
+  lcd_display: PV Isolation Low
+  inverter_state: Error/Off
+  fault_description: PV panels have low insulation resistance
+  troubleshooting_steps:
+  - Check if the PV strings are properly grounded.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 5
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_204
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 204
+  code_range_end: null
+  code_text: Error 204
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: PV Reversed
+  inverter_state: Error/Off
+  fault_description: PV Reversed
+  troubleshooting_steps:
+  - After shutdown,Check the inverter terminal.
+  - Restart inverter.
+  - If error message still exists,contact manufacturer.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 6
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_300
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 300
+  code_range_end: null
+  code_text: Error 300
+  category: AC side
+  category_key: ac_side
+  sub_code: '1. R-Phase Level 1 undervoltage
+
+    2. R-Phase Level 2 undervoltage
+
+    3. R-Phase Level 3 undervoltage
+
+    4. R-Phase Level 1 overvoltage
+
+    5. R-Phase Level 2 overvoltage
+
+    6. R-Phase Level 3 overvoltage
+
+    7. 10-min overvoltage protection
+
+    8. S-Phase Level 1 undervoltage
+
+    9. S-Phase Level 2 undervoltage
+
+    10. S-Phase Level 3 undervoltage
+
+    11. S-Phase Level 1 overvoltage
+
+    12. S-Phase Level 2 overvoltage
+
+    13. S-Phase Level 3 overvoltage
+
+    14. T-Phase Level 1 undervoltage
+
+    15. T-Phase Level 2 undervoltage
+
+    16. T-Phase Level 3 undervoltage
+
+    17. T-Phase Level 1 overvoltage
+
+    18. T-Phase Level 2 overvoltage
+
+    19. T-Phase Level 3 overvoltage
+
+    21. ATS R-Phase Level 1 undervoltage
+
+    22. ATS R-Phase Level 2 undervoltage
+
+    23. ATS R-Phase Level 3 undervoltage
+
+    24. ATS R-Phase Level 1 overvoltage
+
+    25. ATS R-Phase Level 2 overvoltage
+
+    26. ATS R-Phase Level 3 overvoltage
+
+    27. ATS 10-min overvoltage protection
+
+    28. ATS S-Phase Level 1 undervoltage
+
+    29. ATS S-Phase Level 2 undervoltage
+
+    30. ATS S-Phase Level 3 undervoltage
+
+    31. ATS S-Phase Level 1 overvoltage
+
+    32. ATS S-Phase Level 2 overvoltage
+
+    33. ATS S-Phase Level 3 overvoltage
+
+    34. ATS T-Phase Level 1 undervoltage
+
+    35. ATS T-Phase Level 2 undervoltage
+
+    36. ATS T-Phase Level 3 undervoltage
+
+    37. ATS T-Phase Level 1 overvoltage
+
+    38. ATS T-Phase Level 2 overvoltage
+
+    39. ATS T-Phase Level 3 overvoltage
+
+    51. Mains power tailing'
+  lcd_display: AC V Outrange
+  inverter_state: Error/Off
+  fault_description: Grid voltage is beyond the permissible range
+  troubleshooting_steps:
+  - Check the grid voltage.
+  - If  the grid voltage is within the permissible range and the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 7
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_301
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 301
+  code_range_end: null
+  code_text: Error 301
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: AC reversed
+  inverter_state: Error/Off
+  fault_description: AC terminals reversed
+  troubleshooting_steps:
+  - Check the connection of the AC output terminals.
+  - If  the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 8
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_302
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 302
+  code_range_end: null
+  code_text: Error 302
+  category: AC side
+  category_key: ac_side
+  sub_code: '0. Gid disconnect
+
+    20. ATS Grid disconnect'
+  lcd_display: No AC Connection
+  inverter_state: Error/Off
+  fault_description: No utility grid connected or utility grid power failure
+  troubleshooting_steps:
+  - After shutdown, check the AC wiring.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 9
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_303
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 303
+  code_range_end: null
+  code_text: Error 303
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: NE abnormal
+  inverter_state: Error/Off
+  fault_description: The voltage difference between the N line and the PE cable is abnormal
+  troubleshooting_steps:
+  - After shutdown, check if the ground cable is reliably connected.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 10
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_304
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 304
+  code_range_end: null
+  code_text: Error 304
+  category: AC side
+  category_key: ac_side
+  sub_code: '1. Level 1 under-frequency
+
+    2. Level 2 under-frequency
+
+    3. Level 1 over-frequency
+
+    4. Level 2 over-frequency
+
+    5. Frequency rate of change abnormality
+
+    6. Level 3 over-frequency
+
+    7. Level 3 under-frequency
+
+    21. ATS Level 1 under-frequency
+
+    22. ATS Level 2 under-frequency
+
+    23. ATS Level 1 over-frequency
+
+    24. ATS Level 2 over-frequency
+
+    25. ATS Frequency rate of change abnormality
+
+    26. ATS Level 3 over-frequency
+
+    27. ATS Level 3 under-frequency'
+  lcd_display: AC F Outrange
+  inverter_state: Error/Off
+  fault_description: Grid frequency is beyond the permissible range
+  troubleshooting_steps:
+  - Check the grid frequency and restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 11
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_305
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 305
+  code_range_end: null
+  code_text: Error 305
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: Over Load
+  inverter_state: Error/Off
+  fault_description: Overload
+  troubleshooting_steps:
+  - Check if the load exceeds the output power upper limit; if so, please reduce the load.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 12
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_306
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 306
+  code_range_end: null
+  code_text: Error 306
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: CT LN Reversed
+  inverter_state: Error/Off
+  fault_description: CT LN Reversed
+  troubleshooting_steps:
+  - Check if the CT is reversely connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 13
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_307
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 307
+  code_range_end: null
+  code_text: Error 307
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: CT COM Fault
+  inverter_state: Error/Off
+  fault_description: CT communication failure
+  troubleshooting_steps:
+  - Check if the communication cable is properly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 14
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_308
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 308
+  code_range_end: null
+  code_text: Error 308
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: CT COM Overtime
+  inverter_state: Error/Off
+  fault_description: CT and inverter pairing timed out
+  troubleshooting_steps:
+  - Re-pair the inverter and the CT.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 15
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_309
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 309
+  code_range_end: null
+  code_text: Error 309
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: ROCOF Fault
+  inverter_state: Error/Off
+  fault_description: ROCOF abnormal
+  troubleshooting_steps:
+  - Check the grid frequency and restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 16
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_310
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 310
+  code_range_end: null
+  code_text: Error 310
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: NE  Fault
+  inverter_state: Error/Off
+  fault_description: PV negative grounding, protection for low Neutral-to-Ground (N-G) voltage
+  troubleshooting_steps:
+  - Check whether the N line on the inverter side with PV negative grounding is short-circuited with the ground cable and
+    whether the output side is isolated with a transformer.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 17
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_311
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 311
+  code_range_end: null
+  code_text: Error 311
+  category: AC side
+  category_key: ac_side
+  sub_code: '1. Exported power to the grid outrange timeout protection
+
+    2. Export limitation meter abnormal'
+  lcd_display: Fail-safe(311)
+  inverter_state: Error/Off
+  fault_description: Export limitation fail-safe
+  troubleshooting_steps:
+  - After shutdown, check the connection of the CT and the meter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 18
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_312
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 312
+  code_range_end: null
+  code_text: Error 312
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: Phase Sequence Err
+  inverter_state: Error/Off
+  fault_description: The phase sequence is inconsistent when the grid is connected to parallel devices.
+  troubleshooting_steps:
+  - Check wether the phase sequence of the grid-side wiring of the parallel devices is consistent.
+  - Restart devices.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 19
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_313
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 313
+  code_range_end: null
+  code_text: Error 313
+  category: AC side
+  category_key: ac_side
+  sub_code: '1：Generator disconnected
+
+    2：Generator voltage is out of range
+
+    3：Generator frequency is out of range'
+  lcd_display: Abnormal generator condition
+  inverter_state: Error/Off
+  fault_description: Abnormal generator condition
+  troubleshooting_steps:
+  - After shutdown, check the generator status.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 20
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_400
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 400
+  code_range_end: null
+  code_text: Error 400
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 400
+  inverter_state: Error/Off
+  fault_description: DCI bias abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 21
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_401
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 401
+  code_range_end: null
+  code_text: Error 401
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 401
+  inverter_state: Error/Off
+  fault_description: High DC component in output voltage
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 22
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_402
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 402
+  code_range_end: null
+  code_text: Error 402
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. R-Phase DCI excessively high
+
+    2. S-Phase DCI excessively high
+
+    3. T-Phase DCI excessively high'
+  lcd_display: Output High DCI
+  inverter_state: Error/Off
+  fault_description: High DC component in output current
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 23
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_403
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 403
+  code_range_end: null
+  code_text: Error 403
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 403
+  inverter_state: Error/Off
+  fault_description: Output current unbalanced
+  troubleshooting_steps:
+  - Check if the output current is balanced after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 24
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_404
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 404
+  code_range_end: null
+  code_text: Error 404
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 404
+  inverter_state: Error/Off
+  fault_description: Bus voltage sampling abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 25
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_405
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 405
+  code_range_end: null
+  code_text: Error 405
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 405
+  inverter_state: Error/Off
+  fault_description: Relay failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 26
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_406
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 406
+  code_range_end: null
+  code_text: Error 406
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 406
+  inverter_state: Error/Off
+  fault_description: Initialization mode abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 27
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_407
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 407
+  code_range_end: null
+  code_text: Error 407
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 407
+  inverter_state: Error/Off
+  fault_description: Auto-test failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 28
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_408
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 408
+  code_range_end: null
+  code_text: Error 408
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. PCS Over Temprature
+
+    20. ATS Over Temprature'
+  lcd_display: Error 408
+  inverter_state: Error/Off
+  fault_description: Over-temperature
+  troubleshooting_steps:
+  - After shutdown, check the temperature of the inverter and restart the inverter after the temperature is within the acceptable
+    range.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 29
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_409
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 409
+  code_range_end: null
+  code_text: Error 409
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. Bus undervoltage
+
+    2. Bus overvoltage
+
+    3. Positive Bus undervoltage
+
+    4. Positive Bus overvoltage
+
+    5. Negative Bus undervoltage
+
+    6. Negative Bus overvoltage
+
+    7. Bus voltage unbalance'
+  lcd_display: Error 409
+  inverter_state: Error/Off
+  fault_description: Bus voltage abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 30
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_410
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 410
+  code_range_end: null
+  code_text: Error 410
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. Voltage across the flying capacitor_undervoltage protection
+
+    2. Voltage scross the flying capacitor_overvoltage protection'
+  lcd_display: Error 410
+  inverter_state: Error/Off
+  fault_description: Abnormal voltage across the flying capacitor
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 31
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_411
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 411
+  code_range_end: null
+  code_text: Error 411
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. M3 failed to receive communication data from DSP
+
+    1. Communication failure between M0 and DSP
+
+    2. Main DSP chip failed to receive communication data from M3
+
+    3. Communication failure between AFCI and DSP
+
+    4. Sub DSP chip failed to receive communication data from M3
+
+    5. Main DSP chip failed to receive communication data from Sub DSP chip
+
+    6. Sub DSP chip failed to receive communication data from Main DSP chip
+
+    7. CAN communication failure between DSPs in the parallel system
+
+    8. CAN communication failure between DSP and SYN backup box
+
+    9. The main chip DSP receives incomplete communication frames from M3
+
+    10. The sub chip DSP receives incomplete communication frames from M3
+
+    11. The M3 failed to communication data from receive sub chip DSP
+
+    20. Communication failure between ATS and DSP
+
+    21. Communication failure between ATS and M3
+
+    23. DSP receives M3 communication abnormality
+
+    24. M3 receives DSP communication abnormality
+
+    25. The ATS DSP receives incomplete communication frames'
+  lcd_display: Error 411
+  inverter_state: Error/Off
+  fault_description: Internal communication failure
+  troubleshooting_steps:
+  - Check the wiring of the communication board after shutdown.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 32
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_412
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 412
+  code_range_end: null
+  code_text: Error 412
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 412
+  inverter_state: Error/Off
+  fault_description: Temperature sensor disconnected
+  troubleshooting_steps:
+  - Check if the temperature sensor module is properly connected.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 33
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_413
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 413
+  code_range_end: null
+  code_text: Error 413
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 413
+  inverter_state: Error/Off
+  fault_description: IGBT drive fault
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 34
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_414
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 414
+  code_range_end: null
+  code_text: Error 414
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 414
+  inverter_state: Error/Off
+  fault_description: EEPROM error
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 35
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_415
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 415
+  code_range_end: null
+  code_text: Error 415
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 415
+  inverter_state: Error/Off
+  fault_description: Auxiliary power supply abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 36
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_416
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 416
+  code_range_end: null
+  code_text: Error 416
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. DC overcurrent protection
+
+    2. AC overcurrent protection
+
+    3. R-Phase long-term wave-chasing current limiting protection
+
+    4. S Phase long-term wave-chasing current limiting protection
+
+    5. T Phase long-term wave-chasing current limiting protection'
+  lcd_display: Error 416
+  inverter_state: Error/Off
+  fault_description: DC/AC overcurrent protection
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 37
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_417
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 417
+  code_range_end: null
+  code_text: Error 417
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. M3 and BDC communication protocol mismatched
+
+    2. M3 and INV DSP communication protocol mismatched
+
+    3. DSP and M0 communication protocol mismatched
+
+    4. M3 and Secondary DSP communication protocol mismatched'
+  lcd_display: Error 417
+  inverter_state: Error/Off
+  fault_description: Communication protocol mismatch
+  troubleshooting_steps:
+  - Restart the inverter.
+  - Confirm whether the firmware upgrade was successful
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 38
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_418
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 418
+  code_range_end: null
+  code_text: Error 418
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 418
+  inverter_state: Error/Off
+  fault_description: DSP and COM firmware version mismatch
+  troubleshooting_steps:
+  - Check the firmware version.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 39
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_419
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 419
+  code_range_end: null
+  code_text: Error 419
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 419
+  inverter_state: Error/Off
+  fault_description: DSP software and hardware version mismatch
+  troubleshooting_steps:
+  - Check the firmware version.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 40
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_420
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 420
+  code_range_end: null
+  code_text: Error 420
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 420
+  inverter_state: Error/Off
+  fault_description: GFCI module abnormal
+  troubleshooting_steps:
+  - Check the GFCI module after shutdown.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 41
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_421
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 421
+  code_range_end: null
+  code_text: Error 421
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 421
+  inverter_state: Error/Off
+  fault_description: CPLD abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 42
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_422
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 422
+  code_range_end: null
+  code_text: Error 422
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. AC voltage sampling inconsistent
+
+    2. GFCI sampling inconsistent
+
+    3. ISO sampling inconsistent'
+  lcd_display: Error 422
+  inverter_state: Error/Off
+  fault_description: Redundancy sampling inconsistent
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 43
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_423
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 423
+  code_range_end: null
+  code_text: Error 423
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0、PWM signal shoot-through
+
+    1、Inverter voltage R abnormal during startup
+
+    2、Inverter voltage S abnormal during startup
+
+    3、Inverter voltage R/S abnormal during startup
+
+    4、Inverter voltage T abnormal during startup
+
+    5、Inverter voltage R/T abnormal during startup
+
+    6、Inverter voltage S/T abnormal during startup
+
+    7、Inverter voltage R/S/T abnormal during startup
+
+    8、Bus voltage abnormal during startup
+
+    9、PBus voltage abnormal during startup
+
+    10、NBus voltage abnormal during startup'
+  lcd_display: Error 423
+  inverter_state: Error/Off
+  fault_description: PWM pass-through signal failure
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 44
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_424
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 424
+  code_range_end: null
+  code_text: Error 424
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 424
+  inverter_state: Error/Off
+  fault_description: INV current waveform abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 45
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_425
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 425
+  code_range_end: null
+  code_text: Error 425
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 425
+  inverter_state: Error/Off
+  fault_description: AFCI self-test failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 46
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_426
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 426
+  code_range_end: null
+  code_text: Error 426
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0, Abnormal PV current sampling
+
+    1. Abnormal battery current sampling'
+  lcd_display: Error 426
+  inverter_state: Error/Off
+  fault_description: 'PV current sampling abnormal
+
+    DC current sampling abnormal'
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 47
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_427
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 427
+  code_range_end: null
+  code_text: Error 427
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. Abnormal AC current sampling
+
+    1. Abnormal CT current sampling'
+  lcd_display: Error 427
+  inverter_state: Error/Off
+  fault_description: AC current sampling abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 48
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_428
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 428
+  code_range_end: null
+  code_text: Error 428
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 428
+  inverter_state: Error/Off
+  fault_description: BOOST short-circuited
+  troubleshooting_steps:
+  - Please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 49
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_429
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 429
+  code_range_end: null
+  code_text: Error 429
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. BUS1 soft start failed
+
+    2. BUS2 soft start failed'
+  lcd_display: Error 429
+  inverter_state: Error/Off
+  fault_description: BUS soft start failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 50
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_430
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 430
+  code_range_end: null
+  code_text: Error 430
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. PCS EPO
+
+    1. BAT EPO'
+  lcd_display: Error 430
+  inverter_state: Error/Off
+  fault_description: EPO fault
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 51
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_431
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 431
+  code_range_end: null
+  code_text: Error 431
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 431
+  inverter_state: Error/Off
+  fault_description: Monitoring chip BOOT verification failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 52
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_432
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 432
+  code_range_end: null
+  code_text: Error 432
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 432
+  inverter_state: Error/Off
+  fault_description: Incompatible battery model
+  troubleshooting_steps:
+  - Replace the battery model.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 53
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_433
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 433
+  code_range_end: null
+  code_text: Error 433
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 433
+  inverter_state: Error/Off
+  fault_description: Incompatible battery software
+  troubleshooting_steps:
+  - Upgrade the battery software.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 54
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_434
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 434
+  code_range_end: null
+  code_text: Error 434
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 434
+  inverter_state: Error/Off
+  fault_description: High frequency synchronization fault
+  troubleshooting_steps:
+  - Check High frequency synchronization cable  after shutdown
+  - If error message still exists,contact manufacturer.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 55
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_435
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 435
+  code_range_end: null
+  code_text: Error 435
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 435
+  inverter_state: Error/Off
+  fault_description: Power module ID fault
+  troubleshooting_steps:
+  - Restart inverter
+  - If error message still exists, contact manufacturer.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 56
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_436
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 436
+  code_range_end: null
+  code_text: Error 436
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. Inconsistent frequency settings for parallel and off grid operations.
+
+    2. Inconsistent wire system settings for parallel equipment.
+
+    3. Inconsistent phase sequence settings of parallel equipment.
+
+    4. Inconsistent parallel enable settings of parallel equipment.
+
+    5. Inconsistent soft start enable settings of parallel equipment.
+
+    6. Inconsistent voltage level settings of parallel equipment.
+
+    7. Inconsistent low voltage crossing enable settings for parallel equipment
+
+    8. Inconsistent off grid enable settings for parallel devices
+
+    9. Inconsistent setting of parallel device and off grid switching mode
+
+    10. The number of parallel devices set is inconsistent
+
+    11. Inconsistent enable settings for parallel-connected generator equipment
+
+    12. Inconsistent AC Coupling Enable Settings in Parallel Equipment
+
+    13. Inconsistent settings for generator connection types in parallel operation'
+  lcd_display: Error 436
+  inverter_state: Error/Off
+  fault_description: Incompatible parameter settings
+  troubleshooting_steps:
+  - Check if the parameter settings of the parallel equipment are consistent.
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 57
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_437
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 437
+  code_range_end: null
+  code_text: Error 437
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Error 436
+  inverter_state: Error/Off
+  fault_description: Incompatible serial number settings
+  troubleshooting_steps:
+  - Check if the serial number of the parallel equipment are consistent.
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 58
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_500
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 500
+  code_range_end: null
+  code_text: Error 500
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BMS COM Fault
+  inverter_state: Error/Off
+  fault_description: BMS failed to communicate with the inverter
+  troubleshooting_steps:
+  - Check the connection of the RS485 cable between the inverter and the battery.
+  - Check if the battery is in the sleep mode.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 59
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_501
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 501
+  code_range_end: null
+  code_text: Error 501
+  category: Battery side
+  category_key: battery_side
+  sub_code: '1. BMS prohibits battery work
+
+    2. Off-grid batteries are forbidden to discharge
+
+    3. Low off-grid soc'
+  lcd_display: BMS Error
+  inverter_state: Error/Off
+  fault_description: BMS reported a fault; unable to charge/discharge
+  troubleshooting_steps:
+  - Figure out the fault based on the BMS error code.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 60
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_502
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 502
+  code_range_end: null
+  code_text: Error 502
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Bat voltage Low
+  inverter_state: Error/Off
+  fault_description: Battery voltage is below the lower threshold
+  troubleshooting_steps:
+  - Check the battery voltage.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 61
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_503
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 503
+  code_range_end: null
+  code_text: Error 503
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Bat voltage High
+  inverter_state: Error/Off
+  fault_description: Battery voltage exceeds the upper threshold
+  troubleshooting_steps:
+  - Check the battery voltage. If it is within the permissible range, please restart the inverter. If not, please replace
+    the battery.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 62
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_504
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 504
+  code_range_end: null
+  code_text: Error 504
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Bat Over Temp
+  inverter_state: Error/Off
+  fault_description: Battery temperature is beyond the range for charging/discharging
+  troubleshooting_steps:
+  - Check the temperature of the battery.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 63
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_505
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 505
+  code_range_end: null
+  code_text: Error 505
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Bat Reversed
+  inverter_state: Error/Off
+  fault_description: Battery terminals reversed
+  troubleshooting_steps:
+  - Check if the battery terminals are reversely connected.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 64
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_506
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 506
+  code_range_end: null
+  code_text: Error 506
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Battery Open
+  inverter_state: Error/Off
+  fault_description: Battery disconnected
+  troubleshooting_steps:
+  - Check the wiring of the battery terminals.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 65
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_507
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 507
+  code_range_end: null
+  code_text: Error 507
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BAT Over Load
+  inverter_state: Error/Off
+  fault_description: Lithium battery overload protection
+  troubleshooting_steps:
+  - Check if the power of the load exceeds the battery rated discharge power.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 66
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_508
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 508
+  code_range_end: null
+  code_text: Error 508
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: 'BUS2 Volt
+
+    Abnomal'
+  inverter_state: Error/Off
+  fault_description: BUS2 Volt Abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 67
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_509
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 509
+  code_range_end: null
+  code_text: Error 509
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Bat Charge OCP
+  inverter_state: Error/Off
+  fault_description: BAT Charge OCP (Overcurrent Protection)
+  troubleshooting_steps:
+  - Check if the PV voltage is oversized.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 68
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_510
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 510
+  code_range_end: null
+  code_text: Error 510
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Bat Discharge OCP
+  inverter_state: Error/Off
+  fault_description: BAT Discharge OCP (Overcurrent Protection)
+  troubleshooting_steps:
+  - Check if the battery discharge current configuration is proper.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 69
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_511
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 511
+  code_range_end: null
+  code_text: Error 511
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BatSoftStartFault
+  inverter_state: Error/Off
+  fault_description: BAT soft start failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 70
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_512
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 512
+  code_range_end: null
+  code_text: Error 512
+  category: Battery side
+  category_key: battery_side
+  sub_code: '1. Serious backflow
+
+    2. Backflow causes battery overcurrent
+
+    3. Backflow causes battery peak overcurrent
+
+    4. Pour in reverse when the battery is fully charged
+
+    5. Backflow information synchronization'
+  lcd_display: 'BatUncontrolledRecti
+
+    ficatior'
+  inverter_state: Error/Off
+  fault_description: Battery uncontrolled rectification fault
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 71
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_600
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 600
+  code_range_end: null
+  code_text: Error 600
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: EPS OP Short
+  inverter_state: Error/Off
+  fault_description: Off-grid output short-circuited
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 72
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_601
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 601
+  code_range_end: null
+  code_text: Error 601
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. Bus voltage low
+
+    2. Bus voltage high
+
+    3. Parallel mode bus low voltage oscillation fault'
+  lcd_display: Bus voltage abnormal
+  inverter_state: Error/Off
+  fault_description: Off-grid Bus Volt Low
+  troubleshooting_steps:
+  - Check if the battery is working properly or the battery experiences capacity loss.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 73
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_602
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 602
+  code_range_end: null
+  code_text: Error 602
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. Abnormal output port voltage when single machine is not turned on
+
+    2. Abnormal output port voltage when the parallel machine is not turned on
+
+    3. There is a PCS that has been turned on in parallel, but there is no abnormal voltage at the output port of the PCS
+    that has not been turned on'
+  lcd_display: AC port volt Abnormal
+  inverter_state: Error/Off
+  fault_description: Abnormal Volt at the off-grid terminal
+  troubleshooting_steps:
+  - Check if  a voltage is present at the AC port.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 74
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_603
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 603
+  code_range_end: null
+  code_text: Error 603
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Soft Start Fail
+  inverter_state: Error/Off
+  fault_description: Soft start failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 75
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_604
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 604
+  code_range_end: null
+  code_text: Error 604
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. Off-grid output undervoltage
+
+    2. Off-grid output overvoltage
+
+    3.off-grid output underfrequency
+
+    4.off-grid output overfrequency'
+  lcd_display: EPS Volt Abnomal
+  inverter_state: Error/Off
+  fault_description: Off-grid output voltage abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 76
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_605
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 605
+  code_range_end: null
+  code_text: Error 605
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Balance Circuit fault
+  inverter_state: Error/Off
+  fault_description: Balanced circuit self-test failed
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 77
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_606
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 606
+  code_range_end: null
+  code_text: Error 606
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Output High DCV
+  inverter_state: Error/Off
+  fault_description: High DC component in output voltage
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 78
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_607
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 607
+  code_range_end: null
+  code_text: Error 607
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. 120% overload
+
+    2. 150% overload
+
+    3. 180% overload
+
+    4. 110% overload
+
+    5. N-line overcurrent
+
+    6. Balance Circuit overload
+
+    20. ATS overload'
+  lcd_display: EPS Abnomal
+  inverter_state: Error/Off
+  fault_description: Off-grid output overload
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 79
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_608
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 608
+  code_range_end: null
+  code_text: Error 608
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. Parallel CAN communication abnormality
+
+    2. Abnormal low-frequency synchronous communication'
+  lcd_display: OfflineSignError
+  inverter_state: Error/Off
+  fault_description: Off-grid parallel signal abnormal
+  troubleshooting_steps:
+  - Check if the communication cables are properly connected.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 80
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_609
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 609
+  code_range_end: null
+  code_text: Error 609
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Error 609
+  inverter_state: Error/Off
+  fault_description: Backup box is not detected
+  troubleshooting_steps:
+  - After shutdown, check the signal wiring for identifying the backup box.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 81
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_610
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 610
+  code_range_end: null
+  code_text: Error 610
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Error 610
+  inverter_state: Error/Off
+  fault_description: Off-grid split-phase voltage abnormal
+  troubleshooting_steps:
+  - Power off the system and check if the backup box split-phase transformer and the control relay are abnormal.
+  - Restart the system.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 82
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_700
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 700
+  code_range_end: null
+  code_text: Error 700
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Warning 608
+  inverter_state: Warning/On
+  fault_description: Abnormal communication between the backup box and the inverter
+  troubleshooting_steps:
+  - Check if the communication cable between the inverter and the backup box is properly connected.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 83
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_701
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 701
+  code_range_end: null
+  code_text: Error 701
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Warning 608
+  inverter_state: Warning/Off
+  fault_description: Backup box grid-side relay failure
+  troubleshooting_steps:
+  - Restart the backup box.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 84
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_702
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 702
+  code_range_end: null
+  code_text: Error 702
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Warning 608
+  inverter_state: Warning/Off
+  fault_description: Backup box generator relay connection failure
+  troubleshooting_steps:
+  - Restart the backup box.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 85
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_703
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 703
+  code_range_end: null
+  code_text: Error 703
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Warning 608
+  inverter_state: Warning/Off
+  fault_description: Backup box on-grid overload
+  troubleshooting_steps:
+  - Restart the backup box.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 86
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_704
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 704
+  code_range_end: null
+  code_text: Error 704
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Warning 608
+  inverter_state: Warning/On
+  fault_description: Backup box off-grid split-phase overload
+  troubleshooting_steps:
+  - Reduce the load.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 87
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_705
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 705
+  code_range_end: null
+  code_text: Error 705
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Warning 608
+  inverter_state: Warning/Off
+  fault_description: Overheat inside the backup box
+  troubleshooting_steps:
+  - Restart the backup box.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 88
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_706
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 706
+  code_range_end: null
+  code_text: Error 706
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Warning 608
+  inverter_state: Warning/Off
+  fault_description: Backup box firmware boot abnormal.
+  troubleshooting_steps:
+  - Power off and contact Growatt support please.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 89
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_800
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 800
+  code_range_end: null
+  code_text: Error 800
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: null
+  lcd_display: 无LCD
+  inverter_state: Error/Off
+  fault_description: PID communication failure
+  troubleshooting_steps:
+  - After shutdown, exchange and examine the communication wiring sequence between Master 2.0.
+  - Check the configuration of the RS485 port of Master 2.0.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 90
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_801
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 801
+  code_range_end: null
+  code_text: Error 801
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: '1. Hardware overcurrent
+
+    2. Software overcurrent
+
+    3. Hardware overcurrent + Software overcurrent'
+  lcd_display: 无LCD
+  inverter_state: Error/Off
+  fault_description: PID output overcurrent
+  troubleshooting_steps:
+  - After shutdown, check if the PID output is short circuited.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 91
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_802
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 802
+  code_range_end: null
+  code_text: Error 802
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: '1. Hardware overvoltage
+
+    2. Software overvoltage
+
+    3. Hardware overvoltage + Software overvoltage'
+  lcd_display: 无LCD
+  inverter_state: Error/Off
+  fault_description: PID output overvoltage
+  troubleshooting_steps:
+  - Turn off the AC breaker immediately and check whether the PID connection is correct.
+  - Restart the inverter and if the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 92
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_803
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 803
+  code_range_end: null
+  code_text: Error 803
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: '1. SPS input hardware overvoltage
+
+    2. SPS input software overvoltage
+
+    3. SPS input hardware overvoltage and SPS input software overvoltage'
+  lcd_display: 无LCD
+  inverter_state: Error/Off
+  fault_description: SPS Input overvoltage
+  troubleshooting_steps:
+  - Check the grid voltage.
+  - If the grid voltage is within the permissible range and the problem persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 93
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_804
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 804
+  code_range_end: null
+  code_text: Error 804
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: '1. AC Overvoltage
+
+    2. AC Undervoltage'
+  lcd_display: 无LCD
+  inverter_state: Error/Off
+  fault_description: AC overvoltage/AC undervoltage
+  troubleshooting_steps:
+  - Check the grid voltage.
+  - If the grid voltage is within the permissible range and the problem persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 94
+  reserved: false
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: error_1000
+  severity: error
+  severity_rank: 3
+  family: error
+  code: 1000
+  code_range_end: 1299
+  code_text: Error1000-1299
+  category: Battery side
+  category_key: battery_side
+  sub_code: /
+  lcd_display: /
+  inverter_state: /
+  fault_description: Reserved for battery
+  troubleshooting_steps: []
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Error Code
+    row: 95
+  reserved: true
+  auto_recover_default: false
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - block_dispatch
+  - raise_alarm
+  - require_manual_check
+- id: protect_200
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 200
+  code_range_end: null
+  code_text: Protect 200
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: 'String Fault
+
+    PV String Fault'
+  inverter_state: Protect/On
+  fault_description: PV string fault
+  troubleshooting_steps:
+  - Check if the PV panels are normal after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 2
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_201
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 201
+  code_range_end: null
+  code_text: Protect 201
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: Protect 201
+  inverter_state: Protect/On
+  fault_description: PV string/PID quick-connect terminals abnormal
+  troubleshooting_steps:
+  - Check the wiring of the string terminals after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 3
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_202
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 202
+  code_range_end: null
+  code_text: Protect 202
+  category: PV side
+  category_key: pv_side
+  sub_code: '1. PV surge protection alarm
+
+    2. Battery surge protection alarm'
+  lcd_display: DC SPD  Protect
+  inverter_state: Protect/On
+  fault_description: DC SPD  function abnormal
+  troubleshooting_steps:
+  - Check the DC SPD after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 4
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_203
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 203
+  code_range_end: null
+  code_text: Protect 203
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: PV Circuit short
+  inverter_state: Protect/On
+  fault_description: PV1 or PV2 short circuited
+  troubleshooting_steps:
+  - Check if PV1 or PV2 is short circuited.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 5
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_204
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 204
+  code_range_end: null
+  code_text: Protect 204
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: Protect204
+  inverter_state: Protect/On
+  fault_description: Dry contact function abnormal
+  troubleshooting_steps:
+  - Check the wiring of the dry contact after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 6
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_205
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 205
+  code_range_end: null
+  code_text: Protect 205
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: Protect205
+  inverter_state: Protect/On
+  fault_description: PV Boost driver abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 7
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_206
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 206
+  code_range_end: null
+  code_text: Protect 206
+  category: PV side
+  category_key: pv_side
+  sub_code: '0. AC SPD Abnormal
+
+    21. ATS AC side SPD Abnormal
+
+    22. ATS Generator side SPD Abnormal
+
+    23. ATS load side SPD Abnormal'
+  lcd_display: AC SPD  Protect
+  inverter_state: Protect/On
+  fault_description: AC SPD  function abnormal
+  troubleshooting_steps:
+  - Check the AC SPD after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 8
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_207
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 207
+  code_range_end: null
+  code_text: Protect 207
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: USB OCP
+  inverter_state: Protect/On
+  fault_description: USB flash drive overloadprotection
+  troubleshooting_steps:
+  - Unplug the USB flash drive.
+  - Plug in the USB flash drive again after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 9
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_208
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 208
+  code_range_end: null
+  code_text: Protect 208
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: DC Fuse Open
+  inverter_state: Protect/On
+  fault_description: DC fuse blown
+  troubleshooting_steps:
+  - Check the fuse after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 10
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_209
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 209
+  code_range_end: null
+  code_text: Protect 209
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: PV Voltage High
+  inverter_state: Protect/On
+  fault_description: DC input voltage exceeds the upper threshold
+  troubleshooting_steps:
+  - Turn off the DC switch immediately and check the DC voltage.
+  - If the DC voltage is within the specified range and the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 11
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_210
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 210
+  code_range_end: null
+  code_text: Protect 210
+  category: PV side
+  category_key: pv_side
+  sub_code: '1: PV1 reversely connected
+
+    2: PV1 short-circuited
+
+    3: PV2 reversely connected
+
+    4: PV2 short-circuited
+
+    5: PV3 reversely connected
+
+    6: PV3 short-circuited
+
+    7: PV4 reversely connected
+
+    8: PV4short-circuited
+
+    9: PV5 reversely connected
+
+    10: PV5 short-circuited
+
+    11: PV6 reversely connected
+
+    12: PV6 short-circuited
+
+    13: PV7 reversely connected
+
+    14: PV7 short-circuited
+
+    15: PV8 reversely connected
+
+    16: PV8 short-circuited
+
+    17: PV9 reversely connected
+
+    18: PV9 short-circuited
+
+    19: PV10 reversely connected
+
+    20: PV10 short-circuited
+
+    21: PV11 reversely connected
+
+    22: PV11 short-circuited
+
+    23: PV12 reversely connected
+
+    24: PV12 short-circuited
+
+    25: PV13 reversely connected
+
+    26: PV13 short-circuited
+
+    27: PV14 reversely connected
+
+    28: PV14 short-circuited
+
+    29: PV15 reversely connected
+
+    30: PV15 short-circuited
+
+    31: PV16 reversely connected
+
+    32: PV16 short-circuited
+
+    33: PV17 reversely connected
+
+    34: PV17 short-circuited
+
+    35: PV18 reversely connected
+
+    36: PV18 short-circuited
+
+    37: PV19 reversely connected
+
+    38: PV19 short-circuited
+
+    39: PV20 reversely connected
+
+    40: PV20 short-circuited
+
+    41：PV1 positive disconnected
+
+    42：PV2 positive disconnected
+
+    43：PV3 positive disconnected
+
+    44：PV4 positive disconnected
+
+    45：PV1 negative disconnected
+
+    46：PV2 negative disconnected
+
+    47：PV3 negative disconnected
+
+    48：PV4 negative disconnected'
+  lcd_display: PV Abnormal
+  inverter_state: Protect/On
+  fault_description: PV wiring abnormal
+  troubleshooting_steps:
+  - Check the polarity of the PV terminals.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 12
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_211
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 211
+  code_range_end: null
+  code_text: Protect 211
+  category: PV side
+  category_key: pv_side
+  sub_code: 'Bit0:PV1 reverse connection
+
+    Bit1:PV2 reverse connection
+
+    Bit2:PV3 reverse connection
+
+    Bit3:PV4 reverse connection'
+  lcd_display: PV Reversed
+  inverter_state: Protect/On
+  fault_description: PV Reversed
+  troubleshooting_steps:
+  - Check the polarity of the PV terminals.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 13
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_212
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 212
+  code_range_end: null
+  code_text: Protect 212
+  category: PV side
+  category_key: pv_side
+  sub_code: 'Bit0:PV1 short circuit
+
+    Bit1:PV2 short circuit
+
+    Bit2:PV3 short circuit
+
+    Bit3:PV4 short circuit'
+  lcd_display: PV Short Circuit
+  inverter_state: Protect/On
+  fault_description: PV Short Circuit
+  troubleshooting_steps:
+  - Check the polarity of the PV terminals.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 14
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_213
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 213
+  code_range_end: null
+  code_text: Protect 213
+  category: PV side
+  category_key: pv_side
+  sub_code: 'Bit0:PV1 Voltage low
+
+    Bit1:PV2 Voltage low
+
+    Bit2:PV3 Voltage low
+
+    Bit3:PV4 Voltage low'
+  lcd_display: PV Voltage Low
+  inverter_state: Protect/On
+  fault_description: PV Voltage Low
+  troubleshooting_steps:
+  - Check the polarity of the PV terminals
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 15
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_217
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 217
+  code_range_end: null
+  code_text: Protect 217
+  category: PV side
+  category_key: pv_side
+  sub_code: '0：BDC1 Abnormal
+
+    1：BDC1 And INV Communication Abnormal
+
+    2：BDC1 Internal Communication Abnormal
+
+    3：BDC1 Detect ISO Fail
+
+    10：BDC2 Abnormal
+
+    11：BDC2 And INV Communication Abnormal
+
+    12：BDC2 Internal Communication Abnormal
+
+    13：BDC2 Detect ISO Fail'
+  lcd_display: BDC Abnormal
+  inverter_state: Protect/On
+  fault_description: BDC abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 16
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_218
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 218
+  code_range_end: null
+  code_text: Protect 218
+  category: PV side
+  category_key: pv_side
+  sub_code: 'Bit0:BDC1 BUS disconnected
+
+    Bit1:BDC2 BUS disconnected
+
+    Bit2:BDC3 BUS disconnected
+
+    Bit3:BDC4 BUS disconnected
+
+    E.g. In parallel operation, if neither BDC1 nor BDC2 is connected, the sub code would be 3'
+  lcd_display: BDC Bus DisConnect
+  inverter_state: Protect/On
+  fault_description: BDC Bus disconnected
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 17
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_219
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 219
+  code_range_end: null
+  code_text: Protect 219
+  category: PV side
+  category_key: pv_side
+  sub_code: '1. PID overvoltage fault
+
+    2. PID insulation fault
+
+    3. PID bus voltage fault'
+  lcd_display: PID Protect
+  inverter_state: Protect/On
+  fault_description: PID function abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 18
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_220
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 220
+  code_range_end: null
+  code_text: Protect 220
+  category: PV side
+  category_key: pv_side
+  sub_code: 'XXXXX: Each X denotes the connection status of the 20 PV strings respectively. 0000 indicates normal operation.
+    1 represents the string is unconnected. E.g., 0010 means that the second string is unconnected.'
+  lcd_display: Protect 220
+  inverter_state: Protect/On
+  fault_description: PV string disconnected
+  troubleshooting_steps:
+  - Check if the PV string is properly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 19
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_221
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 221
+  code_range_end: null
+  code_text: Protect 221
+  category: PV side
+  category_key: pv_side
+  sub_code: 'XXXXX: Each X denotes the balancing status of the 20 PV strings respectively. 0000 indicates normal operation.
+    1 represents that the string is unbalanced. E.g., 0010 means that the second string is unbalanced.'
+  lcd_display: Protect 221
+  inverter_state: Protect/On
+  fault_description: PV string current unbalanced
+  troubleshooting_steps:
+  - Check if the PV panels of the corresponding string are normal.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 20
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_222
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 222
+  code_range_end: null
+  code_text: Protect 222
+  category: PV side
+  category_key: pv_side
+  sub_code: '1、BUS Short Circuit
+
+    2、BUS Over Voltage
+
+    3、NTC Temp High
+
+    4、PVA Current abnormal  or Fly Cap Over Voltage
+
+    5、PVB Current abnormal  or Fly Cap Over Voltage
+
+    6、PVA Over Voltage
+
+    7、PVB Over Voltage
+
+    8、BUS Under Voltage on Normal State
+
+    9、BUS Under Voltage on Waiting State
+
+    10、AC Current Abnormal
+
+    11、PVA Reverse or Short Circuit
+
+    12、PVB Reverse or Short Circuit
+
+    13、Positive and negative 1/4 BUS Abnormal
+
+    14、Positive 1/4 BUS Abnormal
+
+    15、Negative 1/4 BUS Abnormal
+
+    16、PVA abnormal reverse current
+
+    17、PVB abnormal reverse current
+
+    18、BUS voltage sampling abnormal
+
+    19、AC current abnormal
+
+    20、Inverter bridge arm shorted'
+  lcd_display: Protect 222
+  inverter_state: Protect/On
+  fault_description: DC Switch Abnormal
+  troubleshooting_steps:
+  - Please check whether the positive and negative poles of the string are reversed. If there is a reverse connection, please
+    adjust the polarity of the string. If it still exists, contact the manufacturer;
+  - If the DC switch is disconnected during operation, do not close it and contact the manufacturer;
+  - If there are obvious abnormalities of the equipment, disconnect the AC/DC switch, wait for the photovoltaic string current
+    to drop below 0.01A, and remove the DC terminal.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 21
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_223
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 223
+  code_range_end: null
+  code_text: Protect 223
+  category: PV side
+  category_key: pv_side
+  sub_code: null
+  lcd_display: Protect 223
+  inverter_state: Protect/On
+  fault_description: PV panels Isolation too low
+  troubleshooting_steps:
+  - Check if the PV strings are properly grounded.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 22
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_300
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 300
+  code_range_end: null
+  code_text: Protect 300
+  category: AC side
+  category_key: ac_side
+  sub_code: '0. Gid disconnect
+
+    20. ATS Grid disconnect'
+  lcd_display: No AC Connection
+  inverter_state: Protect/On
+  fault_description: No utility grid connected or utility grid power failure
+  troubleshooting_steps:
+  - Check if the grid is down.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 23
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_301
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 301
+  code_range_end: null
+  code_text: Protect 301
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: AC V Outrange
+  inverter_state: Protect/On
+  fault_description: Grid voltage is beyond the permissible range
+  troubleshooting_steps:
+  - Check if the grid voltage is within the specified range.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 24
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_302
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 302
+  code_range_end: null
+  code_text: Protect 302
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: AC F Outrange
+  inverter_state: Protect/On
+  fault_description: Grid frequency is beyond the permissible range
+  troubleshooting_steps:
+  - Check if the grid frequency is within the specified range.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 25
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_303
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 303
+  code_range_end: null
+  code_text: Protect 303
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: Over Load
+  inverter_state: Protect/On
+  fault_description: Off-grid mode, overload
+  troubleshooting_steps:
+  - Please reduce the load connected to the off-grid output terminal.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 26
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_304
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 304
+  code_range_end: null
+  code_text: Protect 304
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: CT Open
+  inverter_state: Protect/On
+  fault_description: CT disconnected
+  troubleshooting_steps:
+  - Check if the CT is properly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 27
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_305
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 305
+  code_range_end: null
+  code_text: Protect 305
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: CT Reversed
+  inverter_state: Protect/On
+  fault_description: CT is reversely connected
+  troubleshooting_steps:
+  - Check if the CT is reversely connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 28
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_306
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 306
+  code_range_end: null
+  code_text: Protect 306
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: CT COM Fault
+  inverter_state: Protect/On
+  fault_description: The inverter failed to communicate with the CT
+  troubleshooting_steps:
+  - Check if the communication cable is properly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 29
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_307
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 307
+  code_range_end: null
+  code_text: Protect 307
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: PairingTimeOut
+  inverter_state: Protect/On
+  fault_description: CT pairing timed out
+  troubleshooting_steps:
+  - Check if the communication cable is properly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 30
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_308
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 308
+  code_range_end: null
+  code_text: Protect 308
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: Meter Open
+  inverter_state: Protect/On
+  fault_description: Meter disconnected
+  troubleshooting_steps:
+  - Check if the meter is properly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 31
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_309
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 309
+  code_range_end: null
+  code_text: Protect 309
+  category: AC side
+  category_key: ac_side
+  sub_code: '0: Meter reversely connected
+
+    1: CT1 reversely connected, CT2 correctly connected
+
+    2: CT1 correctly connected, CT2 reversely connected
+
+    3: CT1 reversely connected, CT2 reversely connected
+
+    4: CT1 disconnected, CT2 correctly connected
+
+    6: CT1 disconnected, CT2 reversely connected
+
+    8: CT1 correctly connected, CT2 disconnected
+
+    9: CT1 reversely connected, CT2 disconnected
+
+    12: CT1 disconnected, CT2 disconnected'
+  lcd_display: Meter Reversed
+  inverter_state: Protect/On
+  fault_description: Meter wiring abnormal
+  troubleshooting_steps:
+  - Check if the L line and the N line of the meter are reversely connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 32
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_310
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 310
+  code_range_end: null
+  code_text: Protect 310
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: 'NE abnormal
+
+    N-PE Volt Abnormal'
+  inverter_state: Protect/On
+  fault_description: The voltage difference between the N line and the PE cable is abnormal
+  troubleshooting_steps:
+  - Check if the PE cable is reliably connected after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 33
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_311
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 311
+  code_range_end: null
+  code_text: Protect 311
+  category: AC side
+  category_key: ac_side
+  sub_code: '0. Grid phase sequence error
+
+    20. The phase sequence of ATS load side and grid side is inconsistent.'
+  lcd_display: Sequence Err
+  inverter_state: Protect/On
+  fault_description: Phase sequence error in three-phase system
+  troubleshooting_steps:
+  - No operation is required. The PCS will automatically adjust the phase sequence.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 34
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_312
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 312
+  code_range_end: null
+  code_text: Protect 312
+  category: AC side
+  category_key: ac_side
+  sub_code: null
+  lcd_display: BusBar Over Power
+  inverter_state: Protect/On
+  fault_description: BusBar Over Power
+  troubleshooting_steps:
+  - Check the load and make sure the load is within the specification.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 35
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_313
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 313
+  code_range_end: null
+  code_text: Protect 313
+  category: AC side
+  category_key: ac_side
+  sub_code: '0：Low generator oil pressure
+
+    1：Generator disconnected
+
+    2：Generator voltage out of range
+
+    3：Generator frequency out of range
+
+    4：Generator power out of range'
+  lcd_display: Abnormal generator condition
+  inverter_state: Protect/On
+  fault_description: Abnormal generator condition
+  troubleshooting_steps:
+  - Check the generator status.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 36
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_400
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 400
+  code_range_end: null
+  code_text: Protect 400
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: 'BIT0: FAN1 abnormal
+
+    BIT1: FAN2 abnormal
+
+    BIT2: FAN3 abnormal
+
+    BIT3: FAN4 abnormal'
+  lcd_display: Fan Protect XXXX
+  inverter_state: Protect/On
+  fault_description: Fan failure
+  troubleshooting_steps:
+  - Check if the fan is properly connected after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 37
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_401
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 401
+  code_range_end: null
+  code_text: Protect 401
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. System retrofit (Dual-meter mode) Meter 1 communication abnormal alarm; or Meter communication abnormal alarm
+    for the system with a single meter
+
+    1. System retrofit (Dual-meter mode) Meter 2 communication abnormal alarm
+
+    2. EMS communication with inverter abnormal alarm when VPP function enable.
+
+    3. External meter communication abnormality alarm
+
+    4. Three-phase meter set with single-phase address alarm
+
+    5. Meter CT communication line disconnected alarm
+
+    6. Meter PT communication line disconnected alarm'
+  lcd_display: Protect401
+  inverter_state: Protect/On
+  fault_description: Meter abnormal
+  troubleshooting_steps:
+  - Check if the meter is turned on.
+  - When VPP function is enabled, check if the connection between the inverter and the data acquisition device is normal.
+  - If the meter is correctly connected to the inverter.
+  - Check if the three-phase meter address setting is correct.
+  - Check if the internal CT/PT communication cable connection of the meter is normal.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 38
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_402
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 402
+  code_range_end: null
+  code_text: Protect 402
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Protect402
+  inverter_state: Protect/On
+  fault_description: Communication between the optimizer and the inverter is abnormal
+  troubleshooting_steps:
+  - Check if the optimizer is turned on.
+  - If the optimizer is correctly connected to the inverter.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 39
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_403
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 403
+  code_range_end: null
+  code_text: Protect 403
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Protect403
+  inverter_state: Protect/On
+  fault_description: PV string communication failure
+  troubleshooting_steps:
+  - Check if the wiring of the PV string after shutdown.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 40
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_404
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 404
+  code_range_end: null
+  code_text: Protect 404
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Protect404
+  inverter_state: Protect/On
+  fault_description: EEPROM abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 41
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_405
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 405
+  code_range_end: null
+  code_text: Protect 405
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Protect405
+  inverter_state: Protect/On
+  fault_description: DSP and COM firmware version mismatch
+  troubleshooting_steps:
+  - Check  the firmware version.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 42
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_406
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 406
+  code_range_end: null
+  code_text: Protect 406
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Protect406
+  inverter_state: Protect/On
+  fault_description: Boost circuit malfunction
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 43
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_407
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 407
+  code_range_end: null
+  code_text: Protect 407
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. Over temperature Protect
+
+    20. ATS over temperature Protect'
+  lcd_display: Protect407
+  inverter_state: Protect/On
+  fault_description: Over-temperature
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 44
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_408
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 408
+  code_range_end: null
+  code_text: Protect 408
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. NTC broken
+
+    1. INV or BOOST NTC broken
+
+    20. ATS NTC broken'
+  lcd_display: Protect408
+  inverter_state: Protect/On
+  fault_description: NTC temperature sensor is broken
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 45
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_409
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 409
+  code_range_end: null
+  code_text: Protect 409
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Protect409
+  inverter_state: Protect/On
+  fault_description: Reactive power scheduling communication failure
+  troubleshooting_steps:
+  - Check if ShineMaster is turned on.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 46
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_410
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 410
+  code_range_end: null
+  code_text: Protect 410
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: 1. M3 chip oscillator abnormal
+  lcd_display: Protect410
+  inverter_state: Protect/On
+  fault_description: Abnormal operation of the chip
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 47
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_411
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 411
+  code_range_end: null
+  code_text: Protect 411
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. Low-frequency SYNC alarm
+
+    2. High-frequency SYNC alarm
+
+    3. Low frequency synchronous reverse connection
+
+    4. Internal CAN communication abnormality of inverter
+
+    5. Parallel CAN communication abnormality
+
+    6. Parallel communication with data collector is abnormal.
+
+    7. Communication anomaly between host and slave monitoring systems
+
+    22.ATS CAN alarm'
+  lcd_display: Protect411
+  inverter_state: Protect/On
+  fault_description: Sync signal abnormal
+  troubleshooting_steps:
+  - Check if the sync cable is abnormal.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 48
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_412
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 412
+  code_range_end: null
+  code_text: Protect 412
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. Phase lock failed
+
+    2. Grid voltage exceeds the grid-connection startup voltage upper threshold
+
+    3. Grid frequency exceeds the grid-connection startup frequency upper threshold
+
+    4. PV voltage excessively low or excessively high
+
+    5. Bus soft start failed or bus voltage low
+
+    6. BAT voltage is lower than the set EOD point
+
+    7. BUS voltage is not calibrated
+
+    8. The BMS status is in initialization, shutdown, failure or upgrade status.
+
+    9. Abnormal off-grid parameter settings
+
+    10. M3-DSP serial port protocol version does not match
+
+    11. Phase sequence check not completed
+
+    12. Frequency range check not completed
+
+    13. DSP receives incomplete M3 data frame
+
+    14. Anormal inverer voltage
+
+    15. Only auxiliary switch closed, main switch is not closed.（Reserved)
+
+    16. Load side oil engine starts, inverter stops outputting
+
+    17..BUS voltage excessively high
+
+    18. PvToBat does not control
+
+    21. ATS blocking alarm'
+  lcd_display: Protect412
+  inverter_state: Protect/On
+  fault_description: Startup requirements for grid connection are not met
+  troubleshooting_steps:
+  - Check if the grid voltage is within the specified range and check if the grid-connection startup voltage configuration
+    is correct.
+  - Check if the PV voltage is within the specified range.
+  - Check battery voltage and BMS low-voltage setpoint;
+  - Check if the battery BMS status is ready;
+  - Check off-grid parameter settings;
+  - Check if M3 and DSP versions are correct;
+  - Perform corresponding checks on each sub-code information; if it is sub-code 15, operate the switch according to the instruction
+    manual.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 49
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_413
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 413
+  code_range_end: null
+  code_text: Protect 413
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: 20. Abnormal load current sampling
+  lcd_display: Protect413
+  inverter_state: Protect/On
+  fault_description: Load current sampling abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 50
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_414
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 414
+  code_range_end: null
+  code_text: Protect 414
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: 'Parallel ATS current imbalance
+
+    1.Imbalance of parallel R-phase current
+
+    2.Imbalance of parallel S-phase current
+
+    3.Imbalance of parallel T-phase current'
+  lcd_display: Protect414
+  inverter_state: Protect/On
+  fault_description: Parallel ATS current imbalance
+  troubleshooting_steps:
+  - Check the parallel equipment to see if some machines have grid power and some machines are not;.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 51
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_414
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 414
+  code_range_end: null
+  code_text: Protect 414
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '0. Corresponding monitoring communication address for single machine in parallel operation
+
+    1. Parallel Multi-Master Alarm
+
+    2. Monitoring address duplication'
+  lcd_display: Protect415
+  inverter_state: Protect/On
+  fault_description: Duplicate monitoring communication address settings
+  troubleshooting_steps:
+  - Check if the monitoring communication address set by the inverter in the parallel system is duplicated.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 52
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_416
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 416
+  code_range_end: null
+  code_text: Protect 416
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: null
+  lcd_display: Protect416
+  inverter_state: Protect/On
+  fault_description: The number of parallel machines set up is not consistent with the actual number of machines online
+  troubleshooting_steps:
+  - Check if the number of parallel inverters set in the parallel system matches the actual number of inverters.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 53
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_417
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 417
+  code_range_end: null
+  code_text: Protect 417
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1. Inconsistent frequency settings of parallel devices.
+
+    2. Inconsistent wire system settings of parallel devices.
+
+    3. Inconsistent phase sequence settings of parallel devices.
+
+    4. Inconsistent parallel enable settings of parallel devices.
+
+    5. Inconsistent soft start enable settings of parallel devices.
+
+    6. Inconsistent voltage level settings of parallel devices.
+
+    7. Inconsistent low voltage crossing enable settings for parallel devices
+
+    8. Inconsistent off grid enable settings for parallel devices
+
+    9. Inconsistent setting of parallel device and off grid switching mode
+
+    10. The number of parallel devices set is inconsistent
+
+    11. Inconsistent enable settings for parallel-connected generator equipment
+
+    12. Inconsistent AC Coupling Enable Settings in Parallel Equipment
+
+    13. Inconsistent settings for generator connection types in parallel operation'
+  lcd_display: Protect417
+  inverter_state: Protect/On
+  fault_description: Incompatible parameter settings
+  troubleshooting_steps:
+  - Check if the parameter settings of the parallel equipment are consistent.
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 54
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_418
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 418
+  code_range_end: null
+  code_text: Protect 418
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: 'BIT0: FAN 1 reverse rotation
+
+    BIT1: FAN 2 reverse rotation
+
+    BIT2: FAN 3 reverse rotation
+
+    BIT3: FAN 4 reverse rotation'
+  lcd_display: Protect418
+  inverter_state: Protect/On
+  fault_description: Fan abnormal reversal
+  troubleshooting_steps:
+  - After shutdown,Check the fan connection.
+  - replace the fan.
+  - If the error message still exists, contact manufacturer.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 55
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_419
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 419
+  code_range_end: null
+  code_text: Protect 419
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1.Repair stuck high-voltage relay for the switch/auxiliary power supply
+
+    2.BCU 24V abnormality'
+  lcd_display: Protect 419
+  inverter_state: Protect/On
+  fault_description: External power supply abnormality
+  troubleshooting_steps:
+  - Check if the maintenance switch is disconnected.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 56
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_420
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 420
+  code_range_end: null
+  code_text: Protect 420
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1.AC circuit breaker tripped
+
+    2.DC circuit breaker tripped'
+  lcd_display: Protect 420
+  inverter_state: Protect/On
+  fault_description: Circuit breaker abnormality
+  troubleshooting_steps:
+  - Manually close the AC and DC circuit breakers.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 57
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_421
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 421
+  code_range_end: null
+  code_text: Protect 421
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1、AC input power exceeds demand limit
+
+    2、AC output power exceeds demand limit'
+  lcd_display: Protect 421
+  inverter_state: Protect/On
+  fault_description: AC power overdemand limit
+  troubleshooting_steps:
+  - Detect load power
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 58
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_422
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 422
+  code_range_end: null
+  code_text: Protect 422
+  category: Inside the system
+  category_key: inside_the_system
+  sub_code: '1.AC-wakeup soft start relay open fault;
+
+    2.Abnormal wave generation in AC wake-up period
+
+    3.AC relay open fault in AC wake-up period
+
+    4.AC-wakeup soft start relay sticking fault'
+  lcd_display: Protect 422
+  inverter_state: Protect/On
+  fault_description: Bat AC wake up fault
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, please contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 59
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_500
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 500
+  code_range_end: null
+  code_text: Protect 500
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BMS COM Protect
+  inverter_state: Protect/On
+  fault_description: The inverter failed to communicate with the battery
+  troubleshooting_steps:
+  - Check if the battery is turned on.
+  - Check if the battery is correctly and securely connected to the inverter.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 60
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_501
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 501
+  code_range_end: null
+  code_text: Protect 501
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Battery Open
+  inverter_state: Protect/On
+  fault_description: Battery disconnected
+  troubleshooting_steps:
+  - Check if the battery is properly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 61
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_502
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 502
+  code_range_end: null
+  code_text: Protect 502
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Protect：Bat   V High
+  inverter_state: Protect/On
+  fault_description: Battery voltage too high
+  troubleshooting_steps:
+  - Check if the battery voltage is within the permissible range.
+  - Check if the battery is correctly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 62
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_503
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 503
+  code_range_end: null
+  code_text: Protect 503
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Protect：Bat V Low
+  inverter_state: Protect/On
+  fault_description: Battery voltage too low
+  troubleshooting_steps:
+  - Check if the battery voltage is within the permissible range.
+  - Check if the battery is correctly connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 63
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_504
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 504
+  code_range_end: null
+  code_text: Protect 504
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Battery reversed
+  inverter_state: Protect/On
+  fault_description: Battery terminals are reversely connected
+  troubleshooting_steps:
+  - Check if the positive and negative terminals of the battery are reversely connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 64
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_505
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 505
+  code_range_end: null
+  code_text: Protect 505
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BAT NTC Open
+  inverter_state: Protect/On
+  fault_description: Temperature sensor  of the lead-acid battery is disconnected
+  troubleshooting_steps:
+  - Check if the temperature sensor of the lead-acid battery is installed or not.
+  - Check if the temperature sensor is well-connected.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 65
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_506
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 506
+  code_range_end: null
+  code_text: Protect 506
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Bat temp outrange
+  inverter_state: Protect/On
+  fault_description: Battery temperature is out of range
+  troubleshooting_steps:
+  - Check if the ambient temperature of the battery is within the specified range.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 66
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_507
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 507
+  code_range_end: null
+  code_text: Protect 507
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BMS Error
+  inverter_state: Protect/On
+  fault_description: BMS reported a fault; unable to charge/discharge
+  troubleshooting_steps:
+  - Figure out the cause according to the BMS error code.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 67
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_508
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 508
+  code_range_end: null
+  code_text: Protect 508
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: Li-BAT  Overload
+  inverter_state: Protect/On
+  fault_description: Lithium battery overload protection
+  troubleshooting_steps:
+  - Check if the power of the load exceeds the BAT rated discharge power.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 68
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_509
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 509
+  code_range_end: null
+  code_text: Protect 509
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BMS Protect :XXX
+  inverter_state: Protect/On
+  fault_description: BMS communication abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 69
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_510
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 510
+  code_range_end: null
+  code_text: Protect 510
+  category: Battery side
+  category_key: battery_side
+  sub_code: null
+  lcd_display: BAT SPD Protect
+  inverter_state: Protect/On
+  fault_description: BAT SPD  function abnormal
+  troubleshooting_steps:
+  - Check the BAT SPD after powering off the device.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 70
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_600
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 600
+  code_range_end: null
+  code_text: Protect 600
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Output High DCI
+  inverter_state: Protect/On
+  fault_description: DC component excessively high in output current
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 71
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_601
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 601
+  code_range_end: null
+  code_text: Protect 601
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Output High DCV
+  inverter_state: Protect/On
+  fault_description: DC component excessively high in output voltage
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 72
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_602
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 602
+  code_range_end: null
+  code_text: Protect 602
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. R-Phase Level 1 off-grid voltage low
+
+    2. R-Phase Level 2 off-grid voltage low
+
+    3. R-Phase Level 3 off-grid voltage low
+
+    4. S-Phase Level 1 off-grid voltage low
+
+    5. S-Phase Level 2 off-grid voltage low
+
+    6. S-Phase Level 3 off-grid voltage low
+
+    7. T-Phase Level 1 off-grid voltage low
+
+    8. T-Phase Level 2 off-grid voltage low
+
+    9. T-Phase Level 3 off-grid voltage low'
+  lcd_display: EPS Volt Low
+  inverter_state: Protect/On
+  fault_description: Off-grid output voltage too low
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 73
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_603
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 603
+  code_range_end: null
+  code_text: Protect 603
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. R-Phase Level 1 off-grid voltage high
+
+    2. R-Phase Level 2 off-grid voltage high
+
+    3. S-Phase Level 1 off-grid voltage high
+
+    4. S-Phase Level 2 off-grid voltage high
+
+    5. T-Phase Level 1 off-grid voltage high
+
+    6. T-Phase Level 2 off-grid voltage high'
+  lcd_display: Protect 603
+  inverter_state: Protect/On
+  fault_description: Off-grid output voltage too high
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 74
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_604
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 604
+  code_range_end: null
+  code_text: Protect 604
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. R-Phase Level 1 overload
+
+    2. R-Phase Level 2 overload
+
+    3. R-Phase Level 3 overload
+
+    4. S-Phase Level 1 overload
+
+    5. S-Phase Level 2 overload
+
+    6. S-Phase Level 3 overload
+
+    7. T-Phase Level 1 overload
+
+    8. T-Phase Level 2 overload
+
+    9. T-Phase Level 3 overload
+
+    10. N-Line Level 1 overload
+
+    11. N-Line Level 2 overload
+
+    12. N-Line Level 3 overload'
+  lcd_display: Protect 604
+  inverter_state: Protect/On
+  fault_description: Off-grid output overcurrent
+  troubleshooting_steps:
+  - Check if the load power exceeds the specification limit.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 75
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_605
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 605
+  code_range_end: null
+  code_text: Protect 605
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. Level 1 Bus Voltage Low
+
+    2. Level 2 Bus Voltage Low'
+  lcd_display: Protect 605
+  inverter_state: Protect/On
+  fault_description: Off-grid bus voltage too low
+  troubleshooting_steps:
+  - Check if the load power exceeds the specification limit.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 76
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_606
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 606
+  code_range_end: null
+  code_text: Protect 606
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. R-Phase Level 1 overload
+
+    2. R-Phase Level 2 overload
+
+    3. R-Phase Level 3 overload
+
+    4. S-Phase Level 1 overload
+
+    5. S-Phase Level 2 overload
+
+    6. S-Phase Level 3 overload
+
+    7. T-Phase Level 1 overload
+
+    8. T-Phase Level 2 overload
+
+    9. T-Phase Level 3 overload'
+  lcd_display: Protect 606
+  inverter_state: Protect/On
+  fault_description: Off-grid output overloaded
+  troubleshooting_steps:
+  - Check if the load power exceeds the specification limit.
+  - Restart the inverter. If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 77
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_607
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 607
+  code_range_end: null
+  code_text: Protect 607
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: null
+  lcd_display: Protect 607
+  inverter_state: Protect/On
+  fault_description: Communication with the backup box is abnormal
+  troubleshooting_steps:
+  - Check the communication wiring of the backup box after powering off the device.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 78
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_608
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 608
+  code_range_end: null
+  code_text: Protect 608
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. Abnormal communication with the inverter
+
+    2. Backup box_grid-side relay abnormal
+
+    3. Backup box_generator-side relay abnormal
+
+    4. Backup box_ongrid overload
+
+    5. Backup box_split phase overload
+
+    6. Backup box_internal temprature high
+
+    7. Backup box_fan error
+
+    8. Generator starts abnormally
+
+    9. Backup box firmware boot abnormal
+
+    20. ATS load side N-phase relay fault'
+  lcd_display: Protect 608
+  inverter_state: Protect/On
+  fault_description: Backup box is abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 79
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_609
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 609
+  code_range_end: null
+  code_text: Protect 609
+  category: Off-grid side
+  category_key: off_grid_side
+  sub_code: '1. Balanced circuit overload
+
+    2. Balanced circuit abnormal alarm'
+  lcd_display: Protect 609
+  inverter_state: Protect/On
+  fault_description: Balanced circuit abnormal
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 80
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_700
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 700
+  code_range_end: null
+  code_text: Protect 700
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Protect 700
+  inverter_state: Protect/On
+  fault_description: Fan of the backup box is faulty
+  troubleshooting_steps:
+  - Check the wiring of the fan after powering off the device.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 81
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_701
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 701
+  code_range_end: null
+  code_text: Protect 701
+  category: Backup box
+  category_key: backup_box
+  sub_code: null
+  lcd_display: Protect 701
+  inverter_state: Protect/On
+  fault_description: Generator failed to start
+  troubleshooting_steps:
+  - Check the generator and its wiring after powering off the device.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 82
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_800
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 800
+  code_range_end: null
+  code_text: Protect 800
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: '1. Ambient temperature excessively high
+
+    2. SPS over-temperature'
+  lcd_display: 无LCD
+  inverter_state: Protect/On
+  fault_description: The ambient temperature/SPS temperature is too high
+  troubleshooting_steps:
+  - Check whether the fan is faulty
+  - Check whether the PID box is properly installed.
+  - Check whether the air inlet and outlet of the PID box are blocked.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 83
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_801
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 801
+  code_range_end: null
+  code_text: Protect 801
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: null
+  lcd_display: 无LCD
+  inverter_state: Protect/On
+  fault_description: PID Boost input overvoltage
+  troubleshooting_steps:
+  - Restart the inverter.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 84
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_802
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 802
+  code_range_end: null
+  code_text: Protect 802
+  category: ANTI PID-X
+  category_key: anti_pid_x
+  sub_code: null
+  lcd_display: 无LCD
+  inverter_state: Protect/On
+  fault_description: Fan abnormal
+  troubleshooting_steps:
+  - Power off the device and check if the fan is blocked.
+  - If the error message persists, contact Growatt support.
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 85
+  reserved: false
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: protect_1000
+  severity: protect
+  severity_rank: 2
+  family: protect
+  code: 1000
+  code_range_end: 1299
+  code_text: Protect 1000-1299
+  category: Battery side
+  category_key: battery_side
+  sub_code: /
+  lcd_display: /
+  inverter_state: /
+  fault_description: Reserved for battery
+  troubleshooting_steps: []
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Protect Code
+    row: 86
+  reserved: true
+  auto_recover_default: true
+  affects_dispatch_default: true
+  recommended_vpp_action:
+  - pause_dispatch
+  - notify_operator
+  - allow_auto_recover_check
+- id: warning_1000
+  severity: warning
+  severity_rank: 1
+  family: warning
+  code: 1000
+  code_range_end: 1299
+  code_text: Warning 1000-1299
+  category: Battery side
+  category_key: battery_side
+  sub_code: /
+  lcd_display: /
+  inverter_state: /
+  fault_description: Reserved for battery
+  troubleshooting_steps: []
+  external_visibility: public_external
+  source:
+    workbook: Growatt Error&Protect&Warning Code V000.029_External_English.xlsx
+    sheet: Warning Code
+    row: 28
+  reserved: true
+  auto_recover_default: false
+  affects_dispatch_default: false
+  recommended_vpp_action:
+  - log_only
+  - monitor_trend

@@ -129,6 +129,10 @@ sequenceDiagram
 
 如需包含更简单示例的快速开始指南，请参阅：[/growatt-openapi/quick-guide](/growatt-openapi/quick-guide)
 
+## 附录
+
+- [Growatt Codes](/growatt-openapi/growatt-codes) - 面向外部 VPP 客户的 Growatt fault / protect / warning code 参考页，内容由 enterprise SSOT 自动生成
+
 ## 原始汇总文档
 
 完整统一版文档可参考：[../Growatt Unified API.md](../Growatt Unified API.md)

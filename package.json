@@ -21,11 +21,12 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "docs:lint:growatt": "node scripts/lint-growatt-docs.mjs",
-    "docs:test:growatt": "jest --runInBand __tests__/growatt-link-rewriter.test.ts __tests__/growatt-docs.test.ts",
+    "docs:test:growatt": "jest --runInBand __tests__/growatt-link-rewriter.test.ts __tests__/growatt-docs.test.ts __tests__/growatt-codes-basic-auth.test.ts",
     "docs:check": "npm run docs:lint:growatt && npm run docs:test:growatt"
   },
   "dependencies": {
     "mermaid": "^11.12.3",
+    "js-yaml": "^4.1.0",
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",

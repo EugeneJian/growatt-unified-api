@@ -25,10 +25,13 @@ jest.mock("@/lib/growatt-docs/markdown", () => {
 });
 
 import {
+  GROWATT_CODES_SLUG,
   getGrowattDocBySlug,
   getGrowattDocMetas,
+  getGrowattCodesPage,
   getGrowattOverview,
   getGrowattQuickGuide,
+  getGrowattSpecialPages,
 } from "@/lib/growatt-docs";
 
 describe("growatt docs source-of-truth loader", () => {
@@ -47,6 +50,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(overview.title).toContain("Growatt");
     expect(overview.html).toContain("<article>");
     expect(overview.html).toContain("/growatt-openapi/02_api_access_token");
+    expect(overview.html).toContain("/growatt-openapi/growatt-codes");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/02_api_access_token");
   });
 
@@ -89,5 +93,55 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.zh-CN.md");
     expect(quickGuide.title).toContain("快速指南");
     expect(quickGuide.displayMarkdown).toContain("集成检查清单");
+  });
+
+  it("loads fault-code appendix content from the enterprise SSOT", async () => {
+    const codes = await getGrowattCodesPage("en");
+
+    expect(codes.slug).toBe(GROWATT_CODES_SLUG);
+    expect(codes.title).toBe("Growatt Codes");
+    expect(codes.sourceFileName).toBe("growatt_fault_code_enterprise_ssot.yaml");
+    expect(codes.summary.total_records).toBe(180);
+    expect(codes.summary.by_severity.error).toBe(94);
+    expect(codes.summary.by_severity.protect).toBe(85);
+    expect(codes.summary.by_severity.warning).toBe(1);
+    expect(codes.html).toContain("External customer reference");
+    expect(codes.html).toContain('id="error"');
+    expect(codes.html).toContain('id="error-pv-side"');
+    expect(codes.html).toContain("DC arc fault has been detected");
+    expect(codes.html).not.toContain("LCD Display");
+  });
+
+  it("groups fault codes by severity and preserves category/code ordering", async () => {
+    const codes = await getGrowattCodesPage("en");
+
+    expect(codes.severityGroups.map((group) => group.severity)).toEqual([
+      "error",
+      "protect",
+      "warning",
+    ]);
+    expect(codes.severityGroups[0]?.categories[0]?.category).toBe("PV side");
+    expect(codes.severityGroups[0]?.categories[0]?.records[0]?.code).toBe(200);
+    expect(codes.severityGroups[2]?.categories[0]?.records[0]?.code).toBe(1000);
+  });
+
+  it("registers growatt codes as a special page in both locales", async () => {
+    const specialPages = getGrowattSpecialPages();
+    const codesZh = await getGrowattCodesPage("zh-CN");
+
+    expect(specialPages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          slug: GROWATT_CODES_SLUG,
+          labelByLocale: expect.objectContaining({
+            en: "Appendix: Growatt Codes",
+            "zh-CN": "附录：Growatt Codes",
+          }),
+          placement: "afterDocs",
+        }),
+      ]),
+    );
+    expect(codesZh.html).toContain('id="protect"');
+    expect(codesZh.markdown).toContain("# Growatt Codes");
   });
 });

@@ -15,7 +15,8 @@
 1. `/`：项目首页（文档入口）
 2. `/growatt-openapi`：文档总览
 3. `/growatt-openapi/quick-guide`：Professional Integration Quick Guide
-4. `/growatt-openapi/{docSlug}`：API 详情页（静态生成）
+4. `/growatt-openapi/growatt-codes`：Growatt Codes appendix（可选 Cloudflare 边缘 Basic Auth）
+5. `/growatt-openapi/{docSlug}`：API 详情页（静态生成）
 
 ## 本地开发
 
@@ -53,6 +54,24 @@ npm run build
 npm run build
 npx wrangler pages deploy out --project-name <your-project-name>
 ```
+
+## Growatt Codes 单页密码保护
+
+仓库已为 `/growatt-openapi/growatt-codes` 和其子路径准备好 Cloudflare Pages Function Basic Auth。
+
+在 Cloudflare Pages 项目中配置以下环境变量后即可生效：
+
+1. `GROWATT_CODES_BASIC_AUTH_PASSWORD`
+
+建议：
+
+1. `GROWATT_CODES_BASIC_AUTH_PASSWORD` 建议作为加密 secret 保存
+
+说明：
+
+1. 该保护只在 Cloudflare 边缘层生效，不影响其他文档页
+2. `npm run dev` 仍然是本地 Next.js 开发模式，不会模拟 Pages Function 鉴权
+3. 由于使用的是 HTTP Basic Auth，浏览器弹窗里通常仍会显示用户名输入框，但服务端只校验密码，用户名会被忽略
 
 ## 文档维护约束
 
