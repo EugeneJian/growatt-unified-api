@@ -1,9 +1,7 @@
 {
   "version": 1,
   "include": [
-    "/growatt-openapi/growatt-codes",
-    "/growatt-openapi/growatt-codes/",
-    "/growatt-openapi/growatt-codes/*"
+    "/growatt-openapi/growatt-codes*"
   ],
   "exclude": []
 }
