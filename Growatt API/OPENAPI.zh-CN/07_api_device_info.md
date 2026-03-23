@@ -1,153 +1,113 @@
 # 设备信息查询 API
 
 **简要说明**
-- 获取 Growatt 平台上已授权设备的信息。
 
-## 测试环境兼容性说明
-
-> 已在 `https://api-test.growatt.com:9290` 实测通过。
->
-> - 页面中的设备标识可能显示为 `SPH:xxxx` / `SPM:xxxx`，但请求体里应传纯 SN。
-> - 该测试环境下已验证通过的请求格式：
->   - `Authorization: Bearer <access_token>`
->   - `Content-Type: application/json`
->   - JSON body：`{"deviceSn":"RAW_DEVICE_SN"}`
-> - 正确：`RAW_DEVICE_SN`
-> - 错误：`SPH:RAW_DEVICE_SN`
+- 获取当前 token 已授权设备的静态信息。
+- 查询对象为单个 `deviceSn`。
+- 主规范请求体使用 JSON。
 
 **请求 URL**
+
 - `/oauth2/getDeviceInfo`
 
 **请求方式**
-- `POST`
-- `Content-Type`: `application/x-www-form-urlencoded`
-- 请求头必须携带有效 `access_token`
-- 放置在请求头的 `Authorization` 参数中，且必须包含前缀 `Bearer `
 
-## 设备信息查询流程（概念）
+- `POST`
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+## 查询流程
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["用户选择设备"] --> B["附加 bearer access token"]
-    B --> C["调用 getDeviceInfo 接口"]
+    A["选择已授权设备"] --> B["构造 deviceSn 请求体"]
+    B --> C["调用 POST /oauth2/getDeviceInfo"]
     C --> D{"响应 code"}
-    D -->|"0"| E["渲染型号 电池 采集器字段"]
-    D -->|"2"| F["刷新 token 并重试"]
-    D -->|"12"| G["检查设备授权列表"]
-    E --> H["用于监控和控制资格判断"]
-```
-
-## 设备信息查询流程（时序）
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant User as EndUser
-    participant Service as ServiceAPI
-    participant API as OAuthAPI
-
-    User->>Service: 选择目标设备
-    Service->>API: POST getDeviceInfo
-    API-->>Service: 返回 code 和设备信息
-    alt Code 0
-        Service-->>User: 展示设备信息
-    else Code 2
-        Service-->>Service: 刷新后重试
-    else Code 12
-        Service-->>User: 提示更新授权
-    end
+    D -->|"0"| E["返回设备静态信息"]
+    D -->|"2"| F["刷新 token 后重试"]
+    D -->|"12"| G["先检查设备授权关系"]
 ```
 
 ---
 
-## HTTP Header 参数
+## 请求参数
 
 | 参数名 | 必填 | 类型 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `Authorization` | 是 | String | Secret token |
+| `deviceSn` | 是 | string | 设备唯一序列号 |
 
 ---
 
-## HTTP Body 参数
-
-| 参数名 | 必填 | 类型 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | String | 设备唯一序列号（SN） |
-
-## 已验证通过的 9290 请求示例
+## 请求示例
 
 ```json
 {
-    "deviceSn": "RAW_DEVICE_SN"
+    "deviceSn": "YRP0N4S00Q"
 }
 ```
-
----
-
-## 接口返回参数
-
-| 参数名 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| `code` | int | 接口返回状态码。0 表示成功，其他表示失败 |
-| `data` | obj | 返回数据 |
-| `message` | string | 返回描述 |
 
 ---
 
 ## 返回示例
 
 ```json
-// 成功，code=0
 {
     "code": 0,
     "data": {
-        "deviceSn": "USQ1234567",
-        "deviceTypeName": "min",
-        "model": "BDCBAT",
+        "deviceSn": "YRP0N4S00Q",
+        "deviceTypeName": "sph",
+        "model": "SPH 5000TL-HUB",
         "nominalPower": 6000,
-        "datalogSn": "XGD6E3P029",
-        "datalogDeviceTypeName": "ShineWiFi-X",
-        "dtc": 5100,
-        "communicationVersion": "ZABA-0021",
+        "datalogSn": "VWQ0F9W00L",
+        "datalogDeviceTypeName": "ShineWiLan-X2",
+        "dtc": 3503,
+        "communicationVersion": "ZCBD-0004",
         "existBattery": true,
-        "batterySn": "0YXH123456789632",
-        "batteryModel": "ARK 5.12-25.6XH-A1",
-        "batteryCapacity": 5000,
-        "batteryNominalPower": 2500,
+        "batterySn": "YRP0N4S00Q_battery",
+        "batteryModel": "SPH 5000TL-HUB",
+        "batteryCapacity": 9000,
+        "batteryNominalPower": 6000,
         "authFlag": true,
         "batteryList": [
             {
-                "batterySn": "0YXH123456789632",
-                "batteryModel": "ARK 5.12-25.6XH-A1",
-                "batteryCapacity": 5000,
-                "batteryNominalPower": 2500
+                "batterySn": "YRP0N4S00Q_battery",
+                "batteryModel": "BDCBAT",
+                "batteryCapacity": 9000,
+                "batteryNominalPower": 6000
             }
         ]
     },
     "message": "SUCCESSFUL_OPERATION"
 }
+```
 
-// 失败，code 非 0
+### 常见失败
+
+```json
 {
     "code": 2,
     "message": "TOKEN_IS_INVALID"
 }
 ```
 
-### 常见失败与正确动作
+```json
+{
+    "code": 12,
+    "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
+}
+```
 
-| 返回 / 错误 | 含义 | 正确动作 |
-| :--- | :--- | :--- |
-| `TOKEN_IS_INVALID` | token 已过期或无效 | 刷新 token 或重新获取 token 后重试 |
-| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | 当前设备尚未完成绑定授权 | 先调用 `bindDevice`，再重试 `getDeviceInfo` |
-| `parameter error` | 在该测试环境中，常见于仍使用表单体或传了带前缀 SN | 改为 JSON body，并传不带 `SPH:` / `SPM:` 的纯 SN |
+### 9290 测试环境兼容说明
 
-*（注：`data` 参数说明表与 3.3.1 小节相同。）*
+在 `https://api-test.growatt.com:9290` 中：
+
+- 请求体传纯 SN，不带 `SPH:` / `SPM:` 前缀。
+- 已验证通过的请求组合为 `Authorization: Bearer <access_token>` + `Content-Type: application/json`。
 
 ---
 
 ## 相关文档
 
-- [设备授权 API](../04_api_device_auth.md)
-- [设备数据查询 API](../08_api_device_data.md)
+- [设备授权 API](./04_api_device_auth.md)
+- [设备数据查询 API](./08_api_device_data.md)

@@ -1,66 +1,45 @@
 # OAuth2-refresh API
 
 **Brief Description**
-- OAuth2, refresh
-- The Client backend uses `refresh_token` to refresh the `access_token`.
+
+- Refreshes an expired `access_token` by using `refresh_token`.
+- This API applies to flows where the token response actually includes `refresh_token`.
+- If a `client_credentials` deployment does not return `refresh_token`, do not call this endpoint; obtain a new token instead.
 
 **Request URL**
+
 - `/oauth2/refresh`
 
 **Request Method**
-- `POST`
-- In the request header, `ContentType` must be `application/x-www-form-urlencoded;`
 
-## Refresh Lifecycle (Concept)
+- `POST`
+- `Content-Type: application/x-www-form-urlencoded`
+
+## Refresh Lifecycle
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["API call with access token"] --> B{"Token valid"}
-    B -->|"Yes"| C["Continue business API calls"]
-    B -->|"No"| D["Call oauth2 refresh API"]
-    D --> E{"Refresh success"}
-    E -->|"Yes"| F["Store new access token and refresh token"]
-    F --> C
-    E -->|"No"| G["Trigger re authorization flow"]
-```
-
-## Refresh Lifecycle (Sequence)
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Service as ServiceAPI
-    participant OAuth as OAuthServer
-    participant API as API
-
-    Service->>API: Call API with access token
-    alt Token valid
-        API-->>Service: Return response
-    else Token invalid
-        API-->>Service: Return token invalid
-        Service->>OAuth: POST /oauth2/refresh
-        alt Refresh success
-            OAuth-->>Service: Return new token pair
-            Service->>API: Retry API call
-            API-->>Service: Return response
-        else Refresh failed
-            OAuth-->>Service: Return refresh error
-            Service-->>Service: Trigger re-authorization
-        end
-    end
+    A["Call business API with access token"] --> B{"Token valid"}
+    B -->|"Yes"| C["Continue API calls"]
+    B -->|"No and refresh_token exists"| D["Call POST /oauth2/refresh"]
+    B -->|"No and no refresh_token"| E["Get a new token or re-authorize"]
+    D --> F{"Refresh successful"}
+    F -->|"Yes"| G["Store the new token pair"]
+    F -->|"No"| H["Re-authorize"]
+    G --> C
 ```
 
 ---
 
-## Request Parameter Description
+## Request Parameters
 
-| Parameter Name | Parameter Description | Required | Parameter Value Description |
-| :--- | :--- | :--- | :--- |
-| `grant_type` | Authorization Type | Yes | Must be `refresh_token` |
-| `refresh_token` | Refresh Token | Yes | The old `refresh_token`, used to exchange for a new access token |
-| `client_id` | Client ID | Yes | `client_id` applied for by the third-party platform |
-| `client_secret` | Client Secret | Yes | `client_secret` applied for by the third-party platform |
+| Parameter | Required | Description |
+| :--- | :--- | :--- |
+| `grant_type` | Yes | Fixed value `refresh_token` |
+| `refresh_token` | Yes | Existing refresh token |
+| `client_id` | Yes | Client ID issued to the third-party platform |
+| `client_secret` | Yes | Client secret issued to the third-party platform |
 
 ---
 
@@ -77,22 +56,21 @@ sequenceDiagram
 
 ---
 
-## Return Parameter Description
+## Response Parameters
 
-| Parameter Name | Parameter Description | Parameter Value Description |
-| :--- | :--- | :--- |
-| `access_token` | Access Token | The newly issued access token |
-| `refresh_token` | Refresh Token | The newly issued refresh token (the old token will become invalid) |
-| `refresh_expires_in` | New Refresh Token Validity Period | Unit: seconds |
-| `token_type` | Token Type | Fixed as `Bearer` |
-| `expires_in` | New Access Token Validity Period | Unit: seconds |
+| Parameter | Description |
+| :--- | :--- |
+| `access_token` | Newly issued access token |
+| `refresh_token` | Newly issued refresh token |
+| `refresh_expires_in` | Refresh-token lifetime in seconds |
+| `token_type` | Fixed value `Bearer` |
+| `expires_in` | Access-token lifetime in seconds |
 
 ---
 
-## Return Example
+## Response Example
 
 ```json
-// Authorization successful, HTTP status code 200
 {
     "access_token": "avYDaEcmPfaphbE8oDmraKM6FOzq7nYI42iz4KTLClpvWegyREQnyiYUG2VA",
     "refresh_token": "BG6DGTZYpZPq0PHei3N4Rvb2yjM4YMZEFrvrf1A8LxI1xKbH2aEOHG3zfNy9",
@@ -106,5 +84,5 @@ sequenceDiagram
 
 ## Related Documentation
 
-- [Get access_token API](../02_api_access_token.md)
-- [Device Authorization API](../04_api_device_auth.md)
+- [Get access_token API](./02_api_access_token.md)
+- [Device Authorization API](./04_api_device_auth.md)

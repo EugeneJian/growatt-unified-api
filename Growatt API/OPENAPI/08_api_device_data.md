@@ -1,87 +1,41 @@
 # Device Data Query API
 
 **Brief Description**
-- Query high-frequency data of a specified device based on the device serial number. This interface only returns device data that the secret token has permission to access. Devices without access permission will not be returned.
 
-## Test Environment Compatibility Note
-
-> Verified on `https://api-test.growatt.com:9290`.
->
-> - Device labels in UI may appear as `SPH:xxxx` / `SPM:xxxx`, but the request body should use the raw SN only.
-> - Verified working request format in this test environment:
->   - `Authorization: Bearer <access_token>`
->   - `Content-Type: application/json`
->   - JSON body: `{"deviceSn":"RAW_DEVICE_SN"}`
-> - Correct: `RAW_DEVICE_SN`
-> - Incorrect: `SPH:RAW_DEVICE_SN`
+- Queries high-frequency runtime telemetry for an authorized device by device SN.
+- The normative telemetry model is centered on `meterPower`, `reactivePower`, `serialNum`, and `batteryList[]`.
+- Historical test materials that use `activePower`, `reverActivePower`, or top-level `soc` are treated as compatibility fields rather than primary definitions.
 
 **Request URL**
+
 - `/oauth2/getDeviceData`
 
 **Request Method**
-- `POST`
-- `Content-Type`: `application/x-www-form-urlencoded`
 
-## Telemetry Consumption Flow (Concept)
+- `POST`
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+## Telemetry Consumption Flow
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["Scheduler triggers poll"] --> B["Build request with device sn"]
-    B --> C["Call getDeviceData API"]
+    A["Polling job starts"] --> B["Build request with deviceSn"]
+    B --> C["Call POST /oauth2/getDeviceData"]
     C --> D{"Response code"}
-    D -->|"0"| E["Parse metrics and battery list"]
-    D -->|"2 or 12"| F["Refresh token or re authorize device"]
-    E --> G["Store time series data"]
-    G --> H["Run alerting and control logic"]
-    H --> I["Optional call deviceDispatch API"]
-```
-
-## Telemetry Consumption Flow (Sequence)
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Poller as Poller
-    participant API as OAuthAPI
-    participant Store as StorageDB
-    participant Engine as ControlEngine
-
-    Poller->>API: POST getDeviceData
-    API-->>Poller: Return code and telemetry
-    alt Code 0
-        Poller->>Store: Save telemetry
-        Poller->>Engine: Run control rules
-        Engine-->>Poller: Optional dispatch
-    else Code 2 or 12
-        Poller-->>Poller: Refresh or re-authorize
-    end
+    D -->|"0"| E["Parse telemetry and batteryList"]
+    D -->|"2 or 12"| F["Refresh token or check authorization"]
+    E --> G["Store time series or feed the control engine"]
 ```
 
 ---
 
-## HTTP Header Parameters
+## Request Parameters
 
-| Parameter Name | Required | Type | Description |
+| Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `token` | Yes | String | Secret token |
-
----
-
-## HTTP Body Parameters
-
-| Parameter Name | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | String | Device unique serial number (SN) |
-
----
-
-## Interface Return Parameters
-
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
+| `deviceSn` | Yes | string | Unique device serial number |
 
 ---
 
@@ -89,126 +43,111 @@ sequenceDiagram
 
 ```json
 {
-    "deviceSn": "RAW_DEVICE_SN"
+    "deviceSn": "YRP0N4S00Q"
 }
 ```
 
 ---
 
-## Return Example
+## Response Example (Normative Fields)
 
 ```json
 {
     "code": 0,
     "data": {
-        "activePower": 0.00,
-        "batPower": -4816.00,
+        "fac": 50.03,
+        "backupPower": 0.20,
+        "batPower": 0.00,
+        "pac": 41.30,
+        "etoUserToday": 3.10,
+        "meterPower": 0.00,
+        "utcTime": "2026-03-13 07:48:25",
+        "etoUserTotal": 44.80,
+        "pexPower": 14.30,
         "batteryList": [
             {
                 "chargePower": 0.00,
-                "dischargePower": 2511.00,
-                "ibat": -6.40,
+                "soc": 67,
+                "echargeToday": 2.90,
+                "vbat": 53.30,
                 "index": 1,
-                "soc": 100,
-                "vbat": 376.50
-            },
-            {
-                "chargePower": 0.00,
-                "dischargePower": 2305.00,
-                "ibat": -6.10,
-                "index": 2,
-                "soc": 100,
-                "vbat": 375.80
+                "echargeTotal": 80.70,
+                "dischargePower": 0.00,
+                "edischargeToday": 1.90,
+                "ibat": -1.00,
+                "soh": 100,
+                "edischargeTotal": 57.60,
+                "status": 0
             }
         ],
-        "batteryStatus": 3,
-        "pac": 4562.80,
-        "payLoadPower": 365.90,
-        "ppv": 0.00,
-        "priority": 2,
-        "reverActivePower": 4450.10,
-        "deviceSn": "TEST123456",
-        "soc": 100,
-        "status": 6,
-        "utcTime": "2026-02-25 00:10:01",
-        "vac1": 234.64,
-        "vac2": 235.04,
-        "vac3": 234.17
-    }
+        "protectCode": 0,
+        "reactivePower": 174.90,
+        "serialNum": "YRP0N4S00Q",
+        "etoGridTotal": 270.70,
+        "genPower": 0.00,
+        "priority": 0,
+        "vac3": 236.90,
+        "etoGridToday": 1.50,
+        "protectSubCode": 0,
+        "vac2": 236.90,
+        "vac1": 236.90,
+        "payLoadPower": 14.50,
+        "faultCode": 0,
+        "faultSubCode": 0,
+        "batteryStatus": 0,
+        "ppv": 14.30,
+        "smartLoadPower": 0.00,
+        "status": 6
+    },
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
 ---
 
-## Return Parameter Description
+## Normative Field Definitions
 
-| Parameter Name | Type | Example | Description |
-| :--- | :--- | :--- | :--- |
-| `dataType` | string | dfcData | Fixed value: dfcData |
-| `data` | object | - | Main data object |
-| `data.activePower` | double | 0 | Power drawn from grid (positive value), unit: W |
-| `data.pac` | double | 2871.4 | AC output power, unit: W |
-| `data.ppv` | double | 3045.3 | PV generation power, unit: W |
-| `data.payLoadPower` | double | 258.4 | Total load power (calculated value), unit: W |
-| `data.reverActivePower` | double | 2781.9 | Power fed into grid, unit: W |
-| `data.batteryStatus` | int | 3 | Overall battery status |
-| `data.batPower` | double | 200.5 | Total battery charge/discharge power (positive=charging, negative=discharging, 0=idle), unit: W |
-| `data.priority` | int | 2 | Work priority |
-| `data.deviceSn` | string | TEST123456 | Device serial number |
-| `data.status` | int | 6 | Device operation status code |
-| `data.utcTime` | string | 2026/2/25 0:10 | UTC timestamp (offset +00:00), format is yyyy-MM-dd HH:mm:ss |
-| `data.vac1` | double | 234 | Phase voltage 1, unit: V |
-| `data.vac2` | double | 233 | Phase voltage 2, unit: V |
-| `data.vac3` | double | 234.5 | Phase voltage 3, unit: V |
-| `data.soc` | int | 3 | Average battery state of charge (SOC) |
-| `data.batteryList` | array | [...] | Battery information list |
-| `data.batteryList[].index` | int | 1 | Battery index (starting from 1) |
-| `data.batteryList[].soc` | int | 22 | Battery state of charge (percentage) |
-| `data.batteryList[].chargePower` | double | 5 | Battery charge power, unit: W |
-| `data.batteryList[].dischargePower` | double | 0 | Battery discharge power, unit: W |
-| `data.batteryList[].ibat` | double | 0 | Battery current (low voltage side), unit: A |
-| `data.batteryList[].vbat` | double | 370.6 | Battery voltage (low voltage side), unit: V |
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `data.meterPower` | double | Meter-side power. Positive means importing from grid, negative means exporting to grid, unit: W |
+| `data.reactivePower` | double | Reactive power |
+| `data.fac` | double | Grid frequency |
+| `data.etoUserToday` | double | Energy imported today, unit: kWh |
+| `data.etoUserTotal` | double | Total imported energy, unit: kWh |
+| `data.etoGridToday` | double | Energy exported today, unit: kWh |
+| `data.etoGridTotal` | double | Total exported energy, unit: kWh |
+| `data.pac` | double | AC output power, unit: W |
+| `data.ppv` | double | PV power measured by the local inverter, unit: W |
+| `data.payLoadPower` | double | Total load power, unit: W |
+| `data.batPower` | double | Total battery charge/discharge power. Positive for charge, negative for discharge, unit: W |
+| `data.serialNum` | string | Canonical device serial field in telemetry payloads |
+| `data.status` | int | Device runtime status code |
+| `data.utcTime` | string | UTC timestamp |
+| `data.batteryList` | array | Battery object list |
+| `data.batteryList[].soc` | int | State of charge per battery |
+| `data.batteryList[].soh` | int | State of health per battery |
+| `data.batteryList[].chargePower` | double | Charge power per battery |
+| `data.batteryList[].dischargePower` | double | Discharge power per battery |
+| `data.batteryList[].status` | int | Status per battery |
 
 ---
 
-## Status Value Definitions
+## 9290 and Historical-Material Compatibility Note
 
-### Device operation status (`status`)
-- 0: Standby
-- 1: Self-test
-- 3: Fault
-- 4: Upgrade
-- 5: PV online & Battery offline & Grid-tied
-- 6: PV offline (or online) & Battery online & Grid-tied
-- 7: PV online & Battery online & Off-grid
-- 8: PV offline & Battery online & Off-grid
-- 9: Bypass mode
+In `https://api-test.growatt.com:9290` and historical reports, the following differences have been observed:
 
-### Overall battery status (`batteryStatus`)
-- 0: Battery standby
-- 1: Battery disconnected
-- 2: Battery charging
-- 3: Battery discharging
-- 4: Fault
-- 5: Upgrade
+- Telemetry may additionally expose `activePower`, and on some environments or devices it may also expose `reverActivePower`; these fields may coexist with `meterPower`, or only a subset may appear.
+- Some payloads use `deviceSn` or top-level `soc` as compatibility fields.
+- Requests still use raw SN together with `Authorization: Bearer <access_token>` and a JSON body.
 
-### Work priority (`priority`)
-- 0: Load priority
-- 1: Battery priority
-- 2: Grid priority
+Recommended handling:
 
-### Common Failures and Correct Action
-
-| Response / Error | Meaning | Correct Action |
-| :--- | :--- | :--- |
-| `TOKEN_IS_INVALID` | The token is expired or invalid | Refresh or re-fetch the token, then retry |
-| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | The device has not been bound for the current third party yet | Call `bindDevice` first, then retry `getDeviceData` |
-| `parameter error` | Commonly caused by using a prefixed SN or mismatched body format | Switch to JSON body and pass the raw SN without `SPH:` / `SPM:` |
-| `code=400, message=fail` | Commonly caused by a non-working auth/body combination in this test environment | Use `Authorization: Bearer <access_token>` together with JSON body |
+- Use the model on this page as the external semantic contract.
+- If an environment actually returns `activePower` / `reverActivePower`, ingest them as compatibility fields without promoting them to primary semantics.
 
 ---
 
 ## Related Documentation
 
-- [Device Information Query API](../07_api_device_info.md)
-- [Device Data Push API](../09_api_device_push.md)
+- [Device Information Query API](./07_api_device_info.md)
+- [Device Data Push API](./09_api_device_push.md)

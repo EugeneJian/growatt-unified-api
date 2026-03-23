@@ -1,16 +1,8 @@
 # Device Authorization API
 
-This section covers APIs for managing device authorization.
+This document covers the normative flows for device discovery, authorization, authorization-result lookup, and authorization removal.
 
-## Table of Contents
-
-- [Authorization Sequence](#authorization-sequence)
-- [Get Authorizable Device List](#331-get-authorizable-device-list)
-- [Authorize Device](#332-authorize-device)
-- [Get Authorized Device List](#333-get-authorized-device-list)
-- [Unauthorize Device](#334-unauthorize-device)
-
-## Authorization Sequence
+## Authorization Flow
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -19,207 +11,168 @@ sequenceDiagram
     participant Client as PlatformApp
     participant API as OAuthAPI
 
-    Client->>API: POST getApiDeviceList
-    API-->>Client: Return candidate list
-    Client-->>User: Show candidates
-    User->>Client: Select devices
-    Client->>API: POST bindDevice
-    API-->>Client: Return bind status
-    Client->>API: POST getApiDeviceListAuthed
-    API-->>Client: Return authorized list
-    opt Optional revoke
-        Client->>API: POST unbindDevice
-        API-->>Client: Return unbind status
+    opt Authorization-code mode
+        Client->>API: POST /oauth2/getDeviceList
+        API-->>Client: Return candidate device list
+        Client-->>User: Show candidate devices
+        User->>Client: Select target devices
+    end
+    Client->>API: POST /oauth2/bindDevice
+    API-->>Client: Return bind result
+    Client->>API: POST /oauth2/getDeviceListAuthed
+    API-->>Client: Return authorized device list
+    opt Revoke authorization
+        Client->>API: POST /oauth2/unbindDevice
+        API-->>Client: Return unbind result
     end
 ```
 
 ---
 
-## 3.3.1 Get Authorizable Device List
+## 1 Get Candidate Device List
 
 **Brief Description**
-- Get the list of authorizable devices under the Growatt end-user's personal account.
-- Prerequisite: The end-user has registered a Growatt account and has configured/added devices under this account.
+
+- Returns the list of devices that a Growatt end-user can authorize to a third-party platform.
+- Supported only in `authorization_code` mode.
+- Prerequisite: the end-user has already registered the devices under the Growatt account.
 
 **Request URL**
-- `/oauth2/getApiDeviceList`
+
+- `/oauth2/getDeviceList`
 
 **Request Method**
+
 - `POST`
-- The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
+- The request must include a valid bearer token
+- `Authorization: Bearer <token>`
 
 ### Request Example
 
 ```json
-// No parameters
+// No request body
 ```
 
-### Return Parameter Description
-
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
-| `message` | string | Return description |
-
-### Return Example
+### Response Example
 
 ```json
-// Success, code=0
 {
     "code": 0,
     "data": [
         {
-            "deviceSn": "LPL1234567",
-            "deviceTypeName": "min",
-            "model": "MIN 7600TL-XH-US",
-            "nominalPower": 7600,
-            "datalogSn": "VC51030122122538",
-            "datalogDeviceTypeName": "Shine4G-WiFi-FD",
-            "dtc": 5300,
-            "communicationVersion": "ZACA-0013",
-            "existBattery": false,
-            "batterySn": null,
-            "batteryModel": null,
-            "batteryCapacity": null,
-            "batteryNominalPower": null,
-            "authFlag": false,
-            "batteryList": []
+            "deviceSn": "HCQSKJMSJ1",
+            "deviceTypeName": "sph-s",
+            "model": "SPH 10000TL-HU (AU)",
+            "nominalPower": 15000,
+            "datalogSn": "ZGQ0E8511G",
+            "dtc": 21300,
+            "communicationVersion": "ZCEA-0005",
+            "authFlag": true
         }
     ],
     "message": "SUCCESSFUL_OPERATION"
 }
+```
 
-// Failure, code non-zero
+### Device Object Fields
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `deviceSn` | string | Device serial number |
+| `deviceTypeName` | string | Device type name |
+| `model` | string | Device model |
+| `nominalPower` | number | Rated power in watts |
+| `datalogSn` | string | Datalogger serial number |
+| `dtc` | number | Device type code |
+| `communicationVersion` | string | Communication firmware version |
+| `authFlag` | boolean | Whether the device is already authorized |
+
+### 9290 Compatibility Note
+
+In `https://api-test.growatt.com:9290`, calling this endpoint with a `client_credentials` token returns:
+
+```json
 {
-    "code": 2,
-    "message": "TOKEN_IS_INVALID"
+    "code": 103,
+    "data": null,
+    "message": "WRONG_GRANT_TYPE"
 }
 ```
 
-### Data Parameter Description
-
-| Parameter Name | Parameter Description | Parameter Value Description |
-| :--- | :--- | :--- |
-| `deviceSn` | Device serial number | Device unique identifier |
-| `deviceTypeName` | Device major category name | Main category classification of the device |
-| `model` | Device model | Specific model of the device |
-| `nominalPower` | Inverter nominal power | Unit: W |
-| `datalogSn` | Datalogger serial number | Serial number of the data collection device |
-| `datalogDeviceTypeName` | Datalogger type name | Type of the data collection device |
-| `dtc` | dtc numeric code | Numeric code of the device type |
-| `communicationVersion` | Firmware communication version | Device communication protocol version |
-| `existBattery` | Has battery | Boolean value, indicates whether the device is equipped with a battery |
-| `batterySn` | Battery serial number | Unique identifier of the battery |
-| `batteryModel` | Battery model | Specific model of the battery |
-| `batteryCapacity` | Battery nominal capacity | Unit: Wh |
-| `batteryNominalPower` | Battery nominal power | Unit: W |
-| `authFlag` | Is authorized | Boolean value, indicates whether the device has been authorized |
-| `batteryList` | Battery list | Array containing battery information |
+This confirms that the 9290 environment does not use `getDeviceList` as the discovery entry point for `client_credentials`.
 
 ---
 
-## 3.3.2 Authorize Device
+## 2 Bind Device
 
 **Brief Description**
-- Authorize the devices under the Growatt end-user to a third party.
 
-### Test Environment Compatibility Note
-
-> Verified on `https://api-test.growatt.com:9290`.
->
-> - Device labels shown in screenshots or UI may include prefixes such as `SPH:xxxx` or `SPM:xxxx`.
-> - For the actual `bindDevice` request, `deviceSnList[].deviceSn` must use the raw SN only, without the device type prefix.
-> - Verified working request format in this test environment:
->   - `Authorization: Bearer <access_token>`
->   - `Content-Type: application/json`
->   - JSON body with raw SN values
-> - Example:
->
-> ```json
-> {
->     "deviceSnList": [
->         {
->             "deviceSn": "RAW_DEVICE_SN",
->             "pinCode": "TEST_PIN_CODE"
->         }
->     ]
-> }
-> ```
->
-> - Correct: `RAW_DEVICE_SN`
-> - Incorrect: `SPH:RAW_DEVICE_SN`
+- Authorizes one or more devices to the third-party platform.
+- The request body is JSON.
+- The normative `deviceSnList` structure depends on the OAuth mode.
 
 **Request URL**
+
 - `/oauth2/bindDevice`
 
 **Request Method**
+
 - `POST`
-- The `ContentType` of the request must be `application/json;`
-- The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
 
-### Request Parameter Description
+### Request Parameters
 
-| Parameter Name | Type | Required | Description |
+| Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | List | Yes | Not empty, device serial number and PINCode (PINCode is only needed under Client Credentials mode) |
-| `deviceSnList[].deviceSn` | string | Yes | |
-| `deviceSnList[].pinCode` | string | Required under Client Credentials mode | Device PINCode |
+| `deviceSnList` | Yes | array | Non-empty array |
+| `deviceSnList[]` | Yes | string or object | In authorization-code mode, use a device-SN string. In client-credentials mode, use an object containing `deviceSn` and `pinCode` |
+| `deviceSnList[].deviceSn` | Required in client-credentials mode | string | Device serial number |
+| `deviceSnList[].pinCode` | Required in client-credentials mode | string | Device PIN code |
 
-### Request Example
+### Request Examples
+
+#### Authorization-code mode
 
 ```json
-// Under Authorization Code mode
 {
     "deviceSnList": [
-        {
-            "deviceSn": "LXG1234567"
-        },
-        {
-            "deviceSn": "EGM1234567"
-        }
+        "LXG1234567",
+        "LPL1234567"
     ]
 }
+```
 
-// Under Client Credentials mode
+#### Client-credentials mode
+
+```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "RAW_DEVICE_SN",
-            "pinCode": "TEST_PIN_CODE"
+            "deviceSn": "LXG1234567",
+            "pinCode": "123"
         },
         {
-            "deviceSn": "RAW_DEVICE_SN_2",
-            "pinCode": "TEST_PIN_CODE"
+            "deviceSn": "EGM1234567",
+            "pinCode": "456"
         }
     ]
 }
 ```
 
-### Return Parameter Description
-
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
-| `message` | string | Return description |
-
-### Return Example
+### Response Example
 
 ```json
-// Success, code=0
 {
     "code": 0,
     "data": null,
     "message": "SUCCESSFUL_OPERATION"
 }
+```
 
-// Failure, code non-zero
-{
-    "code": 2,
-    "message": "TOKEN_IS_INVALID"
-}
+Failure example:
 
+```json
 {
     "code": 12,
     "data": [
@@ -229,96 +182,95 @@ sequenceDiagram
 }
 ```
 
-### Common Failures and Correct Action
+### 9290 Compatibility Note
 
-| Response / Error | Meaning | Correct Action |
-| :--- | :--- | :--- |
-| `TOKEN_IS_INVALID` | The token is expired or invalid | Refresh or re-fetch the token, then retry |
-| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | The device is not yet authorized to the current third party | Call `bindDevice` first, then retry downstream APIs |
-| `parameter error` | Commonly caused by using a prefixed SN or mismatched request body shape | Switch to JSON body and pass the raw SN without `SPH:` / `SPM:` |
+In `https://api-test.growatt.com:9290`, the verified working format is:
+
+- `Authorization: Bearer <access_token>`
+- `Content-Type: application/json`
+- `deviceSnList[].deviceSn` must use the raw SN without `SPH:` / `SPM:` prefixes
+- In `client_credentials` mode, object entries with `pinCode` are used
+
+Verified example:
+
+```json
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "RAW_DEVICE_SN",
+            "pinCode": "TEST_PIN_CODE"
+        }
+    ]
+}
+```
 
 ---
 
-## 3.3.3 Get Authorized Device List
+## 3 Get Authorized Device List
 
 **Brief Description**
-- Get the list of devices that have already been authorized under the Growatt end-user's personal account.
-- Prerequisite: The end-user has registered a Growatt account and has configured/added devices under this account.
+
+- Returns the list of devices already authorized for the current token.
 
 **Request URL**
-- `/oauth2/getApiDeviceListAuthed`
+
+- `/oauth2/getDeviceListAuthed`
 
 **Request Method**
+
 - `POST`
-- The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
+- `Authorization: Bearer <token>`
 
 ### Request Example
 
 ```json
-// No parameters
+// No request body
 ```
 
-### Return Parameter Description
-
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
-| `message` | string | Return description |
-
-### Return Example
+### Response Example
 
 ```json
-// Success, code=0
 {
     "code": 0,
     "data": [
         {
-            "deviceSn": "LPL1234567",
-            "deviceTypeName": "min",
-            "model": "MIN 7600TL-XH-US",
-            "nominalPower": 7600,
-            "datalogSn": "VC51030122122538",
-            "datalogDeviceTypeName": "Shine4G-WiFi-FD",
-            "dtc": 5300,
-            "communicationVersion": "ZACA-0013",
-            "existBattery": false,
-            "authFlag": true,
-            "batteryList": []
+            "deviceSn": "HCQSKJMSJ1",
+            "deviceTypeName": "sph-s",
+            "model": "SPH 10000TL-HU (AU)",
+            "nominalPower": 15000,
+            "datalogSn": "ZGQ0E8511G",
+            "dtc": 21300,
+            "communicationVersion": "ZCEA-0005",
+            "authFlag": true
         }
     ],
     "message": "SUCCESSFUL_OPERATION"
 }
-
-// Failure, code non-zero
-{
-    "code": 2,
-    "message": "TOKEN_IS_INVALID"
-}
 ```
-
-*(Note: The `data` return parameters description table is identical to section 3.3.1).*
 
 ---
 
-## 3.3.4 Unauthorize Device
+## 4 Unbind Device
 
 **Brief Description**
-- Remove the authorization of subordinate devices that the Growatt end-user has granted to a third party.
+
+- Removes the authorization relationship between the platform and one or more devices.
 
 **Request URL**
+
 - `/oauth2/unbindDevice`
 
 **Request Method**
+
 - `POST`
-- The `ContentType` of the request: `application/json;`
-- The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
 
-### Request Parameter Description
+### Request Parameters
 
-| Parameter Name | Type | Required | Description |
+| Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | List | Yes | Array(string), not empty, serial numbers of subordinate devices under the Growatt end-user |
+| `deviceSnList` | Yes | array(string) | List of device serial numbers to unbind |
 
 ### Request Example
 
@@ -331,28 +283,13 @@ sequenceDiagram
 }
 ```
 
-### Return Parameter Description
-
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
-| `message` | string | Return description |
-
-### Return Example
+### Response Example
 
 ```json
-// Success, code=0
 {
     "code": 0,
     "data": null,
     "message": "SUCCESSFUL_OPERATION"
-}
-
-// Failure, code non-zero
-{
-    "code": 2,
-    "message": "TOKEN_IS_INVALID"
 }
 ```
 
@@ -360,5 +297,5 @@ sequenceDiagram
 
 ## Related Documentation
 
-- [Get access_token API](../02_api_access_token.md)
-- [Device Dispatch API](../05_api_device_dispatch.md)
+- [Authentication Guide](./01_authentication.md)
+- [Device Dispatch API](./05_api_device_dispatch.md)

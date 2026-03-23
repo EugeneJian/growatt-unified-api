@@ -2,7 +2,7 @@
 
 Version: V1.0 | Release Date: March 4, 2026
 
-This folder contains structured documentation for the Growatt Open API.
+This directory contains the English primary specification for Growatt Open API. Endpoint-level documents are the English SSOT. `11_api_troubleshooting.md` records only 9290 test-environment compatibility facts.
 
 ## Integration Roadmap (Concept)
 
@@ -14,125 +14,92 @@ flowchart TD
     C --> D["04 Device Authorization"]
     D --> E["07 Device Information"]
     D --> F["08 Device Data Query"]
-    D --> G["09 Device Data Push"]
-    F --> H["05 Device Dispatch"]
-    H --> I["06 Read Dispatch Parameters"]
-    G --> H
-    I --> J["10 Global Parameters"]
-    J --> K["11 Troubleshooting FAQ"]
-```
-
-## Integration Roadmap (Request Sequence)
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Platform as PlatformApp
-    participant OAuth as OAuthAPI
-    participant Device as DeviceAPI
-    participant Push as WebhookAPI
-
-    Platform->>OAuth: POST /oauth2/token
-    OAuth-->>Platform: Return token pair
-    Platform->>OAuth: Run bindDevice flow
-    OAuth-->>Platform: Return authorized set
-    Platform->>Device: Query info and data
-    Device-->>Platform: Return telemetry
-    Platform->>Device: Dispatch and read back
-    Device-->>Platform: Return dispatch result
-    Push-->>Platform: Push dfcData
-    Platform->>OAuth: POST /oauth2/refresh if needed
+    F --> G["05 Device Dispatch"]
+    G --> H["06 Read Dispatch Parameters"]
+    F --> I["09 Device Data Push"]
+    H --> J["10 Global Parameters"]
+    J --> K["11 9290 FAQ"]
 ```
 
 ## Documentation Structure
 
 | File | Description |
 | :--- | :--- |
-| [01_authentication.md](./01_authentication.md) | OAuth2.0 authorization modes and flow overview |
-| [02_api_access_token.md](./02_api_access_token.md) | Get access_token API |
-| [03_api_refresh.md](./03_api_refresh.md) | OAuth2-refresh API |
-| [04_api_device_auth.md](./04_api_device_auth.md) | Device Authorization APIs (bind/unbind devices) |
-| [05_api_device_dispatch.md](./05_api_device_dispatch.md) | Device Dispatch API (set parameters) |
-| [06_api_read_dispatch.md](./06_api_read_dispatch.md) | Read device dispatch parameters API |
-| [07_api_device_info.md](./07_api_device_info.md) | Device Information Query API |
-| [08_api_device_data.md](./08_api_device_data.md) | Device Data Query API |
-| [09_api_device_push.md](./09_api_device_push.md) | Device Data Push API |
-| [10_global_params.md](./10_global_params.md) | Global parameters (domains, permissions, device parameters) |
-| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | Troubleshooting FAQ for verified test-environment integration pitfalls |
+| [01_authentication.md](./01_authentication.md) | OAuth2 mode boundary and capability matrix |
+| [02_api_access_token.md](./02_api_access_token.md) | Get access token |
+| [03_api_refresh.md](./03_api_refresh.md) | Refresh access token |
+| [04_api_device_auth.md](./04_api_device_auth.md) | Device discovery, authorization, and unbind |
+| [05_api_device_dispatch.md](./05_api_device_dispatch.md) | Device dispatch |
+| [06_api_read_dispatch.md](./06_api_read_dispatch.md) | Dispatch read-back |
+| [07_api_device_info.md](./07_api_device_info.md) | Device metadata query |
+| [08_api_device_data.md](./08_api_device_data.md) | Device telemetry query |
+| [09_api_device_push.md](./09_api_device_push.md) | Device data push |
+| [10_global_params.md](./10_global_params.md) | Shared response codes and `setType` catalog |
+| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 9290 compatibility FAQ |
 
 ## Quick Start
 
-### 1. Authentication
+### 1. Authentication and Token Handling
 
-Start by understanding the [Authentication Guide](./01_authentication.md) to learn about:
-- Authorization Code Mode
-- Client Credentials Mode
-- OAuth2.0 flow overview
+- [Authentication Guide](./01_authentication.md)
+- [Get access_token API](./02_api_access_token.md)
+- [OAuth2-refresh API](./03_api_refresh.md)
 
-### 2. Get Access Token
+### 2. Device Authorization
 
-Use the [Get access_token API](./02_api_access_token.md) to obtain an access token.
+- In `authorization_code` mode, start from [Device Authorization API](./04_api_device_auth.md) and use `getDeviceList` before `bindDevice`
+- In `client_credentials` mode, the flow typically starts from `bindDevice`
 
-### 3. Refresh Token
+### 3. Device Query and Dispatch
 
-When your access token expires, use the [OAuth2-refresh API](./03_api_refresh.md) to refresh it.
+- [Device Information Query API](./07_api_device_info.md)
+- [Device Data Query API](./08_api_device_data.md)
+- [Device Dispatch API](./05_api_device_dispatch.md)
+- [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
+- [Device Data Push API](./09_api_device_push.md)
 
-### 4. Device Management
+### 4. Shared Rules and Compatibility
 
-- [Get Authorizable Device List](./04_api_device_auth.md#get-authorizable-device-list)
-- [Authorize Device](./04_api_device_auth.md#authorize-device)
-- [Get Authorized Device List](./04_api_device_auth.md#get-authorized-device-list)
-- [Unauthorize Device](./04_api_device_auth.md#unauthorize-device)
+- [Global Parameter Description](./10_global_params.md)
+- [Troubleshooting FAQ](./11_api_troubleshooting.md)
 
-### 5. Device Operations
-
-- [Device Dispatch](./05_api_device_dispatch.md) - Set device parameters
-- [Read Dispatch Parameters](./06_api_read_dispatch.md) - Read device parameters
-- [Device Information](./07_api_device_info.md) - Query device info
-- [Device Data](./08_api_device_data.md) - Query device data
-- [Device Data Push](./09_api_device_push.md) - Receive pushed data
-
-### 6. Troubleshooting
-
-- [Troubleshooting FAQ](./11_api_troubleshooting.md) - Verified pitfalls and corrective actions for `api-test.growatt.com:9290`
-
-## API Endpoints Summary
+## API Endpoint Summary
 
 | Endpoint | Method | Description |
 | :--- | :--- | :--- |
-| `/oauth2/token` | POST | Get access_token |
-| `/oauth2/refresh` | POST | Refresh access_token |
-| `/oauth2/getApiDeviceList` | POST | Get authorizable device list |
-| `/oauth2/bindDevice` | POST | Authorize device |
-| `/oauth2/getApiDeviceListAuthed` | POST | Get authorized device list |
-| `/oauth2/unbindDevice` | POST | Unauthorize device |
+| `/oauth2/token` | POST | Get access token |
+| `/oauth2/refresh` | POST | Refresh access token |
+| `/oauth2/getDeviceList` | POST | Get candidate devices, supported only in `authorization_code` mode |
+| `/oauth2/bindDevice` | POST | Authorize devices |
+| `/oauth2/getDeviceListAuthed` | POST | Get authorized devices |
+| `/oauth2/unbindDevice` | POST | Remove device authorization |
 | `/oauth2/getDeviceInfo` | POST | Get device information |
+| `/oauth2/getDeviceData` | POST | Get device telemetry |
 | `/oauth2/deviceDispatch` | POST | Set device parameters |
-| `/oauth2/readDdeviceDispatch` | POST | Read device parameters |
-| `/oauth2/getDeviceData` | POST | Query device data |
+| `/oauth2/readDeviceDispatch` | POST | Read device parameters |
 
 ## Domains
 
-### Production
+### Production Environment
+
 - `https://opencloud.growatt.com`
 - `https://opencloud-au.growatt.com`
 
-### Test
+### Test Environment
+
 - `https://opencloud-test.growatt.com`
 
-## Token Validity
+## Token Lifecycle
 
-- `access_token`: 2 hours (7200 seconds)
-- `refresh_token`: 30 days (2592000 seconds)
+- The TTL values shown in the docs are example values and must not be treated as fixed constants.
+- For both `authorization_code` and `client_credentials`, trust the actual `expires_in` / `refresh_expires_in` values returned by the environment.
 
-## Quick Guide
+## Integration Guide
 
-For a quick start guide with simpler examples, see: [/growatt-openapi/quick-guide](/growatt-openapi/quick-guide)
+For an integration-oriented consolidated guide, see:
+
+- [../Growatt Open API Professional Integration Guide.md](../Growatt Open API Professional Integration Guide.md)
 
 ## Appendix
 
-- [Growatt Codes](/growatt-openapi/growatt-codes) - External VPP reference for Growatt fault, protect, and warning codes generated from the enterprise SSOT
-
-## Original Documentation
-
-For the complete unified document, see: [../Growatt Unified API.md](../Growatt Unified API.md)
+- [Growatt Codes](/growatt-openapi/growatt-codes)

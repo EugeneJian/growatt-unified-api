@@ -1,153 +1,113 @@
 # Device Information Query API
 
 **Brief Description**
-- Get the information of authorized devices on the Growatt platform.
 
-## Test Environment Compatibility Note
-
-> Verified on `https://api-test.growatt.com:9290`.
->
-> - Device labels in UI may appear as `SPH:xxxx` / `SPM:xxxx`, but the request body should use the raw SN only.
-> - Verified working request format in this test environment:
->   - `Authorization: Bearer <access_token>`
->   - `Content-Type: application/json`
->   - JSON body: `{"deviceSn":"RAW_DEVICE_SN"}`
-> - Correct: `RAW_DEVICE_SN`
-> - Incorrect: `SPH:RAW_DEVICE_SN`
+- Returns static information for a device already authorized to the current token.
+- The query target is a single `deviceSn`.
+- The normative request body is JSON.
 
 **Request URL**
+
 - `/oauth2/getDeviceInfo`
 
 **Request Method**
-- `POST`
-- `Content-Type`: `application/x-www-form-urlencoded`
-- The request header must carry a valid `access_token`.
-- Placed in the `Authorization` parameter of the request header, and must include the prefix `Bearer `.
 
-## Device Info Query Flow (Concept)
+- `POST`
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+## Query Flow
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["User selects device"] --> B["Attach bearer access token"]
-    B --> C["Call getDeviceInfo API"]
+    A["Select an authorized device"] --> B["Build request body with deviceSn"]
+    B --> C["Call POST /oauth2/getDeviceInfo"]
     C --> D{"Response code"}
-    D -->|"0"| E["Render model battery and datalog fields"]
+    D -->|"0"| E["Return device metadata"]
     D -->|"2"| F["Refresh token and retry"]
-    D -->|"12"| G["Check device authorization list"]
-    E --> H["Use info for monitoring and dispatch eligibility"]
-```
-
-## Device Info Query Flow (Sequence)
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant User as EndUser
-    participant Service as ServiceAPI
-    participant API as OAuthAPI
-
-    User->>Service: Select target device
-    Service->>API: POST getDeviceInfo
-    API-->>Service: Return code and device info
-    alt Code 0
-        Service-->>User: Show device info
-    else Code 2
-        Service-->>Service: Refresh and retry
-    else Code 12
-        Service-->>User: Request authorization update
-    end
+    D -->|"12"| G["Check device authorization first"]
 ```
 
 ---
 
-## HTTP Header Parameters
+## Request Parameters
 
-| Parameter Name | Required | Type | Description |
+| Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `Authorization` | Yes | String | Secret token |
+| `deviceSn` | Yes | string | Unique device serial number |
 
 ---
 
-## HTTP Body Parameters
-
-| Parameter Name | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | String | Device unique serial number (SN) |
-
-## Verified 9290 Request Example
+## Request Example
 
 ```json
 {
-    "deviceSn": "RAW_DEVICE_SN"
+    "deviceSn": "YRP0N4S00Q"
 }
 ```
 
 ---
 
-## Interface Return Parameters
-
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | obj | Returned data |
-| `message` | string | Return description |
-
----
-
-## Return Example
+## Response Example
 
 ```json
-// Success, code=0
 {
     "code": 0,
     "data": {
-        "deviceSn": "USQ1234567",
-        "deviceTypeName": "min",
-        "model": "BDCBAT",
+        "deviceSn": "YRP0N4S00Q",
+        "deviceTypeName": "sph",
+        "model": "SPH 5000TL-HUB",
         "nominalPower": 6000,
-        "datalogSn": "XGD6E3P029",
-        "datalogDeviceTypeName": "ShineWiFi-X",
-        "dtc": 5100,
-        "communicationVersion": "ZABA-0021",
+        "datalogSn": "VWQ0F9W00L",
+        "datalogDeviceTypeName": "ShineWiLan-X2",
+        "dtc": 3503,
+        "communicationVersion": "ZCBD-0004",
         "existBattery": true,
-        "batterySn": "0YXH123456789632",
-        "batteryModel": "ARK 5.12-25.6XH-A1",
-        "batteryCapacity": 5000,
-        "batteryNominalPower": 2500,
+        "batterySn": "YRP0N4S00Q_battery",
+        "batteryModel": "SPH 5000TL-HUB",
+        "batteryCapacity": 9000,
+        "batteryNominalPower": 6000,
         "authFlag": true,
         "batteryList": [
             {
-                "batterySn": "0YXH123456789632",
-                "batteryModel": "ARK 5.12-25.6XH-A1",
-                "batteryCapacity": 5000,
-                "batteryNominalPower": 2500
+                "batterySn": "YRP0N4S00Q_battery",
+                "batteryModel": "BDCBAT",
+                "batteryCapacity": 9000,
+                "batteryNominalPower": 6000
             }
         ]
     },
     "message": "SUCCESSFUL_OPERATION"
 }
+```
 
-// Failure, code non-zero
+### Common Failures
+
+```json
 {
     "code": 2,
     "message": "TOKEN_IS_INVALID"
 }
 ```
 
-### Common Failures and Correct Action
+```json
+{
+    "code": 12,
+    "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
+}
+```
 
-| Response / Error | Meaning | Correct Action |
-| :--- | :--- | :--- |
-| `TOKEN_IS_INVALID` | The token is expired or invalid | Refresh or re-fetch the token, then retry |
-| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | The device has not been bound for the current third party yet | Call `bindDevice` first, then retry `getDeviceInfo` |
-| `parameter error` | Commonly caused by using form-encoded body or passing a prefixed SN in this test environment | Switch to JSON body and pass the raw SN without `SPH:` / `SPM:` |
+### 9290 Compatibility Note
 
-*(Note: The `data` parameter description table is identical to section 3.3.1).*
+In `https://api-test.growatt.com:9290`:
+
+- The request body must pass the raw SN, without `SPH:` / `SPM:` prefixes.
+- The verified working combination is `Authorization: Bearer <access_token>` with `Content-Type: application/json`.
 
 ---
 
 ## Related Documentation
 
-- [Device Authorization API](../04_api_device_auth.md)
-- [Device Data Query API](../08_api_device_data.md)
+- [Device Authorization API](./04_api_device_auth.md)
+- [Device Data Query API](./08_api_device_data.md)

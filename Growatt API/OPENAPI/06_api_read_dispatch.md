@@ -1,81 +1,44 @@
 # Read Device Dispatch Parameters API
 
 **Brief Description**
-- Read relevant parameters of the device based on the device's SN. The interface will only return reading results for devices that the secret token has permission to access. Devices without permission will not be read, and no results will be returned.
-- Current interface frequency limit: once every 5 seconds per device.
+
+- Reads current dispatch parameters by `deviceSn` and `setType`.
+- The API returns only results for devices that the current token is allowed to access.
+- Current rate limit: at most one request every 5 seconds per device.
+- The normative interface does not require `requestId`.
 
 **Request URL**
-- `/oauth2/readDdeviceDispatch`
+
+- `/oauth2/readDeviceDispatch`
 
 **Request Method**
-- `POST`
-- The `ContentType` of the request must be `application/x-www-form-urlencoded;`
 
-## Read-Back Verification Flow (Concept)
+- `POST`
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+## Read-Back Verification Flow
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["Need current parameter value"] --> B["Build request with device sn set type and request id"]
-    B --> C["Call readDdeviceDispatch API"]
+    A["Dispatch already sent"] --> B["Build request with deviceSn and setType"]
+    B --> C["Call POST /oauth2/readDeviceDispatch"]
     C --> D{"Response code"}
-    D -->|"0"| E["Parse data array"]
-    D -->|"5 or 16"| F["Retry with delay"]
-    D -->|"7 or other"| G["Stop and inspect permission or device type"]
-    E --> H["Compare with expected dispatch plan"]
-    H --> I["Continue control loop"]
-    F --> C
-```
-
-## Read-Back Verification Flow (Sequence)
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Scheduler as DispatchScheduler
-    participant API as OAuthAPI
-    participant Verifier as DispatchVerifier
-
-    Scheduler->>API: POST readDdeviceDispatch
-    API-->>Scheduler: Return code and data
-    alt Code 0
-        Scheduler->>Verifier: Compare with expected
-        Verifier-->>Scheduler: Return verification
-    else Code 5 or 16
-        Scheduler-->>Scheduler: Wait and retry
-        Scheduler->>API: Retry readDdeviceDispatch
-    else Code 7 or other
-        Scheduler-->>Scheduler: Stop and inspect cause
-    end
+    D -->|"0"| E["Parse data"]
+    D -->|"5 or 18"| F["Record failure and retry if needed"]
+    E --> G["Compare with expected target"]
+    G --> H["Continue control loop"]
 ```
 
 ---
 
-## HTTP Header Parameters
+## Request Parameters
 
-| Parameter Name | Required | Type | Description |
+| Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `Authorization` | Yes | String | Bearer your_access_token |
-
----
-
-## HTTP Body Parameters
-
-| Parameter Name | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Device SN, example: xxxxxxx |
-| `setType` | Yes | string | Setting parameter enum, example: `time_slot_charge_discharge` |
-| `requestId` | Yes | string | Unique identifier for this request |
-
----
-
-## Interface Return Parameters
-
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
-| `message` | string | Return description |
+| `deviceSn` | Yes | string | Device serial number |
+| `setType` | Yes | string | Parameter enum, for example `time_slot_charge_discharge` |
 
 ---
 
@@ -90,28 +53,33 @@ sequenceDiagram
 
 ---
 
-## Return Examples
+## Response Parameters
 
-### Reading Successful
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | Business status code, `0` means success |
+| `data` | object or array | Response shape depends on `setType` |
+| `message` | string | Result description |
+
+---
+
+## Response Examples
+
+### `time_slot_charge_discharge` Returns an Array
 
 ```json
 {
     "code": 0,
     "data": [
         {
-            "startTime": 60,
-            "endTime": 420,
+            "startTime": "16:00",
+            "endTime": "18:00",
             "percentage": 80
         },
         {
-            "startTime": 840,
-            "endTime": 1020,
-            "percentage": 80
-        },
-        {
-            "startTime": 0,
-            "endTime": 0,
-            "percentage": 0
+            "startTime": "19:00",
+            "endTime": "21:00",
+            "percentage": -80
         }
     ],
     "message": "success"
@@ -128,30 +96,39 @@ sequenceDiagram
 }
 ```
 
-### Parameter Setting Response Timeout
+### Read Failure
 
 ```json
 {
-    "code": 16,
+    "code": 18,
     "data": null,
-    "message": "PARAMETER_SETTING_RESPONSE_TIMEOUT"
+    "message": "READ_PARAMETER_FAILED"
 }
 ```
 
-### Wrong Device Type
+### 9290 Compatibility Note
+
+In `https://api-test.growatt.com:9290`, `duration_and_power_charge_discharge` has been observed to return an object such as:
 
 ```json
 {
-    "code": 7,
-    "data": null,
-    "message": "WRONG_DEVICE_TYPE"
+    "code": 0,
+    "data": {
+        "duration": 5,
+        "percentage": 20,
+        "acChargingEnabled": 1,
+        "remotePowerControlEnable": 1
+    },
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
+
+This difference is a `setType`-specific shape variation and does not change the normative rule that `data` may be either an object or an array.
 
 ---
 
 ## Related Documentation
 
-- [Device Dispatch API](../05_api_device_dispatch.md)
-- [Device Information Query API](../07_api_device_info.md)
-- [Global Parameters](../10_global_params.md)
+- [Device Dispatch API](./05_api_device_dispatch.md)
+- [Device Information Query API](./07_api_device_info.md)
+- [Global Parameters](./10_global_params.md)
