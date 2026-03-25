@@ -1,8 +1,8 @@
 # 推荐的统一架构口径
 
-## 6. 推荐的统一架构口径
+## 推荐表述
 
-### 中文正式表述
+### 中文版本
 
 平台整体采用 **API Layer、Cloud Platform Layer、Edge Connectivity Layer、Protocol Abstract Layer 和 Device Layer** 的分层架构。
 对外提供两套北向接口：**Legacy API（Token）** 与 **OpenAPI（OAuth 2.0）**，用于支持存量第三方集成与新一代标准化生态接入。

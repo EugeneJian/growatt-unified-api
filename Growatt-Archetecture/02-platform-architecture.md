@@ -1,6 +1,6 @@
 # 平台总体架构
 
-## 3. 平台总体架构说明
+## 架构说明
 
 平台整体采用以下分层架构：
 
@@ -26,7 +26,7 @@ Third-party Platform / Customer → API → Cloud → Collector → Protocol →
 
 ------
 
-## 4. 企业平台总体架构图（完整总图）
+## 架构总图
 
 ```mermaid
 flowchart TB
