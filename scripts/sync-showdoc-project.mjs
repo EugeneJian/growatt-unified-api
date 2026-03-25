@@ -4,8 +4,8 @@ import path from "node:path";
 
 const DEFAULT_MCP_URL = "https://www.showdoc.com.cn/mcp.php";
 const DEFAULT_PROJECT_DIR = "Growatt-Archetecture";
-const MAX_BATCH_SIZE = 50;
-
+const DEFAULT_SHOWDOC_PAGE_BASE_URL = "https://www.showdoc.com.cn/web/#/page";
+const DEFAULT_SHOWDOC_PAGE_SETTLE_MS = 2500;
 function parseArgs(argv) {
   const options = {
     mcpUrl: process.env.SHOWDOC_MCP_URL || DEFAULT_MCP_URL,
@@ -63,12 +63,79 @@ async function fileExists(filePath) {
   }
 }
 
-function chunkArray(items, chunkSize) {
-  const chunks = [];
-  for (let index = 0; index < items.length; index += chunkSize) {
-    chunks.push(items.slice(index, index + chunkSize));
+function normalizeCatalog(catalog) {
+  return typeof catalog === "string" ? catalog.trim() : "";
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getLeafCatalog(catalog) {
+  return normalizeCatalog(catalog).split("/").filter(Boolean).at(-1) ?? null;
+}
+
+function buildShowDocPageUrl(pageId, hash = "") {
+  const baseUrl = process.env.SHOWDOC_PAGE_BASE_URL || DEFAULT_SHOWDOC_PAGE_BASE_URL;
+  return `${baseUrl}/${pageId}${hash}`;
+}
+
+function resolveLinkedMarkdownPath(fromPath, targetPath) {
+  if (!targetPath || !targetPath.toLowerCase().endsWith(".md")) {
+    return null;
   }
-  return chunks;
+
+  const normalizedSourcePath = fromPath.replace(/\\/g, "/");
+  const normalizedTargetPath = targetPath.replace(/\\/g, "/");
+  const sourceDirectory = path.posix.dirname(normalizedSourcePath);
+
+  return path.posix.normalize(path.posix.join(sourceDirectory, normalizedTargetPath));
+}
+
+function rewriteShowDocMarkdownLinks(markdown, currentFilePath, pageRefByPath) {
+  if (!markdown) {
+    return markdown;
+  }
+
+  return markdown.replace(
+    /(?<!!)(\[[^\]]+\]\()([^)]+)(\))/g,
+    (_, prefix, rawTarget, suffix) => {
+      const trimmedTarget = rawTarget.trim();
+      if (!trimmedTarget) {
+        return `${prefix}${rawTarget}${suffix}`;
+      }
+
+      const [targetHref, ...titleParts] = trimmedTarget.split(/\s+/);
+      if (!targetHref || targetHref.startsWith("#") || /^(https?:\/\/|mailto:|tel:)/i.test(targetHref)) {
+        return `${prefix}${rawTarget}${suffix}`;
+      }
+
+      const [rawPath, rawHash] = targetHref.split("#");
+      const resolvedPath = resolveLinkedMarkdownPath(currentFilePath, rawPath);
+      if (!resolvedPath) {
+        return `${prefix}${rawTarget}${suffix}`;
+      }
+
+      const pageRef = pageRefByPath.get(resolvedPath);
+      if (!pageRef?.page_id) {
+        return `${prefix}${rawTarget}${suffix}`;
+      }
+
+      const rewrittenHref = buildShowDocPageUrl(pageRef.page_id, rawHash ? `#${rawHash}` : "");
+      const titleSegment = titleParts.length > 0 ? ` ${titleParts.join(" ")}` : "";
+
+      return `${prefix}${rewrittenHref}${titleSegment}${suffix}`;
+    },
+  );
+}
+
+function toShowDocPagePayload(page) {
+  return {
+    page_title: page.page_title,
+    page_content: page.page_content,
+    s_number: page.s_number,
+    ...(page.cat_name ? { cat_name: page.cat_name } : {}),
+  };
 }
 
 function parseToolContent(result) {
@@ -158,7 +225,7 @@ async function loadProjectConfig(repoRoot, projectDir) {
 
   const files = [];
   for (const [index, entry] of manifest.order.entries()) {
-    if (!entry.path || !entry.title || !entry.catalog) {
+    if (!entry.path || !entry.title || typeof entry.catalog !== "string") {
       throw new Error(`Invalid manifest entry at index ${index}.`);
     }
 
@@ -170,7 +237,8 @@ async function loadProjectConfig(repoRoot, projectDir) {
     files.push({
       ...entry,
       fullPath,
-      leafCatalog: entry.catalog.split("/").filter(Boolean).at(-1),
+      normalizedPath: entry.path.replace(/\\/g, "/"),
+      leafCatalog: getLeafCatalog(entry.catalog),
       sNumber: index + 1,
     });
   }
@@ -225,7 +293,7 @@ async function ensureRootCatalogs(client, itemId, files, dryRun) {
   );
   const createdCatalogs = [];
 
-  for (const leafCatalog of [...new Set(files.map((file) => file.leafCatalog))]) {
+  for (const leafCatalog of [...new Set(files.map((file) => file.leafCatalog).filter(Boolean))]) {
     if (existingCatalogs.has(leafCatalog)) {
       continue;
     }
@@ -274,67 +342,123 @@ async function listAllPages(client, itemId) {
   return pages;
 }
 
-async function syncPages(client, itemId, files, dryRun) {
+async function buildLocalPages(files, pageRefByPath = new Map()) {
   const pages = [];
+
   for (const file of files) {
+    const rawContent = await readText(file.fullPath);
     pages.push({
+      file,
       page_title: file.title,
-      page_content: await readText(file.fullPath),
+      page_content: rewriteShowDocMarkdownLinks(rawContent, file.normalizedPath, pageRefByPath),
       cat_name: file.leafCatalog,
       s_number: file.sNumber,
     });
   }
 
+  return pages;
+}
+
+async function upsertPages(client, itemId, pages) {
+  const results = [];
+  const settleMs = Number(process.env.SHOWDOC_PAGE_SETTLE_MS || DEFAULT_SHOWDOC_PAGE_SETTLE_MS);
+
+  for (const page of pages) {
+    try {
+      const response = await client.callTool("upsert_page", {
+        item_id: itemId,
+        ...toShowDocPagePayload(page),
+      });
+      results.push({
+        filePath: page.file.normalizedPath,
+        page_title: page.page_title,
+        status: "success",
+        page_id: response.page_id,
+        cat_id: response.cat_id,
+        s_number: page.s_number,
+      });
+      if (settleMs > 0) {
+        await sleep(settleMs);
+      }
+    } catch (error) {
+      results.push({
+        filePath: page.file.normalizedPath,
+        page_title: page.page_title,
+        status: "failed",
+        error: error instanceof Error ? error.message : String(error),
+        s_number: page.s_number,
+      });
+    }
+  }
+
+  return {
+    successCount: results.filter((result) => result.status === "success").length,
+    failedCount: results.filter((result) => result.status !== "success").length,
+    results,
+  };
+}
+
+function buildPageRefByPath(syncResults) {
+  const pageRefByPath = new Map();
+
+  for (const result of syncResults) {
+    if (result.status === "success" && result.filePath && result.page_id) {
+      pageRefByPath.set(result.filePath, result);
+    }
+  }
+
+  return pageRefByPath;
+}
+
+async function syncPages(client, itemId, files, dryRun) {
+  const initialPages = await buildLocalPages(files);
+
   if (dryRun) {
     return {
-      successCount: pages.length,
+      successCount: initialPages.length,
       failedCount: 0,
-      results: pages.map((page) => ({
+      results: initialPages.map((page) => ({
         page_title: page.page_title,
         status: "would_sync",
       })),
     };
   }
 
-  const results = [];
-  let successCount = 0;
-  let failedCount = 0;
+  const initialSync = await upsertPages(client, itemId, initialPages);
+  const pageRefByPath = buildPageRefByPath(initialSync.results);
+  const rewrittenPages = await buildLocalPages(files, pageRefByPath);
 
-  for (const chunk of chunkArray(pages, MAX_BATCH_SIZE)) {
-    const response = await client.callTool("batch_upsert_pages", {
-      item_id: itemId,
-      pages: chunk,
-    });
+  const needsRewritePass = rewrittenPages.some(
+    (page, index) => page.page_content !== initialPages[index]?.page_content,
+  );
 
-    successCount += response.success_count || 0;
-    failedCount += response.failed_count || 0;
-    results.push(...(response.results || []));
+  let rewriteSync = { successCount: 0, failedCount: 0, results: [] };
+  if (needsRewritePass) {
+    rewriteSync = await upsertPages(client, itemId, rewrittenPages);
   }
 
-  const remotePages = await listAllPages(client, itemId);
-  const remotePageByNumber = new Map(remotePages.map((page) => [page.s_number, page]));
-  const verifiedResults = pages.map((page) => {
-    const remotePage = remotePageByNumber.get(page.s_number);
-    if (!remotePage) {
-      return {
-        page_title: page.page_title,
-        status: "missing_after_sync",
-      };
-    }
-
-    return {
-      page_title: page.page_title,
-      status: "success",
-      cat_id: remotePage.cat_id,
-      s_number: remotePage.s_number,
-    };
-  });
+  const finalSyncResults = needsRewritePass ? rewriteSync.results : initialSync.results;
+  const verifiedResults = finalSyncResults.map((result) =>
+    result.status === "success"
+      ? {
+          page_title: result.page_title,
+          status: "success",
+          page_id: result.page_id,
+          cat_id: result.cat_id,
+          s_number: result.s_number,
+        }
+      : {
+          page_title: result.page_title,
+          status: "missing_after_sync",
+        },
+  );
 
   const missingCount = verifiedResults.filter((result) => result.status !== "success").length;
+  const verifiedSuccessCount = verifiedResults.length - missingCount;
 
   return {
-    successCount: successCount - missingCount,
-    failedCount: failedCount + missingCount,
+    successCount: verifiedSuccessCount,
+    failedCount: initialSync.failedCount + rewriteSync.failedCount + missingCount,
     results: verifiedResults,
   };
 }

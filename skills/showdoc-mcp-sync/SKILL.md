@@ -65,6 +65,7 @@ Default mapping:
 - each Markdown file maps to one ShowDoc page
 - each subdirectory maps to one nested ShowDoc catalog path
 - `README.md` may be used as a catalog landing page when that is useful
+- if a manifest entry has an empty `catalog`, sync that page to the project root instead of any folder
 
 If `_meta.json` exists, treat it as the source of truth for:
 
@@ -79,6 +80,7 @@ Current ShowDoc MCP behavior to account for:
 - keep `_meta.json` `catalog` as the logical target path
 - when writing pages, fall back to the leaf catalog name as `cat_name`
 - expect practical root-level catalogs such as `平台架构`, `总览`, `角色视图`, and `统一口径与结论`
+- preserve project-root placement for navigation pages whose `catalog` is intentionally empty
 
 If `sync-instructions.md` exists, treat it as the execution policy for:
 
@@ -96,6 +98,7 @@ These source materials are internal-facing. Preserve that positioning during syn
 - Preserve distinctions such as `Legacy API`, `OpenAPI`, `0x04`, `0x03`, `VPP Protocol 2.04`, and `RTU Protocol`.
 - Preserve the modeling rule that batteries are managed through inverters rather than as independently onboarded platform objects.
 - Do not remove statements that clarify internal boundaries, role views, or platform evolution direction.
+- Rewrite repository-internal Markdown links to actual ShowDoc page links after page IDs are known, so index pages can navigate correctly inside ShowDoc.
 
 Default sync mode:
 

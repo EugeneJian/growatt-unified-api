@@ -24,6 +24,7 @@
    - `总览`
    - `角色视图`
    - `统一口径与结论`
+4. 若某个条目的 `catalog` 为空字符串，则页面应直接写入项目根目录，且不创建目录。
 
 因此，当前同步器必须采用：
 
@@ -112,7 +113,7 @@ $env:SHOWDOC_TOKEN = "your-token"
 
 ### 4. 特殊文件规则
 
-- `README.md` 允许作为索引页同步
+- `README.md` 允许作为索引页同步，并可直接落在项目根目录作为导航页
 - `_meta.json` 与 `sync-instructions.md` 只作为同步元数据和执行说明，不同步为 ShowDoc 页面
 - 非 Markdown 文件默认跳过
 
@@ -131,6 +132,7 @@ $env:SHOWDOC_TOKEN = "your-token"
 3. 保留架构术语，例如 `Legacy API`、`OpenAPI`、`0x04`、`0x03`、`VPP Protocol 2.04`、`RTU Protocol`
 4. 保留“内部资料”定位
 5. 不擅自重写中文内容
+6. 对于指向仓库内其他 Markdown 页的相对链接，在同步到 ShowDoc 时应改写为可跳转的 ShowDoc 页面直链
 
 ## 执行步骤
 
@@ -157,8 +159,9 @@ $env:SHOWDOC_TOKEN = "your-token"
 
 1. 解析 `catalog`
 2. 提取 `catalog` 的最后一个路径段作为实际落地目录名
-3. 检查该根级目录是否存在
-4. 若不存在则调用 `create_catalog`
+3. 若 `catalog` 为空字符串，则跳过目录创建并直接落到项目根目录
+4. 检查该根级目录是否存在
+5. 若不存在则调用 `create_catalog`
 
 ### Step 5. 逐页同步
 
@@ -166,9 +169,11 @@ $env:SHOWDOC_TOKEN = "your-token"
 
 1. 读取 `path` 指向的 Markdown 文件
 2. 使用 `title` 作为页面标题
-3. 使用 `catalog` 的最后一个路径段作为目标 `cat_name`
-4. 调用 `upsert_page`
-5. 记录该页是 created、updated、unchanged 还是 failed
+3. 若 `catalog` 非空，则使用 `catalog` 的最后一个路径段作为目标 `cat_name`
+4. 先完成一轮页面同步以获得稳定的 `page_id`
+5. 将正文中的仓库内 Markdown 相对链接改写为目标 ShowDoc 页面直链
+6. 再次调用 `upsert_page` 或 `batch_upsert_pages` 覆盖更新链接
+7. 记录该页是 created、updated、unchanged 还是 failed
 
 ### Step 6. 输出结果摘要
 

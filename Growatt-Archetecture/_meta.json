@@ -6,6 +6,11 @@
   "catalogStrategy": "leaf-root-fallback",
   "order": [
     {
+      "path": "README.md",
+      "title": "Growatt-Archetecture",
+      "catalog": ""
+    },
+    {
       "path": "00-audience-overview.md",
       "title": "Growatt 企业平台架构概览",
       "catalog": "平台架构"
