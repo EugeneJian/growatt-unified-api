@@ -8,28 +8,23 @@
 
 - ShowDoc 项目：`Growatt-Archetecture`
 - 仓库同步根：`Growatt-Archetecture/`
-- 顶层目录：`内部资料/平台架构`
+- 顶层目录：项目根目录
 - 顺序与页面映射真源：`Growatt-Archetecture/_meta.json`
 
 ## 当前 MCP 实际行为
 
-当前 ShowDoc MCP 的页面写入接口在实际落地时，对嵌套目录路径支持不稳定。
+当前 ShowDoc MCP 的页面写入接口在实际落地时，对目录、连续写入和页面 ID 返回的一致性支持不稳定。
 
 已验证的稳定行为是：
 
-1. `_meta.json` 中的 `catalog` 继续作为逻辑目标路径保留。
-2. 实际调用 `upsert_page` 或 `batch_upsert_pages` 时，使用 `catalog` 的最后一个路径段作为 `cat_name`。
-3. 页面会稳定落到项目根级目录中，对应根级目录名通常为：
-   - `平台架构`
-   - `总览`
-   - `角色视图`
-   - `统一口径与结论`
-4. 若某个条目的 `catalog` 为空字符串，则页面应直接写入项目根目录，且不创建目录。
+1. 当多个页面连续写入同一目录时，ShowDoc 返回的 `page_id` 可能出现串页或短暂不一致。
+2. 当前更稳妥的规避方案，是将章节全部直接写入项目根目录。
+3. 因此 `_meta.json` 中的 `catalog` 应统一使用空字符串，避免依赖任何目录层级。
 
 因此，当前同步器必须采用：
 
-- 逻辑目录路径：来自 `_meta.json`
-- 实际 ShowDoc 落地目录：`catalog` 的叶子目录名
+- 页面全部落到项目根目录
+- 不创建也不依赖 ShowDoc 目录
 
 ## 同步前置条件
 
@@ -107,9 +102,8 @@ $env:SHOWDOC_TOKEN = "your-token"
 ### 3. 目标目录
 
 - 目标目录以 `_meta.json` 的 `catalog` 为准
-- 当前实际写入 ShowDoc 时，取 `catalog` 的最后一个路径段作为 `cat_name`
-- 若该根级目录不存在，则由页面写入自动创建，或先显式创建
-- 顶层逻辑目录默认为 `内部资料/平台架构`
+- 当前实际写入 ShowDoc 时，`catalog` 为空字符串，页面直接落到项目根目录
+- 不创建目录，也不依赖目录存在
 
 ### 4. 特殊文件规则
 
@@ -158,10 +152,8 @@ $env:SHOWDOC_TOKEN = "your-token"
 对 `_meta.json.order` 中每一项：
 
 1. 解析 `catalog`
-2. 提取 `catalog` 的最后一个路径段作为实际落地目录名
-3. 若 `catalog` 为空字符串，则跳过目录创建并直接落到项目根目录
-4. 检查该根级目录是否存在
-5. 若不存在则调用 `create_catalog`
+2. 若 `catalog` 为空字符串，则直接跳过目录创建
+3. 当前默认所有页面均直接落到项目根目录
 
 ### Step 5. 逐页同步
 
@@ -169,7 +161,7 @@ $env:SHOWDOC_TOKEN = "your-token"
 
 1. 读取 `path` 指向的 Markdown 文件
 2. 使用 `title` 作为页面标题
-3. 若 `catalog` 非空，则使用 `catalog` 的最后一个路径段作为目标 `cat_name`
+3. 当前默认 `catalog` 为空，不传 `cat_name`
 4. 先完成一轮页面同步以获得稳定的 `page_id`
 5. 将正文中的仓库内 Markdown 相对链接改写为目标 ShowDoc 页面直链
 6. 再次调用 `upsert_page` 或 `batch_upsert_pages` 覆盖更新链接

@@ -52,7 +52,7 @@ Read `docs/SHOWDOC_MCP_VALIDATION.zh-CN.md` if you need the verified capability 
 Unless the user specifies a different information architecture, use:
 
 - sync root: `Growatt-Archetecture/`
-- top-level catalog path: `内部资料/平台架构`
+- placement: project root, flat pages
 
 Preferred write behavior:
 
@@ -63,9 +63,9 @@ Preferred write behavior:
 Default mapping:
 
 - each Markdown file maps to one ShowDoc page
-- each subdirectory maps to one nested ShowDoc catalog path
-- `README.md` may be used as a catalog landing page when that is useful
-- if a manifest entry has an empty `catalog`, sync that page to the project root instead of any folder
+- use a flat root-level page layout for `Growatt-Archetecture/`
+- `README.md` should be used as the project-root navigation page
+- manifest entries should prefer an empty `catalog` so pages sync to the project root
 
 If `_meta.json` exists, treat it as the source of truth for:
 
@@ -77,10 +77,8 @@ If `_meta.json` exists, treat it as the source of truth for:
 Current ShowDoc MCP behavior to account for:
 
 - nested catalog paths may not be preserved during page writes
-- keep `_meta.json` `catalog` as the logical target path
-- when writing pages, fall back to the leaf catalog name as `cat_name`
-- expect practical root-level catalogs such as `平台架构`, `总览`, `角色视图`, and `统一口径与结论`
-- preserve project-root placement for navigation pages whose `catalog` is intentionally empty
+- repeated writes within the same catalog can produce unstable `page_id` mappings
+- for this project, prefer empty `catalog` values and root-level page placement to minimize link misrouting
 
 If `sync-instructions.md` exists, treat it as the execution policy for:
 
