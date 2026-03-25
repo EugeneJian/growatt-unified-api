@@ -1,0 +1,63 @@
+{
+  "project": "Growatt-Archetecture",
+  "scope": "internal",
+  "syncRoot": "Growatt-Archetecture/",
+  "topLevelCatalog": "内部资料/平台架构",
+  "order": [
+    {
+      "path": "README.md",
+      "title": "Growatt-Archetecture 文档索引",
+      "catalog": "内部资料/平台架构"
+    },
+    {
+      "path": "01-document-purpose-and-core-conclusions.md",
+      "title": "文档目的与核心结论",
+      "catalog": "内部资料/平台架构/总览"
+    },
+    {
+      "path": "02-platform-architecture.md",
+      "title": "平台总体架构",
+      "catalog": "内部资料/平台架构/总览"
+    },
+    {
+      "path": "03-role-views/01-management-view.md",
+      "title": "管理层视图",
+      "catalog": "内部资料/平台架构/角色视图"
+    },
+    {
+      "path": "03-role-views/02-platform-architect-view.md",
+      "title": "平台架构师视图",
+      "catalog": "内部资料/平台架构/角色视图"
+    },
+    {
+      "path": "03-role-views/03-api-partner-view.md",
+      "title": "API / 第三方接入视图",
+      "catalog": "内部资料/平台架构/角色视图"
+    },
+    {
+      "path": "03-role-views/04-cloud-edge-view.md",
+      "title": "云边通信视图",
+      "catalog": "内部资料/平台架构/角色视图"
+    },
+    {
+      "path": "03-role-views/05-protocol-device-view.md",
+      "title": "协议与设备接入视图",
+      "catalog": "内部资料/平台架构/角色视图"
+    },
+    {
+      "path": "03-role-views/06-device-modeling-view.md",
+      "title": "设备建模视图",
+      "catalog": "内部资料/平台架构/角色视图"
+    },
+    {
+      "path": "04-unified-architecture-statement.md",
+      "title": "推荐的统一架构口径",
+      "catalog": "内部资料/平台架构/统一口径与结论"
+    },
+    {
+      "path": "05-conclusion-and-next-steps.md",
+      "title": "结论与后续扩展",
+      "catalog": "内部资料/平台架构/统一口径与结论"
+    }
+  ]
+}

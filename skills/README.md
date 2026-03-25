@@ -56,3 +56,41 @@ The skill currently includes:
 - The canonical API docs remain under:
   - [Growatt API/OPENAPI](/Users/kanajane/Desktop/Github/growatt_unified_api/Growatt%20API/OPENAPI)
   - [Growatt API/OPENAPI.zh-CN](/Users/kanajane/Desktop/Github/growatt_unified_api/Growatt%20API/OPENAPI.zh-CN)
+
+### `showdoc-mcp-sync`
+
+Path:
+
+- [skills/showdoc-mcp-sync/SKILL.md](skills/showdoc-mcp-sync/SKILL.md)
+
+Use this skill when you need to sync internal repository Markdown documents into ShowDoc through the configured `showdoc` MCP server.
+
+It is designed for:
+
+- locating or creating the target ShowDoc project
+- creating catalogs for internal architecture materials
+- upserting Markdown pages from repository source files
+- preserving Mermaid diagrams and architecture terminology during sync
+- reporting whether the sync completed, partially completed, or was blocked by ShowDoc account limits
+
+## When To Trigger It
+
+Use or mention this skill when the task involves:
+
+- ShowDoc MCP
+- creating or locating project `Growatt-Archetecture`
+- syncing Markdown files under `Growatt-Archetecture/`
+- internal architecture document synchronization
+- `list_items`, `create_item`, `upsert_page`, or `batch_upsert_pages`
+
+Suggested invocation:
+
+```text
+Use $showdoc-mcp-sync to sync the Markdown files under `Growatt-Archetecture/` into the ShowDoc project `Growatt-Archetecture` as internal architecture documents.
+```
+
+## Notes
+
+- This skill assumes the local MCP server name is `showdoc`.
+- Do not store the real ShowDoc Bearer token in repository files.
+- The capability validation record lives at `docs/SHOWDOC_MCP_VALIDATION.zh-CN.md`.
