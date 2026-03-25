@@ -11,6 +11,25 @@
 - 顶层目录：`内部资料/平台架构`
 - 顺序与页面映射真源：`Growatt-Archetecture/_meta.json`
 
+## 当前 MCP 实际行为
+
+当前 ShowDoc MCP 的页面写入接口在实际落地时，对嵌套目录路径支持不稳定。
+
+已验证的稳定行为是：
+
+1. `_meta.json` 中的 `catalog` 继续作为逻辑目标路径保留。
+2. 实际调用 `upsert_page` 或 `batch_upsert_pages` 时，使用 `catalog` 的最后一个路径段作为 `cat_name`。
+3. 页面会稳定落到项目根级目录中，对应根级目录名通常为：
+   - `平台架构`
+   - `总览`
+   - `角色视图`
+   - `统一口径与结论`
+
+因此，当前同步器必须采用：
+
+- 逻辑目录路径：来自 `_meta.json`
+- 实际 ShowDoc 落地目录：`catalog` 的叶子目录名
+
 ## 同步前置条件
 
 执行同步前，必须满足以下条件：
@@ -20,6 +39,27 @@
 3. `Growatt-Archetecture/_meta.json` 存在且可读取。
 4. `_meta.json` 中列出的 Markdown 文件都存在。
 5. 不将 Bearer token 写入仓库文件、日志摘要或提交信息。
+
+## 本地执行入口
+
+推荐直接使用仓库脚本：
+
+1. `scripts/sync-growatt-archetecture.ps1`
+2. `scripts/sync-showdoc-project.mjs`
+
+推荐命令：
+
+```powershell
+$env:SHOWDOC_TOKEN = "your-token"
+.\scripts\sync-growatt-archetecture.ps1
+```
+
+若只想验证而不真正写入：
+
+```powershell
+$env:SHOWDOC_TOKEN = "your-token"
+.\scripts\sync-growatt-archetecture.ps1 -DryRun
+```
 
 ## 必须先读的文件
 
@@ -66,8 +106,9 @@
 ### 3. 目标目录
 
 - 目标目录以 `_meta.json` 的 `catalog` 为准
-- 若目录不存在，先创建目录，再写入页面
-- 顶层目录默认为 `内部资料/平台架构`
+- 当前实际写入 ShowDoc 时，取 `catalog` 的最后一个路径段作为 `cat_name`
+- 若该根级目录不存在，则由页面写入自动创建，或先显式创建
+- 顶层逻辑目录默认为 `内部资料/平台架构`
 
 ### 4. 特殊文件规则
 
@@ -115,8 +156,9 @@
 对 `_meta.json.order` 中每一项：
 
 1. 解析 `catalog`
-2. 检查目标目录是否存在
-3. 若不存在则调用 `create_catalog`
+2. 提取 `catalog` 的最后一个路径段作为实际落地目录名
+3. 检查该根级目录是否存在
+4. 若不存在则调用 `create_catalog`
 
 ### Step 5. 逐页同步
 
@@ -124,7 +166,7 @@
 
 1. 读取 `path` 指向的 Markdown 文件
 2. 使用 `title` 作为页面标题
-3. 使用 `catalog` 作为目标目录
+3. 使用 `catalog` 的最后一个路径段作为目标 `cat_name`
 4. 调用 `upsert_page`
 5. 记录该页是 created、updated、unchanged 还是 failed
 

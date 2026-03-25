@@ -67,6 +67,12 @@ Expected uses:
 - map files into explicit catalog paths
 - allow `README.md` to be synced as an index page
 
+Current practical ShowDoc mapping:
+
+- retain `_meta.json` `catalog` as the logical information architecture
+- use the last path segment of `catalog` as the actual ShowDoc `cat_name` during sync
+- expect root-level catalogs for the current MCP write path
+
 ## Execution policy source of truth
 
 If `Growatt-Archetecture/sync-instructions.md` exists, use it as the authoritative execution guide for:

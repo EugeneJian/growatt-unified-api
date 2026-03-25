@@ -73,6 +73,13 @@ If `_meta.json` exists, treat it as the source of truth for:
 - target catalog paths
 - which files should be synced first
 
+Current ShowDoc MCP behavior to account for:
+
+- nested catalog paths may not be preserved during page writes
+- keep `_meta.json` `catalog` as the logical target path
+- when writing pages, fall back to the leaf catalog name as `cat_name`
+- expect practical root-level catalogs such as `平台架构`, `总览`, `角色视图`, and `统一口径与结论`
+
 If `sync-instructions.md` exists, treat it as the execution policy for:
 
 - required read order

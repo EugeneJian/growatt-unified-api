@@ -17,6 +17,30 @@
 - `README.md` 可作为目录索引页同步。
 - Markdown 文件映射为 ShowDoc 页面。
 - 子目录与 `_meta.json` 中的 `catalog` 字段共同决定 ShowDoc 目录层级。
+- 当前 ShowDoc MCP 实际落地时，目录采用叶子目录名回退到项目根目录的策略。
+
+## 本地一键同步
+
+PowerShell:
+
+```powershell
+$env:SHOWDOC_TOKEN = "your-token"
+.\scripts\sync-growatt-archetecture.ps1
+```
+
+Dry run:
+
+```powershell
+$env:SHOWDOC_TOKEN = "your-token"
+.\scripts\sync-growatt-archetecture.ps1 -DryRun
+```
+
+NPM:
+
+```powershell
+$env:SHOWDOC_TOKEN = "your-token"
+npm run showdoc:sync:growatt-archetecture
+```
 
 ## 文档索引
 
@@ -48,6 +72,7 @@
 5. Mermaid 图、标题层级、术语口径尽量保持稳定，便于 ShowDoc 持续更新。
 6. 需要调整同步顺序、显示标题或目标目录时，优先修改 `_meta.json`。
 7. 需要调整执行流程或失败处理策略时，优先修改 `sync-instructions.md`。
+8. 当前若通过 ShowDoc MCP 执行实际同步，页面通常会落到根级目录 `平台架构`、`总览`、`角色视图`、`统一口径与结论`。
 
 ## 说明
 
