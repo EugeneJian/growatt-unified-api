@@ -7,7 +7,7 @@
   "order": [
     {
       "path": "00-audience-overview.md",
-      "title": "Growatt-Archetecture 文档索引",
+      "title": "Growatt 企业平台架构概览",
       "catalog": "平台架构"
     },
     {
