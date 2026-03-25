@@ -20,13 +20,14 @@ Do not store or print the full ShowDoc token in repository files, commit message
 Follow this order unless the user explicitly asks for a different sync shape:
 
 1. Confirm the local MCP server `showdoc` is available.
-2. Read `_meta.json` first if it exists under `Growatt-Archetecture/`.
-3. Read the source Markdown files from `Growatt-Archetecture/`.
-4. Check whether project `Growatt-Archetecture` already exists.
-5. If it does not exist, try to create it.
-6. Map subdirectories and files to the needed ShowDoc catalog path.
-7. Upsert the target page contents in the declared order.
-8. Report exactly what was created, updated, skipped, or blocked.
+2. Read `Growatt-Archetecture/sync-instructions.md` first if it exists.
+3. Read `_meta.json` first if it exists under `Growatt-Archetecture/`.
+4. Read the source Markdown files from `Growatt-Archetecture/`.
+5. Check whether project `Growatt-Archetecture` already exists.
+6. If it does not exist, try to create it.
+7. Map subdirectories and files to the needed ShowDoc catalog path.
+8. Upsert the target page contents in the declared order.
+9. Report exactly what was created, updated, skipped, or blocked.
 
 ## Project handling rules
 
@@ -72,6 +73,13 @@ If `_meta.json` exists, treat it as the source of truth for:
 - target catalog paths
 - which files should be synced first
 
+If `sync-instructions.md` exists, treat it as the execution policy for:
+
+- required read order
+- project creation behavior
+- failure handling
+- reporting format
+
 ## Content rules
 
 These source materials are internal-facing. Preserve that positioning during sync.
@@ -116,4 +124,5 @@ When reporting a completed or blocked sync, use this structure:
 
 - For verified MCP behavior in this repo, read [reference.md](reference.md)
 - For the sync source root, read `Growatt-Archetecture/README.md`
+- For explicit execution policy, read `Growatt-Archetecture/sync-instructions.md`
 - For ordered multi-file sync mapping, read `Growatt-Archetecture/_meta.json`

@@ -53,6 +53,7 @@ Use these defaults unless the user overrides them:
 - scope: internal
 - top-level catalog path: `内部资料/平台架构`
 - mapping rule: each Markdown file becomes one page, each subdirectory becomes one catalog
+- execution policy: `Growatt-Archetecture/sync-instructions.md`
 - order source: `Growatt-Archetecture/_meta.json`
 
 ## Ordered sync source of truth
@@ -65,6 +66,16 @@ Expected uses:
 - keep ShowDoc page titles stable even if filenames are technical
 - map files into explicit catalog paths
 - allow `README.md` to be synced as an index page
+
+## Execution policy source of truth
+
+If `Growatt-Archetecture/sync-instructions.md` exists, use it as the authoritative execution guide for:
+
+- read order
+- create-or-reuse project behavior
+- create catalog behavior
+- per-page sync loop
+- failure handling and reporting
 
 ## Recommended prompt
 
