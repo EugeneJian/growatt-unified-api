@@ -71,7 +71,9 @@ describe("growatt docs source-of-truth loader", () => {
 
     expect(quickGuide.slug).toBe("quick-guide");
     expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.md");
-    expect(quickGuide.title).toBe("Quick Guide");
+    expect(quickGuide.title).toBe(
+      "Growatt Open API Professional Integration Guide (SSOT Aligned)",
+    );
     expect(quickGuide.html).toContain("<article>");
     expect(quickGuide.html).toContain("Integration Checklist");
     expect(quickGuide.displayMarkdown).toContain("Integration Checklist");
@@ -83,15 +85,17 @@ describe("growatt docs source-of-truth loader", () => {
       getGrowattDocMetas("zh-CN"),
     ]);
 
-    expect(overview.title).toContain("文档");
+    expect(overview.title).toBe("Growatt Open API 文档");
     expect(docs[0]?.title).toContain("身份认证");
   });
 
   it("loads localized Chinese quick guide markdown", async () => {
     const quickGuide = await getGrowattQuickGuide("zh-CN");
 
-    expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.zh-CN.md");
-    expect(quickGuide.title).toContain("快速指南");
+    expect(quickGuide.fileName).toBe(
+      "Growatt Open API Professional Integration Guide.zh-CN.md",
+    );
+    expect(quickGuide.title).toBe("Growatt Open API 专业集成指南（与 SSOT 对齐）");
     expect(quickGuide.displayMarkdown).toContain("集成检查清单");
   });
 
