@@ -132,13 +132,13 @@ flowchart TD
 
 ---
 
-## 9290 and Historical-Material Compatibility Note
+## Historical-Field Compatibility Note
 
-In `https://api-test.growatt.com:9290` and historical reports, the following differences have been observed:
+Some historical materials and deployment-specific payloads have exposed the following differences:
 
 - Telemetry may additionally expose `activePower`, and on some environments or devices it may also expose `reverActivePower`; these fields may coexist with `meterPower`, or only a subset may appear.
 - Some payloads use `deviceSn` or top-level `soc` as compatibility fields.
-- Requests still use raw SN together with `Authorization: Bearer <access_token>` and a JSON body.
+- Requests still use the raw SN together with `Authorization: Bearer <access_token>` and a JSON body.
 
 Recommended handling:
 

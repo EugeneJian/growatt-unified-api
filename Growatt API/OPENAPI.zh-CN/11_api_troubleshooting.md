@@ -2,7 +2,7 @@
 
 版本：V1.0 | 发布日期：2026 年 3 月 12 日
 
-本页只记录 `https://api-test.growatt.com:9290` 的已验证兼容事实。若本页与端点级主规范冲突，以对应端点文档为准。
+本页汇总常见集成失败场景与符合端点级文档的修正动作。若本页与端点级主规范冲突，以对应端点文档为准。
 
 建议配套阅读：
 
@@ -12,7 +12,7 @@
 
 ---
 
-## 9290 已验证成功路径
+## 已验证的 Client-Credentials 成功路径
 
 在 `client_credentials` 模式下，以下顺序已验证通过：
 
@@ -30,7 +30,7 @@
 
 ### 1. 为什么 `client_credentials` 调 `getDeviceList` 失败？
 
-在 9290 环境中，`client_credentials` 调用 `POST /oauth2/getDeviceList` 会返回：
+使用 `client_credentials` 调用 `POST /oauth2/getDeviceList` 超出了支持边界，可能返回：
 
 ```json
 {
@@ -47,7 +47,7 @@
 
 ### 2. 为什么页面上的设备标识看起来没问题，但 `bindDevice` 还是失败？
 
-在 9290 测试环境中，页面或截图里的设备标识可能带 `SPH:` 或 `SPM:` 前缀，但接口请求必须传纯 SN。
+页面或截图里的设备标识可能带 `SPH:` 或 `SPM:` 前缀，但接口请求必须传纯 SN。
 
 - 正确：`RAW_DEVICE_SN`
 - 错误：`SPH:RAW_DEVICE_SN`
@@ -65,7 +65,7 @@
 - `Content-Type: application/json`
 - Body 只传纯 SN
 
-### 4. 9290 环境里哪些接口统一使用 JSON body？
+### 4. 哪些接口统一使用 JSON body？
 
 已验证通过的接口包括：
 
@@ -81,7 +81,7 @@
 这与 `setType` 有关：
 
 - `time_slot_charge_discharge` 常见为数组
-- `duration_and_power_charge_discharge` 在 9290 中已观察到对象结构
+- `duration_and_power_charge_discharge` 可能返回对象结构
 
 因此客户端应按 `setType` 解析 `data`，不要把某一个示例当成唯一固定结构。
 
@@ -95,7 +95,7 @@
 | `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | 设备尚未绑定或当前 token 无权限 | 先执行 `bindDevice` 或核对授权关系 |
 | `WRONG_GRANT_TYPE` | OAuth 模式与接口不匹配 | 切换到正确模式，或改走 `bindDevice` 流程 |
 | `parameter error` | SN 带前缀或 body 格式错误 | 改为 JSON body，并仅传纯 SN |
-| `code=400, message=fail` | 9290 中常见于鉴权头与请求体组合错误 | 改为 `Authorization: Bearer` + JSON body |
+| `code=400, message=fail` | 常见于鉴权头与请求体组合错误 | 改为 `Authorization: Bearer` + JSON body |
 
 ---
 

@@ -14,6 +14,33 @@ const OPENAPI_DIRS = [
     dir: path.join(process.cwd(), "Growatt API", "OPENAPI.zh-CN"),
   },
 ];
+const GUIDE_FILES = [
+  {
+    label: "guide-en",
+    file: path.join(
+      process.cwd(),
+      "Growatt API",
+      "Growatt Open API Professional Integration Guide.md",
+    ),
+  },
+  {
+    label: "guide-zh-CN",
+    file: path.join(
+      process.cwd(),
+      "Growatt API",
+      "Growatt Open API Professional Integration Guide.zh-CN.md",
+    ),
+  },
+];
+const FORBIDDEN_OFFICIAL_DOC_PATTERN = /9290/;
+const UNMASKED_TOKEN_FIELD_PATTERN =
+  /"(access_token|refresh_token)"\s*:\s*"(?!<masked_(?:access|refresh)_token>")[^"]{16,}"/;
+const UNMASKED_CLIENT_SECRET_PATTERN =
+  /"client_secret"\s*:\s*"(?!<masked_client_secret>")[^"]+"/;
+const UNMASKED_AUTH_CODE_PATTERN =
+  /"code"\s*:\s*"(?!<masked_authorization_code>")[^"]+"/;
+const NON_PLACEHOLDER_CLIENT_ID_PATTERN =
+  /"client_id"\s*:\s*"(?!<example_client_id>")[^"]+"/;
 
 function removeHash(url) {
   const hashIndex = url.indexOf("#");
@@ -38,6 +65,45 @@ async function fileExists(fullPath) {
   } catch {
     return false;
   }
+}
+
+function scanOfficialDocForForbiddenMarkers(content, relativePath, label) {
+  const errors = [];
+  const lines = content.split(/\r?\n/);
+
+  for (const [index, line] of lines.entries()) {
+    if (FORBIDDEN_OFFICIAL_DOC_PATTERN.test(line)) {
+      errors.push(
+        `[${label}] Official docs must stay environment-neutral: found "9290" in ${relativePath}:${index + 1}`,
+      );
+    }
+
+    if (UNMASKED_TOKEN_FIELD_PATTERN.test(line)) {
+      errors.push(
+        `[${label}] Official docs must not expose full token examples: ${relativePath}:${index + 1}`,
+      );
+    }
+
+    if (UNMASKED_CLIENT_SECRET_PATTERN.test(line)) {
+      errors.push(
+        `[${label}] Official docs must not expose full client_secret examples: ${relativePath}:${index + 1}`,
+      );
+    }
+
+    if (UNMASKED_AUTH_CODE_PATTERN.test(line)) {
+      errors.push(
+        `[${label}] Official docs must not expose full authorization code examples: ${relativePath}:${index + 1}`,
+      );
+    }
+
+    if (NON_PLACEHOLDER_CLIENT_ID_PATTERN.test(line)) {
+      errors.push(
+        `[${label}] Official docs must use a placeholder for client_id examples: ${relativePath}:${index + 1}`,
+      );
+    }
+  }
+
+  return errors;
 }
 
 async function lintGrowattDocsInDir(openApiDir, label) {
@@ -92,6 +158,9 @@ async function lintGrowattDocsInDir(openApiDir, label) {
     const fullPath = path.join(openApiDir, fileName);
     const content = await fs.readFile(fullPath, "utf8");
     const sourceDir = path.dirname(fullPath);
+    const relativePath = path.relative(process.cwd(), fullPath);
+
+    errors.push(...scanOfficialDocForForbiddenMarkers(content, relativePath, label));
 
     const links = [...content.matchAll(/(?<!!)\[[^\]]+\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)]
       .map((match) => match[1]);
@@ -123,12 +192,25 @@ async function lintGrowattDocsInDir(openApiDir, label) {
   return { errors, docCount: docFiles.length };
 }
 
+async function lintGuideFile(filePath, label) {
+  const content = await fs.readFile(filePath, "utf8");
+  const relativePath = path.relative(process.cwd(), filePath);
+  const errors = scanOfficialDocForForbiddenMarkers(content, relativePath, label);
+  return { errors, docCount: 1 };
+}
+
 async function lintGrowattDocs() {
   const errors = [];
   let totalDocCount = 0;
 
   for (const { dir, label } of OPENAPI_DIRS) {
     const result = await lintGrowattDocsInDir(dir, label);
+    errors.push(...result.errors);
+    totalDocCount += result.docCount;
+  }
+
+  for (const { file, label } of GUIDE_FILES) {
+    const result = await lintGuideFile(file, label);
     errors.push(...result.errors);
     totalDocCount += result.docCount;
   }

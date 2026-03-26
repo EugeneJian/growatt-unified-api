@@ -2,7 +2,7 @@
 
 Version: V1.0 | Release Date: March 12, 2026
 
-This page records only verified compatibility facts for `https://api-test.growatt.com:9290`. If anything here conflicts with an endpoint-level document, follow the endpoint-level specification first.
+This page summarizes common integration failures and the corrective actions that align with the endpoint-level documents. If anything here conflicts with an endpoint-level document, follow the endpoint-level specification first.
 
 Recommended companion reading:
 
@@ -12,7 +12,7 @@ Recommended companion reading:
 
 ---
 
-## Verified 9290 Success Path
+## Verified Client-Credentials Success Path
 
 Under `client_credentials`, the following sequence has been verified:
 
@@ -30,7 +30,7 @@ Under `client_credentials`, the following sequence has been verified:
 
 ### 1. Why does `getDeviceList` fail under `client_credentials`?
 
-In the 9290 environment, calling `POST /oauth2/getDeviceList` with a `client_credentials` token returns:
+Calling `POST /oauth2/getDeviceList` with a `client_credentials` token is outside the supported mode boundary and may return:
 
 ```json
 {
@@ -47,7 +47,7 @@ Correct action:
 
 ### 2. Why does `bindDevice` fail even though the device label looks correct in the UI?
 
-In the 9290 environment, device labels shown in the UI may include `SPH:` or `SPM:` prefixes, but API requests must use the raw SN only.
+Device labels shown in the UI may include `SPH:` or `SPM:` prefixes, but API requests must use the raw SN only.
 
 - Correct: `RAW_DEVICE_SN`
 - Incorrect: `SPH:RAW_DEVICE_SN`
@@ -65,7 +65,7 @@ Verified working combination:
 - `Content-Type: application/json`
 - Request body contains only the raw SN
 
-### 4. Which endpoints use JSON bodies in the 9290 environment?
+### 4. Which endpoints use JSON bodies?
 
 The following interfaces have been verified with JSON bodies:
 
@@ -81,7 +81,7 @@ The following interfaces have been verified with JSON bodies:
 This depends on `setType`:
 
 - `time_slot_charge_discharge` commonly returns an array
-- `duration_and_power_charge_discharge` has been observed in 9290 to return an object
+- `duration_and_power_charge_discharge` may return an object
 
 Clients should therefore parse `data` according to `setType` instead of treating one example shape as universal.
 
@@ -95,7 +95,7 @@ Clients should therefore parse `data` according to `setType` instead of treating
 | `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | Device is not bound or the current token has no permission | Run `bindDevice` first or verify authorization |
 | `WRONG_GRANT_TYPE` | OAuth mode does not support the endpoint | Switch to the correct mode or use the `bindDevice` flow |
 | `parameter error` | Prefixed SN or wrong body format | Use JSON and pass the raw SN only |
-| `code=400, message=fail` | In 9290 this is often caused by the wrong auth-header/body combination | Use `Authorization: Bearer` with a JSON body |
+| `code=400, message=fail` | Wrong auth-header/body combination | Use `Authorization: Bearer` with a JSON body |
 
 ---
 

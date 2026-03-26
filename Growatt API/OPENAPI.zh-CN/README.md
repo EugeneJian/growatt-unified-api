@@ -2,7 +2,7 @@
 
 版本：V1.0 | 发布日期：2026 年 3 月 4 日
 
-本目录为 Growatt Open API 的中文主规范文档集合。端点级文档为中文 SSOT；`11_api_troubleshooting.md` 仅记录 9290 测试环境兼容事实。
+本目录为 Growatt Open API 的中文主规范文档集合。端点级文档为中文 SSOT；`11_api_troubleshooting.md` 汇总常见集成错误与对应修正动作。
 
 ## 集成路线图（概念）
 
@@ -18,7 +18,7 @@ flowchart TD
     G --> H["06 读取下发参数"]
     F --> I["09 设备数据推送"]
     H --> J["10 全局参数"]
-    J --> K["11 9290 FAQ"]
+    J --> K["11 排查 FAQ"]
 ```
 
 ## 文档结构
@@ -35,7 +35,7 @@ flowchart TD
 | [08_api_device_data.md](./08_api_device_data.md) | 设备遥测查询 |
 | [09_api_device_push.md](./09_api_device_push.md) | 设备数据推送 |
 | [10_global_params.md](./10_global_params.md) | 全局参数、响应码与 setType 索引 |
-| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 9290 测试环境 FAQ |
+| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 常见问题与排查 FAQ |
 
 ## 快速开始
 
@@ -58,7 +58,7 @@ flowchart TD
 - [读取设备下发参数 API](./06_api_read_dispatch.md)
 - [设备数据推送 API](./09_api_device_push.md)
 
-### 4. 全局规则与兼容说明
+### 4. 全局规则与问题排查
 
 - [全局参数说明](./10_global_params.md)
 - [常见问题与排查 FAQ](./11_api_troubleshooting.md)

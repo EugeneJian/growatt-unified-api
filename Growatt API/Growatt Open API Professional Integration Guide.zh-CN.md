@@ -21,10 +21,10 @@
 - [设备数据推送 API](./OPENAPI.zh-CN/09_api_device_push.md)
 - [全局参数说明](./OPENAPI.zh-CN/10_global_params.md)
 
-兼容事实：
+补充资料：
 
-- [9290 常见问题与排查 FAQ](./OPENAPI.zh-CN/11_api_troubleshooting.md)
-- `test/` 目录中的联调报告
+- [常见问题与排查 FAQ](./OPENAPI.zh-CN/11_api_troubleshooting.md)
+- `test/` 目录中的环境联调报告
 
 ---
 
@@ -89,16 +89,14 @@ flowchart TD
 
 ---
 
-## 6 9290 测试环境要点
+## 6 集成要点
 
-在 `https://api-test.growatt.com:9290` 已验证：
+以下集成要点已被既有测试确认，应与主规范一并理解：
 
 - `client_credentials` 调 `/oauth2/getDeviceList` 返回 `WRONG_GRANT_TYPE`
 - `bindDevice`、`getDeviceInfo`、`getDeviceData`、`deviceDispatch`、`readDeviceDispatch`、`unbindDevice` 使用 JSON body
 - SN 必须传纯值，不带 `SPH:` / `SPM:` 前缀
-- `getDeviceData` / `push` 仍可能出现历史兼容字段
-
-这些都是环境事实，不覆盖主规范定义。
+- `getDeviceData` / push 仍可能出现历史兼容字段
 
 ---
 
@@ -111,4 +109,4 @@ flowchart TD
 - [ ] 已将 `deviceDispatch` 的 `requestId` 设为必填
 - [ ] 已按 `setType` 解析 `readDeviceDispatch.data`
 - [ ] 已按主规范字段消费遥测
-- [ ] 已将 9290 差异限制在兼容层处理
+- [ ] 已将兼容处理限制在兼容层

@@ -86,8 +86,8 @@ Authorization-code token example:
 
 ```json
 {
-    "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
-    "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
+    "access_token": "<masked_access_token>",
+    "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
     "expires_in": 7200
@@ -123,16 +123,12 @@ sequenceDiagram
     Platform->>Device: POST /oauth2/readDeviceDispatch
 ```
 
-### 2.3 9290 Test-Environment Compatibility Note
+### 2.3 Implementation Notes
 
-In the verified `https://api-test.growatt.com:9290` environment:
-
-- The `client_credentials` token response typically contains only `access_token`, `token_type`, and `expires_in`.
-- The `expires_in` / `refresh_expires_in` values for both grant types may vary by environment and over time, so example TTLs must not be treated as fixed constants.
-- Calling `POST /oauth2/getDeviceList` with a `client_credentials` token returns `WRONG_GRANT_TYPE` (`code=103`).
-- Business APIs are typically called with `Authorization: Bearer <access_token>`.
-
-These are environment-specific compatibility facts and do not change the normative endpoint descriptions in this directory.
+- A `client_credentials` token response may contain only `access_token`, `token_type`, and `expires_in`.
+- The `expires_in` / `refresh_expires_in` values for both grant types may vary by deployment and over time, so example TTLs must not be treated as fixed constants.
+- `POST /oauth2/getDeviceList` is outside the supported mode boundary for `client_credentials`; start from `bindDevice` with a known raw SN instead.
+- Protected business APIs use `Authorization: Bearer <access_token>`.
 
 ---
 

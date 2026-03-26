@@ -21,10 +21,10 @@ Primary specification:
 - [Device Data Push API](./OPENAPI/09_api_device_push.md)
 - [Global Parameter Description](./OPENAPI/10_global_params.md)
 
-Compatibility facts:
+Supplemental references:
 
-- [9290 Troubleshooting FAQ](./OPENAPI/11_api_troubleshooting.md)
-- Integration reports under `test/`
+- [Troubleshooting FAQ](./OPENAPI/11_api_troubleshooting.md)
+- Environment-specific integration reports under `test/`
 
 ---
 
@@ -89,16 +89,14 @@ flowchart TD
 
 ---
 
-## 6 9290 Test-Environment Notes
+## 6 Integration Notes
 
-The following have been verified on `https://api-test.growatt.com:9290`:
+The following integration notes are confirmed by existing tests and should be applied together with the primary specification:
 
 - `/oauth2/getDeviceList` returns `WRONG_GRANT_TYPE` under `client_credentials`
 - `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice` use JSON bodies
 - SN values must be raw and must not include `SPH:` / `SPM:` prefixes
 - `getDeviceData` and push payloads may still expose historical compatibility fields
-
-These are environment facts and do not override the primary specification.
 
 ---
 
@@ -111,4 +109,4 @@ These are environment facts and do not override the primary specification.
 - [ ] Made `requestId` mandatory in `deviceDispatch`
 - [ ] Parse `readDeviceDispatch.data` according to `setType`
 - [ ] Consume telemetry using the primary field model
-- [ ] Keep 9290 differences isolated to the compatibility layer
+- [ ] Keep compatibility handling isolated to the compatibility layer

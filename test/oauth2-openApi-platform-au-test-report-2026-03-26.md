@@ -1,5 +1,12 @@
 # 澳洲平台 OAuth2 接口测试报告 | AU oauth2-openApi Platform Test Report
 
+## 与正式 API 文档的关系 | Relationship to Official Docs
+
+- 正式 API 文档描述通用规范；本报告只记录 2026-03-26 在澳洲测试环境 observed in AU test environment 的结果。
+  The official docs define the general contract; this report records only behavior observed in AU test environment on 2026-03-26.
+- 本报告用于说明 environment-specific behavior，不替代正式 API 文档。
+  This report documents environment-specific behavior and does not replace the official docs.
+
 ## 测试环境 | Test Environment
 
 | 项目 | Item | 内容 | Content |

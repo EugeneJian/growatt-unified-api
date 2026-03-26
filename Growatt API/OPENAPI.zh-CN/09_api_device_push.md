@@ -60,9 +60,9 @@ sequenceDiagram
 }
 ```
 
-### 9290 与历史材料兼容说明
+### 历史字段兼容说明
 
-部分历史或当前环境 payload 可能仍包含 `activePower`、`reverActivePower` 或外层 `soc`，并且它们可能与 `meterPower` 同时出现。上述字段都应被视为兼容输入，主解析逻辑仍以 [设备数据查询 API](./08_api_device_data.md) 中定义的模型为准。
+部分历史或不同部署的 payload 可能仍包含 `activePower`、`reverActivePower` 或外层 `soc`，并且它们可能与 `meterPower` 同时出现。上述字段都应被视为兼容输入，主解析逻辑仍以 [设备数据查询 API](./08_api_device_data.md) 中定义的模型为准。
 
 ---
 

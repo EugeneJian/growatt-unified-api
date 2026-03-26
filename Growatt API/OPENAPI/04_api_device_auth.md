@@ -87,9 +87,9 @@ sequenceDiagram
 | `communicationVersion` | string | Communication firmware version |
 | `authFlag` | boolean | Whether the device is already authorized |
 
-### 9290 Compatibility Note
+### Mode Boundary Note
 
-In `https://api-test.growatt.com:9290`, calling this endpoint with a `client_credentials` token returns:
+Calling this endpoint with a `client_credentials` token is outside the supported mode boundary and may return a grant-type error such as:
 
 ```json
 {
@@ -99,7 +99,10 @@ In `https://api-test.growatt.com:9290`, calling this endpoint with a `client_cre
 }
 ```
 
-This confirms that the 9290 environment does not use `getDeviceList` as the discovery entry point for `client_credentials`.
+Correct handling:
+
+- Use `getDeviceList` only in `authorization_code` mode.
+- In `client_credentials` mode, start from `bindDevice` with a known raw SN.
 
 ---
 
@@ -182,16 +185,13 @@ Failure example:
 }
 ```
 
-### 9290 Compatibility Note
+### Request-Format Note
 
-In `https://api-test.growatt.com:9290`, the verified working format is:
+- Use `Authorization: Bearer <access_token>` together with `Content-Type: application/json`.
+- `deviceSn` values must use the raw SN without display prefixes such as `SPH:` or `SPM:`.
+- In `client_credentials` mode, object entries with `pinCode` are used.
 
-- `Authorization: Bearer <access_token>`
-- `Content-Type: application/json`
-- `deviceSnList[].deviceSn` must use the raw SN without `SPH:` / `SPM:` prefixes
-- In `client_credentials` mode, object entries with `pinCode` are used
-
-Verified example:
+Reference example:
 
 ```json
 {

@@ -146,15 +146,11 @@ stateDiagram-v2
 }
 ```
 
-### 9290 Compatibility Note
+### Request-Format Note
 
-`https://api-test.growatt.com:9290` has been verified with:
-
-- `Authorization: Bearer <access_token>`
-- `Content-Type: application/json`
-- JSON body containing `deviceSn`, `setType`, `value`, and `requestId`
-
----
+- Use `Authorization: Bearer <access_token>`.
+- Use `Content-Type: application/json`.
+- The JSON body contains `deviceSn`, `setType`, `value`, and `requestId`.
 
 ## Related Documentation
 

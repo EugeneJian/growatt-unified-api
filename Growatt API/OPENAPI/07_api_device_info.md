@@ -98,12 +98,10 @@ flowchart TD
 }
 ```
 
-### 9290 Compatibility Note
+### Request Format Note
 
-In `https://api-test.growatt.com:9290`:
-
-- The request body must pass the raw SN, without `SPH:` / `SPM:` prefixes.
-- The verified working combination is `Authorization: Bearer <access_token>` with `Content-Type: application/json`.
+- The request body must pass the raw SN, without display prefixes such as `SPH:` or `SPM:`.
+- Use `Authorization: Bearer <access_token>` with `Content-Type: application/json`.
 
 ---
 

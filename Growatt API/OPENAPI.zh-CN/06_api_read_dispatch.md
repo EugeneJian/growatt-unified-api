@@ -106,9 +106,9 @@ flowchart TD
 }
 ```
 
-### 9290 测试环境兼容说明
+### 返回结构说明
 
-在 `https://api-test.growatt.com:9290` 中，`duration_and_power_charge_discharge` 已观察到返回对象结构，例如：
+不同 `setType` 合法返回不同结构。例如 `duration_and_power_charge_discharge` 可能返回如下对象：
 
 ```json
 {

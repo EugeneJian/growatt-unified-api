@@ -51,10 +51,10 @@ sequenceDiagram
 ```json
 {
     "grant_type": "authorization_code",
-    "code": "by1c6oH8lLpllkczRFxuKnMWTEQPO8GmpqkcnDhOcRjLFF4BU5hBvt6whdmd",
-    "client_id": "client123",
-    "client_secret": "secret123",
-    "redirect_uri": "http://localhost:9290/hello"
+    "code": "<masked_authorization_code>",
+    "client_id": "<example_client_id>",
+    "client_secret": "<masked_client_secret>",
+    "redirect_uri": "https://third-party.example.com/oauth/callback"
 }
 ```
 
@@ -65,8 +65,8 @@ sequenceDiagram
 ```json
 {
     "grant_type": "client_credentials",
-    "client_id": "client123",
-    "client_secret": "secret123"
+    "client_id": "<example_client_id>",
+    "client_secret": "<masked_client_secret>"
 }
 ```
 
@@ -92,8 +92,8 @@ sequenceDiagram
 
 ```json
 {
-    "access_token": "avYDaEcmPfaphbE8oDmraKM6FOzq7nYI42iz4KTLClpvWegyREQnyiYUG2VA",
-    "refresh_token": "BG6DGTZYpZPq0PHei3N4Rvb2yjM4YMZEFrvrf1A8LxI1xKbH2aEOHG3zfNy9",
+    "access_token": "<masked_access_token>",
+    "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
     "expires_in": 7200
@@ -104,15 +104,15 @@ sequenceDiagram
 
 ```json
 {
-    "access_token": "3s91d7ErRkTczOHkQronnfT3oc9jckXefj6Kp0HMaMkCbiHUpIhGtrf9a90P",
+    "access_token": "<masked_access_token>",
     "token_type": "Bearer",
     "expires_in": 604800
 }
 ```
 
-### 9290 Compatibility Note
+### Response Variability Note
 
-`https://api-test.growatt.com:9290` has been verified to return the compact `client_credentials` response shown above, without a default `refresh_token`.
+The compact `client_credentials` example above reflects the minimum response shape. A deployment may append extra fields, but clients must not assume a default `refresh_token`.
 
 ---
 

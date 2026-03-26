@@ -86,8 +86,8 @@ flowchart TD
 
 ```json
 {
-    "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
-    "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
+    "access_token": "<masked_access_token>",
+    "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
     "expires_in": 7200
@@ -123,16 +123,12 @@ sequenceDiagram
     Platform->>Device: POST /oauth2/readDeviceDispatch
 ```
 
-### 2.3 9290 测试环境兼容说明
+### 2.3 实施说明
 
-在 `https://api-test.growatt.com:9290` 的已验证结果中：
-
-- `client_credentials` 获取 token 后，响应通常只有 `access_token`、`token_type`、`expires_in`。
-- `authorization_code` 与 `client_credentials` 的 `expires_in` / `refresh_expires_in` 也可能随环境和时点变化，不应将示例值视为固定常量。
-- 使用 `client_credentials` 调用 `POST /oauth2/getDeviceList` 会返回 `WRONG_GRANT_TYPE`（`code=103`）。
-- 该环境中的业务接口通常使用 `Authorization: Bearer <access_token>`。
-
-以上为测试环境兼容事实，不改变本目录下各端点文档的主规范描述。
+- `client_credentials` 的 token 响应可能只包含 `access_token`、`token_type`、`expires_in`。
+- 两种授权模式下的 `expires_in` / `refresh_expires_in` 都可能随部署与时点变化，不应将示例值视为固定常量。
+- `POST /oauth2/getDeviceList` 不属于 `client_credentials` 的支持边界，应直接从已知纯 SN 的 `bindDevice` 开始。
+- 受保护业务接口统一使用 `Authorization: Bearer <access_token>`。
 
 ---
 

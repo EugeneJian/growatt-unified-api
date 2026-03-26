@@ -106,9 +106,9 @@ flowchart TD
 }
 ```
 
-### 9290 Compatibility Note
+### Shape Variability Note
 
-In `https://api-test.growatt.com:9290`, `duration_and_power_charge_discharge` has been observed to return an object such as:
+Different `setType` values can legitimately return different shapes. For example, `duration_and_power_charge_discharge` may return an object such as:
 
 ```json
 {
@@ -123,7 +123,7 @@ In `https://api-test.growatt.com:9290`, `duration_and_power_charge_discharge` ha
 }
 ```
 
-This difference is a `setType`-specific shape variation and does not change the normative rule that `data` may be either an object or an array.
+This is a `setType`-specific shape variation and does not change the normative rule that `data` may be either an object or an array.
 
 ---
 

@@ -146,15 +146,11 @@ stateDiagram-v2
 }
 ```
 
-### 9290 测试环境兼容说明
+### 请求格式说明
 
-`https://api-test.growatt.com:9290` 已验证通过：
-
-- `Authorization: Bearer <access_token>`
-- `Content-Type: application/json`
-- JSON body 中携带 `deviceSn`、`setType`、`value`、`requestId`
-
----
+- 使用 `Authorization: Bearer <access_token>`。
+- 使用 `Content-Type: application/json`。
+- JSON body 中携带 `deviceSn`、`setType`、`value`、`requestId`。
 
 ## 相关文档
 

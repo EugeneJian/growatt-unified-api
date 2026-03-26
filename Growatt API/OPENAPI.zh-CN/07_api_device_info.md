@@ -98,12 +98,10 @@ flowchart TD
 }
 ```
 
-### 9290 测试环境兼容说明
+### 请求格式说明
 
-在 `https://api-test.growatt.com:9290` 中：
-
-- 请求体传纯 SN，不带 `SPH:` / `SPM:` 前缀。
-- 已验证通过的请求组合为 `Authorization: Bearer <access_token>` + `Content-Type: application/json`。
+- 请求体传纯 SN，不带 `SPH:` / `SPM:` 等展示前缀。
+- 使用 `Authorization: Bearer <access_token>` + `Content-Type: application/json`。
 
 ---
 

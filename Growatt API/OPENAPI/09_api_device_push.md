@@ -60,9 +60,9 @@ sequenceDiagram
 }
 ```
 
-### 9290 and Historical-Material Compatibility Note
+### Historical-Field Compatibility Note
 
-Some historical or current-environment payloads may still contain `activePower`, `reverActivePower`, or top-level `soc`, and they may appear alongside `meterPower`. Treat them as compatibility inputs. The primary parser should continue to follow the model defined in [Device Data Query API](./08_api_device_data.md).
+Some historical or deployment-specific payloads may still contain `activePower`, `reverActivePower`, or top-level `soc`, and they may appear alongside `meterPower`. Treat them as compatibility inputs. The primary parser should continue to follow the model defined in [Device Data Query API](./08_api_device_data.md).
 
 ---
 

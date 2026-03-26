@@ -48,9 +48,9 @@ flowchart TD
 ```json
 {
     "grant_type": "refresh_token",
-    "refresh_token": "bkabsDaCYRWVPHMPqYij1O2rEWPNc34dH97FmQsDzuaopf1RxdDofp63HL4x",
-    "client_id": "client123",
-    "client_secret": "secret123"
+    "refresh_token": "<masked_refresh_token>",
+    "client_id": "<example_client_id>",
+    "client_secret": "<masked_client_secret>"
 }
 ```
 
@@ -72,8 +72,8 @@ flowchart TD
 
 ```json
 {
-    "access_token": "avYDaEcmPfaphbE8oDmraKM6FOzq7nYI42iz4KTLClpvWegyREQnyiYUG2VA",
-    "refresh_token": "BG6DGTZYpZPq0PHei3N4Rvb2yjM4YMZEFrvrf1A8LxI1xKbH2aEOHG3zfNy9",
+    "access_token": "<masked_access_token>",
+    "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
     "expires_in": 7200

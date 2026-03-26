@@ -2,7 +2,7 @@
 
 Version: V1.0 | Release Date: March 4, 2026
 
-This directory contains the English primary specification for Growatt Open API. Endpoint-level documents are the English SSOT. `11_api_troubleshooting.md` records only 9290 test-environment compatibility facts.
+This directory contains the English primary specification for Growatt Open API. Endpoint-level documents are the English SSOT. `11_api_troubleshooting.md` summarizes common integration errors and the corresponding corrective actions.
 
 ## Integration Roadmap (Concept)
 
@@ -18,7 +18,7 @@ flowchart TD
     G --> H["06 Read Dispatch Parameters"]
     F --> I["09 Device Data Push"]
     H --> J["10 Global Parameters"]
-    J --> K["11 9290 FAQ"]
+    J --> K["11 Troubleshooting"]
 ```
 
 ## Documentation Structure
@@ -35,7 +35,7 @@ flowchart TD
 | [08_api_device_data.md](./08_api_device_data.md) | Device telemetry query |
 | [09_api_device_push.md](./09_api_device_push.md) | Device data push |
 | [10_global_params.md](./10_global_params.md) | Shared response codes and `setType` catalog |
-| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 9290 compatibility FAQ |
+| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | Troubleshooting FAQ |
 
 ## Quick Start
 
@@ -58,7 +58,7 @@ flowchart TD
 - [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
 - [Device Data Push API](./09_api_device_push.md)
 
-### 4. Shared Rules and Compatibility
+### 4. Shared Rules and Troubleshooting
 
 - [Global Parameter Description](./10_global_params.md)
 - [Troubleshooting FAQ](./11_api_troubleshooting.md)

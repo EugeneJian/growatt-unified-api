@@ -132,9 +132,9 @@ flowchart TD
 
 ---
 
-## 9290 与历史材料兼容说明
+## 历史字段兼容说明
 
-在 `https://api-test.growatt.com:9290` 与历史测试报告中，曾观察到以下差异：
+历史材料与不同部署的返回中，曾观察到以下差异：
 
 - 遥测体可能额外返回 `activePower`，并在部分环境或设备上返回 `reverActivePower`；这些字段可能与 `meterPower` 并存，也可能只出现其中一部分。
 - 部分返回中使用 `deviceSn` 或外层 `soc` 作为兼容字段。

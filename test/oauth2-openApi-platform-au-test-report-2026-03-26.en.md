@@ -1,5 +1,11 @@
 # AU oauth2-openApi Platform Test Report
 
+## Relationship to Official Docs
+
+- The official docs define the general contract.
+- This report records only behavior observed in AU test environment on 2026-03-26.
+- This report documents environment-specific behavior and does not replace the official docs.
+
 ## Test Environment
 
 | Item | Content |

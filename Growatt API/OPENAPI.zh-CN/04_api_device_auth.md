@@ -87,9 +87,9 @@ sequenceDiagram
 | `communicationVersion` | string | 通讯版本 |
 | `authFlag` | boolean | 是否已授权 |
 
-### 9290 测试环境兼容说明
+### 模式边界说明
 
-`https://api-test.growatt.com:9290` 中，`client_credentials` token 调用本接口会返回：
+使用 `client_credentials` token 调用本接口超出了支持边界，可能返回如下授权模式错误：
 
 ```json
 {
@@ -99,7 +99,10 @@ sequenceDiagram
 }
 ```
 
-这说明 9290 环境下该接口不作为 `client_credentials` 模式的设备发现入口。
+正确动作：
+
+- `getDeviceList` 仅用于 `authorization_code` 模式。
+- `client_credentials` 模式应直接从已知纯 SN 的 `bindDevice` 开始。
 
 ---
 
@@ -182,16 +185,13 @@ sequenceDiagram
 }
 ```
 
-### 9290 测试环境兼容说明
+### 请求格式说明
 
-在 `https://api-test.growatt.com:9290` 中，已验证通过的调用方式为：
+- 统一使用 `Authorization: Bearer <access_token>` 与 `Content-Type: application/json`。
+- `deviceSn` 必须传纯 SN，不带 `SPH:` / `SPM:` 等展示前缀。
+- `client_credentials` 场景使用对象数组并传 `pinCode`。
 
-- `Authorization: Bearer <access_token>`
-- `Content-Type: application/json`
-- `deviceSnList[].deviceSn` 传纯 SN，不带 `SPH:` / `SPM:` 前缀
-- `client_credentials` 场景使用对象数组并传 `pinCode`
-
-正确示例：
+参考示例：
 
 ```json
 {
