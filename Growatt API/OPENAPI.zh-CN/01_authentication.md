@@ -2,71 +2,87 @@
 
 版本：V1.0 | 发布日期：2026 年 3 月 4 日
 
+本文档说明 Growatt Open API 当前文档集支持的两种 OAuth2.0 集成模式，以及不同模式下允许访问的接口范围。
+
 ## 推荐集成流程
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["开始集成"] --> B{"选择 OAuth 模式"}
-    B -->|"授权码模式"| C["打开 Growatt 登录页"]
-    B -->|"客户端凭证模式"| D["调用 oauth2 token 接口"]
+    B -->|"authorization_code"| C["打开 Growatt 登录页"]
+    B -->|"client_credentials"| D["调用 POST /oauth2/token"]
     C --> E["获取 authorization code"]
-    E --> F["用 code 换取 access token"]
+    E --> F["换取 access token 和 refresh token"]
     D --> G["获取 access token"]
-    F --> H["调用设备授权接口"]
-    G --> H
-    H --> I["调用业务接口"]
-    I --> J{"Token 是否过期"}
-    J -->|"是"| K["调用 oauth2 refresh 接口"]
-    K --> I
-    J -->|"否"| L["继续业务操作"]
+    F --> H["获取候选设备并完成授权"]
+    G --> I["通过 bindDevice 绑定设备"]
+    H --> J["调用业务接口"]
+    I --> J
+    J --> K{"token 是否过期"}
+    K -->|"是且有 refresh_token"| L["调用 POST /oauth2/refresh"]
+    K -->|"否"| M["继续业务调用"]
+    L --> J
 ```
 
 ---
 
 ## 1 OAuth2.0 授权模式说明
 
-> **前置条件：**
-> - **第三方平台** 需联系 Growatt 申请 `clientId` / `clientSecret`，用于接入 Growatt OAuth2 服务端。
-> - **用于接收 Growatt 实时设备推送数据的 URL** 需要由第三方平台自行开发，并将具备相应能力的 URL 提供给 Growatt。
+> **前置条件**
+> - 第三方平台需向 Growatt 申请 `client_id` 与 `client_secret`。
+> - 如需接收设备推送数据，第三方平台需自行提供可用的 webhook URL。
 
-### 授权码模式
+### 1.1 `authorization_code` 模式
 
-适用于 Growatt 用户拥有个人账号的场景。
+适用于 Growatt 终端用户通过个人账号在第三方平台内完成登录与授权的场景。
 
-1. Growatt 提供定制化嵌入式登录页（HTML5）。第三方平台将该登录页集成到自身应用中。
-2. 第三方平台实现 OAuth2.0 流程相关的客户端能力。
-3. 借助嵌入式 Growatt 登录页，Growatt 终端用户完成 OAuth2.0 授权流程。因此，第三方平台获得 Growatt 终端用户的授权信息，用于后续 API 调用。
-4. 一条 OAuth2.0 授权记录对应一个 Growatt 终端用户，以及其明确授权的一个第三方平台。授权信息有有效期，并会在一段时间后过期。
-5. 在获取 Growatt 终端用户授权信息后，第三方平台需要实现以下能力：
-   - *建立 Growatt 终端用户账号与第三方平台账号之间的映射关系。*
-   - *自行维护授权信息有效期，并在过期后完成刷新。*
-   - *如果 refresh token 也已过期，则需要引导 Growatt 终端用户重新执行 OAuth2.0 授权。*
-6. 第三方平台根据本文档提供的 API 完成业务功能开发，在其应用中，当平台用户操作其对应 Growatt 终端用户名下的已授权设备时，通过调用 Growatt API 实现相关功能。
+该模式的典型特点：
 
-### 客户端凭证模式
+- 由终端用户完成 Growatt 账号登录与授权确认。
+- 第三方平台通过 `code` 换取用户维度的 `access_token`。
+- 响应中包含 `refresh_token`，用于后续刷新 `access_token`。
+- 候选设备发现接口 `POST /oauth2/getDeviceList` 仅在该模式下支持。
 
-适用于第三方平台直接连接 Growatt 平台的场景。
+### 1.2 `client_credentials` 模式
 
-1. Growatt 按标准 Client Credentials 流程提供获取 token 的接口。
-2. 第三方平台实现 OAuth2.0 流程相关的客户端能力。
-3. 第三方平台调用授权接口获取 `access_token`，该令牌有有效期，到期后失效。
-4. 在获得 Growatt 终端用户相关 OAuth2.0 授权信息后，第三方平台需要实现以下能力：
-   - *自行维护授权信息有效期，并在过期后完成刷新。*
-   - *如果 refresh token 也已过期，则需要重新执行 OAuth2.0 授权。*
-5. 第三方平台根据本文档提供的 API，实现设备授权、设备下发、设备数据查询等能力。
+适用于第三方平台直接以平台身份接入 Growatt Open API 的场景。
+
+该模式的典型特点：
+
+- 第三方平台直接使用 `client_id` 与 `client_secret` 调用 `POST /oauth2/token`。
+- 令牌响应以实际返回体为准，不应默认假定一定包含 `refresh_token`。
+- 设备接入通常从已知 `deviceSn` 的 `bindDevice` 开始；如果设备要求 `pinCode`，则需一并传入。
+- `POST /oauth2/getDeviceList` 不属于该模式的标准设备发现能力。
+
+### 1.3 能力边界
+
+| 能力 | `authorization_code` | `client_credentials` |
+| :--- | :--- | :--- |
+| 获取 access token | 支持 | 支持 |
+| 获取 refresh token | 支持 | 以实际响应为准，不默认承诺 |
+| 刷新 access token | 支持 | 仅在实际返回 `refresh_token` 时支持 |
+| 获取可授权设备列表 `getDeviceList` | 支持 | 不支持 |
+| 绑定设备 `bindDevice` | 支持 | 支持，常见场景下需 `pinCode` |
+| 获取已授权设备列表 `getDeviceListAuthed` | 支持 | 支持 |
+| 查询设备信息 / 数据 | 支持 | 支持 |
+| 下发 / 回读调度参数 | 支持 | 支持 |
 
 ---
 
 ## 2 OAuth2.0 授权流程总览
 
-### 授权码模式
+### 2.1 `authorization_code` 模式
 
-- **[首次授权 / token 过期后的重新授权]** 当 Growatt 终端用户需要授权其个人账号时，第三方平台打开 Growatt 登录页，由用户登录其 Growatt 账号。
-- 当终端用户登录成功并确认授权后，系统会生成 OAuth2.0 授权码，并在页面从 Growatt 跳转到第三方平台配置的 redirect URL 时一并带回。
-- 第三方平台通过 redirect URL 接收到 OAuth2.0 授权码后，将该授权码换取 Growatt 终端用户的授权信息：
-  `access_token`（访问凭证）、`refresh_token`（刷新凭证）、`expire_time`（访问凭证有效期，单位秒）、`refresh_expires_in`（刷新凭证有效期，单位秒）。
-- 示例：
+1. 第三方平台打开 Growatt 登录页。
+2. Growatt 终端用户登录并确认授权。
+3. Growatt 将 `authorization_code` 带回第三方平台配置的 `redirect_uri`。
+4. 第三方平台调用 `POST /oauth2/token` 换取 token 对。
+5. 第三方平台保存用户维度的 `access_token` / `refresh_token`，并建立平台用户与 Growatt 用户的映射关系。
+6. 第三方平台调用 `POST /oauth2/getDeviceList`、`POST /oauth2/bindDevice` 等接口完成设备授权与后续业务调用。
+7. 当 `access_token` 过期后，使用 `POST /oauth2/refresh` 刷新 token；当 `refresh_token` 也失效后，重新引导用户授权。
+
+授权码模式的 token 示例：
 
 ```json
 {
@@ -78,69 +94,50 @@ flowchart TD
 }
 ```
 
-- 第三方平台需要自行保存和维护 Growatt 终端用户的 OAuth2.0 授权信息，并建立第三方平台用户与 Growatt 终端用户授权信息之间的映射关系。
-- 调用业务 API 时，第三方平台需要将 Growatt 终端用户的授权信息放入请求头。若授权信息正确且处于有效期内，则接口可成功调用。
-- Growatt 终端用户授权信息有有效期，第三方平台需自行维护：
-  - *`access_token` 过期后，可使用 `refresh_token` 调用 `OAuth2.0--refresh` 接口刷新 `access_token`。*
-  - *若 `refresh_token` 也过期且无法刷新 `access_token`，则需要重新执行 OAuth2.0 授权。*
-  - *`access_token` 有效期为 2 小时（7200 秒），`refresh_token` 有效期为 30 天。*
-- 对于设备相关操作，需要调用 [设备授权接口](../04_api_device_auth.md)，以便 Growatt 终端用户管理其授权的下级设备。
-- 只有已授权设备才能通过 API 操作，其数据也才会被推送到第三方平台指定的 URL。
+> 上述 `expires_in` / `refresh_expires_in` 仅为示例值。实际环境中的 token 生命周期应始终以接口实时返回为准。
 
-### 客户端凭证模式流程图
+### 2.2 `client_credentials` 模式
+
+1. 第三方平台调用 `POST /oauth2/token` 获取平台维度 `access_token`。
+2. 使用已知 `deviceSn` 调用 `POST /oauth2/bindDevice` 绑定设备；如设备要求 `pinCode`，一并传入。
+3. 调用 `POST /oauth2/getDeviceListAuthed`、`POST /oauth2/getDeviceInfo`、`POST /oauth2/getDeviceData` 等业务接口。
+4. 如需控制设备，再调用 `POST /oauth2/deviceDispatch` 与 `POST /oauth2/readDeviceDispatch` 形成闭环。
+5. token 生命周期以接口实际返回为准；如响应中未返回 `refresh_token`，则到期后重新获取 token。
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant User as EndUser
-    participant App as ClientApp
-    participant Server as BackendServer
-    participant Growatt as GrowattAPI
+    participant Platform as PlatformApp
+    participant OAuth as OAuthAPI
+    participant Device as DeviceAPI
 
-    User->>App: 发起操作
-    App->>Server: 需要有效 token
-    Server-->>App: 跳转到登录流程
-    App->>Growatt: 用户登录
-    Growatt-->>App: 校验凭据
-    App->>Server: 发送授权上下文
-    Server->>Growatt: 用 code 换取 token
-    Growatt-->>Server: 返回 token 对
-    Server->>Growatt: 携带 access token 调用 API
-    Growatt-->>Server: 返回接口结果
-    Server-->>App: 返回结果
-    App-->>User: 展示结果
-
-    Note over Server,Growatt: token 过期时执行刷新
+    Platform->>OAuth: POST /oauth2/token
+    OAuth-->>Platform: 返回平台 access token
+    Platform->>OAuth: POST /oauth2/bindDevice
+    OAuth-->>Platform: 返回绑定结果
+    Platform->>Device: POST /oauth2/getDeviceInfo
+    Device-->>Platform: 返回设备信息
+    Platform->>Device: POST /oauth2/getDeviceData
+    Device-->>Platform: 返回遥测数据
+    Platform->>Device: POST /oauth2/deviceDispatch
+    Platform->>Device: POST /oauth2/readDeviceDispatch
 ```
 
-### 客户端凭证模式
+### 2.3 9290 测试环境兼容说明
 
-- 第三方平台通过 `client_id` 和 `client_secret` 调用授权接口获取 `access_token`。服务端返回：
-  `access_token`（访问凭证）、`refresh_token`（刷新凭证）、`expire_time`（访问凭证有效期，单位秒）、`refresh_expires_in`（刷新凭证有效期，单位秒）。
-- 示例：
+在 `https://api-test.growatt.com:9290` 的已验证结果中：
 
-```json
-{
-    "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
-    "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
-    "refresh_expires_in": 2592000,
-    "token_type": "Bearer",
-    "expires_in": 7200
-}
-```
+- `client_credentials` 获取 token 后，响应通常只有 `access_token`、`token_type`、`expires_in`。
+- `authorization_code` 与 `client_credentials` 的 `expires_in` / `refresh_expires_in` 也可能随环境和时点变化，不应将示例值视为固定常量。
+- 使用 `client_credentials` 调用 `POST /oauth2/getDeviceList` 会返回 `WRONG_GRANT_TYPE`（`code=103`）。
+- 该环境中的业务接口通常使用 `Authorization: Bearer <access_token>`。
 
-- 调用业务 API 时，第三方平台需要在请求头中携带授权信息。若授权信息正确且在有效期内，则接口可成功调用。
-- Growatt 终端用户授权信息有有效期，第三方平台需自行维护：
-  - *`access_token` 过期后，可使用 `refresh_token` 调用 `OAuth2.0--refresh` 接口刷新 `access_token`。*
-  - *若 `refresh_token` 也过期且无法刷新 `access_token`，则需要重新执行 OAuth2.0 授权。*
-  - *`access_token` 有效期为 2 小时（7200 秒），`refresh_token` 有效期为 30 天。*
-- 对于设备相关操作，需要调用 [设备授权接口](../04_api_device_auth.md) 管理已授权设备。
-- 只有已授权设备才能通过 API 操作，其数据也才会被推送到第三方平台指定的 URL。
+以上为测试环境兼容事实，不改变本目录下各端点文档的主规范描述。
 
 ---
 
 ## 相关文档
 
-- [接口列表 - 获取 access_token](../02_api_access_token.md)
-- [接口列表 - OAuth2-refresh](../03_api_refresh.md)
-- [设备授权 API](../04_api_device_auth.md)
+- [获取 access_token 接口](./02_api_access_token.md)
+- [OAuth2-refresh 接口](./03_api_refresh.md)
+- [设备授权 API](./04_api_device_auth.md)

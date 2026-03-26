@@ -2,151 +2,142 @@
 
 Version: V1.0 | Release Date: March 4, 2026
 
-## Table of Contents
-
-- [Recommended Integration Flow](#recommended-integration-flow)
-- [OAuth2.0 Authorization Mode Description](#1-oauth20-authorization-mode-description)
-- [OAuth2.0 Authorization Flow Overview](#2-oauth20-authorization-flow-overview)
+This document explains the two OAuth2.0 integration modes used by the current Growatt Open API documentation set, together with the API capability boundary of each mode.
 
 ## Recommended Integration Flow
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["Start Integration"] --> B{"Choose OAuth Mode"}
-    B -->|"Authorization Code"| C["Open Growatt Login"]
-    B -->|"Client Credentials"| D["Call oauth2 token API"]
+    A["Start integration"] --> B{"Choose OAuth mode"}
+    B -->|"authorization_code"| C["Open Growatt login page"]
+    B -->|"client_credentials"| D["Call POST /oauth2/token"]
     C --> E["Receive authorization code"]
-    E --> F["Exchange code for access token"]
-    D --> G["Get access token"]
-    F --> H["Call device authorization APIs"]
-    G --> H
-    H --> I["Call business APIs"]
-    I --> J{"Token expired"}
-    J -->|"Yes"| K["Call oauth2 refresh API"]
-    K --> I
-    J -->|"No"| L["Continue operations"]
+    E --> F["Exchange for access token and refresh token"]
+    D --> G["Receive access token"]
+    F --> H["Discover candidate devices and authorize them"]
+    G --> I["Bind devices with bindDevice"]
+    H --> J["Call business APIs"]
+    I --> J
+    J --> K{"Token expired"}
+    K -->|"Yes and refresh_token exists"| L["Call POST /oauth2/refresh"]
+    K -->|"No"| M["Continue business calls"]
+    L --> J
 ```
 
 ---
 
-## 1 OAuth2.0 Authorization Mode Description
+## 1 OAuth2.0 Authorization Modes
 
-> **Prerequisites:**
-> - **Third-party platforms** should contact Growatt staff to apply for a `clientId`/`clientSecret`, which is used to connect to the Growatt OAuth2 server.
-> - **URL for receiving real-time device data pushed by Growatt**: The third-party platform needs to develop this independently and provide the URL with corresponding functionality to Growatt.
+> **Prerequisites**
+> - The third-party platform must obtain `client_id` and `client_secret` from Growatt.
+> - If the platform needs pushed device data, it must provide its own functional webhook URL.
 
-### Authorization Code Mode
+### 1.1 `authorization_code` mode
 
-This mode is for scenarios where Growatt users have personal accounts.
+This mode is for integrations where a Growatt end-user logs in and grants access inside the third-party platform.
 
-1.  Growatt provides a customized embedded login page (HTML5). The third-party platform integrates this login page into its own application.
-2.  The third-party platform develops client-side features related to the OAuth2.0 flow.
-3.  With the help of the embedded Growatt login page, the Growatt end-user completes the OAuth2.0 flow. Thus, the third-party platform obtains the authorization information of the Growatt end-user, which is used for subsequent API calls.
-4.  One OAuth2.0 authorization record corresponds to one Growatt end-user and one third-party platform they have specifically authorized. The authorization information has a limited validity period and will expire after a certain time.
-5.  After obtaining the OAuth2.0 authorization information of the Growatt end-user, the third-party platform needs to develop the following features:
-    - *Establish the mapping relationship between the Growatt end-user account and the third-party platform account.*
-    - *Self-maintain the validity period of the authorization information and refresh it after it expires.*
-    - *If the refresh token also expires, the Growatt end-user will need to go through the OAuth2.0 steps again to re-authorize.*
-6.  The third-party platform develops features corresponding to the API provided in this document. In the third-party platform application, when the user of the third-party platform operates the authorized devices under their corresponding Growatt end-user account, the relevant functions are realized by calling the Growatt API.
+Typical characteristics:
 
-### Client Credentials Mode
+- The Growatt end-user completes the Growatt login and consent flow.
+- The third-party platform exchanges a `code` for a user-scoped `access_token`.
+- The token response includes a `refresh_token`.
+- The candidate-device discovery API `POST /oauth2/getDeviceList` is supported only in this mode.
 
-This mode is for scenarios where the third-party platform directly connects to the Growatt platform.
+### 1.2 `client_credentials` mode
 
-1.  Growatt provides an interface to obtain tokens based on the standard Client Credentials flow.
-2.  The third-party platform develops client-side features related to the OAuth2.0 flow.
-3.  The third-party platform calls the authorization interface to obtain an `access_token` (which has a limited validity period and will expire after a certain time).
-4.  After obtaining the OAuth2.0 authorization information of the Growatt end-user, the third-party platform needs to develop the following features:
-    - *Self-maintain the validity period of the authorization information and refresh it after it expires.*
-    - *If the refresh token also expires, the Growatt end-user will need to go through the OAuth2.0 steps again to re-authorize.*
-5.  The third-party platform develops features corresponding to the API provided in this document to achieve operations such as device authorization, device dispatching, and device data querying.
+This mode is for platform-to-platform integrations where the third-party service connects directly to Growatt.
+
+Typical characteristics:
+
+- The third-party platform directly calls `POST /oauth2/token` with `client_id` and `client_secret`.
+- Clients must not assume that a `refresh_token` is always returned.
+- Device onboarding typically starts from `bindDevice` with a known `deviceSn`; when required, `pinCode` must be included.
+- `POST /oauth2/getDeviceList` is not part of the standard discovery flow for this mode.
+
+### 1.3 Capability Boundary
+
+| Capability | `authorization_code` | `client_credentials` |
+| :--- | :--- | :--- |
+| Get access token | Supported | Supported |
+| Receive refresh token | Supported | Depends on actual response; not guaranteed |
+| Refresh access token | Supported | Only when the actual token response includes `refresh_token` |
+| Get candidate device list `getDeviceList` | Supported | Not supported |
+| Bind device `bindDevice` | Supported | Supported; `pinCode` is commonly required |
+| Get authorized device list `getDeviceListAuthed` | Supported | Supported |
+| Query device info / data | Supported | Supported |
+| Dispatch / read back parameters | Supported | Supported |
 
 ---
 
-## 2 OAuth2.0 Authorization Flow Overview
+## 2 OAuth2.0 Flow Overview
 
-### Authorization Code Mode
+### 2.1 `authorization_code` mode
 
-- **[Initial Authorization / Re-authorization after token expiration]** When a Growatt end-user needs to authorize their personal account, the third-party platform opens the Growatt login page, and the user logs into their Growatt personal account.
-- After the end-user successfully logs in and confirms authorization, an OAuth2.0 authorization code is generated and carried along as the page redirects from Growatt to the redirect URL specified by the third-party platform.
-- After receiving the OAuth2.0 authorization code via the redirect URL, the third-party platform exchanges the authorization code for the Growatt end-user's authorization information:
-  `access_token` (access credential), `refresh_token` (refresh credential), `expire_time` (validity period of the access credential, in seconds), `refresh_expires_in` (validity period of the refresh credential, in seconds).
-- Example:
-  
+1. The third-party platform opens the Growatt login page.
+2. The Growatt end-user logs in and approves authorization.
+3. Growatt returns an `authorization_code` to the configured `redirect_uri`.
+4. The third-party platform exchanges the code by calling `POST /oauth2/token`.
+5. The third-party platform stores the user-scoped `access_token` and `refresh_token`, and maps them to the platform user.
+6. The platform calls `POST /oauth2/getDeviceList`, `POST /oauth2/bindDevice`, and other business APIs.
+7. When the `access_token` expires, the platform calls `POST /oauth2/refresh`. When the `refresh_token` also expires, the user must authorize again.
+
+Authorization-code token example:
+
 ```json
-  {
-      "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
-      "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
-      "refresh_expires_in": 2592000,
-      "token_type": "Bearer",
-      "expires_in": 7200
-  }
-  
+{
+    "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
+    "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
+    "refresh_expires_in": 2592000,
+    "token_type": "Bearer",
+    "expires_in": 7200
+}
 ```
-- The third-party platform independently develops features to save and maintain the OAuth2.0 authorization information of the Growatt end-user. It establishes a mapping between the third-party platform user and the Growatt end-user's authorization information.
-- When calling this API, the third-party platform includes the Growatt end-user's authorization information in the request header. If the authorization information is correct and within its validity period, the call will be successful.
-- The Growatt end-user's authorization information has a limited validity period and will expire after a certain time. The third-party platform needs to self-maintain the validity period of the authorization information.
-  - *After the `access_token` expires, you can use the `refresh_token` to request the `OAuth2.0--refresh` interface to refresh the `access_token`.*
-  - *When the `refresh_token` also expires and the `access_token` cannot be refreshed, the Growatt end-user needs to go through the OAuth2.0 steps again to re-authorize.*
-  - *The `access_token` is valid for 2 hours (7200 seconds), and the `refresh_token` is valid for 30 days.*
-- For device-related operations, the [Device Authorization](../04_api_device_auth.md) related interfaces need to be called to allow the Growatt end-user to manage their authorized subordinate devices.
-- Only authorized devices can be operated via the API and have their data pushed to the URL specified by the third-party platform.
 
-### Client Credentials Mode Flowchart
+> The `expires_in` / `refresh_expires_in` values above are example values only. The real token lifetime must always follow the live response from the target environment.
+
+### 2.2 `client_credentials` mode
+
+1. The third-party platform calls `POST /oauth2/token` and receives a platform-scoped `access_token`.
+2. The platform binds devices using `POST /oauth2/bindDevice`; when the device requires `pinCode`, it must be sent together with the raw `deviceSn`.
+3. The platform calls `POST /oauth2/getDeviceListAuthed`, `POST /oauth2/getDeviceInfo`, `POST /oauth2/getDeviceData`, and other business APIs.
+4. If control is needed, the platform uses `POST /oauth2/deviceDispatch` together with `POST /oauth2/readDeviceDispatch`.
+5. Token lifecycle handling must follow the actual response. If the response does not include `refresh_token`, obtain a new token after expiry instead of calling the refresh API.
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant User as EndUser
-    participant App as ClientApp
-    participant Server as BackendServer
-    participant Growatt as GrowattAPI
+    participant Platform as PlatformApp
+    participant OAuth as OAuthAPI
+    participant Device as DeviceAPI
 
-    User->>App: Start operation
-    App->>Server: Need valid token
-    Server-->>App: Redirect to login
-    App->>Growatt: User login
-    Growatt-->>App: Verify credentials
-    App->>Server: Send authorization context
-    Server->>Growatt: Exchange code for token
-    Growatt-->>Server: Return token pair
-    Server->>Growatt: Call API with access token
-    Growatt-->>Server: Return API result
-    Server-->>App: Return result
-    App-->>User: Show result
-
-    Note over Server,Growatt: Refresh token on expiry
+    Platform->>OAuth: POST /oauth2/token
+    OAuth-->>Platform: Return platform access token
+    Platform->>OAuth: POST /oauth2/bindDevice
+    OAuth-->>Platform: Return bind result
+    Platform->>Device: POST /oauth2/getDeviceInfo
+    Device-->>Platform: Return device info
+    Platform->>Device: POST /oauth2/getDeviceData
+    Device-->>Platform: Return telemetry
+    Platform->>Device: POST /oauth2/deviceDispatch
+    Platform->>Device: POST /oauth2/readDeviceDispatch
 ```
 
-### Client Credentials Mode
+### 2.3 9290 Test-Environment Compatibility Note
 
-- The third-party platform calls the authorization interface using `client_id` and `client_secret` to obtain the `access_token`. The server returns the following:
-  `access_token` (access credential), `refresh_token` (refresh credential), `expire_time` (validity period of the access credential, in seconds), `refresh_expires_in` (validity period of the refresh credential, in seconds).
-- Example:
-  
-```json
-  {
-      "access_token": "lyoAlLQaRr9y5pMFsEmh7gyUAaVuBCQo1V7FlwNeA22o7vAH2DJSVqEKkGh4",
-      "refresh_token": "wx71QkaF7vceFg9UwjUtum498XeYhXZiCu7iQvAeXQ1AMslXXe2SELJ8cd3a",
-      "refresh_expires_in": 2592000,
-      "token_type": "Bearer",
-      "expires_in": 7200
-  }
-  
-```
-- When calling the API, the third-party platform includes the authorization information in the request header. If the authorization information is correct and within its validity period, the call will be successful.
-- The Growatt end-user's authorization information has a limited validity period and will expire after a certain time. The third-party platform needs to self-maintain the validity period of the authorization information.
-  - *After the `access_token` expires, you can use the `refresh_token` to request the `OAuth2.0--refresh` interface to refresh the `access_token`.*
-  - *When the `refresh_token` also expires and the `access_token` cannot be refreshed, the Growatt end-user needs to go through the OAuth2.0 steps again to re-authorize.*
-  - *The `access_token` is valid for 2 hours (7200 seconds), and the `refresh_token` is valid for 30 days.*
-- For device-related operations, the [Device Authorization](../04_api_device_auth.md) related interfaces need to be called to manage authorized subordinate devices.
-- Only authorized devices can be operated via the API and have their data pushed to the URL specified by the third-party platform.
+In the verified `https://api-test.growatt.com:9290` environment:
+
+- The `client_credentials` token response typically contains only `access_token`, `token_type`, and `expires_in`.
+- The `expires_in` / `refresh_expires_in` values for both grant types may vary by environment and over time, so example TTLs must not be treated as fixed constants.
+- Calling `POST /oauth2/getDeviceList` with a `client_credentials` token returns `WRONG_GRANT_TYPE` (`code=103`).
+- Business APIs are typically called with `Authorization: Bearer <access_token>`.
+
+These are environment-specific compatibility facts and do not change the normative endpoint descriptions in this directory.
 
 ---
 
 ## Related Documentation
 
-- [API List - Get access_token](../02_api_access_token.md)
-- [API List - OAuth2-refresh](../03_api_refresh.md)
-- [Device Authorization API](../04_api_device_auth.md)
+- [Get access_token API](./02_api_access_token.md)
+- [OAuth2-refresh API](./03_api_refresh.md)
+- [Device Authorization API](./04_api_device_auth.md)

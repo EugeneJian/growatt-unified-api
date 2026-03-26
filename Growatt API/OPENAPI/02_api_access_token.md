@@ -1,50 +1,52 @@
 # Get access_token API
 
 **Brief Description**
-- OAuth2, token
-- In Authorization Code mode, the Client backend uses the authorization code to exchange for an `access_token`.
-- In Client Credentials mode, the Client backend uses `client_id` and `client_secret` to exchange for an `access_token`.
+
+- `POST /oauth2/token` returns the `access_token` required for Growatt Open API calls.
+- Both `authorization_code` and `client_credentials` are supported.
+- The response shape depends on the grant type and deployment; clients must follow the actual response body instead of assuming extra fields.
 
 **Request URL**
+
 - `/oauth2/token`
 
 **Request Method**
-- `POST`
-- In the request header, `ContentType` must be `application/x-www-form-urlencoded;`
 
-## Token Exchange Sequence (Mermaid)
+- `POST`
+- `Content-Type: application/x-www-form-urlencoded`
+
+## Token Exchange Sequence
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Client as Client
+    participant Client as ClientApp
+    participant Service as IntegrationService
     participant OAuth as OAuthServer
-    participant App as IntegrationService
 
-    Client->>App: Build token request
-    App->>OAuth: POST /oauth2/token
-    OAuth-->>App: Return token pair
-    App-->>Client: Save token pair
-    Client->>App: Use bearer token for next APIs
+    Client->>Service: Trigger token acquisition
+    Service->>OAuth: POST /oauth2/token
+    OAuth-->>Service: Return token response
+    Service-->>Client: Store usable token data
 ```
 
 ---
 
-## Request Parameter Description
+## Request Parameters
 
-| Parameter Name | Parameter Description | Required | Parameter Value Description |
+| Parameter | Required | Applies To | Description |
 | :--- | :--- | :--- | :--- |
-| `grant_type` | Authorization Type | Yes | `authorization_code` or `client_credentials` |
-| `code` | Authorization Code | No | Temporary authorization code issued by the authorization server (Required only in `authorization_code` mode) |
-| `client_id` | Client ID | Yes | `client_id` applied for by the third-party platform |
-| `client_secret` | Client Secret | Yes | `client_secret` applied for by the third-party platform |
-| `redirect_uri` | Redirect URI | Yes | Callback URL to redirect to after successful authorization |
+| `grant_type` | Yes | All | `authorization_code` or `client_credentials` |
+| `code` | Required in authorization-code mode | `authorization_code` | Authorization code returned by Growatt |
+| `client_id` | Yes | All | Client ID issued to the third-party platform |
+| `client_secret` | Yes | All | Client secret issued to the third-party platform |
+| `redirect_uri` | Required in authorization-code mode | `authorization_code` | Redirect URI configured for the OAuth flow |
 
 ---
 
-## Request Example
+## Request Examples
 
-### authorization_code mode
+### `authorization_code` mode
 
 ```json
 {
@@ -56,35 +58,39 @@ sequenceDiagram
 }
 ```
 
-### client_credentials mode
+> The TTL values in the example are illustrative only. In production or test environments, always trust the returned `expires_in` / `refresh_expires_in` values.
+
+### `client_credentials` mode
 
 ```json
 {
     "grant_type": "client_credentials",
     "client_id": "client123",
-    "client_secret": "secret123",
-    "redirect_uri": "http://localhost:9290/hello"
+    "client_secret": "secret123"
 }
 ```
 
 ---
 
-## Return Parameter Description
+## Response Parameters
 
-| Parameter Name | Parameter Description | Parameter Value Description |
+| Parameter | Returned When | Description |
 | :--- | :--- | :--- |
-| `access_token` | Access Token | Token used to access protected resources |
-| `refresh_token` | Refresh Token | Token used to refresh the `access_token` |
-| `refresh_expires_in` | Refresh Token Validity Period | Unit: seconds |
-| `token_type` | Token Type | Fixed as `Bearer` |
-| `expires_in` | Access Token Validity Period | Unit: seconds |
+| `access_token` | All | Access token used to call protected APIs |
+| `token_type` | All | Fixed value `Bearer` |
+| `expires_in` | All | Access-token lifetime in seconds |
+| `refresh_token` | Authorization-code response | Refresh token used to obtain a new access token |
+| `refresh_expires_in` | Authorization-code response | Refresh-token lifetime in seconds |
+
+> Do not assume that `client_credentials` always returns `refresh_token`. If a deployment adds extra fields, trust the real response from that environment.
 
 ---
 
-## Return Example
+## Response Examples
+
+### `authorization_code` mode
 
 ```json
-// Authorization successful, HTTP status code 200
 {
     "access_token": "avYDaEcmPfaphbE8oDmraKM6FOzq7nYI42iz4KTLClpvWegyREQnyiYUG2VA",
     "refresh_token": "BG6DGTZYpZPq0PHei3N4Rvb2yjM4YMZEFrvrf1A8LxI1xKbH2aEOHG3zfNy9",
@@ -94,9 +100,23 @@ sequenceDiagram
 }
 ```
 
+### `client_credentials` mode
+
+```json
+{
+    "access_token": "3s91d7ErRkTczOHkQronnfT3oc9jckXefj6Kp0HMaMkCbiHUpIhGtrf9a90P",
+    "token_type": "Bearer",
+    "expires_in": 604800
+}
+```
+
+### 9290 Compatibility Note
+
+`https://api-test.growatt.com:9290` has been verified to return the compact `client_credentials` response shown above, without a default `refresh_token`.
+
 ---
 
 ## Related Documentation
 
-- [Authentication Guide](../01_authentication.md)
-- [OAuth2-refresh API](../03_api_refresh.md)
+- [Authentication Guide](./01_authentication.md)
+- [OAuth2-refresh API](./03_api_refresh.md)

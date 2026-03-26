@@ -22,7 +22,9 @@
     "test:coverage": "jest --coverage",
     "docs:lint:growatt": "node scripts/lint-growatt-docs.mjs",
     "docs:test:growatt": "jest --runInBand __tests__/growatt-link-rewriter.test.ts __tests__/growatt-docs.test.ts __tests__/growatt-codes-basic-auth.test.ts",
-    "docs:check": "npm run docs:lint:growatt && npm run docs:test:growatt"
+    "docs:check": "npm run docs:lint:growatt && npm run docs:test:growatt",
+    "showdoc:sync:growatt-archetecture": "node scripts/sync-showdoc-project.mjs --project-dir Growatt-Archetecture",
+    "showdoc:sync:growatt-archetecture:dry-run": "node scripts/sync-showdoc-project.mjs --project-dir Growatt-Archetecture --dry-run"
   },
   "dependencies": {
     "mermaid": "^11.12.3",

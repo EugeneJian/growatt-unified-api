@@ -1,86 +1,102 @@
 # Device Dispatch API
 
 **Brief Description**
-- Set relevant parameters of the device based on the device's SN. The interface will only return setting results for devices that the secret token has permission to access. Devices without permission will not be set, and no results will be returned.
-- Current interface frequency limit: once every 5 seconds per device.
+
+- Sets device parameters by device SN.
+- The API returns only results for devices that the current token is allowed to access.
+- Current rate limit: at most one request every 5 seconds per device.
+- The normative request body is JSON and `requestId` is required.
 
 **Request URL**
+
 - `/oauth2/deviceDispatch`
 
 **Request Method**
-- `POST`
-- The `ContentType` of the request must be `application/x-www-form-urlencoded;`
-- The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
 
-## Dispatch Control State (Mermaid)
+- `POST`
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+## Dispatch Loop
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 stateDiagram-v2
     [*] --> Build
-    state "Build Command" as Build
-    state "Throttle Per Device" as Throttle
-    state "Send Dispatch" as Send
-    state "Success Code 0" as Success
-    state "Timeout Code 16" as Timeout
-    state "Offline Code 5" as Offline
-    state "Other Error" as Error
-    state "Read Back Verify" as Verify
-    state "End Cycle" as EndCycle
+    state "Build request" as Build
+    state "Throttle per device" as Throttle
+    state "Send dispatch" as Send
+    state "Successful response" as Success
+    state "Failed response" as Error
+    state "Read-back verification" as Verify
+    state "End cycle" as EndCycle
 
     Build --> Throttle
     Throttle --> Send
     Send --> Success
-    Send --> Timeout
-    Send --> Offline
     Send --> Error
     Success --> Verify
     Verify --> EndCycle
-    Timeout --> Send
-    Offline --> EndCycle
     Error --> EndCycle
     EndCycle --> [*]
 ```
 
 ---
 
-## Http Body Parameters
+## Request Parameters
 
-| Parameter Name | Required | Type | Description |
+| Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Device SN, example: xxxxxxx |
-| `setType` | Yes | string | Setting parameter enum, example: `enable_control` |
-| `value` | Yes | string | Setting parameter value. See "Global Parameter Description" |
-| `requestId` | Yes | String | Unique identifier for this request (32-character string: current time + random number, e.g., yyyyMMddHHmmssSSSxxxxxxxxxxxxxxx) |
+| `deviceSn` | Yes | string | Device serial number |
+| `setType` | Yes | string | Parameter enum, for example `enable_control` |
+| `value` | Yes | string or object | Parameter value. The structure depends on `setType` |
+| `requestId` | Yes | string | Unique request identifier, typically a 32-character string |
 
 ---
 
-## Interface Return Parameters
+## Request Examples
 
-| Parameter Name | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
-| `message` | string | Return description |
-
----
-
-## Request Example
+### Simple-value dispatch
 
 ```json
 {
     "deviceSn": "FDCJQ00003",
     "setType": "enable_control",
     "value": "0",
-    "requestId": "32-character string (yyyyMMddHHmmssSSSxxxxxxxxxxxxxxx)"
+    "requestId": "20260323153000123abcdef123456789"
+}
+```
+
+### Object-value dispatch
+
+```json
+{
+    "deviceSn": "TEST123456",
+    "value": {
+        "duration": 10,
+        "percentage": 20,
+        "type": "dischargeCommand"
+    },
+    "setType": "duration_and_power_charge_discharge",
+    "requestId": "20260323153000123abcdef123456789"
 }
 ```
 
 ---
 
-## Return Examples
+## Response Parameters
 
-### Setting Successful
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | Business status code, `0` means success |
+| `data` | null | Usually empty on success |
+| `message` | string | Result description |
+
+---
+
+## Response Examples
+
+### Successful Setting
 
 ```json
 {
@@ -100,7 +116,17 @@ stateDiagram-v2
 }
 ```
 
-### Parameter Setting Response Timeout
+### Device Not Responding
+
+```json
+{
+    "code": 15,
+    "data": null,
+    "message": "PARAMETER_SETTING_DEVICE_NOT_RESPONDING"
+}
+```
+
+### Parameter-Setting Response Timeout
 
 ```json
 {
@@ -110,20 +136,28 @@ stateDiagram-v2
 }
 ```
 
-### Wrong Device Type
+### Parameter-Setting Failure
 
 ```json
 {
-    "code": 7,
+    "code": 6,
     "data": null,
-    "message": "WRONG_DEVICE_TYPE"
+    "message": "PARAMETER_SETTING_FAILED"
 }
 ```
+
+### 9290 Compatibility Note
+
+`https://api-test.growatt.com:9290` has been verified with:
+
+- `Authorization: Bearer <access_token>`
+- `Content-Type: application/json`
+- JSON body containing `deviceSn`, `setType`, `value`, and `requestId`
 
 ---
 
 ## Related Documentation
 
-- [Device Authorization API](../04_api_device_auth.md)
-- [Read Device Dispatch Parameters API](../06_api_read_dispatch.md)
-- [Global Parameters](../10_global_params.md)
+- [Device Authorization API](./04_api_device_auth.md)
+- [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
+- [Global Parameters](./10_global_params.md)

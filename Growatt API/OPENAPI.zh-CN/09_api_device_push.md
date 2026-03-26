@@ -1,10 +1,12 @@
 # 设备数据推送 API
 
 **简要说明**
-- 第三方平台需要自行开发可用的接收接口，并将对应 URL 提供给 Growatt。
-- 归属于第三方平台的设备会按周期将指定的高频更新数据推送到提供给 Growatt 的 URL。
 
-## Webhook 处理时序（Mermaid）
+- 第三方平台需要自行提供可用的接收接口，并将 webhook URL 提供给 Growatt。
+- 推送 payload 的主结构应与 [设备数据查询 API](./08_api_device_data.md) 的主规范字段保持一致。
+- 如果某个环境仍推送历史兼容字段，应在接收端按兼容方式处理，而不是反向修改主模型。
+
+## Webhook 处理时序
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
@@ -18,7 +20,7 @@ sequenceDiagram
     Webhook->>Webhook: 校验 payload
     alt Payload 合法
         Webhook->>Storage: 保存原始事件
-        Webhook->>RuleEngine: 执行转换与规则处理
+        Webhook->>RuleEngine: 解析主规范字段
         Webhook-->>Growatt: 返回 200
     else Payload 非法
         Webhook-->>Growatt: 返回 4xx
@@ -31,50 +33,40 @@ sequenceDiagram
 
 ```json
 {
+    "dataType": "dfcData",
     "data": {
-        "activePower": 0.00,
-        "batPower": -4816.00,
+        "meterPower": 0.00,
+        "reactivePower": 174.90,
+        "pac": 41.30,
+        "ppv": 14.30,
+        "batPower": 0.00,
+        "payLoadPower": 14.50,
+        "serialNum": "YRP0N4S00Q",
+        "utcTime": "2026-03-13 07:48:25",
+        "status": 6,
         "batteryList": [
             {
-                "chargePower": 0.00,
-                "dischargePower": 2511.00,
-                "ibat": -6.40,
                 "index": 1,
-                "soc": 100,
-                "vbat": 376.50
-            },
-            {
+                "soc": 67,
+                "soh": 100,
                 "chargePower": 0.00,
-                "dischargePower": 2305.00,
-                "ibat": -6.10,
-                "index": 2,
-                "soc": 100,
-                "vbat": 375.80
+                "dischargePower": 0.00,
+                "ibat": -1.00,
+                "vbat": 53.30,
+                "status": 0
             }
-        ],
-        "batteryStatus": 3,
-        "pac": 4562.80,
-        "payLoadPower": 365.90,
-        "ppv": 0.00,
-        "priority": 2,
-        "reverActivePower": 4450.10,
-        "deviceSn": "TEST123456",
-        "soc": 100,
-        "status": 6,
-        "utcTime": "2026-02-25 00:10:01",
-        "vac1": 234.64,
-        "vac2": 235.04,
-        "vac3": 234.17
-    },
-    "dataType": "dfcData"
+        ]
+    }
 }
 ```
 
-*（注：参数说明和状态值定义与 3.7 设备数据查询章节相同。）*
+### 9290 与历史材料兼容说明
+
+部分历史或当前环境 payload 可能仍包含 `activePower`、`reverActivePower` 或外层 `soc`，并且它们可能与 `meterPower` 同时出现。上述字段都应被视为兼容输入，主解析逻辑仍以 [设备数据查询 API](./08_api_device_data.md) 中定义的模型为准。
 
 ---
 
 ## 相关文档
 
-- [设备数据查询 API](../08_api_device_data.md)
-- [全局参数](../10_global_params.md)
+- [设备数据查询 API](./08_api_device_data.md)
+- [全局参数](./10_global_params.md)

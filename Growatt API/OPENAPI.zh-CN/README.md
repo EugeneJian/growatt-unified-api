@@ -2,7 +2,7 @@
 
 版本：V1.0 | 发布日期：2026 年 3 月 4 日
 
-本文件夹包含 Growatt Open API 的结构化文档。
+本目录为 Growatt Open API 的中文主规范文档集合。端点级文档为中文 SSOT；`11_api_troubleshooting.md` 仅记录 9290 测试环境兼容事实。
 
 ## 集成路线图（概念）
 
@@ -14,125 +14,92 @@ flowchart TD
     C --> D["04 设备授权"]
     D --> E["07 设备信息"]
     D --> F["08 设备数据查询"]
-    D --> G["09 设备数据推送"]
-    F --> H["05 设备下发"]
-    H --> I["06 读取下发参数"]
-    G --> H
-    I --> J["10 全局参数"]
-    J --> K["11 常见问题与排查"]
-```
-
-## 集成路线图（请求顺序）
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Platform as PlatformApp
-    participant OAuth as OAuthAPI
-    participant Device as DeviceAPI
-    participant Push as WebhookAPI
-
-    Platform->>OAuth: POST /oauth2/token
-    OAuth-->>Platform: 返回 token 对
-    Platform->>OAuth: 执行 bindDevice 流程
-    OAuth-->>Platform: 返回已授权设备集合
-    Platform->>Device: 查询设备信息与数据
-    Device-->>Platform: 返回遥测数据
-    Platform->>Device: 下发控制并回读
-    Device-->>Platform: 返回控制结果
-    Push-->>Platform: 推送 dfcData
-    Platform->>OAuth: 需要时调用 POST /oauth2/refresh
+    F --> G["05 设备下发"]
+    G --> H["06 读取下发参数"]
+    F --> I["09 设备数据推送"]
+    H --> J["10 全局参数"]
+    J --> K["11 9290 FAQ"]
 ```
 
 ## 文档结构
 
 | 文件 | 说明 |
 | :--- | :--- |
-| [01_authentication.md](./01_authentication.md) | OAuth2.0 授权模式与流程总览 |
-| [02_api_access_token.md](./02_api_access_token.md) | 获取 access_token 接口 |
-| [03_api_refresh.md](./03_api_refresh.md) | OAuth2 刷新令牌接口 |
-| [04_api_device_auth.md](./04_api_device_auth.md) | 设备授权接口（绑定 / 解绑设备） |
-| [05_api_device_dispatch.md](./05_api_device_dispatch.md) | 设备参数下发接口 |
-| [06_api_read_dispatch.md](./06_api_read_dispatch.md) | 设备下发参数回读接口 |
-| [07_api_device_info.md](./07_api_device_info.md) | 设备信息查询 API |
-| [08_api_device_data.md](./08_api_device_data.md) | 设备高频数据查询接口 |
-| [09_api_device_push.md](./09_api_device_push.md) | 设备数据推送接口 |
-| [10_global_params.md](./10_global_params.md) | 全局参数（域名、权限、设备参数） |
-| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 面向测试环境联调的常见问题与排查 FAQ |
+| [01_authentication.md](./01_authentication.md) | OAuth2 模式与能力边界 |
+| [02_api_access_token.md](./02_api_access_token.md) | 获取 access token |
+| [03_api_refresh.md](./03_api_refresh.md) | 刷新 access token |
+| [04_api_device_auth.md](./04_api_device_auth.md) | 设备发现、授权与解除授权 |
+| [05_api_device_dispatch.md](./05_api_device_dispatch.md) | 设备下发 |
+| [06_api_read_dispatch.md](./06_api_read_dispatch.md) | 调度参数回读 |
+| [07_api_device_info.md](./07_api_device_info.md) | 设备静态信息查询 |
+| [08_api_device_data.md](./08_api_device_data.md) | 设备遥测查询 |
+| [09_api_device_push.md](./09_api_device_push.md) | 设备数据推送 |
+| [10_global_params.md](./10_global_params.md) | 全局参数、响应码与 setType 索引 |
+| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 9290 测试环境 FAQ |
 
 ## 快速开始
 
-### 1. 身份认证
+### 1. 认证与 token
 
-首先通过理解 [身份认证说明](./01_authentication.md) 来了解以下内容：
-- 授权码模式
-- 客户端凭证模式
-- OAuth2.0 授权流程概览
+- [身份认证说明](./01_authentication.md)
+- [获取 access_token 接口](./02_api_access_token.md)
+- [OAuth2-refresh 接口](./03_api_refresh.md)
 
-### 2. 获取访问令牌
+### 2. 设备授权
 
-通过 [获取 access_token 接口](./02_api_access_token.md) 获取访问令牌。
+- `authorization_code` 模式：先读 [设备授权 API](./04_api_device_auth.md) 中的 `getDeviceList` 与 `bindDevice`
+- `client_credentials` 模式：通常从 `bindDevice` 开始
 
-### 3. 刷新令牌
+### 3. 设备查询与调度
 
-当访问令牌过期后，使用 [OAuth2 刷新令牌接口](./03_api_refresh.md) 刷新令牌。
+- [设备信息查询 API](./07_api_device_info.md)
+- [设备数据查询 API](./08_api_device_data.md)
+- [设备下发 API](./05_api_device_dispatch.md)
+- [读取设备下发参数 API](./06_api_read_dispatch.md)
+- [设备数据推送 API](./09_api_device_push.md)
 
-### 4. 设备管理
+### 4. 全局规则与兼容说明
 
-- [获取可授权设备列表](./04_api_device_auth.md#331-获取可授权设备列表)
-- [授权设备](./04_api_device_auth.md#332-授权设备)
-- [获取已授权设备列表](./04_api_device_auth.md#333-获取已授权设备列表)
-- [取消设备授权](./04_api_device_auth.md#334-取消设备授权)
-
-### 5. 设备操作
-
-- [设备下发](./05_api_device_dispatch.md) - 设置设备参数
-- [读取下发参数](./06_api_read_dispatch.md) - 读取设备参数
-- [设备信息](./07_api_device_info.md) - 查询设备信息
-- [设备数据](./08_api_device_data.md) - 查询设备高频数据
-- [设备数据推送](./09_api_device_push.md) - 接收设备推送数据
-
-### 6. 常见问题与排查
-
-- [常见问题与排查 FAQ](./11_api_troubleshooting.md) - 汇总 `api-test.growatt.com:9290` 联调中已验证的坑点与正确动作
+- [全局参数说明](./10_global_params.md)
+- [常见问题与排查 FAQ](./11_api_troubleshooting.md)
 
 ## API 端点摘要
 
 | Endpoint | Method | 说明 |
 | :--- | :--- | :--- |
-| `/oauth2/token` | POST | 获取 access_token |
-| `/oauth2/refresh` | POST | 刷新 access_token |
-| `/oauth2/getApiDeviceList` | POST | 获取可授权设备列表 |
+| `/oauth2/token` | POST | 获取 access token |
+| `/oauth2/refresh` | POST | 刷新 access token |
+| `/oauth2/getDeviceList` | POST | 获取可授权设备列表，仅 `authorization_code` 模式支持 |
 | `/oauth2/bindDevice` | POST | 授权设备 |
-| `/oauth2/getApiDeviceListAuthed` | POST | 获取已授权设备列表 |
-| `/oauth2/unbindDevice` | POST | 取消设备授权 |
+| `/oauth2/getDeviceListAuthed` | POST | 获取已授权设备列表 |
+| `/oauth2/unbindDevice` | POST | 解除设备授权 |
 | `/oauth2/getDeviceInfo` | POST | 获取设备信息 |
+| `/oauth2/getDeviceData` | POST | 获取设备遥测 |
 | `/oauth2/deviceDispatch` | POST | 设置设备参数 |
-| `/oauth2/readDdeviceDispatch` | POST | 读取设备参数 |
-| `/oauth2/getDeviceData` | POST | 查询设备数据 |
+| `/oauth2/readDeviceDispatch` | POST | 读取设备参数 |
 
 ## 域名
 
 ### 生产环境
+
 - `https://opencloud.growatt.com`
 - `https://opencloud-au.growatt.com`
 
 ### 测试环境
+
 - `https://opencloud-test.growatt.com`
 
-## Token 有效期
+## Token 生命周期
 
-- `access_token`：2 小时（7200 秒）
-- `refresh_token`：30 天（2592000 秒）
+- 文档中的 TTL 数值仅代表示例响应，不应视为固定常量。
+- `authorization_code` 与 `client_credentials` 的实际有效期都应以实时返回的 `expires_in` / `refresh_expires_in` 为准。
 
 ## 快速指南
 
-如需包含更简单示例的快速开始指南，请参阅：[/growatt-openapi/quick-guide](/growatt-openapi/quick-guide)
+如需面向方案与集成的整合说明，请参阅：
+
+- [../Growatt Open API Professional Integration Guide.zh-CN.md](../Growatt Open API Professional Integration Guide.zh-CN.md)
 
 ## 附录
 
-- [Growatt Codes](/growatt-openapi/growatt-codes) - 面向外部 VPP 客户的 Growatt fault / protect / warning code 参考页，内容由 enterprise SSOT 自动生成
-
-## 原始汇总文档
-
-完整统一版文档可参考：[../Growatt Unified API.md](../Growatt Unified API.md)
+- [Growatt Codes](/growatt-openapi/growatt-codes)

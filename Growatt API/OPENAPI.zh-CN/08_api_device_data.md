@@ -1,87 +1,41 @@
 # 设备数据查询 API
 
 **简要说明**
-- 根据设备序列号查询指定设备的高频数据。该接口仅返回当前 secret token 有权限访问的设备数据；无访问权限的设备不会返回。
 
-## 测试环境兼容性说明
-
-> 已在 `https://api-test.growatt.com:9290` 实测通过。
->
-> - 页面中的设备标识可能显示为 `SPH:xxxx` / `SPM:xxxx`，但请求体里应传纯 SN。
-> - 该测试环境下已验证通过的请求格式：
->   - `Authorization: Bearer <access_token>`
->   - `Content-Type: application/json`
->   - JSON body：`{"deviceSn":"RAW_DEVICE_SN"}`
-> - 正确：`RAW_DEVICE_SN`
-> - 错误：`SPH:RAW_DEVICE_SN`
+- 根据设备 SN 查询已授权设备的高频运行数据。
+- 主规范字段以 `meterPower`、`reactivePower`、`serialNum`、`batteryList[]` 为中心建模。
+- 历史测试材料中出现的 `activePower`、`reverActivePower`、外层 `soc` 仅视为环境兼容字段，不作为主定义。
 
 **请求 URL**
+
 - `/oauth2/getDeviceData`
 
 **请求方式**
-- `POST`
-- `Content-Type`: `application/x-www-form-urlencoded`
 
-## 遥测消费流程（概念）
+- `POST`
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+## 遥测消费流程
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["调度器触发轮询"] --> B["使用 deviceSn 构造请求"]
-    B --> C["调用 getDeviceData 接口"]
+    B --> C["调用 POST /oauth2/getDeviceData"]
     C --> D{"响应 code"}
-    D -->|"0"| E["解析指标和 batteryList"]
-    D -->|"2 或 12"| F["刷新 token 或重新授权设备"]
-    E --> G["存储时序数据"]
-    G --> H["执行告警和控制逻辑"]
-    H --> I["按需调用 deviceDispatch 接口"]
-```
-
-## 遥测消费流程（时序）
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Poller as Poller
-    participant API as OAuthAPI
-    participant Store as StorageDB
-    participant Engine as ControlEngine
-
-    Poller->>API: POST getDeviceData
-    API-->>Poller: 返回 code 和 telemetry
-    alt Code 0
-        Poller->>Store: 保存 telemetry
-        Poller->>Engine: 执行控制规则
-        Engine-->>Poller: 按需返回下发动作
-    else Code 2 或 12
-        Poller-->>Poller: 刷新 token 或重新授权
-    end
+    D -->|"0"| E["解析遥测指标与 batteryList"]
+    D -->|"2 或 12"| F["刷新 token 或检查设备授权"]
+    E --> G["写入时序数据或控制引擎"]
 ```
 
 ---
 
-## HTTP Header 参数
+## 请求参数
 
 | 参数名 | 必填 | 类型 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `token` | 是 | String | Secret token |
-
----
-
-## HTTP Body 参数
-
-| 参数名 | 必填 | 类型 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | String | 设备唯一序列号（SN） |
-
----
-
-## 接口返回参数
-
-| 参数名 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| `code` | int | 接口返回状态码。0 表示成功，其他表示失败 |
-| `data` | string | 返回数据 |
+| `deviceSn` | 是 | string | 设备唯一序列号 |
 
 ---
 
@@ -89,126 +43,111 @@ sequenceDiagram
 
 ```json
 {
-    "deviceSn": "RAW_DEVICE_SN"
+    "deviceSn": "YRP0N4S00Q"
 }
 ```
 
 ---
 
-## 返回示例
+## 返回示例（主规范字段）
 
 ```json
 {
     "code": 0,
     "data": {
-        "activePower": 0.00,
-        "batPower": -4816.00,
+        "fac": 50.03,
+        "backupPower": 0.20,
+        "batPower": 0.00,
+        "pac": 41.30,
+        "etoUserToday": 3.10,
+        "meterPower": 0.00,
+        "utcTime": "2026-03-13 07:48:25",
+        "etoUserTotal": 44.80,
+        "pexPower": 14.30,
         "batteryList": [
             {
                 "chargePower": 0.00,
-                "dischargePower": 2511.00,
-                "ibat": -6.40,
+                "soc": 67,
+                "echargeToday": 2.90,
+                "vbat": 53.30,
                 "index": 1,
-                "soc": 100,
-                "vbat": 376.50
-            },
-            {
-                "chargePower": 0.00,
-                "dischargePower": 2305.00,
-                "ibat": -6.10,
-                "index": 2,
-                "soc": 100,
-                "vbat": 375.80
+                "echargeTotal": 80.70,
+                "dischargePower": 0.00,
+                "edischargeToday": 1.90,
+                "ibat": -1.00,
+                "soh": 100,
+                "edischargeTotal": 57.60,
+                "status": 0
             }
         ],
-        "batteryStatus": 3,
-        "pac": 4562.80,
-        "payLoadPower": 365.90,
-        "ppv": 0.00,
-        "priority": 2,
-        "reverActivePower": 4450.10,
-        "deviceSn": "TEST123456",
-        "soc": 100,
-        "status": 6,
-        "utcTime": "2026-02-25 00:10:01",
-        "vac1": 234.64,
-        "vac2": 235.04,
-        "vac3": 234.17
-    }
+        "protectCode": 0,
+        "reactivePower": 174.90,
+        "serialNum": "YRP0N4S00Q",
+        "etoGridTotal": 270.70,
+        "genPower": 0.00,
+        "priority": 0,
+        "vac3": 236.90,
+        "etoGridToday": 1.50,
+        "protectSubCode": 0,
+        "vac2": 236.90,
+        "vac1": 236.90,
+        "payLoadPower": 14.50,
+        "faultCode": 0,
+        "faultSubCode": 0,
+        "batteryStatus": 0,
+        "ppv": 14.30,
+        "smartLoadPower": 0.00,
+        "status": 6
+    },
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
 ---
 
-## 返回字段说明
+## 主规范字段说明
 
-| 参数名 | 类型 | 示例 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `dataType` | string | dfcData | 固定值：dfcData |
-| `data` | object | - | 主数据对象 |
-| `data.activePower` | double | 0 | 从电网取电功率（正值），单位：W |
-| `data.pac` | double | 2871.4 | 交流输出功率，单位：W |
-| `data.ppv` | double | 3045.3 | 光伏发电功率，单位：W |
-| `data.payLoadPower` | double | 258.4 | 总负载功率（计算值），单位：W |
-| `data.reverActivePower` | double | 2781.9 | 向电网馈电功率，单位：W |
-| `data.batteryStatus` | int | 3 | 电池总体状态 |
-| `data.batPower` | double | 200.5 | 电池总充放电功率（正数=充电，负数=放电，0=空闲），单位：W |
-| `data.priority` | int | 2 | 工作优先级 |
-| `data.deviceSn` | string | TEST123456 | 设备序列号 |
-| `data.status` | int | 6 | 设备运行状态码 |
-| `data.utcTime` | string | 2026/2/25 0:10 | UTC 时间戳（偏移 +00:00），格式为 `yyyy-MM-dd HH:mm:ss` |
-| `data.vac1` | double | 234 | A 相电压，单位：V |
-| `data.vac2` | double | 233 | B 相电压，单位：V |
-| `data.vac3` | double | 234.5 | C 相电压，单位：V |
-| `data.soc` | int | 3 | 平均电池荷电状态（SOC） |
-| `data.batteryList` | array | [...] | 电池信息列表 |
-| `data.batteryList[].index` | int | 1 | 电池序号（从 1 开始） |
-| `data.batteryList[].soc` | int | 22 | 电池荷电状态（百分比） |
-| `data.batteryList[].chargePower` | double | 5 | 电池充电功率，单位：W |
-| `data.batteryList[].dischargePower` | double | 0 | 电池放电功率，单位：W |
-| `data.batteryList[].ibat` | double | 0 | 电池电流（低压侧），单位：A |
-| `data.batteryList[].vbat` | double | 370.6 | 电池电压（低压侧），单位：V |
+| 参数名 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `data.meterPower` | double | 电表功率。正值表示从电网取电，负值表示向电网馈电，单位：W |
+| `data.reactivePower` | double | 无功功率 |
+| `data.fac` | double | 电网频率 |
+| `data.etoUserToday` | double | 今日取电量，单位：kWh |
+| `data.etoUserTotal` | double | 总取电量，单位：kWh |
+| `data.etoGridToday` | double | 今日馈电量，单位：kWh |
+| `data.etoGridTotal` | double | 总馈电量，单位：kWh |
+| `data.pac` | double | 交流输出功率，单位：W |
+| `data.ppv` | double | 本机采集到的 PV 功率，单位：W |
+| `data.payLoadPower` | double | 总负载功率，单位：W |
+| `data.batPower` | double | 电池总充放电功率。正充负放，单位：W |
+| `data.serialNum` | string | 遥测报文中的设备序列号主字段 |
+| `data.status` | int | 设备运行状态码 |
+| `data.utcTime` | string | UTC 时间戳 |
+| `data.batteryList` | array | 电池对象列表 |
+| `data.batteryList[].soc` | int | 单电池荷电状态 |
+| `data.batteryList[].soh` | int | 单电池健康度 |
+| `data.batteryList[].chargePower` | double | 单电池充电功率 |
+| `data.batteryList[].dischargePower` | double | 单电池放电功率 |
+| `data.batteryList[].status` | int | 单电池状态 |
 
 ---
 
-## 状态值定义
+## 9290 与历史材料兼容说明
 
-### 设备运行状态（`status`）
-- 0：待机
-- 1：自检
-- 3：故障
-- 4：升级
-- 5：光伏在线 & 电池离线 & 并网
-- 6：光伏离线（或在线） & 电池在线 & 并网
-- 7：光伏在线 & 电池在线 & 离网
-- 8：光伏离线 & 电池在线 & 离网
-- 9：Bypass 模式
+在 `https://api-test.growatt.com:9290` 与历史测试报告中，曾观察到以下差异：
 
-### 电池总体状态（`batteryStatus`）
-- 0：电池待机
-- 1：电池断开
-- 2：电池充电
-- 3：电池放电
-- 4：故障
-- 5：升级
+- 遥测体可能额外返回 `activePower`，并在部分环境或设备上返回 `reverActivePower`；这些字段可能与 `meterPower` 并存，也可能只出现其中一部分。
+- 部分返回中使用 `deviceSn` 或外层 `soc` 作为兼容字段。
+- 请求体仍然传纯 SN，且使用 `Authorization: Bearer <access_token>` + JSON body。
 
-### 工作优先级（`priority`）
-- 0：负载优先
-- 1：电池优先
-- 2：电网优先
+处理建议：
 
-### 常见失败与正确动作
-
-| 返回 / 错误 | 含义 | 正确动作 |
-| :--- | :--- | :--- |
-| `TOKEN_IS_INVALID` | token 已过期或无效 | 刷新 token 或重新获取 token 后重试 |
-| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | 当前设备尚未完成绑定授权 | 先调用 `bindDevice`，再重试 `getDeviceData` |
-| `parameter error` | 常见于传了带前缀 SN 或请求体格式不匹配 | 改为 JSON body，并传不带 `SPH:` / `SPM:` 的纯 SN |
-| `code=400, message=fail` | 在该测试环境中，常见于鉴权头与 body 组合不正确 | 改为 `Authorization: Bearer <access_token>` + JSON body |
+- 以本页的主规范字段作为对外语义定义。
+- 如果环境实际返回 `activePower` / `reverActivePower`，可作为兼容字段接入，但不要把它们写成新的主语义。
 
 ---
 
 ## 相关文档
 
-- [设备信息查询 API](../07_api_device_info.md)
-- [设备数据推送 API](../09_api_device_push.md)
+- [设备信息查询 API](./07_api_device_info.md)
+- [设备数据推送 API](./09_api_device_push.md)

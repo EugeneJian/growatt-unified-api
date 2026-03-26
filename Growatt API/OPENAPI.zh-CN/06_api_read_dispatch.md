@@ -1,81 +1,44 @@
 # 读取设备下发参数 API
 
 **简要说明**
-- 根据设备 SN 读取设备相关参数。该接口仅返回当前 secret token 有权限访问的设备读取结果。无权限设备不会被读取，也不会返回结果。
-- 当前接口频率限制：单设备每 5 秒最多调用 1 次。
+
+- 根据设备 SN 与 `setType` 读取当前调度参数。
+- 本接口仅返回当前 token 有权限访问的设备结果。
+- 当前频率限制：单设备每 5 秒最多调用 1 次。
+- 主规范不要求 `requestId` 为必填参数。
 
 **请求 URL**
-- `/oauth2/readDdeviceDispatch`
+
+- `/oauth2/readDeviceDispatch`
 
 **请求方式**
-- `POST`
-- 请求 `ContentType` 必须为 `application/x-www-form-urlencoded;`
 
-## 回读校验流程（概念）
+- `POST`
+- `Content-Type: application/json`
+- `Authorization: Bearer <token>`
+
+## 回读校验流程
 
 ```mermaid
 %% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["需要当前参数值"] --> B["使用 deviceSn setType requestId 构造请求"]
-    B --> C["调用 readDdeviceDispatch 接口"]
+    A["已完成下发"] --> B["使用 deviceSn 与 setType 构造请求"]
+    B --> C["调用 POST /oauth2/readDeviceDispatch"]
     C --> D{"响应 code"}
-    D -->|"0"| E["解析 data 数组"]
-    D -->|"5 或 16"| F["延迟后重试"]
-    D -->|"7 或其他"| G["停止并检查权限或设备类型"]
-    E --> H["与预期下发计划进行比对"]
-    H --> I["继续控制闭环"]
-    F --> C
-```
-
-## 回读校验流程（时序）
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Scheduler as DispatchScheduler
-    participant API as OAuthAPI
-    participant Verifier as DispatchVerifier
-
-    Scheduler->>API: POST readDdeviceDispatch
-    API-->>Scheduler: 返回 code 和 data
-    alt Code 0
-        Scheduler->>Verifier: 与预期值比对
-        Verifier-->>Scheduler: 返回校验结果
-    else Code 5 或 16
-        Scheduler-->>Scheduler: 等待后重试
-        Scheduler->>API: 重试 readDdeviceDispatch
-    else Code 7 或其他
-        Scheduler-->>Scheduler: 停止并排查原因
-    end
+    D -->|"0"| E["解析 data"]
+    D -->|"5 或 18"| F["记录失败并按需重试"]
+    E --> G["与期望值比对"]
+    G --> H["继续控制闭环"]
 ```
 
 ---
 
-## HTTP Header 参数
+## 请求参数
 
-| 参数名 | 必填 | 类型 | 说明 |
+| 参数名 | 是否必填 | 类型 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `Authorization` | 是 | String | Bearer your_access_token |
-
----
-
-## HTTP Body 参数
-
-| 参数名 | 必填 | 类型 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | string | 设备 SN，例如：xxxxxxx |
-| `setType` | 是 | string | 设置项枚举，例如：`time_slot_charge_discharge` |
-| `requestId` | 是 | string | 本次请求唯一标识 |
-
----
-
-## 接口返回参数
-
-| 参数名 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| `code` | int | 接口返回状态码。0 表示成功，其他表示失败 |
-| `data` | string | 返回数据 |
-| `message` | string | 返回描述 |
+| `deviceSn` | 是 | string | 设备 SN |
+| `setType` | 是 | string | 读取项枚举，例如 `time_slot_charge_discharge` |
 
 ---
 
@@ -90,28 +53,33 @@ sequenceDiagram
 
 ---
 
+## 返回参数
+
+| 参数名 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `code` | int | 业务状态码，0 为成功 |
+| `data` | object 或 array | 返回结构随 `setType` 变化 |
+| `message` | string | 结果描述 |
+
+---
+
 ## 返回示例
 
-### 读取成功
+### `time_slot_charge_discharge` 返回数组
 
 ```json
 {
     "code": 0,
     "data": [
         {
-            "startTime": 60,
-            "endTime": 420,
+            "startTime": "16:00",
+            "endTime": "18:00",
             "percentage": 80
         },
         {
-            "startTime": 840,
-            "endTime": 1020,
-            "percentage": 80
-        },
-        {
-            "startTime": 0,
-            "endTime": 0,
-            "percentage": 0
+            "startTime": "19:00",
+            "endTime": "21:00",
+            "percentage": -80
         }
     ],
     "message": "success"
@@ -128,30 +96,39 @@ sequenceDiagram
 }
 ```
 
-### 参数设置响应超时
+### 读取失败
 
 ```json
 {
-    "code": 16,
+    "code": 18,
     "data": null,
-    "message": "PARAMETER_SETTING_RESPONSE_TIMEOUT"
+    "message": "READ_PARAMETER_FAILED"
 }
 ```
 
-### 设备类型错误
+### 9290 测试环境兼容说明
+
+在 `https://api-test.growatt.com:9290` 中，`duration_and_power_charge_discharge` 已观察到返回对象结构，例如：
 
 ```json
 {
-    "code": 7,
-    "data": null,
-    "message": "WRONG_DEVICE_TYPE"
+    "code": 0,
+    "data": {
+        "duration": 5,
+        "percentage": 20,
+        "acChargingEnabled": 1,
+        "remotePowerControlEnable": 1
+    },
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
+
+这类差异属于 `setType` 相关的返回结构变化，不改变“`data` 可为 object 或 array”的主规范描述。
 
 ---
 
 ## 相关文档
 
-- [设备下发 API](../05_api_device_dispatch.md)
-- [设备信息查询 API](../07_api_device_info.md)
-- [全局参数](../10_global_params.md)
+- [设备下发 API](./05_api_device_dispatch.md)
+- [设备信息查询 API](./07_api_device_info.md)
+- [全局参数](./10_global_params.md)

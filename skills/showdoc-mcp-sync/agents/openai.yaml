@@ -1,0 +1,4 @@
+interface:
+  display_name: "ShowDoc MCP Sync"
+  short_description: "Sync internal Markdown docs to ShowDoc through the showdoc MCP server"
+  default_prompt: "Use $showdoc-mcp-sync to sync `《企业平台总体架构与角色视图（完整正式版）》.md` into the ShowDoc project `Growatt-Archetecture` as an internal document, reusing the project if it already exists and otherwise creating it before upserting the page."

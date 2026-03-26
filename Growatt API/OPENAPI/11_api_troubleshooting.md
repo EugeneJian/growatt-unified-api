@@ -2,150 +2,100 @@
 
 Version: V1.0 | Release Date: March 12, 2026
 
-This page summarizes the most common integration failures observed during verified testing on `https://api-test.growatt.com:9290`.
+This page records only verified compatibility facts for `https://api-test.growatt.com:9290`. If anything here conflicts with an endpoint-level document, follow the endpoint-level specification first.
 
-Use this page together with:
+Recommended companion reading:
+
 - [Device Authorization API](./04_api_device_auth.md)
 - [Device Information Query API](./07_api_device_info.md)
 - [Device Data Query API](./08_api_device_data.md)
 
 ---
 
-## Verified 9290 Happy Path
+## Verified 9290 Success Path
 
-The following sequence was verified under `client_credentials` mode:
+Under `client_credentials`, the following sequence has been verified:
 
 1. `POST /oauth2/token`
 2. `POST /oauth2/bindDevice`
 3. `POST /oauth2/getDeviceInfo`
 4. `POST /oauth2/getDeviceData`
-
-If your integration does not follow this sequence, troubleshoot that first.
+5. `POST /oauth2/deviceDispatch`
+6. `POST /oauth2/readDeviceDispatch`
+7. `POST /oauth2/unbindDevice`
 
 ---
 
 ## FAQ
 
-### 1. Why does `bindDevice` fail when the device label looks correct in the UI?
+### 1. Why does `getDeviceList` fail under `client_credentials`?
 
-In the 9290 test environment, UI labels may include prefixes such as `SPH:` or `SPM:`, but the API request must use the raw SN only.
+In the 9290 environment, calling `POST /oauth2/getDeviceList` with a `client_credentials` token returns:
+
+```json
+{
+    "code": 103,
+    "data": null,
+    "message": "WRONG_GRANT_TYPE"
+}
+```
+
+Correct action:
+
+- Do not treat `getDeviceList` as the candidate-device discovery entry point for `client_credentials`.
+- Start directly from `bindDevice` with a known raw SN.
+
+### 2. Why does `bindDevice` fail even though the device label looks correct in the UI?
+
+In the 9290 environment, device labels shown in the UI may include `SPH:` or `SPM:` prefixes, but API requests must use the raw SN only.
 
 - Correct: `RAW_DEVICE_SN`
 - Incorrect: `SPH:RAW_DEVICE_SN`
 
-Verified working `bindDevice` request:
+### 3. Why do `getDeviceInfo` or `getDeviceData` return `parameter error`?
 
-```json
-{
-    "deviceSnList": [
-        {
-            "deviceSn": "RAW_DEVICE_SN",
-            "pinCode": "TEST_PIN_CODE"
-        }
-    ]
-}
-```
+This usually happens because:
 
-### 2. Why does `getDeviceInfo` return `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`?
-
-This means the device has not been authorized for the current third party yet.
-
-Correct action:
-
-1. Call `POST /oauth2/bindDevice`
-2. Retry `POST /oauth2/getDeviceInfo`
-
-### 3. Why does `getDeviceInfo` or `getDeviceData` return `parameter error`?
-
-In the verified 9290 environment, this is commonly caused by one of the following:
-
-- Passing a prefixed SN such as `SPH:RAW_DEVICE_SN`
-- Using a non-working request body format
-
-Verified working format for both query APIs in this environment:
-
-- `Authorization: Bearer <access_token>`
-- `Content-Type: application/json`
-- JSON body:
-
-```json
-{
-    "deviceSn": "RAW_DEVICE_SN"
-}
-```
-
-### 4. Why does `getDeviceData` return `code=400` with `message=fail`?
-
-This is commonly caused by a non-working auth/body combination in the 9290 environment.
+- The SN still includes a display prefix
+- The request body is not JSON
 
 Verified working combination:
 
 - `Authorization: Bearer <access_token>`
 - `Content-Type: application/json`
-- JSON body with raw SN
+- Request body contains only the raw SN
 
-### 5. Which auth header should I use for `getDeviceData`?
+### 4. Which endpoints use JSON bodies in the 9290 environment?
 
-The endpoint-level SSOT documents the `token` header, but the 9290 test environment was successfully verified with:
+The following interfaces have been verified with JSON bodies:
 
-- `Authorization: Bearer <access_token>`
+- `bindDevice`
+- `getDeviceInfo`
+- `getDeviceData`
+- `deviceDispatch`
+- `readDeviceDispatch`
+- `unbindDevice`
 
-When integrating against `https://api-test.growatt.com:9290`, prefer the verified working combination documented on this page.
+### 5. Why does `readDeviceDispatch` sometimes return an object and sometimes an array?
 
-### 6. What is the minimum verified request set for 9290?
+This depends on `setType`:
 
-#### `bindDevice`
+- `time_slot_charge_discharge` commonly returns an array
+- `duration_and_power_charge_discharge` has been observed in 9290 to return an object
 
-```json
-{
-    "deviceSnList": [
-        {
-            "deviceSn": "RAW_DEVICE_SN",
-            "pinCode": "TEST_PIN_CODE"
-        }
-    ]
-}
-```
-
-#### `getDeviceInfo`
-
-```json
-{
-    "deviceSn": "RAW_DEVICE_SN"
-}
-```
-
-#### `getDeviceData`
-
-```json
-{
-    "deviceSn": "RAW_DEVICE_SN"
-}
-```
+Clients should therefore parse `data` according to `setType` instead of treating one example shape as universal.
 
 ---
 
-## Error-to-Action Table
+## Error-to-Action Mapping
 
-| Response / Error | Likely Cause | Correct Action |
+| Response / Error | Common Cause | Correct Action |
 | :--- | :--- | :--- |
-| `TOKEN_IS_INVALID` | Token expired or invalid | Refresh or fetch a new token, then retry |
-| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | Device not bound yet | Call `bindDevice` first |
-| `parameter error` | Prefixed SN or non-working body format | Use JSON body and raw SN only |
-| `code=400, message=fail` | Non-working auth/body combination for telemetry | Use `Authorization: Bearer` + JSON body |
-
----
-
-## Recommended Implementation Defaults for 9290
-
-- Normalize device labels before request construction
-  - Convert `SPH:RAW_DEVICE_SN` -> `RAW_DEVICE_SN`
-- Use `Authorization: Bearer <access_token>` for all four validated calls in the 9290 test environment
-- Use `application/json` request bodies for:
-  - `bindDevice`
-  - `getDeviceInfo`
-  - `getDeviceData`
-- Treat `bindDevice` as a hard prerequisite before querying info or telemetry
+| `TOKEN_IS_INVALID` | Token is expired or invalid | Refresh the token or obtain a new one |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | Device is not bound or the current token has no permission | Run `bindDevice` first or verify authorization |
+| `WRONG_GRANT_TYPE` | OAuth mode does not support the endpoint | Switch to the correct mode or use the `bindDevice` flow |
+| `parameter error` | Prefixed SN or wrong body format | Use JSON and pass the raw SN only |
+| `code=400, message=fail` | In 9290 this is often caused by the wrong auth-header/body combination | Use `Authorization: Bearer` with a JSON body |
 
 ---
 

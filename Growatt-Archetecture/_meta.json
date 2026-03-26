@@ -1,0 +1,69 @@
+{
+  "project": "Growatt-Archetecture",
+  "scope": "external",
+  "syncRoot": "Growatt-Archetecture/",
+  "topLevelCatalog": "",
+  "catalogStrategy": "root-flat",
+  "order": [
+    {
+      "path": "README.md",
+      "title": "导航",
+      "catalog": ""
+    },
+    {
+      "path": "00-audience-overview.md",
+      "title": "Growatt 企业平台架构概览",
+      "catalog": ""
+    },
+    {
+      "path": "01-document-purpose-and-core-conclusions.md",
+      "title": "执行摘要与核心结论",
+      "catalog": ""
+    },
+    {
+      "path": "02-platform-architecture.md",
+      "title": "平台总体架构",
+      "catalog": ""
+    },
+    {
+      "path": "03-role-views/01-management-view.md",
+      "title": "业务决策视图",
+      "catalog": ""
+    },
+    {
+      "path": "03-role-views/02-platform-architect-view.md",
+      "title": "平台架构师视图",
+      "catalog": ""
+    },
+    {
+      "path": "03-role-views/03-api-partner-view.md",
+      "title": "API / 第三方接入视图",
+      "catalog": ""
+    },
+    {
+      "path": "03-role-views/04-cloud-edge-view.md",
+      "title": "云边通信视图",
+      "catalog": ""
+    },
+    {
+      "path": "03-role-views/05-protocol-device-view.md",
+      "title": "协议与设备接入视图",
+      "catalog": ""
+    },
+    {
+      "path": "03-role-views/06-device-modeling-view.md",
+      "title": "设备建模视图",
+      "catalog": ""
+    },
+    {
+      "path": "04-unified-architecture-statement.md",
+      "title": "推荐的统一架构口径",
+      "catalog": ""
+    },
+    {
+      "path": "05-conclusion-and-next-steps.md",
+      "title": "总结与后续方向",
+      "catalog": ""
+    }
+  ]
+}
