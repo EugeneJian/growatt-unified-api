@@ -82,7 +82,7 @@ sequenceDiagram
 | `deviceTypeName` | string | Device type name |
 | `model` | string | Device model |
 | `nominalPower` | number | Rated power in watts |
-| `datalogSn` | string | Datalogger serial number |
+| `datalogSn` | string | Datalogger serial number. Use `deviceSn`, not `datalogSn`, when calling `bindDevice` or other device-level APIs |
 | `dtc` | number | Device type code |
 | `communicationVersion` | string | Communication firmware version |
 | `authFlag` | boolean | Whether the device is already authorized |
@@ -112,7 +112,7 @@ Correct handling:
 
 - Authorizes one or more devices to the third-party platform.
 - The request body is JSON.
-- The normative `deviceSnList` structure depends on the OAuth mode.
+- `deviceSnList` accepts either raw-SN strings or object entries. The working shape may depend on the environment or the target device.
 
 **Request URL**
 
@@ -129,13 +129,13 @@ Correct handling:
 | Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSnList` | Yes | array | Non-empty array |
-| `deviceSnList[]` | Yes | string or object | In authorization-code mode, use a device-SN string. In client-credentials mode, use an object containing `deviceSn` and `pinCode` |
-| `deviceSnList[].deviceSn` | Required in client-credentials mode | string | Device serial number |
-| `deviceSnList[].pinCode` | Required in client-credentials mode | string | Device PIN code |
+| `deviceSnList[]` | Yes | string or object | Use the returned `deviceSn` from `getDeviceList`. Some environments accept raw-SN strings; others require object entries |
+| `deviceSnList[].deviceSn` | Required when using object entries | string | Device serial number used by device-level APIs |
+| `deviceSnList[].pinCode` | Required when the environment or device onboarding flow needs a PIN | string | Device PIN code |
 
 ### Request Examples
 
-#### Authorization-code mode
+#### Authorization-code common raw-SN example
 
 ```json
 {
@@ -146,7 +146,19 @@ Correct handling:
 }
 ```
 
-#### Client-credentials mode
+#### Authorization-code / compatibility object-entry example
+
+```json
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "LXG1234567"
+        }
+    ]
+}
+```
+
+#### Client-credentials common example
 
 ```json
 {
@@ -189,13 +201,18 @@ Failure example:
 
 - Use `Authorization: Bearer <access_token>` together with `Content-Type: application/json`.
 - `deviceSn` values must use the raw SN without display prefixes such as `SPH:` or `SPM:`.
-- In `client_credentials` mode, object entries with `pinCode` are used.
+- Use the `deviceSn` field returned by `getDeviceList` as the bind target; do not substitute `datalogSn`.
+- If `authorization_code` binding returns `SYSTEM_ERROR` for a string array, retry with object entries containing `deviceSn`.
+- In `client_credentials` mode, object entries are standard, and `pinCode` is commonly required.
 
 Reference example:
 
 ```json
 {
     "deviceSnList": [
+        {
+            "deviceSn": "RAW_DEVICE_SN"
+        },
         {
             "deviceSn": "RAW_DEVICE_SN",
             "pinCode": "TEST_PIN_CODE"

@@ -52,7 +52,7 @@ flowchart TD
 
 - 第三方平台直接使用 `client_id` 与 `client_secret` 调用 `POST /oauth2/token`。
 - 令牌响应以实际返回体为准，不应默认假定一定包含 `refresh_token`。
-- 设备接入通常从已知 `deviceSn` 的 `bindDevice` 开始；如果设备要求 `pinCode`，则需一并传入。
+- 设备接入通常从已知 `deviceSn` 的 `bindDevice` 开始；对象数组是常见写法，如环境或目标设备要求 `pinCode`，则需一并传入。
 - `POST /oauth2/getDeviceList` 不属于该模式的标准设备发现能力。
 
 ### 1.3 能力边界
@@ -63,7 +63,7 @@ flowchart TD
 | 获取 refresh token | 支持 | 以实际响应为准，不默认承诺 |
 | 刷新 access token | 支持 | 仅在实际返回 `refresh_token` 时支持 |
 | 获取可授权设备列表 `getDeviceList` | 支持 | 不支持 |
-| 绑定设备 `bindDevice` | 支持 | 支持，常见场景下需 `pinCode` |
+| 绑定设备 `bindDevice` | 支持；应使用 `getDeviceList` 返回的 `deviceSn`，并按环境 / 设备要求选择字符串或对象项 | 支持；对象数组是标准写法，且常见场景下需 `pinCode` |
 | 获取已授权设备列表 `getDeviceListAuthed` | 支持 | 支持 |
 | 查询设备信息 / 数据 | 支持 | 支持 |
 | 下发 / 回读调度参数 | 支持 | 支持 |

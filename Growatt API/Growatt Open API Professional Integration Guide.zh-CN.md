@@ -35,12 +35,13 @@
 - 面向 Growatt 终端用户在第三方平台内完成登录授权的场景。
 - `POST /oauth2/token` 响应包含 `refresh_token`。
 - `POST /oauth2/getDeviceList` 仅在该模式下支持。
+- 绑定时应使用 `getDeviceList` 返回的 `deviceSn`；如果字符串数组绑定返回 `SYSTEM_ERROR`，可改为传包含 `deviceSn` 的对象数组重试。
 
 ### `client_credentials`
 
 - 面向平台直连场景。
 - 不默认承诺返回 `refresh_token`，必须以实际响应为准。
-- 设备接入通常从 `POST /oauth2/bindDevice` 开始。
+- 设备接入通常从 `POST /oauth2/bindDevice` 开始；对象数组是标准写法，且常见场景下需 `pinCode`。
 - `POST /oauth2/getDeviceList` 不作为该模式的标准设备发现接口。
 
 ---
@@ -70,7 +71,7 @@ flowchart TD
 | 获取 token | `/oauth2/token` | `grant_type`、客户端凭证 |
 | 刷新 token | `/oauth2/refresh` | `refresh_token` |
 | 候选设备列表 | `/oauth2/getDeviceList` | Bearer token，且仅 `authorization_code` |
-| 绑定设备 | `/oauth2/bindDevice` | `deviceSnList` |
+| 绑定设备 | `/oauth2/bindDevice` | `deviceSnList`，使用返回的 `deviceSn`，并按环境 / 设备要求选择字符串或对象项 |
 | 已授权设备列表 | `/oauth2/getDeviceListAuthed` | Bearer token |
 | 解除授权 | `/oauth2/unbindDevice` | `deviceSnList` |
 | 设备信息 | `/oauth2/getDeviceInfo` | `deviceSn` |
@@ -95,7 +96,8 @@ flowchart TD
 
 - `client_credentials` 调 `/oauth2/getDeviceList` 返回 `WRONG_GRANT_TYPE`
 - `bindDevice`、`getDeviceInfo`、`getDeviceData`、`deviceDispatch`、`readDeviceDispatch`、`unbindDevice` 使用 JSON body
-- SN 必须传纯值，不带 `SPH:` / `SPM:` 前缀
+- 设备级接口必须使用纯 `deviceSn`，不要误用 `datalogSn`，也不要传 `SPH:` / `SPM:` 这类展示值
+- `authorization_code` 下，不同环境可能分别要求字符串数组或包含 `deviceSn` 的对象数组
 - `getDeviceData` / push 仍可能出现历史兼容字段
 
 ---
@@ -106,6 +108,7 @@ flowchart TD
 - [ ] 已实现 `/oauth2/token`
 - [ ] 已按需实现 `/oauth2/refresh`
 - [ ] 已使用新的 endpoint 名称：`getDeviceList` / `getDeviceListAuthed` / `readDeviceDispatch`
+- [ ] 已确认目标环境 / 目标设备实际可用的 `bindDevice` 请求形态
 - [ ] 已将 `deviceDispatch` 的 `requestId` 设为必填
 - [ ] 已按 `setType` 解析 `readDeviceDispatch.data`
 - [ ] 已按主规范字段消费遥测

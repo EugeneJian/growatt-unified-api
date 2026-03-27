@@ -45,12 +45,31 @@ Correct action:
 - Do not treat `getDeviceList` as the candidate-device discovery entry point for `client_credentials`.
 - Start directly from `bindDevice` with a known raw SN.
 
-### 2. Why does `bindDevice` fail even though the device label looks correct in the UI?
+### 2. Why does `bindDevice` fail even though the device identifier looks correct?
 
-Device labels shown in the UI may include `SPH:` or `SPM:` prefixes, but API requests must use the raw SN only.
+Common causes include:
 
-- Correct: `RAW_DEVICE_SN`
-- Incorrect: `SPH:RAW_DEVICE_SN`
+- The UI label still includes a display prefix
+- `datalogSn` was used instead of `deviceSn`
+- The environment expects object entries rather than a string array
+
+Correct handling:
+
+- Correct bind target: the `deviceSn` returned by `getDeviceList`
+- Incorrect bind target: `datalogSn` or a prefixed value such as `SPH:RAW_DEVICE_SN`
+- If a string-array bind returns `SYSTEM_ERROR`, retry with:
+
+```json
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "RAW_DEVICE_SN"
+        }
+    ]
+}
+```
+
+- If the environment or the target device requires a PIN, add `pinCode` to the object entry
 
 ### 3. Why do `getDeviceInfo` or `getDeviceData` return `parameter error`?
 
@@ -93,6 +112,7 @@ Clients should therefore parse `data` according to `setType` instead of treating
 | :--- | :--- | :--- |
 | `TOKEN_IS_INVALID` | Token is expired or invalid | Refresh the token or obtain a new one |
 | `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | Device is not bound or the current token has no permission | Run `bindDevice` first or verify authorization |
+| `SYSTEM_ERROR` during `bindDevice` | Wrong request shape for the current environment/device, or `datalogSn` was used instead of `deviceSn` | Retry with an object entry containing `deviceSn`; add `pinCode` when required |
 | `WRONG_GRANT_TYPE` | OAuth mode does not support the endpoint | Switch to the correct mode or use the `bindDevice` flow |
 | `parameter error` | Prefixed SN or wrong body format | Use JSON and pass the raw SN only |
 | `code=400, message=fail` | Wrong auth-header/body combination | Use `Authorization: Bearer` with a JSON body |

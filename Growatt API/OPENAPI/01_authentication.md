@@ -52,7 +52,7 @@ Typical characteristics:
 
 - The third-party platform directly calls `POST /oauth2/token` with `client_id` and `client_secret`.
 - Clients must not assume that a `refresh_token` is always returned.
-- Device onboarding typically starts from `bindDevice` with a known `deviceSn`; when required, `pinCode` must be included.
+- Device onboarding typically starts from `bindDevice` with a known `deviceSn`; object entries are common, and `pinCode` must be included when the environment or the target device requires it.
 - `POST /oauth2/getDeviceList` is not part of the standard discovery flow for this mode.
 
 ### 1.3 Capability Boundary
@@ -63,7 +63,7 @@ Typical characteristics:
 | Receive refresh token | Supported | Depends on actual response; not guaranteed |
 | Refresh access token | Supported | Only when the actual token response includes `refresh_token` |
 | Get candidate device list `getDeviceList` | Supported | Not supported |
-| Bind device `bindDevice` | Supported | Supported; `pinCode` is commonly required |
+| Bind device `bindDevice` | Supported; use the `deviceSn` returned by `getDeviceList`, and choose string or object entries according to environment / device requirements | Supported; object entries are standard, and `pinCode` is commonly required |
 | Get authorized device list `getDeviceListAuthed` | Supported | Supported |
 | Query device info / data | Supported | Supported |
 | Dispatch / read back parameters | Supported | Supported |

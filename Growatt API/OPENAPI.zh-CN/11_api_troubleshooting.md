@@ -45,12 +45,31 @@
 - 不要把 `getDeviceList` 当作 `client_credentials` 模式下的候选设备发现入口。
 - 直接使用已知纯 SN 调用 `bindDevice`。
 
-### 2. 为什么页面上的设备标识看起来没问题，但 `bindDevice` 还是失败？
+### 2. 为什么设备标识看起来没问题，但 `bindDevice` 还是失败？
 
-页面或截图里的设备标识可能带 `SPH:` 或 `SPM:` 前缀，但接口请求必须传纯 SN。
+常见原因包括：
 
-- 正确：`RAW_DEVICE_SN`
-- 错误：`SPH:RAW_DEVICE_SN`
+- 页面展示值仍带 `SPH:` / `SPM:` 等前缀
+- 把 `datalogSn` 当成了 `deviceSn`
+- 当前环境要求对象数组，而不是字符串数组
+
+正确动作：
+
+- 正确的绑定目标：`getDeviceList` 返回的 `deviceSn`
+- 错误的绑定目标：`datalogSn`，或 `SPH:RAW_DEVICE_SN` 这类带展示前缀的值
+- 如果字符串数组绑定返回 `SYSTEM_ERROR`，可改为：
+
+```json
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "RAW_DEVICE_SN"
+        }
+    ]
+}
+```
+
+- 如果环境或目标设备要求 PIN，再在对象项中补 `pinCode`
 
 ### 3. 为什么 `getDeviceInfo` 或 `getDeviceData` 返回 `parameter error`？
 
@@ -93,6 +112,7 @@
 | :--- | :--- | :--- |
 | `TOKEN_IS_INVALID` | token 已过期或无效 | 刷新 token 或重新获取 token |
 | `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | 设备尚未绑定或当前 token 无权限 | 先执行 `bindDevice` 或核对授权关系 |
+| `bindDevice` 返回 `SYSTEM_ERROR` | 当前环境 / 设备要求的请求形态不匹配，或误用了 `datalogSn` | 改为传包含 `deviceSn` 的对象项；如环境要求，再补 `pinCode` |
 | `WRONG_GRANT_TYPE` | OAuth 模式与接口不匹配 | 切换到正确模式，或改走 `bindDevice` 流程 |
 | `parameter error` | SN 带前缀或 body 格式错误 | 改为 JSON body，并仅传纯 SN |
 | `code=400, message=fail` | 常见于鉴权头与请求体组合错误 | 改为 `Authorization: Bearer` + JSON body |
