@@ -51,19 +51,22 @@
 
 - 页面展示值仍带 `SPH:` / `SPM:` 等前缀
 - 把 `datalogSn` 当成了 `deviceSn`
-- 当前环境要求对象数组，而不是字符串数组
+- 发送了裸字符串数组，而不是对象项
 
 正确动作：
 
 - 正确的绑定目标：`getDeviceList` 返回的 `deviceSn`
 - 错误的绑定目标：`datalogSn`，或 `SPH:RAW_DEVICE_SN` 这类带展示前缀的值
-- 如果字符串数组绑定返回 `SYSTEM_ERROR`，可改为：
+- `deviceSnList` 统一使用对象项，例如：
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "RAW_DEVICE_SN"
+            "deviceSn": "xxx1"
+        },
+        {
+            "deviceSn": "xxxx2"
         }
     ]
 }

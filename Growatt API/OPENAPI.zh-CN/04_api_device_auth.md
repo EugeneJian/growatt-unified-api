@@ -60,11 +60,11 @@ sequenceDiagram
     "code": 0,
     "data": [
         {
-            "deviceSn": "HCQSKJMSJ1",
+            "deviceSn": "xxx1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "ZGQ0E8511G",
+            "datalogSn": "<masked_datalog_sn_1>",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
@@ -112,7 +112,7 @@ sequenceDiagram
 
 - 将设备授权给第三方平台。
 - 请求体统一使用 JSON。
-- `deviceSnList` 支持纯 SN 字符串和对象两种形态；实际可用写法可能受环境或目标设备影响。
+- `deviceSnList` 使用对象项；如环境或目标设备要求 `pinCode`，则在对象项中补充。
 
 **请求 URL**
 
@@ -129,47 +129,39 @@ sequenceDiagram
 | 参数名 | 必填 | 类型 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `deviceSnList` | 是 | array | 非空数组 |
-| `deviceSnList[]` | 是 | string 或 object | 使用 `getDeviceList` 返回的 `deviceSn`。部分环境接受纯 SN 字符串，部分环境要求对象项 |
+| `deviceSnList[]` | 是 | object | 包含 `deviceSn` 的对象项；如环境要求，再补 `pinCode` |
 | `deviceSnList[].deviceSn` | 使用对象项时必填 | string | 设备级接口实际使用的设备序列号 |
 | `deviceSnList[].pinCode` | 环境或设备接入流程要求 PIN 时必填 | string | 设备 PINCode |
 
 ### 请求示例
 
-#### 授权码模式常见纯 SN 示例
-
-```json
-{
-    "deviceSnList": [
-        "LXG1234567",
-        "LPL1234567"
-    ]
-}
-```
-
-#### 授权码模式 / 兼容对象项示例
+#### 常见对象项示例
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "LXG1234567"
+            "deviceSn": "xxx1"
+        },
+        {
+            "deviceSn": "xxxx2"
         }
     ]
 }
 ```
 
-#### 客户端凭证模式常见示例
+#### 带 `pinCode` 的对象项示例
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "LXG1234567",
-            "pinCode": "123"
+            "deviceSn": "xxx1",
+            "pinCode": "<masked_pin_code_1>"
         },
         {
-            "deviceSn": "EGM1234567",
-            "pinCode": "456"
+            "deviceSn": "xxxx2",
+            "pinCode": "<masked_pin_code_2>"
         }
     ]
 }
@@ -191,7 +183,7 @@ sequenceDiagram
 {
     "code": 12,
     "data": [
-        "WAQ1234567"
+        "xxx1"
     ],
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
@@ -202,8 +194,8 @@ sequenceDiagram
 - 统一使用 `Authorization: Bearer <access_token>` 与 `Content-Type: application/json`。
 - `deviceSn` 必须传纯 SN，不带 `SPH:` / `SPM:` 等展示前缀。
 - 绑定目标应使用 `getDeviceList` 返回的 `deviceSn`，不要误用 `datalogSn`。
-- 如果 `authorization_code` 下用字符串数组返回 `SYSTEM_ERROR`，可改为传包含 `deviceSn` 的对象数组重试。
-- `client_credentials` 场景通常使用对象数组；如环境要求，还需传 `pinCode`。
+- `deviceSnList` 统一使用对象项；不再推荐裸字符串数组。
+- 如环境或目标设备要求，再补 `pinCode`。
 
 参考示例：
 
@@ -211,11 +203,11 @@ sequenceDiagram
 {
     "deviceSnList": [
         {
-            "deviceSn": "RAW_DEVICE_SN"
+            "deviceSn": "xxx1"
         },
         {
-            "deviceSn": "RAW_DEVICE_SN",
-            "pinCode": "TEST_PIN_CODE"
+            "deviceSn": "xxxx2",
+            "pinCode": "<masked_pin_code_2>"
         }
     ]
 }
@@ -251,11 +243,11 @@ sequenceDiagram
     "code": 0,
     "data": [
         {
-            "deviceSn": "HCQSKJMSJ1",
+            "deviceSn": "xxx1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "ZGQ0E8511G",
+            "datalogSn": "<masked_datalog_sn_1>",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
@@ -294,8 +286,8 @@ sequenceDiagram
 ```json
 {
     "deviceSnList": [
-        "LXG1234567",
-        "LPL1234567"
+        "xxx1",
+        "xxxx2"
     ]
 }
 ```

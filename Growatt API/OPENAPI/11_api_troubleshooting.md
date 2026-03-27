@@ -51,19 +51,22 @@ Common causes include:
 
 - The UI label still includes a display prefix
 - `datalogSn` was used instead of `deviceSn`
-- The environment expects object entries rather than a string array
+- A bare string array was sent instead of object entries
 
 Correct handling:
 
 - Correct bind target: the `deviceSn` returned by `getDeviceList`
 - Incorrect bind target: `datalogSn` or a prefixed value such as `SPH:RAW_DEVICE_SN`
-- If a string-array bind returns `SYSTEM_ERROR`, retry with:
+- Use object entries in `deviceSnList`, for example:
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "RAW_DEVICE_SN"
+            "deviceSn": "xxx1"
+        },
+        {
+            "deviceSn": "xxxx2"
         }
     ]
 }
@@ -112,7 +115,7 @@ Clients should therefore parse `data` according to `setType` instead of treating
 | :--- | :--- | :--- |
 | `TOKEN_IS_INVALID` | Token is expired or invalid | Refresh the token or obtain a new one |
 | `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | Device is not bound or the current token has no permission | Run `bindDevice` first or verify authorization |
-| `SYSTEM_ERROR` during `bindDevice` | Wrong request shape for the current environment/device, or `datalogSn` was used instead of `deviceSn` | Retry with an object entry containing `deviceSn`; add `pinCode` when required |
+| `SYSTEM_ERROR` during `bindDevice` | Wrong request shape for the current environment/device, or `datalogSn` was used instead of `deviceSn` | Use object entries containing `deviceSn`; add `pinCode` when required |
 | `WRONG_GRANT_TYPE` | OAuth mode does not support the endpoint | Switch to the correct mode or use the `bindDevice` flow |
 | `parameter error` | Prefixed SN or wrong body format | Use JSON and pass the raw SN only |
 | `code=400, message=fail` | Wrong auth-header/body combination | Use `Authorization: Bearer` with a JSON body |

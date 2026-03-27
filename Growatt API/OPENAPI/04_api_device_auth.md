@@ -60,11 +60,11 @@ sequenceDiagram
     "code": 0,
     "data": [
         {
-            "deviceSn": "HCQSKJMSJ1",
+            "deviceSn": "xxx1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "ZGQ0E8511G",
+            "datalogSn": "<masked_datalog_sn_1>",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
@@ -112,7 +112,7 @@ Correct handling:
 
 - Authorizes one or more devices to the third-party platform.
 - The request body is JSON.
-- `deviceSnList` accepts either raw-SN strings or object entries. The working shape may depend on the environment or the target device.
+- `deviceSnList` uses object entries. Add `pinCode` when the environment or the target device requires it.
 
 **Request URL**
 
@@ -129,47 +129,39 @@ Correct handling:
 | Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSnList` | Yes | array | Non-empty array |
-| `deviceSnList[]` | Yes | string or object | Use the returned `deviceSn` from `getDeviceList`. Some environments accept raw-SN strings; others require object entries |
+| `deviceSnList[]` | Yes | object | Object entry containing `deviceSn`; add `pinCode` when required |
 | `deviceSnList[].deviceSn` | Required when using object entries | string | Device serial number used by device-level APIs |
 | `deviceSnList[].pinCode` | Required when the environment or device onboarding flow needs a PIN | string | Device PIN code |
 
 ### Request Examples
 
-#### Authorization-code common raw-SN example
-
-```json
-{
-    "deviceSnList": [
-        "LXG1234567",
-        "LPL1234567"
-    ]
-}
-```
-
-#### Authorization-code / compatibility object-entry example
+#### Common object-entry example
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "LXG1234567"
+            "deviceSn": "xxx1"
+        },
+        {
+            "deviceSn": "xxxx2"
         }
     ]
 }
 ```
 
-#### Client-credentials common example
+#### Object-entry example with `pinCode`
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "LXG1234567",
-            "pinCode": "123"
+            "deviceSn": "xxx1",
+            "pinCode": "<masked_pin_code_1>"
         },
         {
-            "deviceSn": "EGM1234567",
-            "pinCode": "456"
+            "deviceSn": "xxxx2",
+            "pinCode": "<masked_pin_code_2>"
         }
     ]
 }
@@ -191,7 +183,7 @@ Failure example:
 {
     "code": 12,
     "data": [
-        "WAQ1234567"
+        "xxx1"
     ],
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
@@ -202,8 +194,8 @@ Failure example:
 - Use `Authorization: Bearer <access_token>` together with `Content-Type: application/json`.
 - `deviceSn` values must use the raw SN without display prefixes such as `SPH:` or `SPM:`.
 - Use the `deviceSn` field returned by `getDeviceList` as the bind target; do not substitute `datalogSn`.
-- If `authorization_code` binding returns `SYSTEM_ERROR` for a string array, retry with object entries containing `deviceSn`.
-- In `client_credentials` mode, object entries are standard, and `pinCode` is commonly required.
+- Use object entries in `deviceSnList`; bare string arrays are not the recommended request shape.
+- Add `pinCode` when the environment or the target device requires it.
 
 Reference example:
 
@@ -211,11 +203,11 @@ Reference example:
 {
     "deviceSnList": [
         {
-            "deviceSn": "RAW_DEVICE_SN"
+            "deviceSn": "xxx1"
         },
         {
-            "deviceSn": "RAW_DEVICE_SN",
-            "pinCode": "TEST_PIN_CODE"
+            "deviceSn": "xxxx2",
+            "pinCode": "<masked_pin_code_2>"
         }
     ]
 }
@@ -251,11 +243,11 @@ Reference example:
     "code": 0,
     "data": [
         {
-            "deviceSn": "HCQSKJMSJ1",
+            "deviceSn": "xxx1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "ZGQ0E8511G",
+            "datalogSn": "<masked_datalog_sn_1>",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
@@ -294,8 +286,8 @@ Reference example:
 ```json
 {
     "deviceSnList": [
-        "LXG1234567",
-        "LPL1234567"
+        "xxx1",
+        "xxxx2"
     ]
 }
 ```

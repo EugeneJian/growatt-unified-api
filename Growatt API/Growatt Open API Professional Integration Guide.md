@@ -35,13 +35,13 @@ Supplemental references:
 - Intended for end-user login and consent inside the third-party platform.
 - `POST /oauth2/token` returns a `refresh_token`.
 - `POST /oauth2/getDeviceList` is supported only in this mode.
-- Use the `deviceSn` returned by `getDeviceList` as the bind target; if a string-array bind returns `SYSTEM_ERROR`, retry with object entries containing `deviceSn`.
+- Use the `deviceSn` returned by `getDeviceList` as the bind target, and send `deviceSnList` as object entries. Add `pinCode` when required by the environment or target device.
 
 ### `client_credentials`
 
 - Intended for direct platform-to-platform integrations.
 - A `refresh_token` must not be assumed; rely on the actual response.
-- Device onboarding typically starts from `POST /oauth2/bindDevice`; object entries are standard, and `pinCode` is commonly required.
+- Device onboarding typically starts from `POST /oauth2/bindDevice`; send `deviceSnList` as object entries, and add `pinCode` when required.
 - `POST /oauth2/getDeviceList` is not the standard discovery interface for this mode.
 
 ---
@@ -71,7 +71,7 @@ flowchart TD
 | Get token | `/oauth2/token` | `grant_type`, client credentials |
 | Refresh token | `/oauth2/refresh` | `refresh_token` |
 | Candidate device list | `/oauth2/getDeviceList` | Bearer token, `authorization_code` only |
-| Bind device | `/oauth2/bindDevice` | `deviceSnList` using the returned `deviceSn`; use string or object entries according to environment / device requirements |
+| Bind device | `/oauth2/bindDevice` | `deviceSnList` object entries using the returned `deviceSn`; add `pinCode` when required |
 | Authorized device list | `/oauth2/getDeviceListAuthed` | Bearer token |
 | Unbind device | `/oauth2/unbindDevice` | `deviceSnList` |
 | Device information | `/oauth2/getDeviceInfo` | `deviceSn` |
@@ -97,7 +97,7 @@ The following integration notes are confirmed by existing tests and should be ap
 - `/oauth2/getDeviceList` returns `WRONG_GRANT_TYPE` under `client_credentials`
 - `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice` use JSON bodies
 - Use raw `deviceSn` values for device-level APIs; do not substitute `datalogSn` or prefixed labels such as `SPH:` / `SPM:`
-- In `authorization_code`, some environments accept string-array binds while others require object entries containing `deviceSn`
+- Use object entries in `deviceSnList` for `bindDevice`; add `pinCode` when required
 - `getDeviceData` and push payloads may still expose historical compatibility fields
 
 ---
@@ -108,7 +108,7 @@ The following integration notes are confirmed by existing tests and should be ap
 - [ ] Implemented `/oauth2/token`
 - [ ] Implemented `/oauth2/refresh` when `refresh_token` exists
 - [ ] Switched to the new endpoint names: `getDeviceList` / `getDeviceListAuthed` / `readDeviceDispatch`
-- [ ] Verified the working `bindDevice` request shape for the target environment and device
+- [ ] Verified the `bindDevice` object-entry payload and whether `pinCode` is required
 - [ ] Made `requestId` mandatory in `deviceDispatch`
 - [ ] Parse `readDeviceDispatch.data` according to `setType`
 - [ ] Consume telemetry using the primary field model
