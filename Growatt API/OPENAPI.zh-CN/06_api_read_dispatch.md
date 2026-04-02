@@ -16,6 +16,44 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## 回读校验流程（概念）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["需要当前参数值"] --> B["使用 deviceSn setType requestId 构造请求"]
+    B --> C["调用 readDeviceDispatch 接口"]
+    C --> D{"响应 code"}
+    D -->|"0"| E["解析 data 数组"]
+    D -->|"5 或 16"| F["延迟后重试"]
+    D -->|"7 或其他"| G["停止并检查权限或设备类型"]
+    E --> H["与预期下发计划进行比对"]
+    H --> I["继续控制闭环"]
+    F --> C
+```
+
+## 回读校验流程（时序）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Scheduler as DispatchScheduler
+    participant API as OAuthAPI
+    participant Verifier as DispatchVerifier
+
+    Scheduler->>API: POST readDeviceDispatch
+    API-->>Scheduler: 返回 code 和 data
+    alt Code 0
+        Scheduler->>Verifier: 与预期值比对
+        Verifier-->>Scheduler: 返回校验结果
+    else Code 5 或 16
+        Scheduler-->>Scheduler: 等待后重试
+        Scheduler->>API: 重试 readDeviceDispatch
+    else Code 7 或其他
+        Scheduler-->>Scheduler: 停止并排查原因
+    end
+```
+
 ## 请求参数说明
 
 | 参数名 | 厂商表格类型 | 是否必选 | 说明 |

@@ -16,6 +16,36 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## Dispatch Control State
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+stateDiagram-v2
+    [*] --> Build
+    state "Build Command" as Build
+    state "Throttle Per Device" as Throttle
+    state "Send Dispatch" as Send
+    state "Success Code 0" as Success
+    state "Timeout Code 16" as Timeout
+    state "Offline Code 5" as Offline
+    state "Other Error" as Error
+    state "Read Back Verify" as Verify
+    state "End Cycle" as EndCycle
+
+    Build --> Throttle
+    Throttle --> Send
+    Send --> Success
+    Send --> Timeout
+    Send --> Offline
+    Send --> Error
+    Success --> Verify
+    Verify --> EndCycle
+    Timeout --> Send
+    Offline --> EndCycle
+    Error --> EndCycle
+    EndCycle --> [*]
+```
+
 ## Request Parameters
 
 | Parameter | Vendor-table Type | Required | Description |

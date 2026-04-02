@@ -15,6 +15,41 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## Device Info Query Flow (Concept)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["User selects device"] --> B["Attach bearer access token"]
+    B --> C["Call getDeviceInfo API"]
+    C --> D{"Response code"}
+    D -->|"0"| E["Render model battery and datalog fields"]
+    D -->|"2"| F["Refresh token and retry"]
+    D -->|"12"| G["Check device authorization list"]
+    E --> H["Use info for monitoring and dispatch eligibility"]
+```
+
+## Device Info Query Flow (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant User as EndUser
+    participant Service as ServiceAPI
+    participant API as OAuthAPI
+
+    User->>Service: Select target device
+    Service->>API: POST getDeviceInfo
+    API-->>Service: Return code and device info
+    alt Code 0
+        Service-->>User: Show device info
+    else Code 2
+        Service-->>Service: Refresh and retry
+    else Code 12
+        Service-->>User: Request authorization update
+    end
+```
+
 ## HTTP Header Parameters
 
 | Parameter | Required | Type | Description | Example |

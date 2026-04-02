@@ -12,6 +12,45 @@
 - `https://opencloud-test.growatt.com`
 - `https://opencloud-test-au.growatt.com`
 
+## 环境与参数决策流程（概念）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["开始调用 API"] --> B{"环境"}
+    B -->|"Production"| C["使用生产域名"]
+    B -->|"Test"| D["使用测试域名"]
+    C --> E["附加 bearer token"]
+    D --> E
+    E --> F{"权限结果"}
+    F -->|"TOKEN_IS_INVALID"| G["刷新 token"]
+    F -->|"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"| H["先执行设备绑定"]
+    F -->|"OK"| I["从参数表选择 setType"]
+    I --> J["调用下发或回读接口"]
+```
+
+## 环境与权限处理（时序）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Client as IntegrationService
+    participant API as OAuthAPI
+    participant Auth as AuthLogic
+
+    Client->>API: 在目标域名调用 API
+    API-->>Client: 返回权限状态码
+    alt Code TOKEN_IS_INVALID
+        Client->>Auth: 刷新后重试
+        Auth-->>Client: 返回新的 token
+    else Code DEVICE_SN_DOES_NOT_HAVE_PERMISSION
+        Client->>Auth: 执行 bind 流程
+        Auth-->>Client: 返回绑定结果
+    else 权限正常
+        Client-->>Client: 继续下发或回读
+    end
+```
+
 ## HTTP 请求头说明
 
 - 调用 API 时需要 `access_token`。

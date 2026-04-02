@@ -16,6 +16,44 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## Read-Back Verification Flow (Concept)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["Need current parameter value"] --> B["Build request with device sn set type and request id"]
+    B --> C["Call readDeviceDispatch API"]
+    C --> D{"Response code"}
+    D -->|"0"| E["Parse data array"]
+    D -->|"5 or 16"| F["Retry with delay"]
+    D -->|"7 or other"| G["Stop and inspect permission or device type"]
+    E --> H["Compare with expected dispatch plan"]
+    H --> I["Continue control loop"]
+    F --> C
+```
+
+## Read-Back Verification Flow (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Scheduler as DispatchScheduler
+    participant API as OAuthAPI
+    participant Verifier as DispatchVerifier
+
+    Scheduler->>API: POST readDeviceDispatch
+    API-->>Scheduler: Return code and data
+    alt Code 0
+        Scheduler->>Verifier: Compare with expected
+        Verifier-->>Scheduler: Return verification
+    else Code 5 or 16
+        Scheduler-->>Scheduler: Wait and retry
+        Scheduler->>API: Retry readDeviceDispatch
+    else Code 7 or other
+        Scheduler-->>Scheduler: Stop and inspect cause
+    end
+```
+
 ## Request Parameters
 
 | Parameter | Vendor-table Type | Required | Description |

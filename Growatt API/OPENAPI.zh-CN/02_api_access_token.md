@@ -15,6 +15,22 @@
 - `POST`
 - `Content-Type: application/x-www-form-urlencoded`
 
+## Token 交换时序
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Client as Client
+    participant OAuth as OAuthServer
+    participant App as IntegrationService
+
+    Client->>App: 构造 token 请求
+    App->>OAuth: POST /oauth2/token
+    OAuth-->>App: 返回 token 对
+    App-->>Client: 保存 token 对
+    Client->>App: 使用 bearer token 调用后续接口
+```
+
 ## 请求参数说明
 
 | 参数名 | 是否必传 | 说明 |

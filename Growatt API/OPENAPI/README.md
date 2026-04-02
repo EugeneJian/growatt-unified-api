@@ -2,6 +2,46 @@
 
 This directory contains the English published split of the Growatt Open API documentation. It organizes endpoint pages, preserves cross-links, and keeps implementation observations separate from the main API descriptions.
 
+## Integration Roadmap (Concept)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["01 Authentication"] --> B["02 Get access token"]
+    B --> C["03 Refresh token lifecycle"]
+    C --> D["04 Device Authorization"]
+    D --> E["07 Device Information"]
+    D --> F["08 Device Data Query"]
+    D --> G["09 Device Data Push"]
+    F --> H["05 Device Dispatch"]
+    H --> I["06 Read Dispatch Parameters"]
+    G --> H
+    I --> J["10 Global Parameters"]
+    J --> K["11 Troubleshooting FAQ"]
+```
+
+## Integration Roadmap (Request Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Platform as PlatformApp
+    participant OAuth as OAuthAPI
+    participant Device as DeviceAPI
+    participant Push as WebhookAPI
+
+    Platform->>OAuth: POST /oauth2/token
+    OAuth-->>Platform: Return token pair
+    Platform->>OAuth: Run bindDevice flow
+    OAuth-->>Platform: Return authorized set
+    Platform->>Device: Query info and data
+    Device-->>Platform: Return telemetry
+    Platform->>Device: Dispatch and read back
+    Device-->>Platform: Return dispatch result
+    Push-->>Platform: Push dfcData
+    Platform->>OAuth: POST /oauth2/refresh if needed
+```
+
 ## Documentation Structure
 
 | File | Description |

@@ -15,6 +15,42 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## Telemetry Consumption Flow (Concept)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["Scheduler triggers poll"] --> B["Build request with device sn"]
+    B --> C["Call getDeviceData API"]
+    C --> D{"Response code"}
+    D -->|"0"| E["Parse metrics and battery list"]
+    D -->|"2 or 12"| F["Refresh token or re authorize device"]
+    E --> G["Store time series data"]
+    G --> H["Run alerting and control logic"]
+    H --> I["Optional call deviceDispatch API"]
+```
+
+## Telemetry Consumption Flow (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Poller as Poller
+    participant API as OAuthAPI
+    participant Store as StorageDB
+    participant Engine as ControlEngine
+
+    Poller->>API: POST getDeviceData
+    API-->>Poller: Return code and telemetry
+    alt Code 0
+        Poller->>Store: Save telemetry
+        Poller->>Engine: Run control rules
+        Engine-->>Poller: Optional dispatch
+    else Code 2 or 12
+        Poller-->>Poller: Refresh or re-authorize
+    end
+```
+
 ## HTTP Header Parameters
 
 | Parameter | Required | Type | Description | Example |

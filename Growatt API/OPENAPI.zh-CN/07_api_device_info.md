@@ -15,6 +15,41 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## 设备信息查询流程（概念）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["用户选择设备"] --> B["附加 bearer access token"]
+    B --> C["调用 getDeviceInfo 接口"]
+    C --> D{"响应 code"}
+    D -->|"0"| E["渲染型号 电池 采集器字段"]
+    D -->|"2"| F["刷新 token 并重试"]
+    D -->|"12"| G["检查设备授权列表"]
+    E --> H["用于监控和控制资格判断"]
+```
+
+## 设备信息查询流程（时序）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant User as EndUser
+    participant Service as ServiceAPI
+    participant API as OAuthAPI
+
+    User->>Service: 选择目标设备
+    Service->>API: POST getDeviceInfo
+    API-->>Service: 返回 code 和设备信息
+    alt Code 0
+        Service-->>User: 展示设备信息
+    else Code 2
+        Service-->>Service: 刷新后重试
+    else Code 12
+        Service-->>User: 提示更新授权
+    end
+```
+
 ## HTTP 头部参数及说明
 
 | 参数名 | 必选 | 类型 | 说明 | 示例 |

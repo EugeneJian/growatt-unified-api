@@ -11,6 +11,22 @@ This is an entry guide. Endpoint parameters, examples, and response codes are ma
 
 ## 2 Supported Integration Paths
 
+### Integration Flow
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["Obtain client_id / client_secret"] --> B{"Choose OAuth mode"}
+    B -->|"authorization_code"| C["User logs into Growatt and exchanges a token pair"]
+    B -->|"client_credentials"| D["Obtain access token directly"]
+    C --> E["getDeviceList -> bindDevice"]
+    D --> F["bindDevice"]
+    E --> G["getDeviceInfo / getDeviceData"]
+    F --> G
+    G --> H["deviceDispatch -> readDeviceDispatch"]
+    G --> I["Receive dfcData push"]
+```
+
 ### `authorization_code`
 
 1. Call `POST /oauth2/token`

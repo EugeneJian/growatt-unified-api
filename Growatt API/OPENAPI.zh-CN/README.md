@@ -2,6 +2,46 @@
 
 本目录是面向站点发布的中文拆分文档，负责按端点组织说明、补足交叉引用，并将联调观察与主要 API 描述分开展示。
 
+## 集成路线图（概念）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["01 身份认证"] --> B["02 获取 access token"]
+    B --> C["03 refresh token 生命周期"]
+    C --> D["04 设备授权"]
+    D --> E["07 设备信息"]
+    D --> F["08 设备数据查询"]
+    D --> G["09 设备数据推送"]
+    F --> H["05 设备下发"]
+    H --> I["06 读取下发参数"]
+    G --> H
+    I --> J["10 全局参数"]
+    J --> K["11 常见问题与排查"]
+```
+
+## 集成路线图（请求顺序）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Platform as PlatformApp
+    participant OAuth as OAuthAPI
+    participant Device as DeviceAPI
+    participant Push as WebhookAPI
+
+    Platform->>OAuth: POST /oauth2/token
+    OAuth-->>Platform: 返回 token 对
+    Platform->>OAuth: 执行 bindDevice 流程
+    OAuth-->>Platform: 返回已授权设备集合
+    Platform->>Device: 查询设备信息与数据
+    Device-->>Platform: 返回遥测数据
+    Platform->>Device: 下发控制并回读
+    Device-->>Platform: 返回控制结果
+    Push-->>Platform: 推送 dfcData
+    Platform->>OAuth: 需要时调用 POST /oauth2/refresh
+```
+
 ## 文档结构
 
 | 文件 | 说明 |

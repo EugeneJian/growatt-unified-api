@@ -15,6 +15,42 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## 遥测消费流程（概念）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["调度器触发轮询"] --> B["使用 deviceSn 构造请求"]
+    B --> C["调用 getDeviceData 接口"]
+    C --> D{"响应 code"}
+    D -->|"0"| E["解析指标和 batteryList"]
+    D -->|"2 或 12"| F["刷新 token 或重新授权设备"]
+    E --> G["存储时序数据"]
+    G --> H["执行告警和控制逻辑"]
+    H --> I["按需调用 deviceDispatch 接口"]
+```
+
+## 遥测消费流程（时序）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Poller as Poller
+    participant API as OAuthAPI
+    participant Store as StorageDB
+    participant Engine as ControlEngine
+
+    Poller->>API: POST getDeviceData
+    API-->>Poller: 返回 code 和 telemetry
+    alt Code 0
+        Poller->>Store: 保存 telemetry
+        Poller->>Engine: 执行控制规则
+        Engine-->>Poller: 按需返回下发动作
+    else Code 2 或 12
+        Poller-->>Poller: 刷新 token 或重新授权
+    end
+```
+
 ## HTTP 头部参数及说明
 
 | 参数名 | 必选 | 类型 | 说明 | 示例 |

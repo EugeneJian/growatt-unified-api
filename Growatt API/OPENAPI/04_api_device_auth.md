@@ -2,6 +2,29 @@
 
 This page documents `getDeviceList`, `bindDevice`, `getDeviceListAuthed`, and `unbindDevice`.
 
+## Authorization Sequence
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant User as EndUser
+    participant Client as PlatformApp
+    participant API as OAuthAPI
+
+    Client->>API: POST getDeviceList
+    API-->>Client: Return candidate list
+    Client-->>User: Show candidates
+    User->>Client: Select devices
+    Client->>API: POST bindDevice
+    API-->>Client: Return bind status
+    Client->>API: POST getDeviceListAuthed
+    API-->>Client: Return authorized list
+    opt Optional revoke
+        Client->>API: POST unbindDevice
+        API-->>Client: Return unbind status
+    end
+```
+
 ## 1 Get Candidate Devices
 
 ### Brief Description

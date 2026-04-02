@@ -12,6 +12,45 @@
 - `https://opencloud-test.growatt.com`
 - `https://opencloud-test-au.growatt.com`
 
+## Environment and Parameter Decision Flow (Concept)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["Start API call"] --> B{"Environment"}
+    B -->|"Production"| C["Use production domain"]
+    B -->|"Test"| D["Use test domain"]
+    C --> E["Attach bearer token"]
+    D --> E
+    E --> F{"Permission result"}
+    F -->|"TOKEN_IS_INVALID"| G["Refresh token"]
+    F -->|"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"| H["Bind device first"]
+    F -->|"OK"| I["Select set type from parameter table"]
+    I --> J["Call dispatch or read APIs"]
+```
+
+## Environment and Permission Handling (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Client as IntegrationService
+    participant API as OAuthAPI
+    participant Auth as AuthLogic
+
+    Client->>API: Call API on chosen domain
+    API-->>Client: Return permission code
+    alt Code TOKEN_IS_INVALID
+        Client->>Auth: Refresh and retry
+        Auth-->>Client: Return new token
+    else Code DEVICE_SN_DOES_NOT_HAVE_PERMISSION
+        Client->>Auth: Run bind flow
+        Auth-->>Client: Return bind result
+    else Permission ok
+        Client-->>Client: Continue dispatch or read
+    end
+```
+
 ## HTTP Header
 
 - Calling the API requires `access_token`.

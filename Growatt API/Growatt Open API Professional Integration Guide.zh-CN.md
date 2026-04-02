@@ -11,6 +11,22 @@
 
 ## 2 支持的集成路径
 
+### 集成流程
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["申请 client_id / client_secret"] --> B{"选择 OAuth 模式"}
+    B -->|"authorization_code"| C["登录 Growatt 并换取 token 对"]
+    B -->|"client_credentials"| D["直接获取 access token"]
+    C --> E["getDeviceList -> bindDevice"]
+    D --> F["bindDevice"]
+    E --> G["getDeviceInfo / getDeviceData"]
+    F --> G
+    G --> H["deviceDispatch -> readDeviceDispatch"]
+    G --> I["接收 dfcData 推送"]
+```
+
 ### `authorization_code`
 
 1. 调用 `POST /oauth2/token`

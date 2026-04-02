@@ -6,6 +6,27 @@
 - 归属于第三方平台下的设备会按固定数据类型向该 URL 推送高频数据。
 - 本页将推送 payload 单独定义，而不是复用查询模型。
 
+## Webhook 处理时序
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Growatt as PushService
+    participant Webhook as WebhookEndpoint
+    participant Storage as EventStorage
+    participant RuleEngine as RuleEngine
+
+    Growatt->>Webhook: 推送 dfcData
+    Webhook->>Webhook: 校验 payload
+    alt Payload 合法
+        Webhook->>Storage: 保存原始事件
+        Webhook->>RuleEngine: 执行转换与规则处理
+        Webhook-->>Growatt: 返回 200
+    else Payload 非法
+        Webhook-->>Growatt: 返回 4xx
+    end
+```
+
 ## 推送示例
 
 ```json

@@ -16,6 +16,36 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
+## 调度控制状态
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+stateDiagram-v2
+    [*] --> Build
+    state "构造命令" as Build
+    state "按设备限流" as Throttle
+    state "发送下发请求" as Send
+    state "成功代码 0" as Success
+    state "超时代码 16" as Timeout
+    state "离线代码 5" as Offline
+    state "其他错误" as Error
+    state "回读校验" as Verify
+    state "结束本轮" as EndCycle
+
+    Build --> Throttle
+    Throttle --> Send
+    Send --> Success
+    Send --> Timeout
+    Send --> Offline
+    Send --> Error
+    Success --> Verify
+    Verify --> EndCycle
+    Timeout --> Send
+    Offline --> EndCycle
+    Error --> EndCycle
+    EndCycle --> [*]
+```
+
 ## 请求参数说明
 
 | 参数名 | 厂商表格类型 | 是否必选 | 说明 |

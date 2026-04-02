@@ -2,6 +2,29 @@
 
 本页整理 `getDeviceList`、`bindDevice`、`getDeviceListAuthed` 与 `unbindDevice` 四个接口。
 
+## 授权流程
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant User as EndUser
+    participant Client as PlatformApp
+    participant API as OAuthAPI
+
+    Client->>API: POST getDeviceList
+    API-->>Client: 返回候选设备列表
+    Client-->>User: 展示候选设备
+    User->>Client: 选择设备
+    Client->>API: POST bindDevice
+    API-->>Client: 返回绑定结果
+    Client->>API: POST getDeviceListAuthed
+    API-->>Client: 返回已授权设备列表
+    opt 可选撤销
+        Client->>API: POST unbindDevice
+        API-->>Client: 返回解绑结果
+    end
+```
+
 ## 1 获取可授权的设备列表
 
 ### 简要描述

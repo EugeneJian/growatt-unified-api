@@ -35,6 +35,25 @@ import {
   getGrowattSpecialPages,
 } from "@/lib/growatt-docs";
 
+const EXPECTED_MERMAID_COUNTS_BY_SLUG = {
+  "01_authentication": 2,
+  "02_api_access_token": 1,
+  "03_api_refresh": 2,
+  "04_api_device_auth": 1,
+  "05_api_device_dispatch": 1,
+  "06_api_read_dispatch": 2,
+  "07_api_device_info": 2,
+  "08_api_device_data": 2,
+  "09_api_device_push": 1,
+  "10_global_params": 2,
+  "11_api_troubleshooting": 0,
+  "12_ess_terminology": 0,
+} as const;
+
+function countMermaidBlocks(markdown: string | null | undefined) {
+  return markdown?.match(/```mermaid/g)?.length ?? 0;
+}
+
 describe("growatt docs source-of-truth loader", () => {
   it("discovers numbered OPENAPI docs and excludes README from doc list", async () => {
     const docs = await getGrowattDocMetas("en");
@@ -109,6 +128,27 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.markdown).toContain("## 6 集成检查清单");
     expect(quickGuide.markdown).not.toContain("基线来源：");
     expect(quickGuide.markdown).not.toContain("厂商基线");
+  });
+
+  it("restores expected Mermaid diagrams across overview, endpoint docs, and quick guide", async () => {
+    const locales = ["en", "zh-CN"] as const;
+
+    for (const locale of locales) {
+      const [overview, quickGuide] = await Promise.all([
+        getGrowattOverview(locale),
+        getGrowattQuickGuide(locale),
+      ]);
+
+      expect(countMermaidBlocks(overview.markdown)).toBe(2);
+      expect(countMermaidBlocks(quickGuide.markdown)).toBe(1);
+
+      for (const [slug, expectedCount] of Object.entries(EXPECTED_MERMAID_COUNTS_BY_SLUG)) {
+        const page = await getGrowattDocBySlug(slug, locale);
+
+        expect(page).not.toBeNull();
+        expect(countMermaidBlocks(page?.markdown)).toBe(expectedCount);
+      }
+    }
   });
 
   it("loads the bilingual ESS glossary as a numbered documentation page", async () => {

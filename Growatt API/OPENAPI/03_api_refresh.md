@@ -14,6 +14,46 @@
 - `POST`
 - `Content-Type: application/x-www-form-urlencoded`
 
+## Refresh Lifecycle (Concept)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["API call with access token"] --> B{"Token valid"}
+    B -->|"Yes"| C["Continue business API calls"]
+    B -->|"No"| D["Call oauth2 refresh API"]
+    D --> E{"Refresh success"}
+    E -->|"Yes"| F["Store new access token and refresh token"]
+    F --> C
+    E -->|"No"| G["Trigger re authorization flow"]
+```
+
+## Refresh Lifecycle (Sequence)
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Service as ServiceAPI
+    participant OAuth as OAuthServer
+    participant API as API
+
+    Service->>API: Call API with access token
+    alt Token valid
+        API-->>Service: Return response
+    else Token invalid
+        API-->>Service: Return token invalid
+        Service->>OAuth: POST /oauth2/refresh
+        alt Refresh success
+            OAuth-->>Service: Return new token pair
+            Service->>API: Retry API call
+            API-->>Service: Return response
+        else Refresh failed
+            OAuth-->>Service: Return refresh error
+            Service-->>Service: Trigger re-authorization
+        end
+    end
+```
+
 ## Request Parameters
 
 | Parameter | Required | Description |

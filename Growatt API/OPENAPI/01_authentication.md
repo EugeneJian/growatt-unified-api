@@ -2,6 +2,26 @@
 
 This page summarizes the supported authentication modes and capability boundaries for Growatt Open API. If later environment testing behaves differently, treat that behavior as an observation rather than as a replacement for the endpoint descriptions documented here.
 
+## Recommended Integration Flow
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["Start Integration"] --> B{"Choose OAuth Mode"}
+    B -->|"Authorization Code"| C["Open Growatt Login"]
+    B -->|"Client Credentials"| D["Call oauth2 token API"]
+    C --> E["Receive authorization code"]
+    E --> F["Exchange code for access token"]
+    D --> G["Get access token"]
+    F --> H["Call device authorization APIs"]
+    G --> H
+    H --> I["Call business APIs"]
+    I --> J{"Token expired"}
+    J -->|"Yes"| K["Call oauth2 refresh API"]
+    K --> I
+    J -->|"No"| L["Continue operations"]
+```
+
 ## Supported Grant Types
 
 | `grant_type` | Meaning | Capability boundary |
@@ -25,6 +45,32 @@ This page summarizes the supported authentication modes and capability boundarie
 | Get candidate devices `getDeviceList` | Supported | Not supported |
 | Bind devices `bindDevice` | Supported | Supported, and `pinCode` is required in client mode |
 | Get authorized devices `getDeviceListAuthed` | Supported | Supported |
+
+## OAuth2.0 Flow Overview
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant User as EndUser
+    participant App as ClientApp
+    participant Server as BackendServer
+    participant Growatt as GrowattAPI
+
+    User->>App: Start operation
+    App->>Server: Need valid token
+    Server-->>App: Redirect to login
+    App->>Growatt: User login
+    Growatt-->>App: Verify credentials
+    App->>Server: Send authorization context
+    Server->>Growatt: Exchange code for token
+    Growatt-->>Server: Return token pair
+    Server->>Growatt: Call API with access token
+    Growatt-->>Server: Return API result
+    Server-->>App: Return result
+    App-->>User: Show result
+
+    Note over Server,Growatt: Refresh token on expiry
+```
 
 ## Implementation Pointers
 

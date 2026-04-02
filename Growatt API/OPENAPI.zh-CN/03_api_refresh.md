@@ -14,6 +14,46 @@
 - `POST`
 - `Content-Type: application/x-www-form-urlencoded`
 
+## 刷新生命周期（概念）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+flowchart TD
+    A["使用 access token 调用 API"] --> B{"Token 是否有效"}
+    B -->|"是"| C["继续调用业务 API"]
+    B -->|"否"| D["调用 oauth2 refresh 接口"]
+    D --> E{"刷新是否成功"}
+    E -->|"是"| F["保存新的 access token 和 refresh token"]
+    F --> C
+    E -->|"否"| G["触发重新授权流程"]
+```
+
+## 刷新生命周期（时序）
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Service as ServiceAPI
+    participant OAuth as OAuthServer
+    participant API as API
+
+    Service->>API: 携带 access token 调用 API
+    alt Token 有效
+        API-->>Service: 返回响应
+    else Token 无效
+        API-->>Service: 返回 token 无效
+        Service->>OAuth: POST /oauth2/refresh
+        alt 刷新成功
+            OAuth-->>Service: 返回新的 token 对
+            Service->>API: 重试 API 调用
+            API-->>Service: 返回响应
+        else 刷新失败
+            OAuth-->>Service: 返回刷新错误
+            Service-->>Service: 触发重新授权
+        end
+    end
+```
+
 ## 请求参数说明
 
 | 参数名 | 是否必传 | 说明 |

@@ -6,6 +6,27 @@
 - Devices under the third-party platform push high-frequency data to that URL.
 - This page defines the push payload as its own payload definition rather than reusing the query model.
 
+## Webhook Processing Sequence
+
+```mermaid
+%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
+sequenceDiagram
+    participant Growatt as PushService
+    participant Webhook as WebhookEndpoint
+    participant Storage as EventStorage
+    participant RuleEngine as RuleEngine
+
+    Growatt->>Webhook: Push dfcData
+    Webhook->>Webhook: Validate payload
+    alt Payload valid
+        Webhook->>Storage: Save raw event
+        Webhook->>RuleEngine: Run transformation and rules
+        Webhook-->>Growatt: Return 200
+    else Payload invalid
+        Webhook-->>Growatt: Return 4xx
+    end
+```
+
 ## Push Example
 
 ```json
