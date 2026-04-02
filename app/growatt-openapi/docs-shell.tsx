@@ -349,6 +349,7 @@ export function GrowattDocsShell({
             <MermaidRenderer
               key={`${activeSlug ?? "overview"}:${locale}`}
               content={contentHtml}
+              mode="light"
             />
           </article>
         </main>
