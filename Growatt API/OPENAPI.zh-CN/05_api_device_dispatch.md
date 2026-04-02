@@ -48,67 +48,26 @@
 | `data` | string | 厂商表格原文写作 `string`，成功与失败示例均为 `null` |
 | `message` | string | 返回说明 |
 
-## 返回示例
-
-### 设置成功
+## 返回格式示例
 
 ```json
 {
     "code": 0,
     "data": null,
-    "message": "PARAMETER_SETTING_SUCCESSFUL"
+    "message": "RESPONSE_MESSAGE"
 }
 ```
 
-### 设备离线
+## 返回场景
 
-```json
-{
-    "code": 5,
-    "data": null,
-    "message": "DEVICE_OFFLINE"
-}
-```
-
-### 参数设置响应超时
-
-```json
-{
-    "code": 16,
-    "data": null,
-    "message": "PARAMETER_SETTING_RESPONSE_TIMEOUT"
-}
-```
-
-### 设备未回复
-
-```json
-{
-    "code": 15,
-    "data": null,
-    "message": "PARAMETER_SETTING_DEVICE_NOT_RESPONDING"
-}
-```
-
-### 设备回复失败
-
-```json
-{
-    "code": 6,
-    "data": null,
-    "message": "PARAMETER_SETTING_FAILED"
-}
-```
-
-### 请求次数限制
-
-```json
-{
-    "code": 105,
-    "data": null,
-    "message": "TOO_MANY_REQUEST"
-}
-```
+| 场景 | `code` | `data` | `message` |
+| :--- | :--- | :--- | :--- |
+| 设置成功 | `0` | `null` | `PARAMETER_SETTING_SUCCESSFUL` |
+| 设备离线 | `5` | `null` | `DEVICE_OFFLINE` |
+| 参数设置响应超时 | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |
+| 设备未回复 | `15` | `null` | `PARAMETER_SETTING_DEVICE_NOT_RESPONDING` |
+| 设备回复失败 | `6` | `null` | `PARAMETER_SETTING_FAILED` |
+| 请求次数限制 | `105` | `null` | `TOO_MANY_REQUEST` |
 
 ## 基线内部说明
 

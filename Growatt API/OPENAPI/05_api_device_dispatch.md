@@ -48,67 +48,26 @@
 | `data` | string | The vendor table says `string`, while both success and failure samples return `null` |
 | `message` | string | Response description |
 
-## Response Examples
-
-### Successful Setting
+## Response Format Example
 
 ```json
 {
     "code": 0,
     "data": null,
-    "message": "PARAMETER_SETTING_SUCCESSFUL"
+    "message": "RESPONSE_MESSAGE"
 }
 ```
 
-### Device Offline
+## Response Cases
 
-```json
-{
-    "code": 5,
-    "data": null,
-    "message": "DEVICE_OFFLINE"
-}
-```
-
-### Response Timeout
-
-```json
-{
-    "code": 16,
-    "data": null,
-    "message": "PARAMETER_SETTING_RESPONSE_TIMEOUT"
-}
-```
-
-### Device Not Responding
-
-```json
-{
-    "code": 15,
-    "data": null,
-    "message": "PARAMETER_SETTING_DEVICE_NOT_RESPONDING"
-}
-```
-
-### Parameter-Setting Failed
-
-```json
-{
-    "code": 6,
-    "data": null,
-    "message": "PARAMETER_SETTING_FAILED"
-}
-```
-
-### Too Many Requests
-
-```json
-{
-    "code": 105,
-    "data": null,
-    "message": "TOO_MANY_REQUEST"
-}
-```
+| Scenario | `code` | `data` | `message` |
+| :--- | :--- | :--- | :--- |
+| Successful setting | `0` | `null` | `PARAMETER_SETTING_SUCCESSFUL` |
+| Device offline | `5` | `null` | `DEVICE_OFFLINE` |
+| Response timeout | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |
+| Device not responding | `15` | `null` | `PARAMETER_SETTING_DEVICE_NOT_RESPONDING` |
+| Parameter-setting failed | `6` | `null` | `PARAMETER_SETTING_FAILED` |
+| Too many requests | `105` | `null` | `TOO_MANY_REQUEST` |
 
 ## Baseline Note
 

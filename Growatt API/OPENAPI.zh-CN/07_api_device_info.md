@@ -17,23 +17,23 @@
 
 ## HTTP 头部参数及说明
 
-| 参数名 | 必选 | 类型 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `Authorization` | 是 | string | 密钥令牌 |
+| 参数名 | 必选 | 类型 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- |
+| `Authorization` | 是 | string | 密钥令牌 | `Bearer ACCESS_TOKEN` |
 
 ## HTTP Body 参数及说明
 
-| 参数名 | 必选 | 类型 | 说明 |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | string | 设备唯一序列号（SN） |
+| 参数名 | 必选 | 类型 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- | :--- |
+| `deviceSn` | 是 | string | 设备唯一序列号（SN） | `"DEVICE_SN_1"` |
 
 ## 接口返回参数和说明
 
-| 参数名 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | obj | 数据返回 |
-| `message` | string | 返回说明 |
+| 参数名 | 类型 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- |
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 | `0` |
+| `data` | obj | 数据返回 | `{...}` |
+| `message` | string | 返回说明 | `"SUCCESSFUL_OPERATION"` |
 
 ## 请求示例
 
@@ -85,23 +85,27 @@
 
 ## `data` 参数说明
 
-| 参数名 | 说明 |
-| :--- | :--- |
-| `deviceSn` | 设备序列号 |
-| `deviceTypeName` | 设备大类型名称 |
-| `model` | 设备型号 |
-| `nominalPower` | 逆变器额定功率，单位 W |
-| `datalogSn` | 采集器序列号 |
-| `datalogDeviceTypeName` | 采集器类型名称 |
-| `dtc` | 设备类型数字编码 |
-| `communicationVersion` | 固件通讯版本 |
-| `existBattery` | 是否有电池 |
-| `batterySn` | 电池序列号 |
-| `batteryModel` | 电池型号 |
-| `batteryCapacity` | 电池额定容量，单位 Wh |
-| `batteryNominalPower` | 电池额定功率，单位 W |
-| `authFlag` | 是否已授权 |
-| `batteryList` | 电池列表 |
+| 参数名 | 类型 | 说明 | 示例 |
+| :--- | :--- | :--- | :--- |
+| `deviceSn` | string | 设备序列号 | `"DEVICE_SN_1"` |
+| `deviceTypeName` | string | 设备大类型名称 | `"min"` |
+| `model` | string | 设备型号 | `"BDCBAT"` |
+| `nominalPower` | int | 逆变器额定功率，单位 W | `6000` |
+| `datalogSn` | string | 采集器序列号 | `"DATALOG_SN_1"` |
+| `datalogDeviceTypeName` | string | 采集器类型名称 | `"ShineWiFi-X"` |
+| `dtc` | int | 设备类型数字编码 | `5100` |
+| `communicationVersion` | string | 固件通讯版本 | `"ZABA-0021"` |
+| `existBattery` | boolean | 是否有电池 | `true` |
+| `batterySn` | string | 电池序列号 | `"BATTERY_SN_1"` |
+| `batteryModel` | string | 电池型号 | `"ARK 5.12-25.6XH-A1"` |
+| `batteryCapacity` | int | 电池额定容量，单位 Wh | `5000` |
+| `batteryNominalPower` | int | 电池额定功率，单位 W | `2500` |
+| `authFlag` | boolean | 是否已授权 | `true` |
+| `batteryList` | array | 电池列表 | `[{...}]` |
+| `batteryList[].batterySn` | string | 电池列表中的电池序列号 | `"BATTERY_SN_1"` |
+| `batteryList[].batteryModel` | string | 电池列表中的电池型号 | `"ARK 5.12-25.6XH-A1"` |
+| `batteryList[].batteryCapacity` | int | 电池额定容量，单位 Wh | `5000` |
+| `batteryList[].batteryNominalPower` | int | 电池额定功率，单位 W | `2500` |
 
 ## 相关文档
 

@@ -211,6 +211,68 @@ describe("growatt docs source-of-truth loader", () => {
     }
   });
 
+  it("adds example columns and concrete values to device-data query tables", async () => {
+    const [queryDocEn, queryDocZh] = await Promise.all([
+      getGrowattDocBySlug("08_api_device_data", "en"),
+      getGrowattDocBySlug("08_api_device_data", "zh-CN"),
+    ]);
+
+    expect(queryDocEn).not.toBeNull();
+    expect(queryDocZh).not.toBeNull();
+
+    expect(queryDocEn?.markdown).toContain("| Parameter | Type | Description | Example |");
+    expect(queryDocEn?.markdown).toContain('| `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) | `174.90` |');
+    expect(queryDocEn?.markdown).toContain('| `data.vac1` | double | Line voltage 1 in V | `236.90` |');
+    expect(queryDocEn?.markdown).toContain('| `message` | string | Response description | `"SUCCESSFUL_OPERATION"` |');
+
+    expect(queryDocZh?.markdown).toContain("| 参数名 | 类型 | 说明 | 示例 |");
+    expect(queryDocZh?.markdown).toContain('| `data.reactivePower` | double | 无功功率（正值：容性，负值：感性） | `174.90` |');
+    expect(queryDocZh?.markdown).toContain('| `data.vac1` | double | 线电压 1，单位 V | `236.90` |');
+    expect(queryDocZh?.markdown).toContain('| `message` | string | 返回说明 | `"SUCCESSFUL_OPERATION"` |');
+  });
+
+  it("adds example columns and nested battery details to device-info tables", async () => {
+    const [infoDocEn, infoDocZh] = await Promise.all([
+      getGrowattDocBySlug("07_api_device_info", "en"),
+      getGrowattDocBySlug("07_api_device_info", "zh-CN"),
+    ]);
+
+    expect(infoDocEn).not.toBeNull();
+    expect(infoDocZh).not.toBeNull();
+
+    expect(infoDocEn?.markdown).toContain("| Parameter | Type | Description | Example |");
+    expect(infoDocEn?.markdown).toContain('| `deviceTypeName` | string | Device type name | `"min"` |');
+    expect(infoDocEn?.markdown).toContain('| `existBattery` | boolean | Whether the device has a battery | `true` |');
+    expect(infoDocEn?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | Battery nominal power in W | `2500` |');
+
+    expect(infoDocZh?.markdown).toContain("| 参数名 | 类型 | 说明 | 示例 |");
+    expect(infoDocZh?.markdown).toContain('| `deviceTypeName` | string | 设备大类型名称 | `"min"` |');
+    expect(infoDocZh?.markdown).toContain('| `existBattery` | boolean | 是否有电池 | `true` |');
+    expect(infoDocZh?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | 电池额定功率，单位 W | `2500` |');
+  });
+
+  it("renders device-dispatch response outcomes as tables", async () => {
+    const [dispatchDocEn, dispatchDocZh] = await Promise.all([
+      getGrowattDocBySlug("05_api_device_dispatch", "en"),
+      getGrowattDocBySlug("05_api_device_dispatch", "zh-CN"),
+    ]);
+
+    expect(dispatchDocEn).not.toBeNull();
+    expect(dispatchDocZh).not.toBeNull();
+
+    expect(dispatchDocEn?.markdown).toContain("## Response Format Example");
+    expect(dispatchDocEn?.markdown).toContain('"message": "RESPONSE_MESSAGE"');
+    expect(dispatchDocEn?.markdown).toContain("| Scenario | `code` | `data` | `message` |");
+    expect(dispatchDocEn?.markdown).toContain("| Response timeout | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |");
+    expect(dispatchDocEn?.markdown).toContain("| Too many requests | `105` | `null` | `TOO_MANY_REQUEST` |");
+
+    expect(dispatchDocZh?.markdown).toContain("## 返回格式示例");
+    expect(dispatchDocZh?.markdown).toContain('"message": "RESPONSE_MESSAGE"');
+    expect(dispatchDocZh?.markdown).toContain("| 场景 | `code` | `data` | `message` |");
+    expect(dispatchDocZh?.markdown).toContain("| 参数设置响应超时 | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |");
+    expect(dispatchDocZh?.markdown).toContain("| 请求次数限制 | `105` | `null` | `TOO_MANY_REQUEST` |");
+  });
+
   it("keeps integration-only findings inside explicit observation sections", async () => {
     const [guideEn, guideZh, faqEn, faqZh] = await Promise.all([
       getGrowattQuickGuide("en"),

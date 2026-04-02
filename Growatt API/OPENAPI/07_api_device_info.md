@@ -17,23 +17,23 @@
 
 ## HTTP Header Parameters
 
-| Parameter | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `Authorization` | Yes | string | Access-token header |
+| Parameter | Required | Type | Description | Example |
+| :--- | :--- | :--- | :--- | :--- |
+| `Authorization` | Yes | string | Access-token header | `Bearer ACCESS_TOKEN` |
 
 ## HTTP Body Parameters
 
-| Parameter | Required | Type | Description |
-| :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Unique device serial number (SN) |
+| Parameter | Required | Type | Description | Example |
+| :--- | :--- | :--- | :--- | :--- |
+| `deviceSn` | Yes | string | Unique device serial number (SN) | `"DEVICE_SN_1"` |
 
 ## Response Parameters
 
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `code` | int | `0` means success; any other value means failure |
-| `data` | obj | Response data |
-| `message` | string | Response description |
+| Parameter | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `code` | int | `0` means success; any other value means failure | `0` |
+| `data` | obj | Response data | `{...}` |
+| `message` | string | Response description | `"SUCCESSFUL_OPERATION"` |
 
 ## Request Example
 
@@ -85,23 +85,27 @@
 
 ## `data` Field Definitions
 
-| Parameter | Description |
-| :--- | :--- |
-| `deviceSn` | Device serial number |
-| `deviceTypeName` | Device type name |
-| `model` | Device model |
-| `nominalPower` | Nominal inverter power in W |
-| `datalogSn` | Datalogger serial number |
-| `datalogDeviceTypeName` | Datalogger type name |
-| `dtc` | Numeric device-type code |
-| `communicationVersion` | Communication version |
-| `existBattery` | Whether the device has a battery |
-| `batterySn` | Battery serial number |
-| `batteryModel` | Battery model |
-| `batteryCapacity` | Battery nominal capacity in Wh |
-| `batteryNominalPower` | Battery nominal power in W |
-| `authFlag` | Whether the device is already authorized |
-| `batteryList` | Battery list |
+| Parameter | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `deviceSn` | string | Device serial number | `"DEVICE_SN_1"` |
+| `deviceTypeName` | string | Device type name | `"min"` |
+| `model` | string | Device model | `"BDCBAT"` |
+| `nominalPower` | int | Nominal inverter power in W | `6000` |
+| `datalogSn` | string | Datalogger serial number | `"DATALOG_SN_1"` |
+| `datalogDeviceTypeName` | string | Datalogger type name | `"ShineWiFi-X"` |
+| `dtc` | int | Numeric device-type code | `5100` |
+| `communicationVersion` | string | Communication version | `"ZABA-0021"` |
+| `existBattery` | boolean | Whether the device has a battery | `true` |
+| `batterySn` | string | Battery serial number | `"BATTERY_SN_1"` |
+| `batteryModel` | string | Battery model | `"ARK 5.12-25.6XH-A1"` |
+| `batteryCapacity` | int | Battery nominal capacity in Wh | `5000` |
+| `batteryNominalPower` | int | Battery nominal power in W | `2500` |
+| `authFlag` | boolean | Whether the device is already authorized | `true` |
+| `batteryList` | array | Battery list | `[{...}]` |
+| `batteryList[].batterySn` | string | Battery serial number in the battery list | `"BATTERY_SN_1"` |
+| `batteryList[].batteryModel` | string | Battery model in the battery list | `"ARK 5.12-25.6XH-A1"` |
+| `batteryList[].batteryCapacity` | int | Battery nominal capacity in Wh | `5000` |
+| `batteryList[].batteryNominalPower` | int | Battery nominal power in W | `2500` |
 
 ## Related Documentation
 
