@@ -1,7 +1,5 @@
 # ESS Terminology Glossary
 
-Baseline source: `docs/3 接口列表.md` (synced from the approved vendor document dated April 1, 2026)
-
 This page standardizes the bilingual ESS terminology used in the public Growatt Open API documentation. It does not rename vendor JSON keys, endpoint names, or enum values.
 
 ## Usage Rules
@@ -12,7 +10,7 @@ This page standardizes the bilingual ESS terminology used in the public Growatt 
 
 ## Public Glossary
 
-| Concept | 中文基线词 | Recommended English | Field / `setType` | Usage Note |
+| Concept | Chinese Source Term | Recommended English | Field / `setType` | Usage Note |
 | :--- | :--- | :--- | :--- | :--- |
 | Power rating | 额定功率 | rated power | `nominalPower`, `batteryNominalPower` | Use `rated power` in prose; keep vendor keys unchanged. |
 | Capacity rating | 额定容量 | rated capacity | `batteryCapacity` | Use for battery energy capacity in Wh. |

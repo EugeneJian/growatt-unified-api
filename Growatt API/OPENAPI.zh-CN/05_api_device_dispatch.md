@@ -69,10 +69,10 @@
 | 设备回复失败 | `6` | `null` | `PARAMETER_SETTING_FAILED` |
 | 请求次数限制 | `105` | `null` | `TOO_MANY_REQUEST` |
 
-## 基线内部说明
+## 实现说明
 
-- 厂商参数表将 `value` 标为 `string`，但同页示例在 `duration_and_power_charge_discharge` 场景下传入的是 JSON 对象。
-- 本页保留厂商表格原文，同时原样保留对象型示例，不再把这种差异扩写成新的主规范。
+- 参数表将 `value` 标为 `string`，但同页示例在 `duration_and_power_charge_discharge` 场景下传入的是 JSON 对象。
+- 本页保留表格原文，同时保留对象型示例，不把这种差异扩写成新的接口规则。
 
 ## 相关文档
 

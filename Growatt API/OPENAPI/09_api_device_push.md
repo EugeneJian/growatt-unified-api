@@ -4,7 +4,7 @@
 
 - The third-party platform must implement its own receiving endpoint and provide that URL to Growatt.
 - Devices under the third-party platform push high-frequency data to that URL.
-- This page defines the push payload directly from the vendor baseline as its own payload definition.
+- This page defines the push payload as its own payload definition rather than reusing the query model.
 
 ## Push Example
 

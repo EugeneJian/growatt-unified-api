@@ -69,10 +69,10 @@
 | Parameter-setting failed | `6` | `null` | `PARAMETER_SETTING_FAILED` |
 | Too many requests | `105` | `null` | `TOO_MANY_REQUEST` |
 
-## Baseline Note
+## Implementation Note
 
-- The vendor parameter table labels `value` as `string`, but the same page publishes an object-valued example for `duration_and_power_charge_discharge`.
-- This page preserves the vendor table wording and the vendor example, without promoting that discrepancy into a new rule.
+- The parameter table labels `value` as `string`, but the same page publishes an object-valued example for `duration_and_power_charge_discharge`.
+- This page preserves both pieces of source wording without turning that discrepancy into a new API rule.
 
 ## Related Documentation
 

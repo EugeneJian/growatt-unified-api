@@ -95,15 +95,15 @@
 }
 ```
 
-## Baseline Note
+## Implementation Note
 
-- The vendor parameter table marks `requestId` as required, even though the original request sample omits it. This page follows the parameter table.
-- The vendor response table labels `data` as `string`, while the success sample is an array.
+- The parameter table marks `requestId` as required, even though the request sample omits it. This page follows the parameter table.
+- The response table labels `data` as `string`, while the success sample is an array.
 
-## Integration Observations (Non-Normative)
+## Integration Observations
 
 - Some environment reports under `test/` show object-shaped read-back payloads for certain `setType` values.
-- That behavior is not part of the April 1, 2026 vendor baseline, so it is kept here only as an observation.
+- That behavior is kept here only as an implementation observation.
 
 ## Related Documentation
 

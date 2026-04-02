@@ -55,6 +55,8 @@ describe("growatt docs source-of-truth loader", () => {
     expect(overview.html).toContain("/growatt-openapi/growatt-codes");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/02_api_access_token");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
+    expect(overview.markdown).not.toContain("Baseline source:");
+    expect(overview.markdown).not.toContain("vendor baseline");
   });
 
   it("loads markdown by slug and rewrites internal markdown links", async () => {
@@ -77,8 +79,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.title).toBe("Growatt Open API Professional Integration Guide");
     expect(quickGuide.html).toContain("<article>");
     expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
-    expect(quickGuide.markdown).toContain("## 5 Integration Observations (Non-Normative)");
+    expect(quickGuide.markdown).toContain("## 5 Integration Observations");
     expect(quickGuide.markdown).toContain("## 6 Integration Checklist");
+    expect(quickGuide.markdown).not.toContain("Baseline source:");
+    expect(quickGuide.markdown).not.toContain("vendor baseline");
   });
 
   it("loads localized Chinese overview and doc titles without mojibake", async () => {
@@ -89,6 +93,8 @@ describe("growatt docs source-of-truth loader", () => {
 
     expect(overview.title).toBe("Growatt Open API 文档");
     expect(docs[0]?.title).toContain("身份认证");
+    expect(overview.markdown).not.toContain("基线来源：");
+    expect(overview.markdown).not.toContain("厂商基线");
   });
 
   it("loads localized Chinese quick guide markdown", async () => {
@@ -99,8 +105,10 @@ describe("growatt docs source-of-truth loader", () => {
     );
     expect(quickGuide.title).toBe("Growatt Open API 专业集成指南");
     expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
-    expect(quickGuide.markdown).toContain("## 5 联调观察（非基线规范）");
+    expect(quickGuide.markdown).toContain("## 5 联调观察");
     expect(quickGuide.markdown).toContain("## 6 集成检查清单");
+    expect(quickGuide.markdown).not.toContain("基线来源：");
+    expect(quickGuide.markdown).not.toContain("厂商基线");
   });
 
   it("loads the bilingual ESS glossary as a numbered documentation page", async () => {
@@ -118,6 +126,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(glossaryEn?.markdown).toContain("state of charge (SOC)");
     expect(glossaryEn?.markdown).toContain("Export Limit");
     expect(glossaryZh?.markdown).toContain("state of charge (SOC)");
+    expect(glossaryZh?.markdown).not.toContain("基线来源：");
   });
 
   it("registers quick guide and growatt codes special pages with corrected labels", () => {
@@ -199,7 +208,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(readDispatchZh?.markdown).toContain("| `requestId` | string | 是 |");
   });
 
-  it("restores baseline global parameters and response codes", async () => {
+  it("keeps global parameters and response codes aligned in the published docs", async () => {
     const [globalParamsEn, globalParamsZh] = await Promise.all([
       getGrowattDocBySlug("10_global_params", "en"),
       getGrowattDocBySlug("10_global_params", "zh-CN"),
@@ -225,7 +234,7 @@ describe("growatt docs source-of-truth loader", () => {
     }
   });
 
-  it("publishes push payloads from the baseline instead of query-model wording", async () => {
+  it("publishes push payloads directly instead of reusing query-model wording", async () => {
     const [pushDocEn, pushDocZh] = await Promise.all([
       getGrowattDocBySlug("09_api_device_push", "en"),
       getGrowattDocBySlug("09_api_device_push", "zh-CN"),
@@ -354,26 +363,22 @@ describe("growatt docs source-of-truth loader", () => {
       getGrowattDocBySlug("11_api_troubleshooting", "zh-CN"),
     ]);
 
-    expect(guideEn.markdown.indexOf("## 5 Integration Observations (Non-Normative)")).toBeGreaterThan(
-      -1,
-    );
-    expect(guideZh.markdown.indexOf("## 5 联调观察（非基线规范）")).toBeGreaterThan(-1);
-    expect(faqEn?.markdown.indexOf("## Integration Observations (Non-Normative)")).toBeGreaterThan(
-      -1,
-    );
-    expect(faqZh?.markdown.indexOf("## 联调观察（非基线规范）")).toBeGreaterThan(-1);
+    expect(guideEn.markdown.indexOf("## 5 Integration Observations")).toBeGreaterThan(-1);
+    expect(guideZh.markdown.indexOf("## 5 联调观察")).toBeGreaterThan(-1);
+    expect(faqEn?.markdown.indexOf("## Integration Observations")).toBeGreaterThan(-1);
+    expect(faqZh?.markdown.indexOf("## 联调观察")).toBeGreaterThan(-1);
 
     expect(guideEn.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
-      guideEn.markdown.indexOf("## 5 Integration Observations (Non-Normative)"),
+      guideEn.markdown.indexOf("## 5 Integration Observations"),
     );
     expect(guideZh.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
-      guideZh.markdown.indexOf("## 5 联调观察（非基线规范）"),
+      guideZh.markdown.indexOf("## 5 联调观察"),
     );
     expect(faqEn?.markdown.indexOf("WRONG_GRANT_TYPE") ?? -1).toBeGreaterThan(
-      faqEn?.markdown.indexOf("## Integration Observations (Non-Normative)") ?? -1,
+      faqEn?.markdown.indexOf("## Integration Observations") ?? -1,
     );
     expect(faqZh?.markdown.indexOf("WRONG_GRANT_TYPE") ?? -1).toBeGreaterThan(
-      faqZh?.markdown.indexOf("## 联调观察（非基线规范）") ?? -1,
+      faqZh?.markdown.indexOf("## 联调观察") ?? -1,
     );
   });
 });

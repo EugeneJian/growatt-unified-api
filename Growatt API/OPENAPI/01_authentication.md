@@ -1,10 +1,10 @@
 # Growatt Open API - Authentication Guide
 
-This page is derived from sections `3.1`, `3.2`, and `3.3` of `docs/3 接口列表.md`. If later environment testing behaves differently, treat that behavior as an observation rather than as a replacement for the baseline documented here.
+This page summarizes the supported authentication modes and capability boundaries for Growatt Open API. If later environment testing behaves differently, treat that behavior as an observation rather than as a replacement for the endpoint descriptions documented here.
 
-## Baseline-Confirmed Grant Types
+## Supported Grant Types
 
-| `grant_type` | Meaning | Capability boundary explicitly stated by the baseline |
+| `grant_type` | Meaning | Capability boundary |
 | :--- | :--- | :--- |
 | `authorization_code` | End-user authorization code exchanged for `access_token` | Supports `POST /oauth2/getDeviceList` |
 | `client_credentials` | Platform obtains `access_token` with `client_id` / `client_secret` | `POST /oauth2/bindDevice` requires `pinCode` in client mode |
@@ -12,16 +12,16 @@ This page is derived from sections `3.1`, `3.2`, and `3.3` of `docs/3 接口列�
 ## Token Rules
 
 - Both grant types use `POST /oauth2/token` to obtain `access_token`.
-- Both vendor token examples include `redirect_uri`.
-- `POST /oauth2/refresh` requires a `refresh_token`; the April 1, 2026 baseline does not further split refresh behavior by grant type.
-- The vendor token field table lists `access_token`, `refresh_token`, `refresh_expires_in`, `token_type`, and `expires_in` as one shared response model.
+- Both token request examples include `redirect_uri`.
+- `POST /oauth2/refresh` requires a `refresh_token`; this documentation does not further split refresh behavior by grant type.
+- The token field table lists `access_token`, `refresh_token`, `refresh_expires_in`, `token_type`, and `expires_in` as one shared response model.
 
 ## Capability Matrix
 
 | Capability | `authorization_code` | `client_credentials` |
 | :--- | :--- | :--- |
 | Get access token | Supported | Supported |
-| Refresh access token | Provided by `POST /oauth2/refresh` | The baseline does not introduce an extra mode-specific carve-out |
+| Refresh access token | Provided by `POST /oauth2/refresh` | Same endpoint behavior is published for both modes |
 | Get candidate devices `getDeviceList` | Supported | Not supported |
 | Bind devices `bindDevice` | Supported | Supported, and `pinCode` is required in client mode |
 | Get authorized devices `getDeviceListAuthed` | Supported | Supported |

@@ -3,7 +3,7 @@
 ## Brief Description
 
 - Use `refresh_token` to refresh `access_token`.
-- The vendor baseline documents this as a generic refresh interface and does not add further grant-type-specific carve-outs.
+- This documentation treats it as a generic refresh interface and does not add further grant-type-specific carve-outs.
 
 ## Request URL
 
@@ -56,9 +56,9 @@
 }
 ```
 
-## Baseline Note
+## Implementation Note
 
-- The original vendor sample mixes JSON and inline comments in a malformed way; this page rewrites it into equivalent readable JSON without changing the field contract.
+- The original source sample mixes JSON and inline comments in a malformed way; this page rewrites it into equivalent readable JSON without changing the field contract.
 
 ## Related Documentation
 

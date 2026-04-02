@@ -44,7 +44,7 @@ const LOCALE_TEXT: Record<GrowattDocLocale, LocaleText> = {
     navAriaLabel: "Growatt API navigation",
     sourceFileLabel: "Source file",
     sidebarTitle: "Growatt Open API",
-    sidebarDescription: "Published bilingual documentation aligned to the imported baseline.",
+    sidebarDescription: "Published bilingual Growatt Open API documentation.",
     languageLabel: "Language",
     languageOptions: {
       en: "EN",
@@ -68,7 +68,7 @@ const LOCALE_TEXT: Record<GrowattDocLocale, LocaleText> = {
     navAriaLabel: "Growatt API 导航",
     sourceFileLabel: "源文件",
     sidebarTitle: "Growatt Open API",
-    sidebarDescription: "基于厂商基线对齐维护的中英双语公开文档。",
+    sidebarDescription: "Growatt Open API 中英双语公开文档。",
     languageLabel: "语言",
     languageOptions: {
       en: "EN",

@@ -1,8 +1,6 @@
 # Growatt Open API 文档
 
-基线来源：`docs/3 接口列表.md`（同步自 2026 年 4 月 1 日版厂商文档）
-
-本目录是面向站点发布的中文拆分文档。事实口径以上游基线为准；本目录负责按端点拆分、补足交叉引用，并把环境联调经验明确降级为“非基线规范”的观察信息。
+本目录是面向站点发布的中文拆分文档，负责按端点组织说明、补足交叉引用，并将联调观察与主要 API 描述分开展示。
 
 ## 文档结构
 
@@ -36,12 +34,12 @@
 - [常见问题与排查 FAQ](./11_api_troubleshooting.md)
 - [储能术语对照表](./12_ess_terminology.md)
 
-## 基线提醒
+## 关键说明
 
-- `POST /oauth2/token` 的两个厂商示例都包含 `redirect_uri`。
+- `POST /oauth2/token` 的两个公开示例都包含 `redirect_uri`。
 - `POST /oauth2/getDeviceList` 仅在 `authorization_code` 模式下支持。
 - `POST /oauth2/bindDevice` 中，`deviceSnList[].pinCode` 在客户端模式下必填。
-- `POST /oauth2/readDeviceDispatch` 的参数表将 `requestId` 标为必填，虽然厂商示例正文漏写了它。
+- `POST /oauth2/readDeviceDispatch` 的参数表将 `requestId` 标为必填。
 - 测试环境域名包含 `https://opencloud-test-au.growatt.com`。
 
 ## 入口指南

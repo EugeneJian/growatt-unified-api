@@ -2,20 +2,20 @@
 
 This page is split into two layers:
 
-- Baseline reminders: directly derived from `docs/3 接口列表.md` or from explicit cross-checks between its sections.
-- Integration observations: findings from environment reports under `test/`, kept as non-normative references only.
+- Published API notes: user-facing rules captured in the endpoint docs.
+- Integration observations: findings from environment reports under `test/`, kept as implementation references only.
 
-## Baseline Reminders
+## Published API Notes
 
 ### 1. Can `client_credentials` call `getDeviceList` directly?
 
-No. The vendor baseline explicitly states:
+No.
 
 - `POST /oauth2/getDeviceList` is supported only in `authorization_code` mode.
 
 ### 2. When is `pinCode` required in `bindDevice`?
 
-The vendor parameter table states:
+The published parameter table states:
 
 - `deviceSnList[].pinCode`: required in client mode.
 
@@ -25,16 +25,16 @@ Yes in the parameter table. The original vendor request sample omits it, but the
 
 ### 4. Should `getDeviceData` use `token` or `Authorization` as the header name?
 
-The current baseline contains an internal wording mismatch:
+The current published materials contain an internal wording mismatch:
 
 - The local header table in section `3.7` uses `token`
 - Section `4 Global Parameters` standardizes `Authorization: Bearer xxxxxxx`
 
 The published split docs follow the global section.
 
-## Integration Observations (Non-Normative)
+## Integration Observations
 
-The following observations come from environment reports under `test/` and do not redefine the April 1, 2026 vendor baseline:
+The following observations come from environment reports under `test/` and are kept for implementation reference only:
 
 - Multiple environment reports use JSON bodies for `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice`.
 - Multiple reports recommend using the raw `deviceSn` for device-level APIs and avoiding `datalogSn` or display-prefixed values.

@@ -1,8 +1,6 @@
 # Growatt Open API Documentation
 
-Baseline source: `docs/3 接口列表.md` (synced from the approved vendor document dated April 1, 2026)
-
-This directory is the English published split of the Growatt Open API documentation. The vendor baseline is the factual source; this directory exists to publish aligned endpoint pages, preserve cross-links, and clearly demote environment findings into non-normative observations.
+This directory contains the English published split of the Growatt Open API documentation. It organizes endpoint pages, preserves cross-links, and keeps implementation observations separate from the main API descriptions.
 
 ## Documentation Structure
 
@@ -36,12 +34,12 @@ This directory is the English published split of the Growatt Open API documentat
 - [Troubleshooting FAQ](./11_api_troubleshooting.md)
 - [ESS Terminology Glossary](./12_ess_terminology.md)
 
-## Baseline Reminders
+## Key Notes
 
-- Both vendor examples for `POST /oauth2/token` include `redirect_uri`.
+- Both published examples for `POST /oauth2/token` include `redirect_uri`.
 - `POST /oauth2/getDeviceList` is supported only in `authorization_code` mode.
 - In `POST /oauth2/bindDevice`, `deviceSnList[].pinCode` is required in client mode.
-- The parameter table for `POST /oauth2/readDeviceDispatch` marks `requestId` as required even though the vendor sample omits it.
+- The parameter table for `POST /oauth2/readDeviceDispatch` marks `requestId` as required.
 - The test domains include `https://opencloud-test-au.growatt.com`.
 
 ## Entry Guide

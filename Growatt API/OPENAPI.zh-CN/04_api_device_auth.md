@@ -1,6 +1,6 @@
 # 设备授权 API
 
-本页按厂商基线整理 `getDeviceList`、`bindDevice`、`getDeviceListAuthed` 与 `unbindDevice` 四个接口。
+本页整理 `getDeviceList`、`bindDevice`、`getDeviceListAuthed` 与 `unbindDevice` 四个接口。
 
 ## 1 获取可授权的设备列表
 

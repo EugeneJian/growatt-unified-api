@@ -3,8 +3,8 @@
 ## Brief Description
 
 - Use `POST /oauth2/token` to obtain the `access_token` required to call Growatt Open API.
-- The vendor baseline explicitly supports two `grant_type` values: `authorization_code` and `client_credentials`.
-- The April 1, 2026 baseline publishes one shared response field table and one shared response example for both modes; it does not split token fields by mode.
+- The published documentation supports two `grant_type` values: `authorization_code` and `client_credentials`.
+- One shared response field table and one shared response example are used for both modes; token fields are not split by mode.
 
 ## Request URL
 
@@ -72,10 +72,10 @@
 }
 ```
 
-## Baseline Note
+## Implementation Note
 
-- The vendor baseline does not publish a separate “minimum response” model for `client_credentials`.
-- This page therefore no longer promotes claims such as “`client_credentials` normally omits `refresh_token`” into the normative layer.
+- This page uses one shared response model for `authorization_code` and `client_credentials`.
+- Claims such as "`client_credentials` normally omits `refresh_token`" are not promoted into the published API description unless they are defined by the endpoint docs themselves.
 
 ## Related Documentation
 

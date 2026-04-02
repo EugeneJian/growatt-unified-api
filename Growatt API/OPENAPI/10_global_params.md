@@ -46,7 +46,7 @@
 
 ## Device Parameters
 
-- The table below keeps only the `setType` entries explicitly published by the current vendor baseline.
+- The table below keeps only the `setType` entries documented for this page.
 
 | Parameter | Description | Value Description |
 | :--- | :--- | :--- |

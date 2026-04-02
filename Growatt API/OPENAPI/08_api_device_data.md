@@ -169,10 +169,10 @@
 - `1`: Battery priority
 - `2`: Grid priority
 
-## Baseline Note
+## Implementation Note
 
-- The local header table in the vendor source uses `token`, while section `4 Global Parameters` standardizes `Authorization: Bearer xxxxxxx`. This page follows the global section.
-- The vendor response table labels the top-level `data` field as `string`, while the success sample is clearly an object.
+- The local header table uses `token`, while the global section standardizes `Authorization: Bearer xxxxxxx`. This page follows the global section.
+- The response table labels the top-level `data` field as `string`, while the success sample is clearly an object.
 
 ## Related Documentation
 

@@ -1,7 +1,5 @@
 # 储能术语对照表
 
-基线来源：`docs/3 接口列表.md`（同步自 2026 年 4 月 1 日版厂商文档）
-
 本页整理 Growatt Open API 公开文档中涉及储能行业的中英术语。它不改动 vendor JSON key、接口名或枚举值。
 
 ## 使用规则
@@ -12,7 +10,7 @@
 
 ## 公开术语表
 
-| 概念 | 中文基线词 | 推荐英文 | 对应字段或 `setType` | 使用说明 |
+| 概念 | 中文来源词 | 推荐英文 | 对应字段或 `setType` | 使用说明 |
 | :--- | :--- | :--- | :--- | :--- |
 | 功率额定值 | 额定功率 | rated power | `nominalPower`, `batteryNominalPower` | 正文使用 `rated power`，但保留 vendor key 原名。 |
 | 容量额定值 | 额定容量 | rated capacity | `batteryCapacity` | 用于表示电池额定容量，单位通常为 Wh。 |

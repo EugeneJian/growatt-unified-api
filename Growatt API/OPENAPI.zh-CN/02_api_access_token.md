@@ -3,8 +3,8 @@
 ## 简要描述
 
 - 使用 `POST /oauth2/token` 获取访问 Growatt Open API 所需的 `access_token`。
-- 厂商基线明确支持 `authorization_code` 与 `client_credentials` 两种 `grant_type`。
-- 当前 2026 年 4 月 1 日基线对两种模式给出的是同一套返回字段表与同一套返回示例，没有再拆分模式差异。
+- 公开文档支持 `authorization_code` 与 `client_credentials` 两种 `grant_type`。
+- 两种模式共用同一套返回字段表与返回示例，没有再拆分模式差异。
 
 ## 请求 URL
 
@@ -72,10 +72,10 @@
 }
 ```
 
-## 基线说明
+## 实现说明
 
-- 厂商基线在本接口上没有把返回字段按 `grant_type` 分成两套规范。
-- 因此本页不再把 `client_credentials` 扩写成“最小返回结构”或“默认不返回 `refresh_token`”。
+- 本接口未按 `grant_type` 将返回字段拆成两套规则。
+- 因此本页不把 `client_credentials` 扩写成“最小返回结构”或“默认不返回 `refresh_token`”。
 
 ## 相关文档
 

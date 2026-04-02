@@ -1,6 +1,6 @@
 # Device Authorization API
 
-This page publishes the baseline behavior of `getDeviceList`, `bindDevice`, `getDeviceListAuthed`, and `unbindDevice`.
+This page documents `getDeviceList`, `bindDevice`, `getDeviceListAuthed`, and `unbindDevice`.
 
 ## 1 Get Candidate Devices
 
