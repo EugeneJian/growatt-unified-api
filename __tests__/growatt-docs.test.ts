@@ -53,8 +53,149 @@ const EXPECTED_MERMAID_COUNTS_BY_SLUG = {
   "11_api_troubleshooting": 0,
 } as const;
 
+const EXPECTED_RUNTIME_TELEMETRY_FIELDS = [
+  "data.batPower",
+  "data.batteryList[].chargePower",
+  "data.batteryList[].dischargePower",
+  "data.batteryList[].echargeToday",
+  "data.batteryList[].echargeTotal",
+  "data.batteryList[].edischargeToday",
+  "data.batteryList[].edischargeTotal",
+  "data.batteryList[].ibat",
+  "data.batteryList[].index",
+  "data.batteryList[].soc",
+  "data.batteryList[].soh",
+  "data.batteryList[].status",
+  "data.batteryList[].vbat",
+  "data.batteryStatus",
+  "data.deviceSn",
+  "data.epvTotal",
+  "data.etoGridToday",
+  "data.etoGridTotal",
+  "data.etoUserToday",
+  "data.etoUserTotal",
+  "data.fac",
+  "data.faultCode",
+  "data.faultSubCode",
+  "data.meterPower",
+  "data.pac",
+  "data.payLoadPower",
+  "data.ppv",
+  "data.priority",
+  "data.protectCode",
+  "data.protectSubCode",
+  "data.reactivePower",
+  "data.smartLoadPower",
+  "data.status",
+  "data.utcTime",
+  "data.vac1",
+  "data.vac2",
+  "data.vac3",
+] as const;
+
+const EXAMPLE_ONLY_NON_VPP_TELEMETRY_FIELDS = [
+  "data.backupPower",
+  "data.genPower",
+  "data.pexPower",
+] as const;
+
+const EXPECTED_APPENDIX_BLOCK_FIELDS = [
+  "dataType",
+  ...EXPECTED_RUNTIME_TELEMETRY_FIELDS.map((field) => field.replace(/^data\./, "")),
+].sort();
+
 function countMermaidBlocks(markdown: string | null | undefined) {
   return markdown?.match(/```mermaid/g)?.length ?? 0;
+}
+
+function uniqueSorted(values: Iterable<string>) {
+  return [...new Set(values)].sort();
+}
+
+function extractTelemetryPayload(markdown: string) {
+  const jsonBlocks = [...markdown.matchAll(/```json\s*([\s\S]*?)```/g)];
+
+  for (const match of jsonBlocks) {
+    const parsed = JSON.parse(match[1]) as Record<string, unknown>;
+    if (parsed.data && typeof parsed.data === "object" && !Array.isArray(parsed.data)) {
+      return parsed as { data: Record<string, unknown>; dataType?: string };
+    }
+  }
+
+  throw new Error("Unable to locate telemetry payload example.");
+}
+
+function collectRuntimeFieldPaths(
+  value: Record<string, unknown>,
+  prefix = "data",
+): string[] {
+  const paths: string[] = [];
+
+  for (const [key, nested] of Object.entries(value)) {
+    const path = `${prefix}.${key}`;
+
+    if (Array.isArray(nested)) {
+      if (nested.length > 0 && nested.every((entry) => entry && typeof entry === "object")) {
+        const nestedKeys = new Set<string>();
+        for (const entry of nested as Array<Record<string, unknown>>) {
+          for (const nestedKey of Object.keys(entry)) {
+            nestedKeys.add(nestedKey);
+          }
+        }
+
+        for (const nestedKey of [...nestedKeys].sort()) {
+          paths.push(`${path}[].${nestedKey}`);
+        }
+      }
+      continue;
+    }
+
+    if (nested && typeof nested === "object") {
+      paths.push(...collectRuntimeFieldPaths(nested as Record<string, unknown>, path));
+      continue;
+    }
+
+    paths.push(path);
+  }
+
+  return uniqueSorted(paths);
+}
+
+function extractExampleTelemetryFieldPaths(
+  markdown: string,
+  { includeDataType = false }: { includeDataType?: boolean } = {},
+) {
+  const payload = extractTelemetryPayload(markdown);
+  const fields = collectRuntimeFieldPaths(payload.data);
+
+  if (includeDataType && typeof payload.dataType === "string") {
+    fields.push("dataType");
+  }
+
+  return uniqueSorted(fields);
+}
+
+function extractTableTelemetryFieldPaths(markdown: string) {
+  const fields = [...markdown.matchAll(/^\|\s*`([^`]+)`\s*\|/gm)]
+    .map((match) => match[1])
+    .filter(
+      (field) =>
+        field === "dataType" ||
+        (field.startsWith("data.") && field !== "data" && field !== "data.batteryList"),
+    );
+
+  return uniqueSorted(fields);
+}
+
+function extractAppendixBlockCatalogFields(markdown: string) {
+  const match = markdown.match(/## 6\.4 Telemetry Block Catalog([\s\S]*?)\n---\n\n# 7\./);
+  if (!match) {
+    throw new Error("Unable to locate telemetry block catalog section.");
+  }
+
+  return uniqueSorted(
+    [...match[1].matchAll(/^\|\s*`([^`]+)`\s*\|/gm)].map((tableMatch) => tableMatch[1]),
+  );
 }
 
 describe("growatt docs source-of-truth loader", () => {
@@ -194,7 +335,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(semanticEn.markdown).toContain("**Status**: Public Standard");
     expect(semanticEn.markdown).not.toContain("Amber / AGL / Origin / Evergen");
     expect(semanticEn.markdown).not.toContain("对外口径");
-    expect(countMermaidBlocks(semanticEn.markdown)).toBeGreaterThan(0);
+    expect(countMermaidBlocks(semanticEn.markdown)).toBeGreaterThanOrEqual(5);
   });
 
   it("restores expected Mermaid diagrams across overview, endpoint docs, and quick guide", async () => {
@@ -407,6 +548,49 @@ describe("growatt docs source-of-truth loader", () => {
     expect(queryDocZh?.markdown).toContain('| `message` | string | 返回说明 | `"SUCCESSFUL_OPERATION"` |');
   });
 
+  it("keeps telemetry field tables aligned with the published query and push examples in both locales", async () => {
+    const [queryEn, queryZh, pushEn, pushZh] = await Promise.all([
+      getGrowattDocBySlug("08_api_device_data", "en"),
+      getGrowattDocBySlug("08_api_device_data", "zh-CN"),
+      getGrowattDocBySlug("09_api_device_push", "en"),
+      getGrowattDocBySlug("09_api_device_push", "zh-CN"),
+    ]);
+
+    for (const page of [queryEn, queryZh]) {
+      expect(page).not.toBeNull();
+      expect(extractExampleTelemetryFieldPaths(page!.markdown)).toEqual(
+        uniqueSorted([
+          ...EXPECTED_RUNTIME_TELEMETRY_FIELDS,
+          ...EXAMPLE_ONLY_NON_VPP_TELEMETRY_FIELDS,
+        ]),
+      );
+      expect(extractTableTelemetryFieldPaths(page!.markdown)).toEqual(
+        uniqueSorted(EXPECTED_RUNTIME_TELEMETRY_FIELDS),
+      );
+    }
+
+    for (const page of [pushEn, pushZh]) {
+      expect(page).not.toBeNull();
+      expect(extractExampleTelemetryFieldPaths(page!.markdown, { includeDataType: true })).toEqual(
+        uniqueSorted([
+          "dataType",
+          ...EXPECTED_RUNTIME_TELEMETRY_FIELDS,
+          ...EXAMPLE_ONLY_NON_VPP_TELEMETRY_FIELDS,
+        ]),
+      );
+      expect(extractTableTelemetryFieldPaths(page!.markdown)).toEqual(
+        uniqueSorted(["dataType", ...EXPECTED_RUNTIME_TELEMETRY_FIELDS]),
+      );
+    }
+
+    expect(extractExampleTelemetryFieldPaths(queryEn!.markdown)).toEqual(
+      extractExampleTelemetryFieldPaths(pushEn!.markdown),
+    );
+    expect(extractExampleTelemetryFieldPaths(queryZh!.markdown)).toEqual(
+      extractExampleTelemetryFieldPaths(pushZh!.markdown),
+    );
+  });
+
   it("adds example columns and nested battery details to device-info tables", async () => {
     const [infoDocEn, infoDocZh] = await Promise.all([
       getGrowattDocBySlug("07_api_device_info", "en"),
@@ -463,6 +647,11 @@ describe("growatt docs source-of-truth loader", () => {
     expect(dataDoc?.markdown).toContain("grid-connected");
     expect(pushDoc?.markdown).toContain("grid-connected");
     expect(dataDoc?.markdown).toContain("`data.payLoadPower`");
+    expect(pushDoc?.markdown).toContain("`data.smartLoadPower`");
+    expect(dataDoc?.markdown).toContain("`data.batteryList[].status`");
+    expect(dataDoc?.markdown).not.toContain("| `data.backupPower` |");
+    expect(dataDoc?.markdown).not.toContain("| `data.pexPower` |");
+    expect(dataDoc?.markdown).not.toContain("| `data.genPower` |");
 
     expect(globalDoc?.markdown).toContain("Export Limit.");
     expect(globalDoc?.markdown).toContain("`anti_backflow`");
@@ -519,5 +708,49 @@ describe("growatt docs source-of-truth loader", () => {
     expect(faqZh?.markdown.indexOf("WRONG_GRANT_TYPE") ?? -1).toBeGreaterThan(
       faqZh?.markdown.indexOf("## 联调观察") ?? -1,
     );
+  });
+
+  it("publishes a complete runtime telemetry block catalog in appendix C", async () => {
+    const semantic = await getGrowattSemanticModelPage("en");
+    const blockCatalogFields = extractAppendixBlockCatalogFields(semantic.markdown);
+
+    expect(blockCatalogFields).toEqual(EXPECTED_APPENDIX_BLOCK_FIELDS);
+    expect(semantic.markdown).toContain("| >0    | Grid import |");
+    expect(semantic.markdown).toContain("| <0    | Grid export |");
+    expect(semantic.markdown).toContain("`batPower`");
+    expect(semantic.markdown).toContain("`meterPower`");
+    expect(semantic.markdown).toContain("`anti_backflow`");
+    expect(semantic.markdown).not.toContain("batteryPower");
+    expect(semantic.markdown).not.toContain("gridPower");
+    expect(semantic.markdown).not.toContain("pvPower");
+    expect(semantic.markdown).not.toContain("loadPower");
+    expect(semantic.markdown).not.toContain("backupPower");
+    expect(semantic.markdown).not.toContain("pexPower");
+    expect(semantic.markdown).not.toContain("genPower");
+  });
+
+  it("adds the new runtime telemetry glossary terms in both locales", async () => {
+    const [appendixEn, appendixZh] = await Promise.all([
+      getGrowattAppendixTerminologyPage("en"),
+      getGrowattAppendixTerminologyPage("zh-CN"),
+    ]);
+
+    expect(appendixEn.markdown).toContain("| Reactive power | 无功功率 | reactive power | `reactivePower` |");
+    expect(appendixEn.markdown).toContain("| Grid frequency | 电网频率 | grid frequency | `fac` |");
+    expect(appendixEn.markdown).toContain("| Line voltage | 线电压 | line voltage | `vac1`, `vac2`, `vac3` |");
+    expect(appendixEn.markdown).toContain("| Battery pack status | 电池包状态 | battery pack status | `batteryList[].status` |");
+    expect(appendixEn.markdown).toContain("| Smart-load power | Smart Load 负载功率 | smart-load power | `smartLoadPower` |");
+    expect(appendixEn.markdown).not.toContain("`backupPower`");
+    expect(appendixEn.markdown).not.toContain("`pexPower`");
+    expect(appendixEn.markdown).not.toContain("`genPower`");
+
+    expect(appendixZh.markdown).toContain("| 无功功率 | 无功功率 | reactive power | `reactivePower` |");
+    expect(appendixZh.markdown).toContain("| 电网频率 | 电网频率 | grid frequency | `fac` |");
+    expect(appendixZh.markdown).toContain("| 线电压 | 线电压 | line voltage | `vac1`, `vac2`, `vac3` |");
+    expect(appendixZh.markdown).toContain("| 电池包状态 | 电池包状态 | battery pack status | `batteryList[].status` |");
+    expect(appendixZh.markdown).toContain("| Smart Load 负载功率 | Smart Load 负载功率 | smart-load power | `smartLoadPower` |");
+    expect(appendixZh.markdown).not.toContain("`backupPower`");
+    expect(appendixZh.markdown).not.toContain("`pexPower`");
+    expect(appendixZh.markdown).not.toContain("`genPower`");
   });
 });

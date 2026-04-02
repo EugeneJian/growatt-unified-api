@@ -18,15 +18,20 @@
 | 电表功率 | 电表功率 | grid meter power | `meterPower` | 正值表示 `grid import`，负值表示 `grid export`。 |
 | 电网取电 | 取电 | grid import | `meterPower`, `etoUserToday`, `etoUserTotal` | 用于表示从电网输入的功率或电量。 |
 | 电网馈电 | 馈电 | grid export | `meterPower`, `etoGridToday`, `etoGridTotal` | 正文优先使用 `grid export`，避免混用 `feed-in`。 |
+| 无功功率 | 无功功率 | reactive power | `reactivePower` | 需要时保留“正值容性、负值感性”的符号说明。 |
+| 电网频率 | 电网频率 | grid frequency | `fac` | 字段级单位说明统一写 `Hz`。 |
+| 线电压 | 线电压 | line voltage | `vac1`, `vac2`, `vac3` | 用于逐相电压字段，单位 V。 |
 | 电网运行方式 | 并网 / 离网 | grid-connected / off-grid | 运行状态值 `5`-`8` | 并网状态优先写 `grid-connected`，不主用 `on-grid`。 |
 | 电池荷电状态 | 荷电状态 | state of charge (SOC) | `batteryList[].soc` | 首次出现优先带出缩写。 |
 | 电池健康状态 | 健康状态 | state of health (SOH) | `batteryList[].soh` | 首次出现优先带出缩写。 |
+| 电池包状态 | 电池包状态 | battery pack status | `batteryList[].status` | 用于 payload 明确返回单个电池包状态码的场景。 |
 | 电池功率 | 电池总充/放电功率 | battery power | `batPower` | 首次出现时说明符号方向：正值充电，负值放电。 |
 | 充放电量 | 今日充电量 / 总充电量 / 今日放电量 / 总放电量 | charged energy today / total charged energy / discharged energy today / total discharged energy | `echargeToday`, `echargeTotal`, `edischargeToday`, `edischargeTotal` | 优先使用明确的能量表达。 |
 | PV 功率 | PV 功率 | PV power | `ppv` | 无需默认扩写为 `local PV power`。 |
 | PV 总发电能量 | PV 总发电能量 | total PV generation | `epvTotal` | 单位在字段说明上下文中保留。 |
 | 防逆流 | 防逆流 | Export Limit | `anti_backflow` | 对外公开术语和 API 设计优先使用 `Export Limit`，但 vendor key 保持不变。 |
 | 负载功率 | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | 字段名中的 vendor key 拼写保持不变。 |
+| Smart Load 负载功率 | Smart Load 负载功率 | smart-load power | `smartLoadPower` | 用于设备上报独立 smart load 通道功率的场景。 |
 | 工作优先级 | 工作优先级 | operating priority | `priority` | 值标签继续使用 `load priority`、`battery priority`、`grid priority`。 |
 
 ## 相关文档

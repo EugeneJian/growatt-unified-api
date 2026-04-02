@@ -126,6 +126,7 @@ sequenceDiagram
         "faultSubCode": 0,
         "batteryStatus": 0,
         "ppv": 14.30,
+        "epvTotal": 0.00,
         "smartLoadPower": 0.00,
         "status": 6
     },
@@ -142,7 +143,7 @@ sequenceDiagram
 | `data.deviceSn` | string | Device serial number | `"DEVICE_SN_1"` |
 | `data.meterPower` | double | Grid meter power. Positive means grid import and negative means grid export, unit: W | `0.00` |
 | `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) | `174.90` |
-| `data.fac` | double | Grid frequency | `50.03` |
+| `data.fac` | double | Grid frequency in Hz | `50.03` |
 | `data.etoUserToday` | double | Grid import energy today in kWh | `3.10` |
 | `data.etoUserTotal` | double | Total grid import energy in kWh | `44.80` |
 | `data.etoGridToday` | double | Grid export energy today in kWh | `1.50` |
@@ -153,7 +154,9 @@ sequenceDiagram
 | `data.protectSubCode` | int | Protection sub-code | `0` |
 | `data.pac` | double | AC output power in W | `41.30` |
 | `data.ppv` | double | PV power in W | `14.30` |
+| `data.epvTotal` | double | Total PV generation in kWh | `0.00` |
 | `data.payLoadPower` | double | Total load power (calculated) in W | `14.50` |
+| `data.smartLoadPower` | double | Smart-load power when the device reports a dedicated smart-load channel, unit: W | `0.00` |
 | `data.batteryStatus` | int | Overall battery status | `0` |
 | `data.batPower` | double | Battery power. Positive = charging, negative = discharging, `0` = idle, unit: W | `0.00` |
 | `data.priority` | int | Operating priority | `0` |
@@ -162,7 +165,6 @@ sequenceDiagram
 | `data.vac1` | double | Line voltage 1 in V | `236.90` |
 | `data.vac2` | double | Line voltage 2 in V | `236.90` |
 | `data.vac3` | double | Line voltage 3 in V | `236.90` |
-| `data.epvTotal` | double | Total PV generation | — |
 | `data.batteryList` | array | Battery data list | `[{...}]` |
 | `data.batteryList[].index` | int | Battery index (starts from 1) | `1` |
 | `data.batteryList[].soc` | int | Battery state of charge (SOC) in percent | `67` |
@@ -171,6 +173,7 @@ sequenceDiagram
 | `data.batteryList[].ibat` | double | Battery current on the low-voltage side in A | `-1.00` |
 | `data.batteryList[].vbat` | double | Battery voltage on the low-voltage side in V | `53.30` |
 | `data.batteryList[].soh` | int | Battery state of health (SOH) `[0,100]` | `100` |
+| `data.batteryList[].status` | int | Per-battery status code when present | `0` |
 | `data.batteryList[].echargeToday` | double | Charged energy today in kWh | `2.90` |
 | `data.batteryList[].echargeTotal` | double | Total charged energy in kWh | `80.70` |
 | `data.batteryList[].edischargeToday` | double | Discharged energy today in kWh | `1.90` |
