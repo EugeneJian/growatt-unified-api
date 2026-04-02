@@ -8,7 +8,7 @@ import {
 } from "@/lib/growatt-docs";
 
 export const metadata: Metadata = {
-  title: "Growatt Codes | Growatt Open API Docs",
+  title: "Appendix A Growatt Codes | Growatt Open API Docs",
   description: "External customer reference appendix for Growatt fault, protect, and warning codes.",
 };
 
@@ -27,7 +27,10 @@ export default async function GrowattOpenApiGrowattCodesPage() {
       docsByLocale={{ en: docsEn, "zh-CN": docsZh }}
       specialPages={getGrowattSpecialPages()}
       activeSlug={codesEn.slug}
-      headingByLocale={{ en: codesEn.title, "zh-CN": codesZh.title }}
+      headingByLocale={{
+        en: "Appendix A Growatt Codes",
+        "zh-CN": "附录A Growatt Codes",
+      }}
       subheadingByLocale={{
         en: `Source file: ${codesEn.sourceFileName}`,
         "zh-CN": `源文件：${codesZh.sourceFileName}`,

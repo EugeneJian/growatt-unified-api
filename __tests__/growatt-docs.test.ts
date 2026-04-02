@@ -25,13 +25,17 @@ jest.mock("@/lib/growatt-docs/markdown", () => {
 });
 
 import {
+  GROWATT_APPENDIX_TERMINOLOGY_SLUG,
   GROWATT_CODES_SLUG,
   GROWATT_QUICK_GUIDE_SLUG,
+  GROWATT_SEMANTIC_MODEL_SLUG,
+  getGrowattAppendixTerminologyPage,
   getGrowattCodesPage,
   getGrowattDocBySlug,
   getGrowattDocMetas,
   getGrowattOverview,
   getGrowattQuickGuide,
+  getGrowattSemanticModelPage,
   getGrowattSpecialPages,
 } from "@/lib/growatt-docs";
 
@@ -72,8 +76,19 @@ describe("growatt docs source-of-truth loader", () => {
     expect(overview.html).toContain("/growatt-openapi/02_api_access_token");
     expect(overview.html).toContain("/growatt-openapi/12_ess_terminology");
     expect(overview.html).toContain("/growatt-openapi/growatt-codes");
+    expect(overview.html).toContain("/growatt-openapi/appendix-terminology");
+    expect(overview.html).toContain("/growatt-openapi/semantic-model");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/02_api_access_token");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
+    expect(overview.displayMarkdown).toContain("/growatt-openapi/growatt-codes");
+    expect(overview.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
+    expect(overview.displayMarkdown).toContain("/growatt-openapi/semantic-model");
+    expect(overview.displayMarkdown.indexOf("/growatt-openapi/growatt-codes")).toBeLessThan(
+      overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology"),
+    );
+    expect(overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology")).toBeLessThan(
+      overview.displayMarkdown.indexOf("/growatt-openapi/semantic-model"),
+    );
     expect(overview.markdown).not.toContain("Baseline source:");
     expect(overview.markdown).not.toContain("vendor baseline");
   });
@@ -130,6 +145,56 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.markdown).not.toContain("厂商基线");
   });
 
+  it("publishes appendix A/B/C links in both overview locales", async () => {
+    const [overviewEn, overviewZh] = await Promise.all([
+      getGrowattOverview("en"),
+      getGrowattOverview("zh-CN"),
+    ]);
+
+    for (const overview of [overviewEn, overviewZh]) {
+      expect(overview.displayMarkdown).toContain("/growatt-openapi/growatt-codes");
+      expect(overview.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
+      expect(overview.displayMarkdown).toContain("/growatt-openapi/semantic-model");
+      expect(overview.displayMarkdown.indexOf("/growatt-openapi/growatt-codes")).toBeLessThan(
+        overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology"),
+      );
+      expect(overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology")).toBeLessThan(
+        overview.displayMarkdown.indexOf("/growatt-openapi/semantic-model"),
+      );
+    }
+  });
+
+  it("loads appendix terminology alias pages and the shared semantic model page", async () => {
+    const [appendixTermEn, appendixTermZh, glossaryEn, glossaryZh, semanticEn, semanticZh] =
+      await Promise.all([
+        getGrowattAppendixTerminologyPage("en"),
+        getGrowattAppendixTerminologyPage("zh-CN"),
+        getGrowattDocBySlug("12_ess_terminology", "en"),
+        getGrowattDocBySlug("12_ess_terminology", "zh-CN"),
+        getGrowattSemanticModelPage("en"),
+        getGrowattSemanticModelPage("zh-CN"),
+      ]);
+
+    expect(appendixTermEn.slug).toBe(GROWATT_APPENDIX_TERMINOLOGY_SLUG);
+    expect(appendixTermZh.slug).toBe(GROWATT_APPENDIX_TERMINOLOGY_SLUG);
+    expect(appendixTermEn.fileName).toBe("12_ess_terminology.md");
+    expect(appendixTermZh.fileName).toBe("12_ess_terminology.md");
+    expect(appendixTermEn.title).toBe("Appendix B Glossary");
+    expect(appendixTermZh.title).toBe("附录B 术语表");
+    expect(appendixTermEn.markdown).toBe(glossaryEn?.markdown);
+    expect(appendixTermZh.markdown).toBe(glossaryZh?.markdown);
+
+    expect(semanticEn.slug).toBe(GROWATT_SEMANTIC_MODEL_SLUG);
+    expect(semanticZh.slug).toBe(GROWATT_SEMANTIC_MODEL_SLUG);
+    expect(semanticEn.fileName).toBe("docs/growatt-ess-semantic-model-preliminary-review.md");
+    expect(semanticZh.fileName).toBe("docs/growatt-ess-semantic-model-preliminary-review.md");
+    expect(semanticEn.title).toBe("Appendix C Semantic Model");
+    expect(semanticZh.title).toBe("附录C Semantic Model");
+    expect(semanticEn.markdown).toBe(semanticZh.markdown);
+    expect(semanticEn.markdown).toMatch(/semantic model/i);
+    expect(countMermaidBlocks(semanticEn.markdown)).toBeGreaterThan(0);
+  });
+
   it("restores expected Mermaid diagrams across overview, endpoint docs, and quick guide", async () => {
     const locales = ["en", "zh-CN"] as const;
 
@@ -169,28 +234,54 @@ describe("growatt docs source-of-truth loader", () => {
     expect(glossaryZh?.markdown).not.toContain("基线来源：");
   });
 
-  it("registers quick guide and growatt codes special pages with corrected labels", () => {
+  it("registers quick guide and appendix A/B/C special pages in navigation order", () => {
     const specialPages = getGrowattSpecialPages();
 
-    expect(specialPages).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          slug: GROWATT_QUICK_GUIDE_SLUG,
-          labelByLocale: expect.objectContaining({
-            en: "Quick Guide",
-            "zh-CN": "快速指南",
-          }),
-          placement: "beforeDocs",
+    expect(specialPages.map((page) => page.slug)).toEqual([
+      GROWATT_QUICK_GUIDE_SLUG,
+      GROWATT_CODES_SLUG,
+      GROWATT_APPENDIX_TERMINOLOGY_SLUG,
+      GROWATT_SEMANTIC_MODEL_SLUG,
+    ]);
+    expect(specialPages[0]).toEqual(
+      expect.objectContaining({
+        slug: GROWATT_QUICK_GUIDE_SLUG,
+        labelByLocale: expect.objectContaining({
+          en: "Quick Guide",
+          "zh-CN": "快速指南",
         }),
-        expect.objectContaining({
-          slug: GROWATT_CODES_SLUG,
-          labelByLocale: expect.objectContaining({
-            en: "Appendix: Growatt Codes",
-            "zh-CN": "附录：Growatt Codes",
-          }),
-          placement: "afterDocs",
+        placement: "beforeDocs",
+      }),
+    );
+    expect(specialPages[1]).toEqual(
+      expect.objectContaining({
+        slug: GROWATT_CODES_SLUG,
+        labelByLocale: expect.objectContaining({
+          en: "Appendix A Growatt Codes",
+          "zh-CN": "附录A Growatt Codes",
         }),
-      ]),
+        placement: "afterDocs",
+      }),
+    );
+    expect(specialPages[2]).toEqual(
+      expect.objectContaining({
+        slug: GROWATT_APPENDIX_TERMINOLOGY_SLUG,
+        labelByLocale: expect.objectContaining({
+          en: "Appendix B Glossary",
+          "zh-CN": "附录B 术语表",
+        }),
+        placement: "afterDocs",
+      }),
+    );
+    expect(specialPages[3]).toEqual(
+      expect.objectContaining({
+        slug: GROWATT_SEMANTIC_MODEL_SLUG,
+        labelByLocale: expect.objectContaining({
+          en: "Appendix C Semantic Model",
+          "zh-CN": "附录C Semantic Model",
+        }),
+        placement: "afterDocs",
+      }),
     );
   });
 

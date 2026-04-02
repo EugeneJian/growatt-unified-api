@@ -91,4 +91,6 @@ For the consolidated integration guide, see:
 
 ## Appendix
 
-- [Growatt Codes](/growatt-openapi/growatt-codes)
+- [Appendix A Growatt Codes](/growatt-openapi/growatt-codes)
+- [Appendix B Glossary](/growatt-openapi/appendix-terminology)
+- [Appendix C Semantic Model](/growatt-openapi/semantic-model)

@@ -91,4 +91,6 @@ sequenceDiagram
 
 ## 附录
 
-- [Growatt Codes](/growatt-openapi/growatt-codes)
+- [附录A Growatt Codes](/growatt-openapi/growatt-codes)
+- [附录B 术语表](/growatt-openapi/appendix-terminology)
+- [附录C Semantic Model](/growatt-openapi/semantic-model)
