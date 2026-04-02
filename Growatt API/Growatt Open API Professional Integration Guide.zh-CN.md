@@ -6,7 +6,7 @@
 
 - 中文拆分发布文档：`Growatt API/OPENAPI.zh-CN/*.md`
 - 英文拆分发布文档：`Growatt API/OPENAPI/*.md`
-- 储能术语对照表：[./OPENAPI.zh-CN/12_ess_terminology.md](./OPENAPI.zh-CN/12_ess_terminology.md)
+- 附录B 术语表：[/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
 - 联调观察来源：仓库 `test/` 目录中的环境记录
 
 ## 2 支持的集成路径
@@ -81,5 +81,5 @@ flowchart TD
 - [ ] 已将 `bindDevice.pinCode` 视为客户端模式必填
 - [ ] 已将 `readDeviceDispatch.requestId` 视为必填
 - [ ] 已按 `10_global_params.md` 中的 3 个 `setType` 实现基础映射
-- [ ] 已对照 [./OPENAPI.zh-CN/12_ess_terminology.md](./OPENAPI.zh-CN/12_ess_terminology.md) 理解公开储能术语
+- [ ] 已对照 [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology) 理解公开储能术语
 - [ ] 已将联调经验留在兼容层，而不是提升为端点规范

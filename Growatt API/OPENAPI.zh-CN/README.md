@@ -57,7 +57,6 @@ sequenceDiagram
 | [09_api_device_push.md](./09_api_device_push.md) | 设备数据推送 |
 | [10_global_params.md](./10_global_params.md) | 全局参数说明 |
 | [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 常见问题与排查 FAQ |
-| [12_ess_terminology.md](./12_ess_terminology.md) | 储能术语对照表 |
 
 ## 快速导航
 
@@ -72,7 +71,6 @@ sequenceDiagram
 - [设备数据推送 API](./09_api_device_push.md)
 - [全局参数说明](./10_global_params.md)
 - [常见问题与排查 FAQ](./11_api_troubleshooting.md)
-- [储能术语对照表](./12_ess_terminology.md)
 
 ## 关键说明
 
@@ -87,7 +85,6 @@ sequenceDiagram
 如需阅读整合型说明，请参阅：
 
 - [../Growatt Open API Professional Integration Guide.zh-CN.md](../Growatt Open API Professional Integration Guide.zh-CN.md)
-- [储能术语对照表](./12_ess_terminology.md)
 
 ## 附录
 

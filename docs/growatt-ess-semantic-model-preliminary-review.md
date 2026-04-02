@@ -1,12 +1,9 @@
-下面是**可直接对外/评审/落库的最终整合版 Markdown**（已合并：Semantic / Topology / Telemetry / Dispatch / Validation / Applicability Matrix / Acceptance Criteria）。
+# Growatt ESS Semantic Model and Dispatch Specification
 
----
-
-# 《Growatt Unified VPP Semantic & Dispatch Specification》终版 Markdown
-
-**Version**: v1.0 Final
-**Scope**: Growatt Unified OpenAPI / EMS / VPP Integration
-**Audience**: VPP Operators (Amber / AGL / Origin / Evergen), Integrators, QA, PMO
+**Version**: v1.0
+**Status**: Public Standard
+**Scope**: Growatt Unified OpenAPI / EMS / ESS semantic modeling and dispatch validation
+**Audience**: Integrators, solution architects, validation teams, and implementation teams
 
 ---
 
@@ -364,7 +361,7 @@ flowchart TD
 
 ---
 
-# 15. Executive Summary（对外口径）
+# 15. Executive Summary
 
 ## 中文
 
@@ -379,4 +376,3 @@ This specification unifies topology, semantics, dispatch, and telemetry.
 A dispatch is valid only when command acceptance, telemetry response, sign correctness, and behavioral consistency are all satisfied.
 
 ---
-

@@ -6,7 +6,7 @@ This is an entry guide. Endpoint parameters, examples, and response codes are ma
 
 - Chinese split publication docs: `Growatt API/OPENAPI.zh-CN/*.md`
 - English split publication docs: `Growatt API/OPENAPI/*.md`
-- ESS terminology glossary: [./OPENAPI/12_ess_terminology.md](./OPENAPI/12_ess_terminology.md)
+- Appendix B Glossary: [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
 - Integration observations: environment reports under `test/`
 
 ## 2 Supported Integration Paths
@@ -81,5 +81,5 @@ These findings should not replace the endpoint-level API descriptions.
 - [ ] Treated `bindDevice.pinCode` as required in client mode
 - [ ] Treated `readDeviceDispatch.requestId` as required
 - [ ] Implemented the three `setType` entries published in `10_global_params.md`
-- [ ] Aligned public ESS terminology to [./OPENAPI/12_ess_terminology.md](./OPENAPI/12_ess_terminology.md)
+- [ ] Aligned public ESS terminology to [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
 - [ ] Kept integration observations in the compatibility layer instead of promoting them into endpoint descriptions

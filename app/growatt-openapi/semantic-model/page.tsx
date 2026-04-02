@@ -9,7 +9,7 @@ import {
 
 export const metadata: Metadata = {
   title: "Appendix C Semantic Model | Growatt Open API Docs",
-  description: "Appendix entry for the Growatt semantic model reference.",
+  description: "Public appendix entry for the Growatt ESS semantic model standard.",
 };
 
 export const dynamic = "force-static";
@@ -29,8 +29,8 @@ export default async function GrowattOpenApiSemanticModelPage() {
       activeSlug={semanticEn.slug}
       headingByLocale={{ en: semanticEn.title, "zh-CN": semanticZh.title }}
       subheadingByLocale={{
-        en: `Source file: ${semanticEn.fileName}`,
-        "zh-CN": `源文件：${semanticZh.fileName}`,
+        en: "Public semantic model and dispatch validation standard.",
+        "zh-CN": "公开语义模型与调度校验标准。",
       }}
       contentMarkdownByLocale={{
         en: semanticEn.displayMarkdown,

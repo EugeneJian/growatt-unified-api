@@ -29,8 +29,8 @@ export default async function GrowattOpenApiAppendixTerminologyPage() {
       activeSlug={appendixEn.slug}
       headingByLocale={{ en: appendixEn.title, "zh-CN": appendixZh.title }}
       subheadingByLocale={{
-        en: `Source file: ${appendixEn.fileName}`,
-        "zh-CN": `源文件：${appendixZh.fileName}`,
+        en: "Published ESS terminology glossary reference.",
+        "zh-CN": "公开储能术语表参考页。",
       }}
       contentMarkdownByLocale={{
         en: appendixEn.displayMarkdown,

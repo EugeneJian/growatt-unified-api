@@ -51,7 +51,6 @@ const EXPECTED_MERMAID_COUNTS_BY_SLUG = {
   "09_api_device_push": 1,
   "10_global_params": 2,
   "11_api_troubleshooting": 0,
-  "12_ess_terminology": 0,
 } as const;
 
 function countMermaidBlocks(markdown: string | null | undefined) {
@@ -59,12 +58,13 @@ function countMermaidBlocks(markdown: string | null | undefined) {
 }
 
 describe("growatt docs source-of-truth loader", () => {
-  it("discovers numbered OPENAPI docs and excludes README from doc list", async () => {
+  it("discovers numbered OPENAPI docs and excludes README plus appendix-only glossary from doc list", async () => {
     const docs = await getGrowattDocMetas("en");
     const fileNames = docs.map((doc) => doc.fileName);
 
     expect(fileNames.length).toBeGreaterThan(0);
     expect(fileNames).not.toContain("README.md");
+    expect(fileNames).not.toContain("12_ess_terminology.md");
     expect(fileNames[0]).toMatch(/^01_/);
   });
 
@@ -74,15 +74,14 @@ describe("growatt docs source-of-truth loader", () => {
     expect(overview.title).toContain("Growatt");
     expect(overview.html).toContain("<article>");
     expect(overview.html).toContain("/growatt-openapi/02_api_access_token");
-    expect(overview.html).toContain("/growatt-openapi/12_ess_terminology");
     expect(overview.html).toContain("/growatt-openapi/growatt-codes");
     expect(overview.html).toContain("/growatt-openapi/appendix-terminology");
     expect(overview.html).toContain("/growatt-openapi/semantic-model");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/02_api_access_token");
-    expect(overview.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/growatt-codes");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/semantic-model");
+    expect(overview.displayMarkdown).not.toContain("12_ess_terminology");
     expect(overview.displayMarkdown.indexOf("/growatt-openapi/growatt-codes")).toBeLessThan(
       overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology"),
     );
@@ -112,7 +111,8 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.md");
     expect(quickGuide.title).toBe("Growatt Open API Professional Integration Guide");
     expect(quickGuide.html).toContain("<article>");
-    expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
+    expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
+    expect(quickGuide.displayMarkdown).not.toContain("12_ess_terminology");
     expect(quickGuide.markdown).toContain("## 5 Integration Observations");
     expect(quickGuide.markdown).toContain("## 6 Integration Checklist");
     expect(quickGuide.markdown).not.toContain("Baseline source:");
@@ -138,7 +138,8 @@ describe("growatt docs source-of-truth loader", () => {
       "Growatt Open API Professional Integration Guide.zh-CN.md",
     );
     expect(quickGuide.title).toBe("Growatt Open API 专业集成指南");
-    expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
+    expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
+    expect(quickGuide.displayMarkdown).not.toContain("12_ess_terminology");
     expect(quickGuide.markdown).toContain("## 5 联调观察");
     expect(quickGuide.markdown).toContain("## 6 集成检查清单");
     expect(quickGuide.markdown).not.toContain("基线来源：");
@@ -165,15 +166,12 @@ describe("growatt docs source-of-truth loader", () => {
   });
 
   it("loads appendix terminology alias pages and the shared semantic model page", async () => {
-    const [appendixTermEn, appendixTermZh, glossaryEn, glossaryZh, semanticEn, semanticZh] =
-      await Promise.all([
-        getGrowattAppendixTerminologyPage("en"),
-        getGrowattAppendixTerminologyPage("zh-CN"),
-        getGrowattDocBySlug("12_ess_terminology", "en"),
-        getGrowattDocBySlug("12_ess_terminology", "zh-CN"),
-        getGrowattSemanticModelPage("en"),
-        getGrowattSemanticModelPage("zh-CN"),
-      ]);
+    const [appendixTermEn, appendixTermZh, semanticEn, semanticZh] = await Promise.all([
+      getGrowattAppendixTerminologyPage("en"),
+      getGrowattAppendixTerminologyPage("zh-CN"),
+      getGrowattSemanticModelPage("en"),
+      getGrowattSemanticModelPage("zh-CN"),
+    ]);
 
     expect(appendixTermEn.slug).toBe(GROWATT_APPENDIX_TERMINOLOGY_SLUG);
     expect(appendixTermZh.slug).toBe(GROWATT_APPENDIX_TERMINOLOGY_SLUG);
@@ -181,8 +179,9 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixTermZh.fileName).toBe("12_ess_terminology.md");
     expect(appendixTermEn.title).toBe("Appendix B Glossary");
     expect(appendixTermZh.title).toBe("附录B 术语表");
-    expect(appendixTermEn.markdown).toBe(glossaryEn?.markdown);
-    expect(appendixTermZh.markdown).toBe(glossaryZh?.markdown);
+    expect(appendixTermEn.markdown).toContain("state of charge (SOC)");
+    expect(appendixTermZh.markdown).toContain("公开术语表");
+    expect(appendixTermEn.displayMarkdown).not.toContain("12_ess_terminology");
 
     expect(semanticEn.slug).toBe(GROWATT_SEMANTIC_MODEL_SLUG);
     expect(semanticZh.slug).toBe(GROWATT_SEMANTIC_MODEL_SLUG);
@@ -191,7 +190,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(semanticEn.title).toBe("Appendix C Semantic Model");
     expect(semanticZh.title).toBe("附录C Semantic Model");
     expect(semanticEn.markdown).toBe(semanticZh.markdown);
-    expect(semanticEn.markdown).toMatch(/semantic model/i);
+    expect(semanticEn.markdown).toContain("# Growatt ESS Semantic Model and Dispatch Specification");
+    expect(semanticEn.markdown).toContain("**Status**: Public Standard");
+    expect(semanticEn.markdown).not.toContain("Amber / AGL / Origin / Evergen");
+    expect(semanticEn.markdown).not.toContain("对外口径");
     expect(countMermaidBlocks(semanticEn.markdown)).toBeGreaterThan(0);
   });
 
@@ -216,22 +218,26 @@ describe("growatt docs source-of-truth loader", () => {
     }
   });
 
-  it("loads the bilingual ESS glossary as a numbered documentation page", async () => {
-    const [docsEn, docsZh, glossaryEn, glossaryZh] = await Promise.all([
+  it("keeps the bilingual ESS glossary available only through appendix B", async () => {
+    const [docsEn, docsZh, glossaryEn, glossaryZh, appendixEn, appendixZh] = await Promise.all([
       getGrowattDocMetas("en"),
       getGrowattDocMetas("zh-CN"),
       getGrowattDocBySlug("12_ess_terminology", "en"),
       getGrowattDocBySlug("12_ess_terminology", "zh-CN"),
+      getGrowattAppendixTerminologyPage("en"),
+      getGrowattAppendixTerminologyPage("zh-CN"),
     ]);
 
-    expect(docsEn.map((doc) => doc.fileName)).toContain("12_ess_terminology.md");
-    expect(docsZh.map((doc) => doc.fileName)).toContain("12_ess_terminology.md");
-    expect(glossaryEn?.title).toBe("ESS Terminology Glossary");
-    expect(glossaryZh?.title).toBe("储能术语对照表");
-    expect(glossaryEn?.markdown).toContain("state of charge (SOC)");
-    expect(glossaryEn?.markdown).toContain("Export Limit");
-    expect(glossaryZh?.markdown).toContain("state of charge (SOC)");
-    expect(glossaryZh?.markdown).not.toContain("基线来源：");
+    expect(docsEn.map((doc) => doc.fileName)).not.toContain("12_ess_terminology.md");
+    expect(docsZh.map((doc) => doc.fileName)).not.toContain("12_ess_terminology.md");
+    expect(glossaryEn).toBeNull();
+    expect(glossaryZh).toBeNull();
+    expect(appendixEn.title).toBe("Appendix B Glossary");
+    expect(appendixZh.title).toBe("附录B 术语表");
+    expect(appendixEn.markdown).toContain("state of charge (SOC)");
+    expect(appendixEn.markdown).toContain("Export Limit");
+    expect(appendixZh.markdown).toContain("state of charge (SOC)");
+    expect(appendixZh.markdown).not.toContain("基线来源：");
   });
 
   it("registers quick guide and appendix A/B/C special pages in navigation order", () => {
@@ -461,7 +467,9 @@ describe("growatt docs source-of-truth loader", () => {
     expect(globalDoc?.markdown).toContain("Export Limit.");
     expect(globalDoc?.markdown).toContain("`anti_backflow`");
 
-    expect(faqDoc?.markdown).toContain("[ESS Terminology Glossary](./12_ess_terminology.md)");
+    expect(faqDoc?.displayMarkdown).toContain(
+      "[ESS Terminology Glossary](/growatt-openapi/appendix-terminology)",
+    );
   });
 
   it("renders device-dispatch response outcomes as tables", async () => {

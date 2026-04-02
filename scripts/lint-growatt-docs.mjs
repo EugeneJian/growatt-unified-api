@@ -32,6 +32,7 @@ const GUIDE_FILES = [
     ),
   },
 ];
+const README_OPTIONAL_DOC_FILES = new Set(["12_ess_terminology.md"]);
 const FORBIDDEN_OFFICIAL_DOC_PATTERN = /9290/;
 const UNMASKED_TOKEN_FIELD_PATTERN =
   /"(access_token|refresh_token)"\s*:\s*"(?!<masked_(?:access|refresh)_token>")[^"]{16,}"/;
@@ -143,6 +144,10 @@ async function lintGrowattDocsInDir(openApiDir, label) {
 
   const readmeLinkSet = new Set(readmeDocLinks);
   for (const fileName of docFiles) {
+    if (README_OPTIONAL_DOC_FILES.has(fileName)) {
+      continue;
+    }
+
     if (!readmeLinkSet.has(fileName)) {
       errors.push(`[${label}] README coverage missing: ${fileName} is not listed as ./<file>.md`);
     }

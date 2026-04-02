@@ -19,7 +19,7 @@ const EN_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guid
 const ZH_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.zh-CN.md";
 const GROWATT_SEMANTIC_MODEL_FILE_NAME = "growatt-ess-semantic-model-preliminary-review.md";
 const GROWATT_SEMANTIC_MODEL_SOURCE_FILE = `docs/${GROWATT_SEMANTIC_MODEL_FILE_NAME}`;
-const GROWATT_TERMINOLOGY_DOC_SLUG = "12_ess_terminology";
+const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "12_ess_terminology.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
 export const GROWATT_APPENDIX_TERMINOLOGY_SLUG = "appendix-terminology";
@@ -171,6 +171,15 @@ function getLocaleSourceConfig(locale: GrowattDocLocale): LocaleSourceConfig {
   return GROWATT_DOC_SOURCE_CONFIG[locale];
 }
 
+function buildGrowattInternalSlugMap(fileNames: string[]): Map<string, string> {
+  const slugByFileName = buildGrowattSlugByFileName(fileNames);
+
+  // Keep legacy glossary links working after the glossary moves to appendix B.
+  slugByFileName.set(GROWATT_TERMINOLOGY_DOC_FILE_NAME, GROWATT_APPENDIX_TERMINOLOGY_SLUG);
+
+  return slugByFileName;
+}
+
 async function readOpenApiMarkdownFiles(locale: GrowattDocLocale): Promise<string[]> {
   const entries = await fs.readdir(getLocaleSourceConfig(locale).openApiRootDir, {
     withFileTypes: true,
@@ -190,7 +199,10 @@ export const getGrowattDocMetas = cache(
   async (locale: GrowattDocLocale = "en"): Promise<GrowattDocMeta[]> => {
     const markdownFileNames = await readOpenApiMarkdownFiles(locale);
     const docFileNames = markdownFileNames
-      .filter((fileName) => fileName !== README_FILE_NAME)
+      .filter(
+        (fileName) =>
+          fileName !== README_FILE_NAME && fileName !== GROWATT_TERMINOLOGY_DOC_FILE_NAME,
+      )
       .sort(compareDocFiles);
 
     const docs = await Promise.all(
@@ -214,7 +226,7 @@ export const getGrowattOverview = cache(async (locale: GrowattDocLocale = "en") 
   const sourceConfig = getLocaleSourceConfig(locale);
   const markdown = await readOpenApiFile(README_FILE_NAME, locale);
   const docMetas = await getGrowattDocMetas(locale);
-  const slugByFileName = buildGrowattSlugByFileName(docMetas.map((doc) => doc.fileName));
+  const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
 
   const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
   const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
@@ -239,7 +251,7 @@ export const getGrowattDocBySlug = cache(
     }
 
     const markdown = await readOpenApiFile(currentDoc.fileName, locale);
-    const slugByFileName = buildGrowattSlugByFileName(docs.map((doc) => doc.fileName));
+    const slugByFileName = buildGrowattInternalSlugMap(docs.map((doc) => doc.fileName));
     const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
     const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
@@ -260,7 +272,7 @@ export const getGrowattQuickGuide = cache(
       fs.readFile(sourceConfig.quickGuidePath, "utf8"),
     ]);
 
-    const slugByFileName = buildGrowattSlugByFileName(docMetas.map((doc) => doc.fileName));
+    const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
     const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
     const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
@@ -277,18 +289,21 @@ export const getGrowattQuickGuide = cache(
 
 export const getGrowattAppendixTerminologyPage = cache(
   async (locale: GrowattDocLocale = "en"): Promise<GrowattSpecialMarkdownPage> => {
-    const glossaryPage = await getGrowattDocBySlug(GROWATT_TERMINOLOGY_DOC_SLUG, locale);
-    if (!glossaryPage) {
-      throw new Error(`Missing Growatt terminology doc for slug: ${GROWATT_TERMINOLOGY_DOC_SLUG}`);
-    }
+    const [docMetas, markdown] = await Promise.all([
+      getGrowattDocMetas(locale),
+      readOpenApiFile(GROWATT_TERMINOLOGY_DOC_FILE_NAME, locale),
+    ]);
+    const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
+    const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
+    const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
     return {
       slug: GROWATT_APPENDIX_TERMINOLOGY_SLUG,
-      fileName: glossaryPage.fileName,
+      fileName: GROWATT_TERMINOLOGY_DOC_FILE_NAME,
       title: APPENDIX_B_LABELS[locale],
-      markdown: glossaryPage.markdown,
-      displayMarkdown: glossaryPage.displayMarkdown,
-      html: glossaryPage.html,
+      markdown,
+      displayMarkdown,
+      html,
     };
   },
 );
@@ -300,7 +315,7 @@ export const getGrowattSemanticModelPage = cache(
       fs.readFile(path.join(GROWATT_DOCS_ROOT_DIR, GROWATT_SEMANTIC_MODEL_FILE_NAME), "utf8"),
     ]);
 
-    const slugByFileName = buildGrowattSlugByFileName(docMetas.map((doc) => doc.fileName));
+    const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
     const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
     const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
