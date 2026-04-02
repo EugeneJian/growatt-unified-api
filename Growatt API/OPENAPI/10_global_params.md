@@ -1,4 +1,4 @@
-# Global Parameter Description
+# Global Parameters
 
 ## Domains
 
@@ -12,7 +12,7 @@
 - `https://opencloud-test.growatt.com`
 - `https://opencloud-test-au.growatt.com`
 
-## HTTP Header Description
+## HTTP Header
 
 - Calling the API requires `access_token`.
 
@@ -20,92 +20,42 @@
 | :--- | :--- | :--- |
 | `Authorization` | Token marker | `Bearer xxxxxxx` |
 
-## Response Code Description
+## Response Codes
+
+### Response Format Example
 
 ```json
 {
     "code": 0,
     "data": {},
-    "message": "SUCCESSFUL_OPERATION"
+    "message": "RESPONSE_MESSAGE"
 }
 ```
 
-```json
-{
-    "code": 12,
-    "data": [
-        "DEVICE_SN_1"
-    ],
-    "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
-}
-```
+| Scenario | `code` | `data` | `message` |
+| :--- | :--- | :--- | :--- |
+| Successful operation | `0` | `{}` | `"SUCCESSFUL_OPERATION"` |
+| Device SN does not have permission | `12` | `["DEVICE_SN_1"]` | `"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"` |
+| Token is invalid | `2` | Not returned | `"TOKEN_IS_INVALID"` |
+| Device offline | `5` | `null` | `"DEVICE_OFFLINE"` |
+| Read device parameter failed | `18` | `null` | `"READ_DEVICE_PARAM_FAIL"` |
+| Parameter-setting response timeout | `16` | `null` | `"PARAMETER_SETTING_RESPONSE_TIMEOUT"` |
+| Parameter-setting device not responding | `15` | `null` | `"PARAMETER_SETTING_DEVICE_NOT_RESPONDING"` |
+| Parameter-setting failed | `6` | `null` | `"PARAMETER_SETTING_FAILED"` |
+| Too many requests | `105` | `null` | `"TOO_MANY_REQUEST"` |
 
-```json
-{
-    "code": 2,
-    "message": "TOKEN_IS_INVALID"
-}
-```
-
-```json
-{
-    "code": 5,
-    "data": null,
-    "message": "DEVICE_OFFLINE"
-}
-```
-
-```json
-{
-    "code": 18,
-    "data": null,
-    "message": "READ_DEVICE_PARAM_FAIL"
-}
-```
-
-```json
-{
-    "code": 16,
-    "data": null,
-    "message": "PARAMETER_SETTING_RESPONSE_TIMEOUT"
-}
-```
-
-```json
-{
-    "code": 15,
-    "data": null,
-    "message": "PARAMETER_SETTING_DEVICE_NOT_RESPONDING"
-}
-```
-
-```json
-{
-    "code": 6,
-    "data": null,
-    "message": "PARAMETER_SETTING_FAILED"
-}
-```
-
-```json
-{
-    "code": 105,
-    "data": null,
-    "message": "TOO_MANY_REQUEST"
-}
-```
-
-## Device Parameter Description
+## Device Parameters
 
 - The table below keeps only the `setType` entries explicitly published by the current vendor baseline.
 
 | Parameter | Description | Value Description |
 | :--- | :--- | :--- |
-| `time_slot_charge_discharge` | Time-slot charge and discharge. `percentage` range `[-100,100]`; `percentage > 0` means charge and `percentage < 0` means discharge; `startTime` / `endTime` are UTC times | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
-| `duration_and_power_charge_discharge` | Charge/discharge duration and power percentage. `percentage` range `[0,100]`; supports `selfConsumptionCommand`, `chargeOnlySelfConsumptionCommand`, `chargeCommand`, and `dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
-| `anti_backflow` | Anti-backflow setting. `antiBackflowEnabled` is the enable switch; `percentage` range `[-100,100]`; positive values mean reverse-flow control and negative values mean forward-flow control | `{ "antiBackflowEnabled": 1, "percentage": 20 }` |
+| `time_slot_charge_discharge` | Time-slot charging/discharging. `percentage` range `[-100,100]`; `percentage > 0` means charging and `percentage < 0` means discharging; `startTime` / `endTime` are UTC times | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
+| `duration_and_power_charge_discharge` | Charging/discharging duration and power percentage. `percentage` range `[0,100]`; supports `selfConsumptionCommand`, `chargeOnlySelfConsumptionCommand`, `chargeCommand`, and `dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
+| `anti_backflow` | Export Limit. `antiBackflowEnabled` is the enable switch; `percentage` range `[-100,100]`; positive values mean export limiting and negative values mean forward-flow control | `{ "antiBackflowEnabled": 1, "percentage": 20 }` |
 
 ## Related Documentation
 
 - [Device Dispatch API](./05_api_device_dispatch.md)
 - [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)

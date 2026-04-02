@@ -51,8 +51,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(overview.title).toContain("Growatt");
     expect(overview.html).toContain("<article>");
     expect(overview.html).toContain("/growatt-openapi/02_api_access_token");
+    expect(overview.html).toContain("/growatt-openapi/12_ess_terminology");
     expect(overview.html).toContain("/growatt-openapi/growatt-codes");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/02_api_access_token");
+    expect(overview.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
   });
 
   it("loads markdown by slug and rewrites internal markdown links", async () => {
@@ -74,6 +76,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.md");
     expect(quickGuide.title).toBe("Growatt Open API Professional Integration Guide");
     expect(quickGuide.html).toContain("<article>");
+    expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
     expect(quickGuide.markdown).toContain("## 5 Integration Observations (Non-Normative)");
     expect(quickGuide.markdown).toContain("## 6 Integration Checklist");
   });
@@ -95,8 +98,26 @@ describe("growatt docs source-of-truth loader", () => {
       "Growatt Open API Professional Integration Guide.zh-CN.md",
     );
     expect(quickGuide.title).toBe("Growatt Open API 专业集成指南");
+    expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/12_ess_terminology");
     expect(quickGuide.markdown).toContain("## 5 联调观察（非基线规范）");
     expect(quickGuide.markdown).toContain("## 6 集成检查清单");
+  });
+
+  it("loads the bilingual ESS glossary as a numbered documentation page", async () => {
+    const [docsEn, docsZh, glossaryEn, glossaryZh] = await Promise.all([
+      getGrowattDocMetas("en"),
+      getGrowattDocMetas("zh-CN"),
+      getGrowattDocBySlug("12_ess_terminology", "en"),
+      getGrowattDocBySlug("12_ess_terminology", "zh-CN"),
+    ]);
+
+    expect(docsEn.map((doc) => doc.fileName)).toContain("12_ess_terminology.md");
+    expect(docsZh.map((doc) => doc.fileName)).toContain("12_ess_terminology.md");
+    expect(glossaryEn?.title).toBe("ESS Terminology Glossary");
+    expect(glossaryZh?.title).toBe("储能术语对照表");
+    expect(glossaryEn?.markdown).toContain("state of charge (SOC)");
+    expect(glossaryEn?.markdown).toContain("Export Limit");
+    expect(glossaryZh?.markdown).toContain("state of charge (SOC)");
   });
 
   it("registers quick guide and growatt codes special pages with corrected labels", () => {
@@ -184,6 +205,11 @@ describe("growatt docs source-of-truth loader", () => {
       getGrowattDocBySlug("10_global_params", "zh-CN"),
     ]);
 
+    expect(globalParamsEn).not.toBeNull();
+    expect(globalParamsZh).not.toBeNull();
+    expect(globalParamsEn?.markdown).toContain("Response Format Example");
+    expect(globalParamsEn?.markdown).toContain("| Scenario | `code` | `data` | `message` |");
+
     for (const page of [globalParamsEn, globalParamsZh]) {
       expect(page).not.toBeNull();
       expect(page?.markdown).toContain("opencloud-test-au.growatt.com");
@@ -192,6 +218,10 @@ describe("growatt docs source-of-truth loader", () => {
       expect(page?.markdown).toContain("duration_and_power_charge_discharge");
       expect(page?.markdown).toContain("anti_backflow");
       expect(page?.markdown).not.toContain("enable_control");
+      expect(page?.markdown).toContain('"message": "RESPONSE_MESSAGE"');
+      expect(page?.markdown).toContain("`code` | `data` | `message`");
+      expect(page?.markdown).toContain('| `18` | `null` | `"READ_DEVICE_PARAM_FAIL"` |');
+      expect(page?.markdown).toContain('| `105` | `null` | `"TOO_MANY_REQUEST"` |');
     }
   });
 
@@ -243,12 +273,55 @@ describe("growatt docs source-of-truth loader", () => {
     expect(infoDocEn?.markdown).toContain("| Parameter | Type | Description | Example |");
     expect(infoDocEn?.markdown).toContain('| `deviceTypeName` | string | Device type name | `"min"` |');
     expect(infoDocEn?.markdown).toContain('| `existBattery` | boolean | Whether the device has a battery | `true` |');
-    expect(infoDocEn?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | Battery nominal power in W | `2500` |');
+    expect(infoDocEn?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | Battery rated power in W | `2500` |');
 
     expect(infoDocZh?.markdown).toContain("| 参数名 | 类型 | 说明 | 示例 |");
     expect(infoDocZh?.markdown).toContain('| `deviceTypeName` | string | 设备大类型名称 | `"min"` |');
     expect(infoDocZh?.markdown).toContain('| `existBattery` | boolean | 是否有电池 | `true` |');
     expect(infoDocZh?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | 电池额定功率，单位 W | `2500` |');
+  });
+
+  it("standardizes ESS terminology in the reviewed English docs without renaming vendor keys", async () => {
+    const [authDoc, infoDoc, dataDoc, pushDoc, globalDoc, faqDoc] = await Promise.all([
+      getGrowattDocBySlug("04_api_device_auth", "en"),
+      getGrowattDocBySlug("07_api_device_info", "en"),
+      getGrowattDocBySlug("08_api_device_data", "en"),
+      getGrowattDocBySlug("09_api_device_push", "en"),
+      getGrowattDocBySlug("10_global_params", "en"),
+      getGrowattDocBySlug("11_api_troubleshooting", "en"),
+    ]);
+
+    expect(authDoc).not.toBeNull();
+    expect(infoDoc).not.toBeNull();
+    expect(dataDoc).not.toBeNull();
+    expect(pushDoc).not.toBeNull();
+    expect(globalDoc).not.toBeNull();
+    expect(faqDoc).not.toBeNull();
+
+    expect(authDoc?.markdown).toContain("Rated inverter power in W");
+    expect(authDoc?.markdown).toContain("Datalogger serial number");
+
+    expect(infoDoc?.markdown).toContain("Rated inverter power in W");
+    expect(infoDoc?.markdown).toContain("Battery rated capacity in Wh");
+    expect(infoDoc?.markdown).toContain("Battery rated power in W");
+    expect(infoDoc?.markdown).toContain("`batteryNominalPower`");
+
+    expect(dataDoc?.markdown).toContain(
+      "Grid meter power. Positive means grid import and negative means grid export, unit: W",
+    );
+    expect(pushDoc?.markdown).toContain(
+      "Grid meter power. Positive means grid import and negative means grid export, unit: W",
+    );
+    expect(dataDoc?.markdown).toContain("Battery state of charge (SOC) in percent");
+    expect(pushDoc?.markdown).toContain("Battery state of health (SOH) `[0,100]`");
+    expect(dataDoc?.markdown).toContain("grid-connected");
+    expect(pushDoc?.markdown).toContain("grid-connected");
+    expect(dataDoc?.markdown).toContain("`data.payLoadPower`");
+
+    expect(globalDoc?.markdown).toContain("Export Limit.");
+    expect(globalDoc?.markdown).toContain("`anti_backflow`");
+
+    expect(faqDoc?.markdown).toContain("[ESS Terminology Glossary](./12_ess_terminology.md)");
   });
 
   it("renders device-dispatch response outcomes as tables", async () => {

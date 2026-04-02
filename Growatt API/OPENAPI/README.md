@@ -19,6 +19,7 @@ This directory is the English published split of the Growatt Open API documentat
 | [09_api_device_push.md](./09_api_device_push.md) | Device data push |
 | [10_global_params.md](./10_global_params.md) | Global parameter description |
 | [11_api_troubleshooting.md](./11_api_troubleshooting.md) | Troubleshooting FAQ |
+| [12_ess_terminology.md](./12_ess_terminology.md) | ESS terminology glossary |
 
 ## Quick Navigation
 
@@ -33,6 +34,7 @@ This directory is the English published split of the Growatt Open API documentat
 - [Device Data Push API](./09_api_device_push.md)
 - [Global Parameter Description](./10_global_params.md)
 - [Troubleshooting FAQ](./11_api_troubleshooting.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)
 
 ## Baseline Reminders
 
@@ -47,6 +49,7 @@ This directory is the English published split of the Growatt Open API documentat
 For the consolidated integration guide, see:
 
 - [../Growatt Open API Professional Integration Guide.md](../Growatt Open API Professional Integration Guide.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)
 
 ## Appendix
 

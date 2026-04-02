@@ -109,3 +109,4 @@
 
 - [Device Dispatch API](./05_api_device_dispatch.md)
 - [Global Parameters](./10_global_params.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)

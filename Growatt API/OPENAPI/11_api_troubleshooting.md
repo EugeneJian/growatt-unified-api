@@ -46,3 +46,4 @@ The following observations come from environment reports under `test/` and do no
 - [Device Authorization API](./04_api_device_auth.md)
 - [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
 - [Device Data Query API](./08_api_device_data.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)

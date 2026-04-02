@@ -32,7 +32,7 @@
 | Parameter | Type | Description | Example |
 | :--- | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure | `0` |
-| `data` | obj | Response data | `{...}` |
+| `data` | object | Response payload | `{...}` |
 | `message` | string | Response description | `"SUCCESSFUL_OPERATION"` |
 
 ## Request Example
@@ -90,24 +90,25 @@
 | `deviceSn` | string | Device serial number | `"DEVICE_SN_1"` |
 | `deviceTypeName` | string | Device type name | `"min"` |
 | `model` | string | Device model | `"BDCBAT"` |
-| `nominalPower` | int | Nominal inverter power in W | `6000` |
+| `nominalPower` | int | Rated inverter power in W | `6000` |
 | `datalogSn` | string | Datalogger serial number | `"DATALOG_SN_1"` |
 | `datalogDeviceTypeName` | string | Datalogger type name | `"ShineWiFi-X"` |
 | `dtc` | int | Numeric device-type code | `5100` |
-| `communicationVersion` | string | Communication version | `"ZABA-0021"` |
+| `communicationVersion` | string | Firmware communication version | `"ZABA-0021"` |
 | `existBattery` | boolean | Whether the device has a battery | `true` |
 | `batterySn` | string | Battery serial number | `"BATTERY_SN_1"` |
 | `batteryModel` | string | Battery model | `"ARK 5.12-25.6XH-A1"` |
-| `batteryCapacity` | int | Battery nominal capacity in Wh | `5000` |
-| `batteryNominalPower` | int | Battery nominal power in W | `2500` |
+| `batteryCapacity` | int | Battery rated capacity in Wh | `5000` |
+| `batteryNominalPower` | int | Battery rated power in W | `2500` |
 | `authFlag` | boolean | Whether the device is already authorized | `true` |
 | `batteryList` | array | Battery list | `[{...}]` |
 | `batteryList[].batterySn` | string | Battery serial number in the battery list | `"BATTERY_SN_1"` |
 | `batteryList[].batteryModel` | string | Battery model in the battery list | `"ARK 5.12-25.6XH-A1"` |
-| `batteryList[].batteryCapacity` | int | Battery nominal capacity in Wh | `5000` |
-| `batteryList[].batteryNominalPower` | int | Battery nominal power in W | `2500` |
+| `batteryList[].batteryCapacity` | int | Battery rated capacity in Wh | `5000` |
+| `batteryList[].batteryNominalPower` | int | Battery rated power in W | `2500` |
 
 ## Related Documentation
 
 - [Device Authorization API](./04_api_device_auth.md)
 - [Device Data Query API](./08_api_device_data.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)

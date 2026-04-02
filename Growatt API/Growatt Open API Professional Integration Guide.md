@@ -9,6 +9,7 @@ This is an entry guide. Endpoint parameters, examples, and response codes remain
 - Baseline source of fact: `docs/3 接口列表.md`
 - Chinese split publication docs: `Growatt API/OPENAPI.zh-CN/*.md`
 - English split publication docs: `Growatt API/OPENAPI/*.md`
+- ESS terminology glossary: [./OPENAPI/12_ess_terminology.md](./OPENAPI/12_ess_terminology.md)
 - Integration observations: environment reports under `test/`
 
 ## 2 Baseline-Confirmed Integration Paths
@@ -67,4 +68,5 @@ These findings must not override the endpoint-level baseline.
 - [ ] Treated `bindDevice.pinCode` as required in client mode
 - [ ] Treated `readDeviceDispatch.requestId` as required
 - [ ] Implemented the three `setType` entries published in `10_global_params.md`
+- [ ] Aligned public ESS terminology to [./OPENAPI/12_ess_terminology.md](./OPENAPI/12_ess_terminology.md)
 - [ ] Kept integration observations in the compatibility layer instead of promoting them into the normative layer

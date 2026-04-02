@@ -21,7 +21,7 @@
 | Parameter | Vendor-table Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | Yes | Device SN |
-| `setType` | string | Yes | Parameter enum, for example `enable_control` |
+| `setType` | string | Yes | Parameter enum, for example `duration_and_power_charge_discharge` |
 | `value` | string | Yes | Parameter value, see [Global Parameters](./10_global_params.md) |
 | `requestId` | string | Yes | Unique request identifier, 32-character string |
 
@@ -78,3 +78,4 @@
 
 - [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
 - [Global Parameters](./10_global_params.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)

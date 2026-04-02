@@ -104,22 +104,22 @@
 | `code` | int | API status code; `0` means success | `0` |
 | `data` | object | Main data object | `{...}` |
 | `data.deviceSn` | string | Device serial number | `"DEVICE_SN_1"` |
-| `data.meterPower` | double | Meter power. Positive means grid import, negative means feed-in, unit: W | `0.00` |
+| `data.meterPower` | double | Grid meter power. Positive means grid import and negative means grid export, unit: W | `0.00` |
 | `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) | `174.90` |
 | `data.fac` | double | Grid frequency | `50.03` |
-| `data.etoUserToday` | double | Imported energy today in kWh | `3.10` |
-| `data.etoUserTotal` | double | Total imported energy in kWh | `44.80` |
-| `data.etoGridToday` | double | Exported energy today in kWh | `1.50` |
-| `data.etoGridTotal` | double | Total exported energy in kWh | `270.70` |
+| `data.etoUserToday` | double | Grid import energy today in kWh | `3.10` |
+| `data.etoUserTotal` | double | Total grid import energy in kWh | `44.80` |
+| `data.etoGridToday` | double | Grid export energy today in kWh | `1.50` |
+| `data.etoGridTotal` | double | Total grid export energy in kWh | `270.70` |
 | `data.faultCode` | int | Fault main code | `0` |
 | `data.faultSubCode` | int | Fault sub-code | `0` |
 | `data.protectCode` | int | Protection main code | `0` |
 | `data.protectSubCode` | int | Protection sub-code | `0` |
 | `data.pac` | double | AC output power in W | `41.30` |
-| `data.ppv` | double | Local PV power in W | `14.30` |
-| `data.payLoadPower` | double | Total load power in W | `14.50` |
+| `data.ppv` | double | PV power in W | `14.30` |
+| `data.payLoadPower` | double | Total load power (calculated) in W | `14.50` |
 | `data.batteryStatus` | int | Overall battery status | `0` |
-| `data.batPower` | double | Total battery charge/discharge power in W | `0.00` |
+| `data.batPower` | double | Battery power. Positive = charging, negative = discharging, `0` = idle, unit: W | `0.00` |
 | `data.priority` | int | Operating priority | `0` |
 | `data.status` | int | Runtime status code | `6` |
 | `data.utcTime` | string | UTC timestamp in `yyyy-MM-dd HH:mm:ss` format | `"2026-03-13 07:48:25"` |
@@ -129,16 +129,16 @@
 | `data.epvTotal` | double | Total PV generation | — |
 | `data.batteryList` | array | Battery data list | `[{...}]` |
 | `data.batteryList[].index` | int | Battery index (starts from 1) | `1` |
-| `data.batteryList[].soc` | int | Battery state of charge in percent | `67` |
-| `data.batteryList[].chargePower` | double | Battery charge power in W | `0.00` |
-| `data.batteryList[].dischargePower` | double | Battery discharge power in W | `0.00` |
+| `data.batteryList[].soc` | int | Battery state of charge (SOC) in percent | `67` |
+| `data.batteryList[].chargePower` | double | Battery charging power in W | `0.00` |
+| `data.batteryList[].dischargePower` | double | Battery discharging power in W | `0.00` |
 | `data.batteryList[].ibat` | double | Battery current on the low-voltage side in A | `-1.00` |
 | `data.batteryList[].vbat` | double | Battery voltage on the low-voltage side in V | `53.30` |
-| `data.batteryList[].soh` | int | Battery state of health `[0,100]` | `100` |
-| `data.batteryList[].echargeToday` | double | Battery charge energy today in kWh | `2.90` |
-| `data.batteryList[].echargeTotal` | double | Total battery charge energy in kWh | `80.70` |
-| `data.batteryList[].edischargeToday` | double | Battery discharge energy today in kWh | `1.90` |
-| `data.batteryList[].edischargeTotal` | double | Total battery discharge energy in kWh | `57.60` |
+| `data.batteryList[].soh` | int | Battery state of health (SOH) `[0,100]` | `100` |
+| `data.batteryList[].echargeToday` | double | Charged energy today in kWh | `2.90` |
+| `data.batteryList[].echargeTotal` | double | Total charged energy in kWh | `80.70` |
+| `data.batteryList[].edischargeToday` | double | Discharged energy today in kWh | `1.90` |
+| `data.batteryList[].edischargeTotal` | double | Total discharged energy in kWh | `57.60` |
 
 ## Status Definitions
 
@@ -148,8 +148,8 @@
 - `1`: Self-check
 - `3`: Fault
 - `4`: Upgrade
-- `5`: PV online & battery offline & on-grid
-- `6`: PV offline (or online) & battery online & on-grid
+- `5`: PV online & battery offline & grid-connected
+- `6`: PV offline (or online) & battery online & grid-connected
 - `7`: PV online & battery online & off-grid
 - `8`: PV offline & battery online & off-grid
 - `9`: Bypass mode
@@ -178,3 +178,4 @@
 
 - [Device Information Query API](./07_api_device_info.md)
 - [Device Data Push API](./09_api_device_push.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)

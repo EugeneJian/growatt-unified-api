@@ -78,10 +78,10 @@ This page publishes the baseline behavior of `getDeviceList`, `bindDevice`, `get
 | `deviceSn` | Device serial number |
 | `deviceTypeName` | Device type name |
 | `model` | Device model |
-| `nominalPower` | Nominal inverter power in W |
+| `nominalPower` | Rated inverter power in W |
 | `datalogSn` | Datalogger serial number |
 | `dtc` | Numeric device-type code |
-| `communicationVersion` | Communication version |
+| `communicationVersion` | Firmware communication version |
 | `authFlag` | Whether the device is already authorized |
 
 ## 2 Bind Devices
@@ -303,3 +303,4 @@ This page publishes the baseline behavior of `getDeviceList`, `bindDevice`, `get
 
 - [Authentication Guide](./01_authentication.md)
 - [Troubleshooting FAQ](./11_api_troubleshooting.md)
+- [ESS Terminology Glossary](./12_ess_terminology.md)
