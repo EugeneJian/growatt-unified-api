@@ -44,7 +44,7 @@ const LOCALE_TEXT: Record<GrowattDocLocale, LocaleText> = {
     navAriaLabel: "Growatt API navigation",
     sourceFileLabel: "Source file",
     sidebarTitle: "Growatt Open API",
-    sidebarDescription: "Official bilingual documentation aligned to the SSOT markdown source.",
+    sidebarDescription: "Published bilingual documentation aligned to the imported baseline.",
     languageLabel: "Language",
     languageOptions: {
       en: "EN",
@@ -68,7 +68,7 @@ const LOCALE_TEXT: Record<GrowattDocLocale, LocaleText> = {
     navAriaLabel: "Growatt API 导航",
     sourceFileLabel: "源文件",
     sidebarTitle: "Growatt Open API",
-    sidebarDescription: "基于 SSOT Markdown 对齐维护的中英文双语文档。",
+    sidebarDescription: "基于厂商基线对齐维护的中英双语公开文档。",
     languageLabel: "语言",
     languageOptions: {
       en: "EN",
@@ -160,7 +160,7 @@ function DocsNav({
           className={`growatt-docs-nav-link ${activeSlug === doc.slug ? "active" : ""}`.trim()}
           href={withLocaleHref(`/growatt-openapi/${doc.slug}`)}
         >
-          {doc.fileName} · {doc.title}
+          {doc.fileName} - {doc.title}
         </Link>
       ))}
       {afterDocsPages.length > 0 && <div className="growatt-docs-nav-divider" aria-hidden="true" />}

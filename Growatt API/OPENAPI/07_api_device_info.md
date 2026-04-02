@@ -1,53 +1,47 @@
 # Device Information Query API
 
-**Brief Description**
+## Brief Description
 
-- Returns static information for a device already authorized to the current token.
-- The query target is a single `deviceSn`.
-- The normative request body is JSON.
+- Get information for devices already authorized to the current token.
+- The API returns only device results that the current token is allowed to access; unauthorized devices return `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`.
 
-**Request URL**
+## Request URL
 
 - `/oauth2/getDeviceInfo`
 
-**Request Method**
+## Request Method
 
 - `POST`
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## Query Flow
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Select an authorized device"] --> B["Build request body with deviceSn"]
-    B --> C["Call POST /oauth2/getDeviceInfo"]
-    C --> D{"Response code"}
-    D -->|"0"| E["Return device metadata"]
-    D -->|"2"| F["Refresh token and retry"]
-    D -->|"12"| G["Check device authorization first"]
-```
-
----
-
-## Request Parameters
+## HTTP Header Parameters
 
 | Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Unique device serial number |
+| `Authorization` | Yes | string | Access-token header |
 
----
+## HTTP Body Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `deviceSn` | Yes | string | Unique device serial number (SN) |
+
+## Response Parameters
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | `0` means success; any other value means failure |
+| `data` | obj | Response data |
+| `message` | string | Response description |
 
 ## Request Example
 
 ```json
 {
-    "deviceSn": "YRP0N4S00Q"
+    "deviceSn": "DEVICE_SN_1"
 }
 ```
-
----
 
 ## Response Example
 
@@ -55,34 +49,32 @@ flowchart TD
 {
     "code": 0,
     "data": {
-        "deviceSn": "YRP0N4S00Q",
-        "deviceTypeName": "sph",
-        "model": "SPH 5000TL-HUB",
+        "deviceSn": "DEVICE_SN_1",
+        "deviceTypeName": "min",
+        "model": "BDCBAT",
         "nominalPower": 6000,
-        "datalogSn": "VWQ0F9W00L",
-        "datalogDeviceTypeName": "ShineWiLan-X2",
-        "dtc": 3503,
-        "communicationVersion": "ZCBD-0004",
+        "datalogSn": "DATALOG_SN_1",
+        "datalogDeviceTypeName": "ShineWiFi-X",
+        "dtc": 5100,
+        "communicationVersion": "ZABA-0021",
         "existBattery": true,
-        "batterySn": "YRP0N4S00Q_battery",
-        "batteryModel": "SPH 5000TL-HUB",
-        "batteryCapacity": 9000,
-        "batteryNominalPower": 6000,
+        "batterySn": "BATTERY_SN_1",
+        "batteryModel": "ARK 5.12-25.6XH-A1",
+        "batteryCapacity": 5000,
+        "batteryNominalPower": 2500,
         "authFlag": true,
         "batteryList": [
             {
-                "batterySn": "YRP0N4S00Q_battery",
-                "batteryModel": "BDCBAT",
-                "batteryCapacity": 9000,
-                "batteryNominalPower": 6000
+                "batterySn": "BATTERY_SN_1",
+                "batteryModel": "ARK 5.12-25.6XH-A1",
+                "batteryCapacity": 5000,
+                "batteryNominalPower": 2500
             }
         ]
     },
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
-
-### Common Failures
 
 ```json
 {
@@ -91,19 +83,25 @@ flowchart TD
 }
 ```
 
-```json
-{
-    "code": 12,
-    "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
-}
-```
+## `data` Field Definitions
 
-### Request Format Note
-
-- The request body must pass the raw SN, without display prefixes such as `SPH:` or `SPM:`.
-- Use `Authorization: Bearer <access_token>` with `Content-Type: application/json`.
-
----
+| Parameter | Description |
+| :--- | :--- |
+| `deviceSn` | Device serial number |
+| `deviceTypeName` | Device type name |
+| `model` | Device model |
+| `nominalPower` | Nominal inverter power in W |
+| `datalogSn` | Datalogger serial number |
+| `datalogDeviceTypeName` | Datalogger type name |
+| `dtc` | Numeric device-type code |
+| `communicationVersion` | Communication version |
+| `existBattery` | Whether the device has a battery |
+| `batterySn` | Battery serial number |
+| `batteryModel` | Battery model |
+| `batteryCapacity` | Battery nominal capacity in Wh |
+| `batteryNominalPower` | Battery nominal power in W |
+| `authFlag` | Whether the device is already authorized |
+| `batteryList` | Battery list |
 
 ## Related Documentation
 

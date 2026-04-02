@@ -26,9 +26,10 @@ jest.mock("@/lib/growatt-docs/markdown", () => {
 
 import {
   GROWATT_CODES_SLUG,
+  GROWATT_QUICK_GUIDE_SLUG,
+  getGrowattCodesPage,
   getGrowattDocBySlug,
   getGrowattDocMetas,
-  getGrowattCodesPage,
   getGrowattOverview,
   getGrowattQuickGuide,
   getGrowattSpecialPages,
@@ -66,20 +67,18 @@ describe("growatt docs source-of-truth loader", () => {
     expect(page?.displayMarkdown).toContain("/growatt-openapi/04_api_device_auth");
   });
 
-  it("loads and renders quick guide markdown from Growatt API root", async () => {
+  it("loads and renders the English quick guide from the Growatt API root", async () => {
     const quickGuide = await getGrowattQuickGuide("en");
 
-    expect(quickGuide.slug).toBe("quick-guide");
+    expect(quickGuide.slug).toBe(GROWATT_QUICK_GUIDE_SLUG);
     expect(quickGuide.fileName).toBe("Growatt Open API Professional Integration Guide.md");
-    expect(quickGuide.title).toBe(
-      "Growatt Open API Professional Integration Guide (SSOT Aligned)",
-    );
+    expect(quickGuide.title).toBe("Growatt Open API Professional Integration Guide");
     expect(quickGuide.html).toContain("<article>");
-    expect(quickGuide.html).toContain("Integration Checklist");
-    expect(quickGuide.displayMarkdown).toContain("Integration Checklist");
+    expect(quickGuide.markdown).toContain("## 5 Integration Observations (Non-Normative)");
+    expect(quickGuide.markdown).toContain("## 6 Integration Checklist");
   });
 
-  it("loads localized Chinese overview and doc titles", async () => {
+  it("loads localized Chinese overview and doc titles without mojibake", async () => {
     const [overview, docs] = await Promise.all([
       getGrowattOverview("zh-CN"),
       getGrowattDocMetas("zh-CN"),
@@ -95,8 +94,34 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.fileName).toBe(
       "Growatt Open API Professional Integration Guide.zh-CN.md",
     );
-    expect(quickGuide.title).toBe("Growatt Open API 专业集成指南（与 SSOT 对齐）");
-    expect(quickGuide.displayMarkdown).toContain("集成检查清单");
+    expect(quickGuide.title).toBe("Growatt Open API 专业集成指南");
+    expect(quickGuide.markdown).toContain("## 5 联调观察（非基线规范）");
+    expect(quickGuide.markdown).toContain("## 6 集成检查清单");
+  });
+
+  it("registers quick guide and growatt codes special pages with corrected labels", () => {
+    const specialPages = getGrowattSpecialPages();
+
+    expect(specialPages).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          slug: GROWATT_QUICK_GUIDE_SLUG,
+          labelByLocale: expect.objectContaining({
+            en: "Quick Guide",
+            "zh-CN": "快速指南",
+          }),
+          placement: "beforeDocs",
+        }),
+        expect.objectContaining({
+          slug: GROWATT_CODES_SLUG,
+          labelByLocale: expect.objectContaining({
+            en: "Appendix: Growatt Codes",
+            "zh-CN": "附录：Growatt Codes",
+          }),
+          placement: "afterDocs",
+        }),
+      ]),
+    );
   });
 
   it("loads fault-code appendix content from the enterprise SSOT", async () => {
@@ -129,23 +154,91 @@ describe("growatt docs source-of-truth loader", () => {
     expect(codes.severityGroups[2]?.categories[0]?.records[0]?.code).toBe(1000);
   });
 
-  it("registers growatt codes as a special page in both locales", async () => {
-    const specialPages = getGrowattSpecialPages();
-    const codesZh = await getGrowattCodesPage("zh-CN");
+  it("keeps redirect_uri in both token grant examples", async () => {
+    const [tokenDocEn, tokenDocZh] = await Promise.all([
+      getGrowattDocBySlug("02_api_access_token", "en"),
+      getGrowattDocBySlug("02_api_access_token", "zh-CN"),
+    ]);
 
-    expect(specialPages).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          slug: GROWATT_CODES_SLUG,
-          labelByLocale: expect.objectContaining({
-            en: "🔒 Appendix: Growatt Codes",
-            "zh-CN": "🔒 附录：Growatt Codes",
-          }),
-          placement: "afterDocs",
-        }),
-      ]),
+    expect(tokenDocEn).not.toBeNull();
+    expect(tokenDocZh).not.toBeNull();
+    expect(tokenDocEn?.markdown.match(/redirect_uri/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
+    expect(tokenDocZh?.markdown.match(/redirect_uri/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
+  });
+
+  it("marks readDeviceDispatch requestId as required in both locales", async () => {
+    const [readDispatchEn, readDispatchZh] = await Promise.all([
+      getGrowattDocBySlug("06_api_read_dispatch", "en"),
+      getGrowattDocBySlug("06_api_read_dispatch", "zh-CN"),
+    ]);
+
+    expect(readDispatchEn).not.toBeNull();
+    expect(readDispatchZh).not.toBeNull();
+    expect(readDispatchEn?.markdown).toContain("| `requestId` | string | Yes |");
+    expect(readDispatchZh?.markdown).toContain("| `requestId` | string | 是 |");
+  });
+
+  it("restores baseline global parameters and response codes", async () => {
+    const [globalParamsEn, globalParamsZh] = await Promise.all([
+      getGrowattDocBySlug("10_global_params", "en"),
+      getGrowattDocBySlug("10_global_params", "zh-CN"),
+    ]);
+
+    for (const page of [globalParamsEn, globalParamsZh]) {
+      expect(page).not.toBeNull();
+      expect(page?.markdown).toContain("opencloud-test-au.growatt.com");
+      expect(page?.markdown).toContain("READ_DEVICE_PARAM_FAIL");
+      expect(page?.markdown).toContain("time_slot_charge_discharge");
+      expect(page?.markdown).toContain("duration_and_power_charge_discharge");
+      expect(page?.markdown).toContain("anti_backflow");
+      expect(page?.markdown).not.toContain("enable_control");
+    }
+  });
+
+  it("publishes push payloads from the baseline instead of query-model wording", async () => {
+    const [pushDocEn, pushDocZh] = await Promise.all([
+      getGrowattDocBySlug("09_api_device_push", "en"),
+      getGrowattDocBySlug("09_api_device_push", "zh-CN"),
+    ]);
+
+    for (const page of [pushDocEn, pushDocZh]) {
+      expect(page).not.toBeNull();
+      expect(page?.markdown).toContain('"dataType": "dfcData"');
+      expect(page?.markdown).toContain('"deviceSn": "DEVICE_SN_1"');
+      expect(page?.markdown).not.toContain("same as the query model");
+      expect(page?.markdown).not.toContain("same model as query");
+      expect(page?.markdown).not.toContain("与查询模型一致");
+    }
+  });
+
+  it("keeps integration-only findings inside explicit observation sections", async () => {
+    const [guideEn, guideZh, faqEn, faqZh] = await Promise.all([
+      getGrowattQuickGuide("en"),
+      getGrowattQuickGuide("zh-CN"),
+      getGrowattDocBySlug("11_api_troubleshooting", "en"),
+      getGrowattDocBySlug("11_api_troubleshooting", "zh-CN"),
+    ]);
+
+    expect(guideEn.markdown.indexOf("## 5 Integration Observations (Non-Normative)")).toBeGreaterThan(
+      -1,
     );
-    expect(codesZh.html).toContain('id="protect"');
-    expect(codesZh.markdown).toContain("# Growatt Codes");
+    expect(guideZh.markdown.indexOf("## 5 联调观察（非基线规范）")).toBeGreaterThan(-1);
+    expect(faqEn?.markdown.indexOf("## Integration Observations (Non-Normative)")).toBeGreaterThan(
+      -1,
+    );
+    expect(faqZh?.markdown.indexOf("## 联调观察（非基线规范）")).toBeGreaterThan(-1);
+
+    expect(guideEn.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
+      guideEn.markdown.indexOf("## 5 Integration Observations (Non-Normative)"),
+    );
+    expect(guideZh.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
+      guideZh.markdown.indexOf("## 5 联调观察（非基线规范）"),
+    );
+    expect(faqEn?.markdown.indexOf("WRONG_GRANT_TYPE") ?? -1).toBeGreaterThan(
+      faqEn?.markdown.indexOf("## Integration Observations (Non-Normative)") ?? -1,
+    );
+    expect(faqZh?.markdown.indexOf("WRONG_GRANT_TYPE") ?? -1).toBeGreaterThan(
+      faqZh?.markdown.indexOf("## 联调观察（非基线规范）") ?? -1,
+    );
   });
 });

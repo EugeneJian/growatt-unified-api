@@ -84,7 +84,10 @@ export function getGrowattSpecialPages(): GrowattSpecialPageNavMeta[] {
     },
     {
       slug: GROWATT_CODES_SLUG,
-      labelByLocale: { en: "🔒 Appendix: Growatt Codes", "zh-CN": "🔒 附录：Growatt Codes" },
+      labelByLocale: {
+        en: "Appendix: Growatt Codes",
+        "zh-CN": "附录：Growatt Codes",
+      },
       placement: "afterDocs",
       requiresDocumentNavigation: true,
     },

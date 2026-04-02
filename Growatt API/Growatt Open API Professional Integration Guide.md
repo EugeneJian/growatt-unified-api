@@ -1,115 +1,70 @@
-# Growatt Open API Professional Integration Guide (SSOT Aligned)
+# Growatt Open API Professional Integration Guide
 
-Version: 1.2 | Alignment Baseline: OPENAPI V1.0 | Date: March 23, 2026
+Baseline source: `docs/3 接口列表.md` (synced from the approved vendor document dated April 1, 2026)
 
-This guide is an entry document for solution architects, backend engineers, and integration teams. The endpoint-level SSOT is `Growatt API/OPENAPI/*.md`. If this guide conflicts with an endpoint document, follow the endpoint document.
+This is an entry guide. Endpoint parameters, examples, and response codes remain governed by `Growatt API/OPENAPI/*.md`; this page no longer lets integration observations override the baseline.
 
----
+## 1 Document Layering
 
-## 1 SSOT and Document Layering
+- Baseline source of fact: `docs/3 接口列表.md`
+- Chinese split publication docs: `Growatt API/OPENAPI.zh-CN/*.md`
+- English split publication docs: `Growatt API/OPENAPI/*.md`
+- Integration observations: environment reports under `test/`
 
-Primary specification:
-
-- [Authentication Guide](./OPENAPI/01_authentication.md)
-- [Get access_token API](./OPENAPI/02_api_access_token.md)
-- [OAuth2-refresh API](./OPENAPI/03_api_refresh.md)
-- [Device Authorization API](./OPENAPI/04_api_device_auth.md)
-- [Device Dispatch API](./OPENAPI/05_api_device_dispatch.md)
-- [Read Device Dispatch Parameters API](./OPENAPI/06_api_read_dispatch.md)
-- [Device Information Query API](./OPENAPI/07_api_device_info.md)
-- [Device Data Query API](./OPENAPI/08_api_device_data.md)
-- [Device Data Push API](./OPENAPI/09_api_device_push.md)
-- [Global Parameter Description](./OPENAPI/10_global_params.md)
-
-Supplemental references:
-
-- [Troubleshooting FAQ](./OPENAPI/11_api_troubleshooting.md)
-- Environment-specific integration reports under `test/`
-
----
-
-## 2 OAuth Mode Boundary
+## 2 Baseline-Confirmed Integration Paths
 
 ### `authorization_code`
 
-- Intended for end-user login and consent inside the third-party platform.
-- `POST /oauth2/token` returns a `refresh_token`.
-- `POST /oauth2/getDeviceList` is supported only in this mode.
-- Use the `deviceSn` returned by `getDeviceList` as the bind target, and send `deviceSnList` as object entries. Add `pinCode` when required by the environment or target device.
+1. Call `POST /oauth2/token`
+2. Call `POST /oauth2/getDeviceList`
+3. Call `POST /oauth2/bindDevice`
+4. Continue with device query, dispatch, and read-back APIs
 
 ### `client_credentials`
 
-- Intended for direct platform-to-platform integrations.
-- A `refresh_token` must not be assumed; rely on the actual response.
-- Device onboarding typically starts from `POST /oauth2/bindDevice`; send `deviceSnList` as object entries, and add `pinCode` when required.
-- `POST /oauth2/getDeviceList` is not the standard discovery interface for this mode.
+1. Call `POST /oauth2/token`
+2. Call `POST /oauth2/bindDevice` directly
+3. Call `POST /oauth2/getDeviceListAuthed`
+4. Continue with device query, dispatch, and read-back APIs
 
----
+## 3 API Matrix
 
-## 3 Recommended Integration Path
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Obtain client_id / client_secret"] --> B{"Choose OAuth mode"}
-    B -->|"authorization_code"| C["User logs into Growatt and exchanges a token pair"]
-    B -->|"client_credentials"| D["Obtain access token directly"]
-    C --> E["getDeviceList -> bindDevice"]
-    D --> F["bindDevice"]
-    E --> G["getDeviceInfo / getDeviceData"]
-    F --> G
-    G --> H["deviceDispatch -> readDeviceDispatch"]
-    G --> I["Receive dfcData push"]
-```
-
----
-
-## 4 API Matrix
-
-| Capability | Endpoint | Key Input |
+| Capability | Endpoint | Baseline Key Input |
 | :--- | :--- | :--- |
-| Get token | `/oauth2/token` | `grant_type`, client credentials |
-| Refresh token | `/oauth2/refresh` | `refresh_token` |
-| Candidate device list | `/oauth2/getDeviceList` | Bearer token, `authorization_code` only |
-| Bind device | `/oauth2/bindDevice` | `deviceSnList` object entries using the returned `deviceSn`; add `pinCode` when required |
-| Authorized device list | `/oauth2/getDeviceListAuthed` | Bearer token |
-| Unbind device | `/oauth2/unbindDevice` | `deviceSnList` |
+| Get token | `/oauth2/token` | `grant_type`, `client_id`, `client_secret`, `redirect_uri` |
+| Refresh token | `/oauth2/refresh` | `refresh_token`, client credentials |
+| Get candidate devices | `/oauth2/getDeviceList` | Bearer token, `authorization_code` only |
+| Bind devices | `/oauth2/bindDevice` | `deviceSnList`; `pinCode` required in client mode |
+| Get authorized devices | `/oauth2/getDeviceListAuthed` | Bearer token |
+| Unbind devices | `/oauth2/unbindDevice` | `deviceSnList` |
 | Device information | `/oauth2/getDeviceInfo` | `deviceSn` |
 | Device telemetry | `/oauth2/getDeviceData` | `deviceSn` |
 | Device dispatch | `/oauth2/deviceDispatch` | `deviceSn`, `setType`, `value`, `requestId` |
-| Dispatch read-back | `/oauth2/readDeviceDispatch` | `deviceSn`, `setType` |
+| Dispatch read-back | `/oauth2/readDeviceDispatch` | `deviceSn`, `setType`, `requestId` |
 
----
+## 4 Baseline Items That Need Extra Attention
 
-## 5 Dispatch and Telemetry Conventions
+- Both vendor examples for `POST /oauth2/token` include `redirect_uri`.
+- The parameter table for `POST /oauth2/readDeviceDispatch` requires `requestId`, while the vendor sample omits it.
+- The parameter table for `POST /oauth2/deviceDispatch` labels `value` as `string`, while the same page publishes an object-valued example.
+- The local header table for `POST /oauth2/getDeviceData` uses `token`, while the global section uses `Authorization: Bearer xxxxxxx`.
 
-- The normative `deviceDispatch` request body is JSON and `requestId` is required.
-- The normative `readDeviceDispatch` interface requires only `deviceSn` and `setType`; `data` may be either an object or an array depending on `setType`.
-- The primary telemetry model is centered on `meterPower`, `reactivePower`, `serialNum`, and `batteryList[].soh`.
-- Historical materials that use `activePower`, `reverActivePower`, or top-level `soc` should be handled as compatibility fields only.
+## 5 Integration Observations (Non-Normative)
 
----
+The following findings come from environment reports under `test/` and are kept for implementation reference only:
 
-## 6 Integration Notes
+- Multiple reports use JSON bodies for device-level APIs.
+- Multiple reports recommend sending raw `deviceSn` values instead of `datalogSn` or display-prefixed labels.
+- Some reports observe `WRONG_GRANT_TYPE` when `client_credentials` calls `getDeviceList`.
+- Some reports observe object-shaped `readDeviceDispatch.data` values for certain `setType` values.
 
-The following integration notes are confirmed by existing tests and should be applied together with the primary specification:
+These findings must not override the endpoint-level baseline.
 
-- `/oauth2/getDeviceList` returns `WRONG_GRANT_TYPE` under `client_credentials`
-- `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice` use JSON bodies
-- Use raw `deviceSn` values for device-level APIs; do not substitute `datalogSn` or prefixed labels such as `SPH:` / `SPM:`
-- Use object entries in `deviceSnList` for `bindDevice`; add `pinCode` when required
-- `getDeviceData` and push payloads may still expose historical compatibility fields
+## 6 Integration Checklist
 
----
-
-## 7 Integration Checklist
-
-- [ ] Separated `authorization_code` and `client_credentials` capability boundaries
-- [ ] Implemented `/oauth2/token`
-- [ ] Implemented `/oauth2/refresh` when `refresh_token` exists
-- [ ] Switched to the new endpoint names: `getDeviceList` / `getDeviceListAuthed` / `readDeviceDispatch`
-- [ ] Verified the `bindDevice` object-entry payload and whether `pinCode` is required
-- [ ] Made `requestId` mandatory in `deviceDispatch`
-- [ ] Parse `readDeviceDispatch.data` according to `setType`
-- [ ] Consume telemetry using the primary field model
-- [ ] Keep compatibility handling isolated to the compatibility layer
+- [ ] Separated the baseline capability boundary between `authorization_code` and `client_credentials`
+- [ ] Kept `redirect_uri` in both token request examples
+- [ ] Treated `bindDevice.pinCode` as required in client mode
+- [ ] Treated `readDeviceDispatch.requestId` as required
+- [ ] Implemented the three `setType` entries published in `10_global_params.md`
+- [ ] Kept integration observations in the compatibility layer instead of promoting them into the normative layer

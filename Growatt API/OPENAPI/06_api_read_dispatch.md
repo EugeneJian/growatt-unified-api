@@ -1,71 +1,50 @@
 # Read Device Dispatch Parameters API
 
-**Brief Description**
+## Brief Description
 
-- Reads current dispatch parameters by `deviceSn` and `setType`.
-- The API returns only results for devices that the current token is allowed to access.
-- Current rate limit: at most one request every 5 seconds per device.
-- The normative interface does not require `requestId`.
+- Read device parameters by device SN.
+- The API returns results only for devices that the current token is allowed to access; unauthorized devices return `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`.
+- Current frequency limit: one call every 5 seconds per device.
 
-**Request URL**
+## Request URL
 
 - `/oauth2/readDeviceDispatch`
 
-**Request Method**
+## Request Method
 
 - `POST`
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## Read-Back Verification Flow
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Dispatch already sent"] --> B["Build request with deviceSn and setType"]
-    B --> C["Call POST /oauth2/readDeviceDispatch"]
-    C --> D{"Response code"}
-    D -->|"0"| E["Parse data"]
-    D -->|"5 or 18"| F["Record failure and retry if needed"]
-    E --> G["Compare with expected target"]
-    G --> H["Continue control loop"]
-```
-
----
-
 ## Request Parameters
 
-| Parameter | Required | Type | Description |
+| Parameter | Vendor-table Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Device serial number |
-| `setType` | Yes | string | Parameter enum, for example `time_slot_charge_discharge` |
-
----
+| `deviceSn` | string | Yes | Device SN |
+| `setType` | string | Yes | Parameter enum, for example `time_slot_charge_discharge` |
+| `requestId` | string | Yes | Unique request identifier |
 
 ## Request Example
 
 ```json
 {
-    "deviceSn": "FDCJQ00003",
-    "setType": "time_slot_charge_discharge"
+    "deviceSn": "DEVICE_SN_1",
+    "setType": "time_slot_charge_discharge",
+    "requestId": "20260402093000123abcdef123456789"
 }
 ```
 
----
-
 ## Response Parameters
 
-| Parameter | Type | Description |
+| Parameter | Vendor-table Type | Description |
 | :--- | :--- | :--- |
-| `code` | int | Business status code, `0` means success |
-| `data` | object or array | Response shape depends on `setType` |
-| `message` | string | Result description |
-
----
+| `code` | int | `0` means success; any other value means failure |
+| `data` | string | The vendor table says `string`, while the success sample is an array |
+| `message` | string | Response description |
 
 ## Response Examples
 
-### `time_slot_charge_discharge` Returns an Array
+### Successful Read
 
 ```json
 {
@@ -102,33 +81,31 @@ flowchart TD
 {
     "code": 18,
     "data": null,
-    "message": "READ_PARAMETER_FAILED"
+    "message": "READ_DEVICE_PARAM_FAIL"
 }
 ```
 
-### Shape Variability Note
-
-Different `setType` values can legitimately return different shapes. For example, `duration_and_power_charge_discharge` may return an object such as:
+### Too Many Requests
 
 ```json
 {
-    "code": 0,
-    "data": {
-        "duration": 5,
-        "percentage": 20,
-        "acChargingEnabled": 1,
-        "remotePowerControlEnable": 1
-    },
-    "message": "SUCCESSFUL_OPERATION"
+    "code": 105,
+    "data": null,
+    "message": "TOO_MANY_REQUEST"
 }
 ```
 
-This is a `setType`-specific shape variation and does not change the normative rule that `data` may be either an object or an array.
+## Baseline Note
 
----
+- The vendor parameter table marks `requestId` as required, even though the original request sample omits it. This page follows the parameter table.
+- The vendor response table labels `data` as `string`, while the success sample is an array.
+
+## Integration Observations (Non-Normative)
+
+- Some environment reports under `test/` show object-shaped read-back payloads for certain `setType` values.
+- That behavior is not part of the April 1, 2026 vendor baseline, so it is kept here only as an observation.
 
 ## Related Documentation
 
 - [Device Dispatch API](./05_api_device_dispatch.md)
-- [Device Information Query API](./07_api_device_info.md)
 - [Global Parameters](./10_global_params.md)

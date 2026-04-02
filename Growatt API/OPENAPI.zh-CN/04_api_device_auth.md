@@ -1,50 +1,22 @@
 # 设备授权 API
 
-本节说明设备发现、授权、授权结果查询与解除授权的规范接口。
+本页按厂商基线整理 `getDeviceList`、`bindDevice`、`getDeviceListAuthed` 与 `unbindDevice` 四个接口。
 
-## 授权流程
+## 1 获取可授权的设备列表
 
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant User as EndUser
-    participant Client as PlatformApp
-    participant API as OAuthAPI
-
-    opt 授权码模式
-        Client->>API: POST /oauth2/getDeviceList
-        API-->>Client: 返回候选设备列表
-        Client-->>User: 展示可授权设备
-        User->>Client: 选择目标设备
-    end
-    Client->>API: POST /oauth2/bindDevice
-    API-->>Client: 返回授权结果
-    Client->>API: POST /oauth2/getDeviceListAuthed
-    API-->>Client: 返回已授权设备列表
-    opt 撤销授权
-        Client->>API: POST /oauth2/unbindDevice
-        API-->>Client: 返回解除结果
-    end
-```
-
----
-
-## 1 获取可授权设备列表
-
-**简要说明**
+### 简要描述
 
 - 获取 Growatt 终端用户账号下可授权给第三方平台的设备列表。
-- 仅 `authorization_code` 模式支持。
-- 前提：终端用户已在 Growatt 账号下完成设备配网与绑定。
+- 前提：终端用户已注册 Growatt 账号，并在账号下配网添加设备。
+- 仅 `authorization_code` 模式下支持。
 
-**请求 URL**
+### 请求 URL
 
 - `/oauth2/getDeviceList`
 
-**请求方式**
+### 请求方式
 
 - `POST`
-- Header 需携带有效 `access_token`
 - `Authorization: Bearer <token>`
 
 ### 请求示例
@@ -53,6 +25,14 @@ sequenceDiagram
 // 无参数
 ```
 
+### 返回参数说明
+
+| 参数名 | 厂商表格类型 | 说明 |
+| :--- | :--- | :--- |
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
+| `data` | string | 厂商表格原文写作 `string`，实际示例为设备数组 |
+| `message` | string | 返回说明 |
+
 ### 返回示例
 
 ```json
@@ -60,65 +40,61 @@ sequenceDiagram
     "code": 0,
     "data": [
         {
-            "deviceSn": "xxx1",
+            "deviceSn": "DEVICE_SN_1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "<masked_datalog_sn_1>",
+            "datalogSn": "DATALOG_SN_1",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
+        },
+        {
+            "deviceSn": "DEVICE_SN_2",
+            "deviceTypeName": "min",
+            "model": "MIN 5000TL-XH2",
+            "nominalPower": 6000,
+            "datalogSn": "DATALOG_SN_2",
+            "dtc": 5100,
+            "communicationVersion": "ZABA-0023",
+            "authFlag": false
         }
     ],
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
-### 设备对象字段
-
-| 参数名 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| `deviceSn` | string | 设备序列号 |
-| `deviceTypeName` | string | 设备类型名称 |
-| `model` | string | 设备型号 |
-| `nominalPower` | number | 额定功率，单位：W |
-| `datalogSn` | string | 采集器序列号。调用 `bindDevice` 与其他设备级接口时应使用 `deviceSn`，不要使用 `datalogSn` |
-| `dtc` | number | 设备类型编码 |
-| `communicationVersion` | string | 通讯版本 |
-| `authFlag` | boolean | 是否已授权 |
-
-### 模式边界说明
-
-使用 `client_credentials` token 调用本接口超出了支持边界，可能返回如下授权模式错误：
-
 ```json
 {
-    "code": 103,
-    "data": null,
-    "message": "WRONG_GRANT_TYPE"
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
 }
 ```
 
-正确动作：
+### `data` 字段说明
 
-- `getDeviceList` 仅用于 `authorization_code` 模式。
-- `client_credentials` 模式应直接从已知纯 SN 的 `bindDevice` 开始。
-
----
+| 参数名 | 说明 |
+| :--- | :--- |
+| `deviceSn` | 设备序列号 |
+| `deviceTypeName` | 设备大类型名称 |
+| `model` | 设备型号 |
+| `nominalPower` | 逆变器额定功率，单位 W |
+| `datalogSn` | 采集器序列号 |
+| `dtc` | 设备类型数字编码 |
+| `communicationVersion` | 固件通讯版本 |
+| `authFlag` | 是否已授权 |
 
 ## 2 授权设备
 
-**简要说明**
+### 简要描述
 
-- 将设备授权给第三方平台。
-- 请求体统一使用 JSON。
-- `deviceSnList` 使用对象项；如环境或目标设备要求 `pinCode`，则在对象项中补充。
+- 授权 Growatt 终端用户下的设备给第三方。
 
-**请求 URL**
+### 请求 URL
 
 - `/oauth2/bindDevice`
 
-**请求方式**
+### 请求方式
 
 - `POST`
 - `Content-Type: application/json`
@@ -126,46 +102,53 @@ sequenceDiagram
 
 ### 请求参数说明
 
-| 参数名 | 必填 | 类型 | 说明 |
+| 参数名 | 类型 | 是否必传 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | 是 | array | 非空数组 |
-| `deviceSnList[]` | 是 | object | 包含 `deviceSn` 的对象项；如环境要求，再补 `pinCode` |
-| `deviceSnList[].deviceSn` | 使用对象项时必填 | string | 设备级接口实际使用的设备序列号 |
-| `deviceSnList[].pinCode` | 环境或设备接入流程要求 PIN 时必填 | string | 设备 PINCode |
+| `deviceSnList` | array | 是 | 非空，设备序列号及 `pinCode` 列表 |
+| `deviceSnList[].deviceSn` | string | 是 | 设备序列号 |
+| `deviceSnList[].pinCode` | string | 客户端模式下必填 | 设备 `PinCode` |
 
 ### 请求示例
 
-#### 常见对象项示例
+#### 授权码模式
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "xxx1"
+            "deviceSn": "DEVICE_SN_1"
         },
         {
-            "deviceSn": "xxxx2"
+            "deviceSn": "DEVICE_SN_2"
         }
     ]
 }
 ```
 
-#### 带 `pinCode` 的对象项示例
+#### 客户端模式
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "xxx1",
-            "pinCode": "<masked_pin_code_1>"
+            "deviceSn": "DEVICE_SN_1",
+            "pinCode": "PIN001"
         },
         {
-            "deviceSn": "xxxx2",
-            "pinCode": "<masked_pin_code_2>"
+            "deviceSn": "DEVICE_SN_2",
+            "pinCode": "PIN002"
         }
     ]
 }
 ```
+
+### 返回参数说明
+
+| 参数名 | 厂商表格类型 | 说明 |
+| :--- | :--- | :--- |
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
+| `data` | string | 厂商表格原文写作 `string`，成功示例为 `null`，部分失败示例为数组 |
+| `message` | string | 返回说明 |
 
 ### 返回示例
 
@@ -177,55 +160,42 @@ sequenceDiagram
 }
 ```
 
-失败示例：
+```json
+{
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
+}
+```
+
+```json
+{
+    "code": 19,
+    "message": "DEVICE_ID_ALREADY_EXISTS"
+}
+```
 
 ```json
 {
     "code": 12,
     "data": [
-        "xxx1"
+        "DEVICE_SN_2"
     ],
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
 ```
 
-### 请求格式说明
-
-- 统一使用 `Authorization: Bearer <access_token>` 与 `Content-Type: application/json`。
-- `deviceSn` 必须传纯 SN，不带 `SPH:` / `SPM:` 等展示前缀。
-- 绑定目标应使用 `getDeviceList` 返回的 `deviceSn`，不要误用 `datalogSn`。
-- `deviceSnList` 统一使用对象项；不再推荐裸字符串数组。
-- 如环境或目标设备要求，再补 `pinCode`。
-
-参考示例：
-
-```json
-{
-    "deviceSnList": [
-        {
-            "deviceSn": "xxx1"
-        },
-        {
-            "deviceSn": "xxxx2",
-            "pinCode": "<masked_pin_code_2>"
-        }
-    ]
-}
-```
-
----
-
 ## 3 获取已授权的设备列表
 
-**简要说明**
+### 简要描述
 
-- 获取当前 token 已经授权的设备列表。
+- 获取 Growatt 终端用户个人账号下已经授权的设备列表。
+- 前提：终端用户已注册 Growatt 账号，并在账号下配网添加设备。
 
-**请求 URL**
+### 请求 URL
 
 - `/oauth2/getDeviceListAuthed`
 
-**请求方式**
+### 请求方式
 
 - `POST`
 - `Authorization: Bearer <token>`
@@ -236,6 +206,14 @@ sequenceDiagram
 // 无参数
 ```
 
+### 返回参数说明
+
+| 参数名 | 厂商表格类型 | 说明 |
+| :--- | :--- | :--- |
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
+| `data` | string | 厂商表格原文写作 `string`，实际示例为设备数组 |
+| `message` | string | 返回说明 |
+
 ### 返回示例
 
 ```json
@@ -243,11 +221,11 @@ sequenceDiagram
     "code": 0,
     "data": [
         {
-            "deviceSn": "xxx1",
+            "deviceSn": "DEVICE_SN_1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "<masked_datalog_sn_1>",
+            "datalogSn": "DATALOG_SN_1",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
@@ -257,19 +235,24 @@ sequenceDiagram
 }
 ```
 
----
+```json
+{
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
+}
+```
 
 ## 4 解除授权设备
 
-**简要说明**
+### 简要描述
 
-- 解除第三方平台对设备的授权关系。
+- 将 Growatt 终端用户授权给第三方的下属设备解除授权。
 
-**请求 URL**
+### 请求 URL
 
 - `/oauth2/unbindDevice`
 
-**请求方式**
+### 请求方式
 
 - `POST`
 - `Content-Type: application/json`
@@ -277,20 +260,28 @@ sequenceDiagram
 
 ### 请求参数说明
 
-| 参数名 | 必填 | 类型 | 说明 |
+| 参数名 | 类型 | 是否必传 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | 是 | array(string) | 待解除授权的设备 SN 列表 |
+| `deviceSnList` | array | 是 | Growatt 终端用户下属的设备序列号列表 |
 
 ### 请求示例
 
 ```json
 {
     "deviceSnList": [
-        "xxx1",
-        "xxxx2"
+        "DEVICE_SN_1",
+        "DEVICE_SN_2"
     ]
 }
 ```
+
+### 返回参数说明
+
+| 参数名 | 厂商表格类型 | 说明 |
+| :--- | :--- | :--- |
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
+| `data` | string | 厂商表格原文写作 `string`，成功示例为 `null` |
+| `message` | string | 返回说明 |
 
 ### 返回示例
 
@@ -302,9 +293,14 @@ sequenceDiagram
 }
 ```
 
----
+```json
+{
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
+}
+```
 
 ## 相关文档
 
 - [身份认证说明](./01_authentication.md)
-- [设备下发 API](./05_api_device_dispatch.md)
+- [常见问题与排查 FAQ](./11_api_troubleshooting.md)

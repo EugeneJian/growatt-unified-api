@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feishu Sheet Writer"
+  short_description: "Write Feishu sheets safely on Windows"
+  default_prompt: "Use $feishu-sheet-writer to create or update a Feishu spreadsheet from UTF-8 CSV content without Chinese encoding issues."

@@ -1,22 +1,33 @@
-# Growatt Docs SSOT Workflow
+# Growatt Docs Baseline Workflow
 
 ## Goal
 
-Keep a single source of truth (SSOT) for Growatt API docs while publishing a customer-friendly HTML site at `/growatt-openapi`.
+Use the imported vendor baseline as the factual source, then publish aligned bilingual HTML documentation at `/growatt-openapi`.
 
-## SSOT Rules
+## Source Order
 
-1. The primary editable source for Growatt API docs is:
+1. Upstream baseline:
+   - `docs/3 接口列表.md`
+   - Sync this file from the latest approved vendor document first.
+2. Published split docs:
    - `Growatt API/OPENAPI/*.md`
-2. The editable source for Quick Guide is:
+   - `Growatt API/OPENAPI.zh-CN/*.md`
+3. Entry guides and FAQ:
    - `Growatt API/Growatt Open API Professional Integration Guide.md`
-3. `Growatt API/Growatt Unified API.md` is reference-only and must not be edited as the primary source.
-4. Add new API docs with the file naming pattern:
-   - `NN_descriptive_name.md` (example: `11_api_new_feature.md`)
-5. Keep `Growatt API/OPENAPI/README.md` updated with:
-   - Version
-   - Release Date
-   - Full document index links
+   - `Growatt API/Growatt Open API Professional Integration Guide.zh-CN.md`
+4. Historical references and integration reports:
+   - `Growatt API/Growatt Unified API.md`
+   - `test/*.md`
+
+The baseline is normative. Split docs, guides, and FAQ are publication layers and must not override it.
+
+## Publication Rules
+
+1. Update `docs/3 接口列表.md` before editing any published OPENAPI page.
+2. Reconcile the bilingual split docs against the baseline before touching Quick Guide or FAQ.
+3. Keep environment-specific findings explicitly labeled as non-normative observations.
+4. If the vendor baseline is internally inconsistent, document the inconsistency instead of silently inventing a new rule.
+5. Keep both OPENAPI README indexes aligned with the current published file inventory.
 
 ## Build and Validation
 
@@ -34,25 +45,26 @@ npm run build
    - README index coverage
    - Duplicate slug detection
    - Markdown link reachability
+   - Placeholder and masked-secret checks for public docs
 2. `docs:test:growatt`
    - Link rewriter unit tests
    - Docs loader and render tests
+   - Bilingual title and regression assertions
 
-## Publish Flow (Cloudflare Pages)
+## Publish Flow
 
-1. Commit changes to `Growatt API/OPENAPI/*.md`, quick guide markdown, and related docs code.
-2. Open PR and ensure `growatt-docs-check` CI is green.
-3. Merge to `main`.
-4. Cloudflare Pages 自动构建并发布（或使用 Wrangler 手动发布）。
-5. Share customer URL:
+1. Update the baseline and derived public docs.
+2. Update guides, FAQ, shared UI strings, and tests if user-facing wording changes.
+3. Open a PR and ensure the docs checks are green.
+4. Merge to `main`.
+5. Publish through Cloudflare Pages or Wrangler.
+6. Share the customer URL:
    - `https://<your-cloudflare-domain>/growatt-openapi`
-6. Deployment setup reference:
-   - `docs/CLOUDFLARE_DEPLOYMENT.md`
 
 ## Content Update Checklist
 
-1. Edit or add API markdown files in `Growatt API/OPENAPI` and/or edit quick guide markdown in `Growatt API/Growatt Open API Professional Integration Guide.md`.
-2. Verify cross-document markdown links (`./xx.md` or `../xx.md`) are valid.
-3. Update `Growatt API/OPENAPI/README.md` when API file inventory changes.
-4. Run local checks.
-5. Merge and publish.
+1. Sync `docs/3 接口列表.md` from the approved upstream vendor file.
+2. Update `Growatt API/OPENAPI*` docs to reflect the baseline.
+3. Move environment-specific findings into clearly labeled observation sections.
+4. Update README indexes when file inventory changes.
+5. Run local checks and build verification.

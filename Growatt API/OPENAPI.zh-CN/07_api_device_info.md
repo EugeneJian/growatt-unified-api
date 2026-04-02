@@ -1,53 +1,47 @@
 # 设备信息查询 API
 
-**简要说明**
+## 简要描述
 
-- 获取当前 token 已授权设备的静态信息。
-- 查询对象为单个 `deviceSn`。
-- 主规范请求体使用 JSON。
+- 获取 Growatt 平台已授权设备的信息。
+- 接口仅返回当前 token 有权限访问的设备查询结果；无权限设备会返回 `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`。
 
-**请求 URL**
+## 请求 URL
 
 - `/oauth2/getDeviceInfo`
 
-**请求方式**
+## 请求方式
 
 - `POST`
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## 查询流程
+## HTTP 头部参数及说明
 
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["选择已授权设备"] --> B["构造 deviceSn 请求体"]
-    B --> C["调用 POST /oauth2/getDeviceInfo"]
-    C --> D{"响应 code"}
-    D -->|"0"| E["返回设备静态信息"]
-    D -->|"2"| F["刷新 token 后重试"]
-    D -->|"12"| G["先检查设备授权关系"]
-```
-
----
-
-## 请求参数
-
-| 参数名 | 必填 | 类型 | 说明 |
+| 参数名 | 必选 | 类型 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | string | 设备唯一序列号 |
+| `Authorization` | 是 | string | 密钥令牌 |
 
----
+## HTTP Body 参数及说明
+
+| 参数名 | 必选 | 类型 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `deviceSn` | 是 | string | 设备唯一序列号（SN） |
+
+## 接口返回参数和说明
+
+| 参数名 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
+| `data` | obj | 数据返回 |
+| `message` | string | 返回说明 |
 
 ## 请求示例
 
 ```json
 {
-    "deviceSn": "YRP0N4S00Q"
+    "deviceSn": "DEVICE_SN_1"
 }
 ```
-
----
 
 ## 返回示例
 
@@ -55,34 +49,32 @@ flowchart TD
 {
     "code": 0,
     "data": {
-        "deviceSn": "YRP0N4S00Q",
-        "deviceTypeName": "sph",
-        "model": "SPH 5000TL-HUB",
+        "deviceSn": "DEVICE_SN_1",
+        "deviceTypeName": "min",
+        "model": "BDCBAT",
         "nominalPower": 6000,
-        "datalogSn": "VWQ0F9W00L",
-        "datalogDeviceTypeName": "ShineWiLan-X2",
-        "dtc": 3503,
-        "communicationVersion": "ZCBD-0004",
+        "datalogSn": "DATALOG_SN_1",
+        "datalogDeviceTypeName": "ShineWiFi-X",
+        "dtc": 5100,
+        "communicationVersion": "ZABA-0021",
         "existBattery": true,
-        "batterySn": "YRP0N4S00Q_battery",
-        "batteryModel": "SPH 5000TL-HUB",
-        "batteryCapacity": 9000,
-        "batteryNominalPower": 6000,
+        "batterySn": "BATTERY_SN_1",
+        "batteryModel": "ARK 5.12-25.6XH-A1",
+        "batteryCapacity": 5000,
+        "batteryNominalPower": 2500,
         "authFlag": true,
         "batteryList": [
             {
-                "batterySn": "YRP0N4S00Q_battery",
-                "batteryModel": "BDCBAT",
-                "batteryCapacity": 9000,
-                "batteryNominalPower": 6000
+                "batterySn": "BATTERY_SN_1",
+                "batteryModel": "ARK 5.12-25.6XH-A1",
+                "batteryCapacity": 5000,
+                "batteryNominalPower": 2500
             }
         ]
     },
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
-
-### 常见失败
 
 ```json
 {
@@ -91,19 +83,25 @@ flowchart TD
 }
 ```
 
-```json
-{
-    "code": 12,
-    "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
-}
-```
+## `data` 参数说明
 
-### 请求格式说明
-
-- 请求体传纯 SN，不带 `SPH:` / `SPM:` 等展示前缀。
-- 使用 `Authorization: Bearer <access_token>` + `Content-Type: application/json`。
-
----
+| 参数名 | 说明 |
+| :--- | :--- |
+| `deviceSn` | 设备序列号 |
+| `deviceTypeName` | 设备大类型名称 |
+| `model` | 设备型号 |
+| `nominalPower` | 逆变器额定功率，单位 W |
+| `datalogSn` | 采集器序列号 |
+| `datalogDeviceTypeName` | 采集器类型名称 |
+| `dtc` | 设备类型数字编码 |
+| `communicationVersion` | 固件通讯版本 |
+| `existBattery` | 是否有电池 |
+| `batterySn` | 电池序列号 |
+| `batteryModel` | 电池型号 |
+| `batteryCapacity` | 电池额定容量，单位 Wh |
+| `batteryNominalPower` | 电池额定功率，单位 W |
+| `authFlag` | 是否已授权 |
+| `batteryList` | 电池列表 |
 
 ## 相关文档
 

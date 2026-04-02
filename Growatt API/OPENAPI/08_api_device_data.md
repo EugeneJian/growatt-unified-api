@@ -1,55 +1,49 @@
 # Device Data Query API
 
-**Brief Description**
+## Brief Description
 
-- Queries high-frequency runtime telemetry for an authorized device by device SN.
-- The normative telemetry model is centered on `meterPower`, `reactivePower`, `serialNum`, and `batteryList[]`.
-- Historical test materials that use `activePower`, `reverActivePower`, or top-level `soc` are treated as compatibility fields rather than primary definitions.
+- Query high-frequency runtime data for a device by device serial number.
+- The API returns only device results that the current token is allowed to access; unauthorized devices return `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`.
 
-**Request URL**
+## Request URL
 
 - `/oauth2/getDeviceData`
 
-**Request Method**
+## Request Method
 
 - `POST`
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## Telemetry Consumption Flow
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["Polling job starts"] --> B["Build request with deviceSn"]
-    B --> C["Call POST /oauth2/getDeviceData"]
-    C --> D{"Response code"}
-    D -->|"0"| E["Parse telemetry and batteryList"]
-    D -->|"2 or 12"| F["Refresh token or check authorization"]
-    E --> G["Store time series or feed the control engine"]
-```
-
----
-
-## Request Parameters
+## HTTP Header Parameters
 
 | Parameter | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Unique device serial number |
+| `Authorization` | Yes | string | Access-token header |
 
----
+## HTTP Body Parameters
+
+| Parameter | Required | Type | Description |
+| :--- | :--- | :--- | :--- |
+| `deviceSn` | Yes | string | Unique device serial number (SN) |
+
+## Response Parameters
+
+| Parameter | Vendor-table Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | `0` means success; any other value means failure |
+| `data` | string | The vendor table says `string`, while the success sample is an object |
+| `message` | string | Response description |
 
 ## Request Example
 
 ```json
 {
-    "deviceSn": "YRP0N4S00Q"
+    "deviceSn": "DEVICE_SN_1"
 }
 ```
 
----
-
-## Response Example (Normative Fields)
+## Response Example
 
 ```json
 {
@@ -82,7 +76,7 @@ flowchart TD
         ],
         "protectCode": 0,
         "reactivePower": 174.90,
-        "serialNum": "YRP0N4S00Q",
+        "deviceSn": "DEVICE_SN_1",
         "etoGridTotal": 270.70,
         "genPower": 0.00,
         "priority": 0,
@@ -103,49 +97,82 @@ flowchart TD
 }
 ```
 
----
-
-## Normative Field Definitions
+## Response Field Definitions
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `data.meterPower` | double | Meter-side power. Positive means importing from grid, negative means exporting to grid, unit: W |
-| `data.reactivePower` | double | Reactive power |
+| `code` | int | API status code; `0` means success |
+| `data` | object | Main data object |
+| `data.deviceSn` | string | Device serial number |
+| `data.meterPower` | double | Meter power. Positive means grid import, negative means feed-in, unit: W |
+| `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) |
 | `data.fac` | double | Grid frequency |
-| `data.etoUserToday` | double | Energy imported today, unit: kWh |
-| `data.etoUserTotal` | double | Total imported energy, unit: kWh |
-| `data.etoGridToday` | double | Energy exported today, unit: kWh |
-| `data.etoGridTotal` | double | Total exported energy, unit: kWh |
-| `data.pac` | double | AC output power, unit: W |
-| `data.ppv` | double | PV power measured by the local inverter, unit: W |
-| `data.payLoadPower` | double | Total load power, unit: W |
-| `data.batPower` | double | Total battery charge/discharge power. Positive for charge, negative for discharge, unit: W |
-| `data.serialNum` | string | Canonical device serial field in telemetry payloads |
-| `data.status` | int | Device runtime status code |
-| `data.utcTime` | string | UTC timestamp |
-| `data.batteryList` | array | Battery object list |
-| `data.batteryList[].soc` | int | State of charge per battery |
-| `data.batteryList[].soh` | int | State of health per battery |
-| `data.batteryList[].chargePower` | double | Charge power per battery |
-| `data.batteryList[].dischargePower` | double | Discharge power per battery |
-| `data.batteryList[].status` | int | Status per battery |
+| `data.etoUserToday` | double | Imported energy today in kWh |
+| `data.etoUserTotal` | double | Total imported energy in kWh |
+| `data.etoGridToday` | double | Exported energy today in kWh |
+| `data.etoGridTotal` | double | Total exported energy in kWh |
+| `data.faultCode` | int | Fault main code |
+| `data.faultSubCode` | int | Fault sub-code |
+| `data.protectCode` | int | Protection main code |
+| `data.protectSubCode` | int | Protection sub-code |
+| `data.pac` | double | AC output power in W |
+| `data.ppv` | double | Local PV power in W |
+| `data.payLoadPower` | double | Total load power in W |
+| `data.batteryStatus` | int | Overall battery status |
+| `data.batPower` | double | Total battery charge/discharge power in W |
+| `data.priority` | int | Operating priority |
+| `data.status` | int | Runtime status code |
+| `data.utcTime` | string | UTC timestamp in `yyyy-MM-dd HH:mm:ss` format |
+| `data.vac1` | double | Line voltage 1 in V |
+| `data.vac2` | double | Line voltage 2 in V |
+| `data.vac3` | double | Line voltage 3 in V |
+| `data.epvTotal` | double | Total PV generation |
+| `data.batteryList` | array | Battery data list |
+| `data.batteryList[].index` | int | Battery index (starts from 1) |
+| `data.batteryList[].soc` | int | Battery state of charge in percent |
+| `data.batteryList[].chargePower` | double | Battery charge power in W |
+| `data.batteryList[].dischargePower` | double | Battery discharge power in W |
+| `data.batteryList[].ibat` | double | Battery current on the low-voltage side in A |
+| `data.batteryList[].vbat` | double | Battery voltage on the low-voltage side in V |
+| `data.batteryList[].soh` | int | Battery state of health `[0,100]` |
+| `data.batteryList[].echargeToday` | double | Battery charge energy today in kWh |
+| `data.batteryList[].echargeTotal` | double | Total battery charge energy in kWh |
+| `data.batteryList[].edischargeToday` | double | Battery discharge energy today in kWh |
+| `data.batteryList[].edischargeTotal` | double | Total battery discharge energy in kWh |
 
----
+## Status Definitions
 
-## Historical-Field Compatibility Note
+### Runtime Status (`status`)
 
-Some historical materials and deployment-specific payloads have exposed the following differences:
+- `0`: Standby
+- `1`: Self-check
+- `3`: Fault
+- `4`: Upgrade
+- `5`: PV online & battery offline & on-grid
+- `6`: PV offline (or online) & battery online & on-grid
+- `7`: PV online & battery online & off-grid
+- `8`: PV offline & battery online & off-grid
+- `9`: Bypass mode
 
-- Telemetry may additionally expose `activePower`, and on some environments or devices it may also expose `reverActivePower`; these fields may coexist with `meterPower`, or only a subset may appear.
-- Some payloads use `deviceSn` or top-level `soc` as compatibility fields.
-- Requests still use the raw SN together with `Authorization: Bearer <access_token>` and a JSON body.
+### Overall Battery Status (`batteryStatus`)
 
-Recommended handling:
+- `0`: Battery standby
+- `1`: Battery disconnected
+- `2`: Battery charging
+- `3`: Battery discharging
+- `4`: Fault
+- `5`: Upgrade
 
-- Use the model on this page as the external semantic contract.
-- If an environment actually returns `activePower` / `reverActivePower`, ingest them as compatibility fields without promoting them to primary semantics.
+### Operating Priority (`priority`)
 
----
+- `0`: Load priority
+- `1`: Battery priority
+- `2`: Grid priority
+
+## Baseline Note
+
+- The local header table in the vendor source uses `token`, while section `4 Global Parameters` standardizes `Authorization: Bearer xxxxxxx`. This page follows the global section.
+- The vendor response table labels the top-level `data` field as `string`, while the success sample is clearly an object.
 
 ## Related Documentation
 

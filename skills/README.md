@@ -94,3 +94,43 @@ Use $showdoc-mcp-sync to sync the Markdown files under `Growatt-Archetecture/` i
 - This skill assumes the local MCP server name is `showdoc`.
 - Do not store the real ShowDoc Bearer token in repository files.
 - The capability validation record lives at `docs/SHOWDOC_MCP_VALIDATION.zh-CN.md`.
+
+### `feishu-sheet-writer`
+
+Path:
+
+- [skills/feishu-sheet-writer/SKILL.md](skills/feishu-sheet-writer/SKILL.md)
+
+Use this skill when you need to create or update Feishu spreadsheets from CSV or structured rows on Windows, especially when the sheet contains Chinese text and must not become garbled.
+
+It is designed for:
+
+- creating new Feishu spreadsheets through the authenticated local `lark-cli`
+- overwriting existing sheets by spreadsheet token or URL
+- writing UTF-8 CSV content without Chinese text turning into `?`
+- building PMO check tables and rollout trackers
+- repairing previously garbled Chinese content in Feishu sheets
+
+## When To Trigger It
+
+Use or mention this skill when the task involves:
+
+- Feishu sheets or Feishu spreadsheets
+- `lark-cli sheets`
+- CSV import into Feishu
+- Chinese text corruption in Feishu tables
+- PMO check tables
+- rollout tracking tables
+- overwriting or fixing an existing Feishu sheet
+
+Suggested invocation:
+
+```text
+Use $feishu-sheet-writer to create or update a Feishu spreadsheet from UTF-8 CSV content and verify the written Chinese text.
+```
+
+## Notes
+
+- This skill assumes `@larksuite/cli` is already installed and authenticated locally.
+- The bundled script avoids the Windows shell encoding path that turned Chinese text into `?` during direct CLI writes.
+- The PMO starter template lives at `skills/feishu-sheet-writer/assets/pmo-check-template.csv`.

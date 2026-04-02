@@ -1,129 +1,48 @@
 # Troubleshooting FAQ
 
-Version: V1.0 | Release Date: March 12, 2026
+This page is split into two layers:
 
-This page summarizes common integration failures and the corrective actions that align with the endpoint-level documents. If anything here conflicts with an endpoint-level document, follow the endpoint-level specification first.
+- Baseline reminders: directly derived from `docs/3 接口列表.md` or from explicit cross-checks between its sections.
+- Integration observations: findings from environment reports under `test/`, kept as non-normative references only.
 
-Recommended companion reading:
+## Baseline Reminders
 
-- [Device Authorization API](./04_api_device_auth.md)
-- [Device Information Query API](./07_api_device_info.md)
-- [Device Data Query API](./08_api_device_data.md)
+### 1. Can `client_credentials` call `getDeviceList` directly?
 
----
+No. The vendor baseline explicitly states:
 
-## Verified Client-Credentials Success Path
+- `POST /oauth2/getDeviceList` is supported only in `authorization_code` mode.
 
-Under `client_credentials`, the following sequence has been verified:
+### 2. When is `pinCode` required in `bindDevice`?
 
-1. `POST /oauth2/token`
-2. `POST /oauth2/bindDevice`
-3. `POST /oauth2/getDeviceInfo`
-4. `POST /oauth2/getDeviceData`
-5. `POST /oauth2/deviceDispatch`
-6. `POST /oauth2/readDeviceDispatch`
-7. `POST /oauth2/unbindDevice`
+The vendor parameter table states:
 
----
+- `deviceSnList[].pinCode`: required in client mode.
 
-## FAQ
+### 3. Is `requestId` required in `readDeviceDispatch`?
 
-### 1. Why does `getDeviceList` fail under `client_credentials`?
+Yes in the parameter table. The original vendor request sample omits it, but the published split docs continue to treat it as required because the table marks it as required.
 
-Calling `POST /oauth2/getDeviceList` with a `client_credentials` token is outside the supported mode boundary and may return:
+### 4. Should `getDeviceData` use `token` or `Authorization` as the header name?
 
-```json
-{
-    "code": 103,
-    "data": null,
-    "message": "WRONG_GRANT_TYPE"
-}
-```
+The current baseline contains an internal wording mismatch:
 
-Correct action:
+- The local header table in section `3.7` uses `token`
+- Section `4 Global Parameters` standardizes `Authorization: Bearer xxxxxxx`
 
-- Do not treat `getDeviceList` as the candidate-device discovery entry point for `client_credentials`.
-- Start directly from `bindDevice` with a known raw SN.
+The published split docs follow the global section.
 
-### 2. Why does `bindDevice` fail even though the device identifier looks correct?
+## Integration Observations (Non-Normative)
 
-Common causes include:
+The following observations come from environment reports under `test/` and do not redefine the April 1, 2026 vendor baseline:
 
-- The UI label still includes a display prefix
-- `datalogSn` was used instead of `deviceSn`
-- A bare string array was sent instead of object entries
-
-Correct handling:
-
-- Correct bind target: the `deviceSn` returned by `getDeviceList`
-- Incorrect bind target: `datalogSn` or a prefixed value such as `SPH:RAW_DEVICE_SN`
-- Use object entries in `deviceSnList`, for example:
-
-```json
-{
-    "deviceSnList": [
-        {
-            "deviceSn": "xxx1"
-        },
-        {
-            "deviceSn": "xxxx2"
-        }
-    ]
-}
-```
-
-- If the environment or the target device requires a PIN, add `pinCode` to the object entry
-
-### 3. Why do `getDeviceInfo` or `getDeviceData` return `parameter error`?
-
-This usually happens because:
-
-- The SN still includes a display prefix
-- The request body is not JSON
-
-Verified working combination:
-
-- `Authorization: Bearer <access_token>`
-- `Content-Type: application/json`
-- Request body contains only the raw SN
-
-### 4. Which endpoints use JSON bodies?
-
-The following interfaces have been verified with JSON bodies:
-
-- `bindDevice`
-- `getDeviceInfo`
-- `getDeviceData`
-- `deviceDispatch`
-- `readDeviceDispatch`
-- `unbindDevice`
-
-### 5. Why does `readDeviceDispatch` sometimes return an object and sometimes an array?
-
-This depends on `setType`:
-
-- `time_slot_charge_discharge` commonly returns an array
-- `duration_and_power_charge_discharge` may return an object
-
-Clients should therefore parse `data` according to `setType` instead of treating one example shape as universal.
-
----
-
-## Error-to-Action Mapping
-
-| Response / Error | Common Cause | Correct Action |
-| :--- | :--- | :--- |
-| `TOKEN_IS_INVALID` | Token is expired or invalid | Refresh the token or obtain a new one |
-| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | Device is not bound or the current token has no permission | Run `bindDevice` first or verify authorization |
-| `SYSTEM_ERROR` during `bindDevice` | Wrong request shape for the current environment/device, or `datalogSn` was used instead of `deviceSn` | Use object entries containing `deviceSn`; add `pinCode` when required |
-| `WRONG_GRANT_TYPE` | OAuth mode does not support the endpoint | Switch to the correct mode or use the `bindDevice` flow |
-| `parameter error` | Prefixed SN or wrong body format | Use JSON and pass the raw SN only |
-| `code=400, message=fail` | Wrong auth-header/body combination | Use `Authorization: Bearer` with a JSON body |
-
----
+- Multiple environment reports use JSON bodies for `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice`.
+- Multiple reports recommend using the raw `deviceSn` for device-level APIs and avoiding `datalogSn` or display-prefixed values.
+- Some reports observe `WRONG_GRANT_TYPE` when `client_credentials` calls `getDeviceList`.
+- Some reports observe object-shaped `readDeviceDispatch.data` payloads for particular `setType` values.
 
 ## Related Documentation
 
 - [Device Authorization API](./04_api_device_auth.md)
-- [Device Information Query API](./07_api_device_info.md)
+- [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
 - [Device Data Query API](./08_api_device_data.md)

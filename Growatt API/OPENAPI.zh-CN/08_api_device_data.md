@@ -1,55 +1,49 @@
 # 设备数据查询 API
 
-**简要说明**
+## 简要描述
 
-- 根据设备 SN 查询已授权设备的高频运行数据。
-- 主规范字段以 `meterPower`、`reactivePower`、`serialNum`、`batteryList[]` 为中心建模。
-- 历史测试材料中出现的 `activePower`、`reverActivePower`、外层 `soc` 仅视为环境兼容字段，不作为主定义。
+- 根据设备序列号查询指定设备的高频数据。
+- 接口仅返回当前 token 有权限访问的设备查询结果；无权限设备会返回 `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`。
 
-**请求 URL**
+## 请求 URL
 
 - `/oauth2/getDeviceData`
 
-**请求方式**
+## 请求方式
 
 - `POST`
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## 遥测消费流程
+## HTTP 头部参数及说明
 
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["调度器触发轮询"] --> B["使用 deviceSn 构造请求"]
-    B --> C["调用 POST /oauth2/getDeviceData"]
-    C --> D{"响应 code"}
-    D -->|"0"| E["解析遥测指标与 batteryList"]
-    D -->|"2 或 12"| F["刷新 token 或检查设备授权"]
-    E --> G["写入时序数据或控制引擎"]
-```
-
----
-
-## 请求参数
-
-| 参数名 | 必填 | 类型 | 说明 |
+| 参数名 | 必选 | 类型 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | string | 设备唯一序列号 |
+| `Authorization` | 是 | string | 密钥令牌 |
 
----
+## HTTP Body 参数及说明
+
+| 参数名 | 必选 | 类型 | 说明 |
+| :--- | :--- | :--- | :--- |
+| `deviceSn` | 是 | string | 设备唯一序列号（SN） |
+
+## 接口返回参数和说明
+
+| 参数名 | 厂商表格类型 | 说明 |
+| :--- | :--- | :--- |
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
+| `data` | string | 厂商表格原文写作 `string`，成功示例为对象 |
+| `message` | string | 返回说明 |
 
 ## 请求示例
 
 ```json
 {
-    "deviceSn": "YRP0N4S00Q"
+    "deviceSn": "DEVICE_SN_1"
 }
 ```
 
----
-
-## 返回示例（主规范字段）
+## 返回示例
 
 ```json
 {
@@ -82,7 +76,7 @@ flowchart TD
         ],
         "protectCode": 0,
         "reactivePower": 174.90,
-        "serialNum": "YRP0N4S00Q",
+        "deviceSn": "DEVICE_SN_1",
         "etoGridTotal": 270.70,
         "genPower": 0.00,
         "priority": 0,
@@ -103,49 +97,82 @@ flowchart TD
 }
 ```
 
----
-
-## 主规范字段说明
+## 返回参数说明
 
 | 参数名 | 类型 | 说明 |
 | :--- | :--- | :--- |
-| `data.meterPower` | double | 电表功率。正值表示从电网取电，负值表示向电网馈电，单位：W |
-| `data.reactivePower` | double | 无功功率 |
+| `code` | int | API 状态码，`0` 表示成功 |
+| `data` | object | 主数据对象 |
+| `data.deviceSn` | string | 设备序列号 |
+| `data.meterPower` | double | 电表功率（正值取电，负值馈电），单位 W |
+| `data.reactivePower` | double | 无功功率（正值：容性，负值：感性） |
 | `data.fac` | double | 电网频率 |
-| `data.etoUserToday` | double | 今日取电量，单位：kWh |
-| `data.etoUserTotal` | double | 总取电量，单位：kWh |
-| `data.etoGridToday` | double | 今日馈电量，单位：kWh |
-| `data.etoGridTotal` | double | 总馈电量，单位：kWh |
-| `data.pac` | double | 交流输出功率，单位：W |
-| `data.ppv` | double | 本机采集到的 PV 功率，单位：W |
-| `data.payLoadPower` | double | 总负载功率，单位：W |
-| `data.batPower` | double | 电池总充放电功率。正充负放，单位：W |
-| `data.serialNum` | string | 遥测报文中的设备序列号主字段 |
+| `data.etoUserToday` | double | 今日取电电量，单位 kWh |
+| `data.etoUserTotal` | double | 总取电电量，单位 kWh |
+| `data.etoGridToday` | double | 今日馈电电量，单位 kWh |
+| `data.etoGridTotal` | double | 总馈电电量，单位 kWh |
+| `data.faultCode` | int | 故障主码 |
+| `data.faultSubCode` | int | 故障子码 |
+| `data.protectCode` | int | 保护主码 |
+| `data.protectSubCode` | int | 保护子码 |
+| `data.pac` | double | 交流输出功率，单位 W |
+| `data.ppv` | double | 设备本身的 PV 功率，单位 W |
+| `data.payLoadPower` | double | 总负载功率（计算值），单位 W |
+| `data.batteryStatus` | int | 电池总体状态 |
+| `data.batPower` | double | 电池总充/放电功率（正值充电，负值放电，0 为空闲），单位 W |
+| `data.priority` | int | 工作优先级 |
 | `data.status` | int | 设备运行状态码 |
-| `data.utcTime` | string | UTC 时间戳 |
-| `data.batteryList` | array | 电池对象列表 |
-| `data.batteryList[].soc` | int | 单电池荷电状态 |
-| `data.batteryList[].soh` | int | 单电池健康度 |
-| `data.batteryList[].chargePower` | double | 单电池充电功率 |
-| `data.batteryList[].dischargePower` | double | 单电池放电功率 |
-| `data.batteryList[].status` | int | 单电池状态 |
+| `data.utcTime` | string | UTC 时间戳，格式 `yyyy-MM-dd HH:mm:ss` |
+| `data.vac1` | double | 线电压 1，单位 V |
+| `data.vac2` | double | 线电压 2，单位 V |
+| `data.vac3` | double | 线电压 3，单位 V |
+| `data.epvTotal` | double | PV 总发电能量 |
+| `data.batteryList` | array | 电池信息列表 |
+| `data.batteryList[].index` | int | 电池索引（从 1 开始） |
+| `data.batteryList[].soc` | int | 电池荷电状态（百分比） |
+| `data.batteryList[].chargePower` | double | 电池充电功率，单位 W |
+| `data.batteryList[].dischargePower` | double | 电池放电功率，单位 W |
+| `data.batteryList[].ibat` | double | 电池电流（低压侧），单位 A |
+| `data.batteryList[].vbat` | double | 电池电压（低压侧），单位 V |
+| `data.batteryList[].soh` | int | 电池健康状态 `[0,100]` |
+| `data.batteryList[].echargeToday` | double | 电池今日充电量，单位 kWh |
+| `data.batteryList[].echargeTotal` | double | 电池总充电量，单位 kWh |
+| `data.batteryList[].edischargeToday` | double | 电池今日放电量，单位 kWh |
+| `data.batteryList[].edischargeTotal` | double | 电池总放电量，单位 kWh |
 
----
+## 状态值定义
 
-## 历史字段兼容说明
+### 设备运行状态（`status`）
 
-历史材料与不同部署的返回中，曾观察到以下差异：
+- `0`: 待机
+- `1`: 自检
+- `3`: 故障
+- `4`: 升级
+- `5`: 光伏在线 & 电池离线 & 并网
+- `6`: 光伏离线（或在线） & 电池在线 & 并网
+- `7`: 光伏在线 & 电池在线 & 离网
+- `8`: 光伏离线 & 电池在线 & 离网
+- `9`: 旁路模式
 
-- 遥测体可能额外返回 `activePower`，并在部分环境或设备上返回 `reverActivePower`；这些字段可能与 `meterPower` 并存，也可能只出现其中一部分。
-- 部分返回中使用 `deviceSn` 或外层 `soc` 作为兼容字段。
-- 请求体仍然传纯 SN，且使用 `Authorization: Bearer <access_token>` + JSON body。
+### 电池总体状态（`batteryStatus`）
 
-处理建议：
+- `0`: 电池待机
+- `1`: 电池断开
+- `2`: 电池充电
+- `3`: 电池放电
+- `4`: 故障
+- `5`: 升级
 
-- 以本页的主规范字段作为对外语义定义。
-- 如果环境实际返回 `activePower` / `reverActivePower`，可作为兼容字段接入，但不要把它们写成新的主语义。
+### 工作优先级（`priority`）
 
----
+- `0`: 负载优先
+- `1`: 电池优先
+- `2`: 电网优先
+
+## 基线内部说明
+
+- 本节局部 HTTP 头部表在厂商原文中写作 `token`，但全局参数章节明确要求 `Authorization: Bearer xxxxxxx`。本页采用全局章节的统一口径。
+- 厂商返回表将顶层 `data` 标为 `string`，但成功示例明确给出对象结构。
 
 ## 相关文档
 

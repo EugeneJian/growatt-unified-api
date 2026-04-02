@@ -1,50 +1,22 @@
 # Device Authorization API
 
-This document covers the normative flows for device discovery, authorization, authorization-result lookup, and authorization removal.
+This page publishes the baseline behavior of `getDeviceList`, `bindDevice`, `getDeviceListAuthed`, and `unbindDevice`.
 
-## Authorization Flow
+## 1 Get Candidate Devices
 
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant User as EndUser
-    participant Client as PlatformApp
-    participant API as OAuthAPI
+### Brief Description
 
-    opt Authorization-code mode
-        Client->>API: POST /oauth2/getDeviceList
-        API-->>Client: Return candidate device list
-        Client-->>User: Show candidate devices
-        User->>Client: Select target devices
-    end
-    Client->>API: POST /oauth2/bindDevice
-    API-->>Client: Return bind result
-    Client->>API: POST /oauth2/getDeviceListAuthed
-    API-->>Client: Return authorized device list
-    opt Revoke authorization
-        Client->>API: POST /oauth2/unbindDevice
-        API-->>Client: Return unbind result
-    end
-```
-
----
-
-## 1 Get Candidate Device List
-
-**Brief Description**
-
-- Returns the list of devices that a Growatt end-user can authorize to a third-party platform.
+- Get the device list that can be authorized to the third-party platform.
+- Prerequisite: the end user has already registered a Growatt account and added devices under that account.
 - Supported only in `authorization_code` mode.
-- Prerequisite: the end-user has already registered the devices under the Growatt account.
 
-**Request URL**
+### Request URL
 
 - `/oauth2/getDeviceList`
 
-**Request Method**
+### Request Method
 
 - `POST`
-- The request must include a valid bearer token
 - `Authorization: Bearer <token>`
 
 ### Request Example
@@ -53,6 +25,14 @@ sequenceDiagram
 // No request body
 ```
 
+### Response Parameters
+
+| Parameter | Vendor-table Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | `0` means success; any other value means failure |
+| `data` | string | The vendor table says `string`, while the sample payload is an array of devices |
+| `message` | string | Response description |
+
 ### Response Example
 
 ```json
@@ -60,65 +40,61 @@ sequenceDiagram
     "code": 0,
     "data": [
         {
-            "deviceSn": "xxx1",
+            "deviceSn": "DEVICE_SN_1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "<masked_datalog_sn_1>",
+            "datalogSn": "DATALOG_SN_1",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
+        },
+        {
+            "deviceSn": "DEVICE_SN_2",
+            "deviceTypeName": "min",
+            "model": "MIN 5000TL-XH2",
+            "nominalPower": 6000,
+            "datalogSn": "DATALOG_SN_2",
+            "dtc": 5100,
+            "communicationVersion": "ZABA-0023",
+            "authFlag": false
         }
     ],
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
-### Device Object Fields
-
-| Parameter | Type | Description |
-| :--- | :--- | :--- |
-| `deviceSn` | string | Device serial number |
-| `deviceTypeName` | string | Device type name |
-| `model` | string | Device model |
-| `nominalPower` | number | Rated power in watts |
-| `datalogSn` | string | Datalogger serial number. Use `deviceSn`, not `datalogSn`, when calling `bindDevice` or other device-level APIs |
-| `dtc` | number | Device type code |
-| `communicationVersion` | string | Communication firmware version |
-| `authFlag` | boolean | Whether the device is already authorized |
-
-### Mode Boundary Note
-
-Calling this endpoint with a `client_credentials` token is outside the supported mode boundary and may return a grant-type error such as:
-
 ```json
 {
-    "code": 103,
-    "data": null,
-    "message": "WRONG_GRANT_TYPE"
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
 }
 ```
 
-Correct handling:
+### `data` Fields
 
-- Use `getDeviceList` only in `authorization_code` mode.
-- In `client_credentials` mode, start from `bindDevice` with a known raw SN.
+| Parameter | Description |
+| :--- | :--- |
+| `deviceSn` | Device serial number |
+| `deviceTypeName` | Device type name |
+| `model` | Device model |
+| `nominalPower` | Nominal inverter power in W |
+| `datalogSn` | Datalogger serial number |
+| `dtc` | Numeric device-type code |
+| `communicationVersion` | Communication version |
+| `authFlag` | Whether the device is already authorized |
 
----
+## 2 Bind Devices
 
-## 2 Bind Device
+### Brief Description
 
-**Brief Description**
+- Authorize end-user devices to the third-party platform.
 
-- Authorizes one or more devices to the third-party platform.
-- The request body is JSON.
-- `deviceSnList` uses object entries. Add `pinCode` when the environment or the target device requires it.
-
-**Request URL**
+### Request URL
 
 - `/oauth2/bindDevice`
 
-**Request Method**
+### Request Method
 
 - `POST`
 - `Content-Type: application/json`
@@ -126,48 +102,55 @@ Correct handling:
 
 ### Request Parameters
 
-| Parameter | Required | Type | Description |
+| Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | Yes | array | Non-empty array |
-| `deviceSnList[]` | Yes | object | Object entry containing `deviceSn`; add `pinCode` when required |
-| `deviceSnList[].deviceSn` | Required when using object entries | string | Device serial number used by device-level APIs |
-| `deviceSnList[].pinCode` | Required when the environment or device onboarding flow needs a PIN | string | Device PIN code |
+| `deviceSnList` | array | Yes | Non-empty list of device serials and `pinCode` values |
+| `deviceSnList[].deviceSn` | string | Yes | Device serial number |
+| `deviceSnList[].pinCode` | string | Required in client mode | Device `PinCode` |
 
 ### Request Examples
 
-#### Common object-entry example
+#### Authorization-Code Mode
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "xxx1"
+            "deviceSn": "DEVICE_SN_1"
         },
         {
-            "deviceSn": "xxxx2"
+            "deviceSn": "DEVICE_SN_2"
         }
     ]
 }
 ```
 
-#### Object-entry example with `pinCode`
+#### Client Mode
 
 ```json
 {
     "deviceSnList": [
         {
-            "deviceSn": "xxx1",
-            "pinCode": "<masked_pin_code_1>"
+            "deviceSn": "DEVICE_SN_1",
+            "pinCode": "PIN001"
         },
         {
-            "deviceSn": "xxxx2",
-            "pinCode": "<masked_pin_code_2>"
+            "deviceSn": "DEVICE_SN_2",
+            "pinCode": "PIN002"
         }
     ]
 }
 ```
 
-### Response Example
+### Response Parameters
+
+| Parameter | Vendor-table Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | `0` means success; any other value means failure |
+| `data` | string | The vendor table says `string`; successful samples use `null` and partial failures use arrays |
+| `message` | string | Response description |
+
+### Response Examples
 
 ```json
 {
@@ -177,55 +160,41 @@ Correct handling:
 }
 ```
 
-Failure example:
+```json
+{
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
+}
+```
+
+```json
+{
+    "code": 19,
+    "message": "DEVICE_ID_ALREADY_EXISTS"
+}
+```
 
 ```json
 {
     "code": 12,
     "data": [
-        "xxx1"
+        "DEVICE_SN_2"
     ],
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
 ```
 
-### Request-Format Note
+## 3 Get Authorized Devices
 
-- Use `Authorization: Bearer <access_token>` together with `Content-Type: application/json`.
-- `deviceSn` values must use the raw SN without display prefixes such as `SPH:` or `SPM:`.
-- Use the `deviceSn` field returned by `getDeviceList` as the bind target; do not substitute `datalogSn`.
-- Use object entries in `deviceSnList`; bare string arrays are not the recommended request shape.
-- Add `pinCode` when the environment or the target device requires it.
+### Brief Description
 
-Reference example:
+- Get the devices that are already authorized under the current token.
 
-```json
-{
-    "deviceSnList": [
-        {
-            "deviceSn": "xxx1"
-        },
-        {
-            "deviceSn": "xxxx2",
-            "pinCode": "<masked_pin_code_2>"
-        }
-    ]
-}
-```
-
----
-
-## 3 Get Authorized Device List
-
-**Brief Description**
-
-- Returns the list of devices already authorized for the current token.
-
-**Request URL**
+### Request URL
 
 - `/oauth2/getDeviceListAuthed`
 
-**Request Method**
+### Request Method
 
 - `POST`
 - `Authorization: Bearer <token>`
@@ -236,6 +205,14 @@ Reference example:
 // No request body
 ```
 
+### Response Parameters
+
+| Parameter | Vendor-table Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | `0` means success; any other value means failure |
+| `data` | string | The vendor table says `string`, while the sample payload is an array of devices |
+| `message` | string | Response description |
+
 ### Response Example
 
 ```json
@@ -243,11 +220,11 @@ Reference example:
     "code": 0,
     "data": [
         {
-            "deviceSn": "xxx1",
+            "deviceSn": "DEVICE_SN_1",
             "deviceTypeName": "sph-s",
             "model": "SPH 10000TL-HU (AU)",
             "nominalPower": 15000,
-            "datalogSn": "<masked_datalog_sn_1>",
+            "datalogSn": "DATALOG_SN_1",
             "dtc": 21300,
             "communicationVersion": "ZCEA-0005",
             "authFlag": true
@@ -257,19 +234,24 @@ Reference example:
 }
 ```
 
----
+```json
+{
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
+}
+```
 
-## 4 Unbind Device
+## 4 Unbind Devices
 
-**Brief Description**
+### Brief Description
 
-- Removes the authorization relationship between the platform and one or more devices.
+- Remove device authorization from the third-party platform.
 
-**Request URL**
+### Request URL
 
 - `/oauth2/unbindDevice`
 
-**Request Method**
+### Request Method
 
 - `POST`
 - `Content-Type: application/json`
@@ -277,22 +259,30 @@ Reference example:
 
 ### Request Parameters
 
-| Parameter | Required | Type | Description |
+| Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | Yes | array(string) | List of device serial numbers to unbind |
+| `deviceSnList` | array | Yes | List of device serial numbers to unbind |
 
 ### Request Example
 
 ```json
 {
     "deviceSnList": [
-        "xxx1",
-        "xxxx2"
+        "DEVICE_SN_1",
+        "DEVICE_SN_2"
     ]
 }
 ```
 
-### Response Example
+### Response Parameters
+
+| Parameter | Vendor-table Type | Description |
+| :--- | :--- | :--- |
+| `code` | int | `0` means success; any other value means failure |
+| `data` | string | The vendor table says `string`, while the successful sample returns `null` |
+| `message` | string | Response description |
+
+### Response Examples
 
 ```json
 {
@@ -302,9 +292,14 @@ Reference example:
 }
 ```
 
----
+```json
+{
+    "code": 2,
+    "message": "TOKEN_IS_INVALID"
+}
+```
 
 ## Related Documentation
 
 - [Authentication Guide](./01_authentication.md)
-- [Device Dispatch API](./05_api_device_dispatch.md)
+- [Troubleshooting FAQ](./11_api_troubleshooting.md)

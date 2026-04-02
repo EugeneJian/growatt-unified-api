@@ -1,70 +1,135 @@
 # Device Data Push API
 
-**Brief Description**
+## Brief Description
 
-- The third-party platform must provide its own functional receiving endpoint and share the webhook URL with Growatt.
-- The primary payload model should follow the normative fields in [Device Data Query API](./08_api_device_data.md).
-- If an environment still pushes historical compatibility fields, handle them as backward-compatible inputs instead of changing the primary model.
-
-## Webhook Processing Sequence
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-sequenceDiagram
-    participant Growatt as PushService
-    participant Webhook as WebhookEndpoint
-    participant Storage as EventStorage
-    participant RuleEngine as RuleEngine
-
-    Growatt->>Webhook: Push dfcData
-    Webhook->>Webhook: Validate payload
-    alt Payload valid
-        Webhook->>Storage: Save raw event
-        Webhook->>RuleEngine: Parse normative fields
-        Webhook-->>Growatt: Return 200
-    else Payload invalid
-        Webhook-->>Growatt: Return 4xx
-    end
-```
-
----
+- The third-party platform must implement its own receiving endpoint and provide that URL to Growatt.
+- Devices under the third-party platform push high-frequency data to that URL.
+- This page defines the push payload directly from the vendor baseline as its own payload definition.
 
 ## Push Example
 
 ```json
 {
-    "dataType": "dfcData",
     "data": {
-        "meterPower": 0.00,
-        "reactivePower": 174.90,
-        "pac": 41.30,
-        "ppv": 14.30,
+        "deviceSn": "DEVICE_SN_1",
+        "fac": 50.03,
+        "backupPower": 0.20,
         "batPower": 0.00,
-        "payLoadPower": 14.50,
-        "serialNum": "YRP0N4S00Q",
+        "pac": 41.30,
+        "etoUserToday": 3.10,
+        "meterPower": 0.00,
         "utcTime": "2026-03-13 07:48:25",
-        "status": 6,
+        "etoUserTotal": 44.80,
+        "pexPower": 14.30,
         "batteryList": [
             {
-                "index": 1,
-                "soc": 67,
-                "soh": 100,
                 "chargePower": 0.00,
-                "dischargePower": 0.00,
-                "ibat": -1.00,
+                "soc": 67,
+                "echargeToday": 2.90,
                 "vbat": 53.30,
+                "index": 1,
+                "echargeTotal": 80.70,
+                "dischargePower": 0.00,
+                "edischargeToday": 1.90,
+                "ibat": -1.00,
+                "soh": 100,
+                "edischargeTotal": 57.60,
                 "status": 0
             }
-        ]
-    }
+        ],
+        "protectCode": 0,
+        "reactivePower": 174.90,
+        "etoGridTotal": 270.70,
+        "genPower": 0.00,
+        "priority": 0,
+        "vac3": 236.90,
+        "etoGridToday": 1.50,
+        "protectSubCode": 0,
+        "vac2": 236.90,
+        "vac1": 236.90,
+        "payLoadPower": 14.50,
+        "faultCode": 0,
+        "faultSubCode": 0,
+        "batteryStatus": 0,
+        "ppv": 14.30,
+        "smartLoadPower": 0.00,
+        "status": 6
+    },
+    "dataType": "dfcData"
 }
 ```
 
-### Historical-Field Compatibility Note
+## Parameter Definitions
 
-Some historical or deployment-specific payloads may still contain `activePower`, `reverActivePower`, or top-level `soc`, and they may appear alongside `meterPower`. Treat them as compatibility inputs. The primary parser should continue to follow the model defined in [Device Data Query API](./08_api_device_data.md).
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `dataType` | string | Fixed value: `dfcData` |
+| `data` | object | Main data object |
+| `data.deviceSn` | string | Device serial number |
+| `data.meterPower` | double | Meter power. Positive means grid import, negative means feed-in, unit: W |
+| `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) |
+| `data.fac` | double | Grid frequency |
+| `data.etoUserToday` | double | Imported energy today in kWh |
+| `data.etoUserTotal` | double | Total imported energy in kWh |
+| `data.etoGridToday` | double | Exported energy today in kWh |
+| `data.etoGridTotal` | double | Total exported energy in kWh |
+| `data.faultCode` | int | Fault main code |
+| `data.faultSubCode` | int | Fault sub-code |
+| `data.protectCode` | int | Protection main code |
+| `data.protectSubCode` | int | Protection sub-code |
+| `data.pac` | double | AC output power in W |
+| `data.ppv` | double | Local PV power in W |
+| `data.payLoadPower` | double | Total load power in W |
+| `data.batteryStatus` | int | Overall battery status |
+| `data.batPower` | double | Total battery charge/discharge power in W |
+| `data.priority` | int | Operating priority |
+| `data.status` | int | Runtime status code |
+| `data.utcTime` | string | UTC timestamp in `yyyy-MM-dd HH:mm:ss` format |
+| `data.vac1` | double | Line voltage 1 in V |
+| `data.vac2` | double | Line voltage 2 in V |
+| `data.vac3` | double | Line voltage 3 in V |
+| `data.epvTotal` | double | Total PV generation |
+| `data.batteryList` | array | Battery data list |
+| `data.batteryList[].index` | int | Battery index (starts from 1) |
+| `data.batteryList[].soc` | int | Battery state of charge in percent |
+| `data.batteryList[].chargePower` | double | Battery charge power in W |
+| `data.batteryList[].dischargePower` | double | Battery discharge power in W |
+| `data.batteryList[].ibat` | double | Battery current on the low-voltage side in A |
+| `data.batteryList[].vbat` | double | Battery voltage on the low-voltage side in V |
+| `data.batteryList[].soh` | int | Battery state of health `[0,100]` |
+| `data.batteryList[].echargeToday` | double | Battery charge energy today in kWh |
+| `data.batteryList[].echargeTotal` | double | Total battery charge energy in kWh |
+| `data.batteryList[].edischargeToday` | double | Battery discharge energy today in kWh |
+| `data.batteryList[].edischargeTotal` | double | Total battery discharge energy in kWh |
 
----
+## Status Definitions
+
+### Runtime Status (`status`)
+
+- `0`: Standby
+- `1`: Self-check
+- `3`: Fault
+- `4`: Upgrade
+- `5`: PV online & battery offline & on-grid
+- `6`: PV offline (or online) & battery online & on-grid
+- `7`: PV online & battery online & off-grid
+- `8`: PV offline & battery online & off-grid
+- `9`: Bypass mode
+
+### Overall Battery Status (`batteryStatus`)
+
+- `0`: Battery standby
+- `1`: Battery disconnected
+- `2`: Battery charging
+- `3`: Battery discharging
+- `4`: Fault
+- `5`: Upgrade
+
+### Operating Priority (`priority`)
+
+- `0`: Load priority
+- `1`: Battery priority
+- `2`: Grid priority
 
 ## Related Documentation
 

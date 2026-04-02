@@ -1,71 +1,50 @@
-# 读取设备下发参数 API
+# 读取设备调度参数 API
 
-**简要说明**
+## 简要描述
 
-- 根据设备 SN 与 `setType` 读取当前调度参数。
-- 本接口仅返回当前 token 有权限访问的设备结果。
-- 当前频率限制：单设备每 5 秒最多调用 1 次。
-- 主规范不要求 `requestId` 为必填参数。
+- 根据设备 SN 读取设备相关参数。
+- 接口仅返回当前 token 有权限访问的设备读取结果；无权限设备会返回 `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`。
+- 当前接口频率：每个设备 5 秒一次。
 
-**请求 URL**
+## 请求 URL
 
 - `/oauth2/readDeviceDispatch`
 
-**请求方式**
+## 请求方式
 
 - `POST`
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## 回读校验流程
+## 请求参数说明
 
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-flowchart TD
-    A["已完成下发"] --> B["使用 deviceSn 与 setType 构造请求"]
-    B --> C["调用 POST /oauth2/readDeviceDispatch"]
-    C --> D{"响应 code"}
-    D -->|"0"| E["解析 data"]
-    D -->|"5 或 18"| F["记录失败并按需重试"]
-    E --> G["与期望值比对"]
-    G --> H["继续控制闭环"]
-```
-
----
-
-## 请求参数
-
-| 参数名 | 是否必填 | 类型 | 说明 |
+| 参数名 | 厂商表格类型 | 是否必选 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | string | 设备 SN |
-| `setType` | 是 | string | 读取项枚举，例如 `time_slot_charge_discharge` |
-
----
+| `deviceSn` | string | 是 | 设备 SN |
+| `setType` | string | 是 | 设置的参数枚举，例如 `time_slot_charge_discharge` |
+| `requestId` | string | 是 | 表示本次调用唯一标识 |
 
 ## 请求示例
 
 ```json
 {
-    "deviceSn": "FDCJQ00003",
-    "setType": "time_slot_charge_discharge"
+    "deviceSn": "DEVICE_SN_1",
+    "setType": "time_slot_charge_discharge",
+    "requestId": "20260402093000123abcdef123456789"
 }
 ```
 
----
+## 返回参数说明
 
-## 返回参数
-
-| 参数名 | 类型 | 说明 |
+| 参数名 | 厂商表格类型 | 说明 |
 | :--- | :--- | :--- |
-| `code` | int | 业务状态码，0 为成功 |
-| `data` | object 或 array | 返回结构随 `setType` 变化 |
-| `message` | string | 结果描述 |
-
----
+| `code` | int | 接口返回状态码，`0` 成功，其余失败 |
+| `data` | string | 厂商表格原文写作 `string`，成功示例为数组 |
+| `message` | string | 返回说明 |
 
 ## 返回示例
 
-### `time_slot_charge_discharge` 返回数组
+### 读取成功
 
 ```json
 {
@@ -96,39 +75,37 @@ flowchart TD
 }
 ```
 
-### 读取失败
+### 读取参数失败
 
 ```json
 {
     "code": 18,
     "data": null,
-    "message": "READ_PARAMETER_FAILED"
+    "message": "READ_DEVICE_PARAM_FAIL"
 }
 ```
 
-### 返回结构说明
-
-不同 `setType` 合法返回不同结构。例如 `duration_and_power_charge_discharge` 可能返回如下对象：
+### 请求次数限制
 
 ```json
 {
-    "code": 0,
-    "data": {
-        "duration": 5,
-        "percentage": 20,
-        "acChargingEnabled": 1,
-        "remotePowerControlEnable": 1
-    },
-    "message": "SUCCESSFUL_OPERATION"
+    "code": 105,
+    "data": null,
+    "message": "TOO_MANY_REQUEST"
 }
 ```
 
-这类差异属于 `setType` 相关的返回结构变化，不改变“`data` 可为 object 或 array”的主规范描述。
+## 基线内部说明
 
----
+- 厂商参数表将 `requestId` 标为必填，但原始请求示例漏写了它。本页按参数表口径将其保留为必填字段。
+- 厂商返回表将 `data` 标为 `string`，但成功示例给出的是数组结构。
+
+## 联调观察（非基线规范）
+
+- 现有 `test/` 目录中的部分联调记录显示，某些 `setType` 在特定环境下可能返回对象结构。
+- 这类现象不属于 2026 年 4 月 1 日厂商基线，本页不把它提升为主规范。
 
 ## 相关文档
 
-- [设备下发 API](./05_api_device_dispatch.md)
-- [设备信息查询 API](./07_api_device_info.md)
-- [全局参数](./10_global_params.md)
+- [设备调度 API](./05_api_device_dispatch.md)
+- [全局参数说明](./10_global_params.md)

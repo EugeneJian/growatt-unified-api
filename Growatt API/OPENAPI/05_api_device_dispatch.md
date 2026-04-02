@@ -1,98 +1,52 @@
 # Device Dispatch API
 
-**Brief Description**
+## Brief Description
 
-- Sets device parameters by device SN.
-- The API returns only results for devices that the current token is allowed to access.
-- Current rate limit: at most one request every 5 seconds per device.
-- The normative request body is JSON and `requestId` is required.
+- Set device parameters by device SN.
+- The API returns results only for devices that the current token is allowed to access; unauthorized devices return `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`.
+- Current frequency limit: one call every 5 seconds per device.
 
-**Request URL**
+## Request URL
 
 - `/oauth2/deviceDispatch`
 
-**Request Method**
+## Request Method
 
 - `POST`
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## Dispatch Loop
-
-```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
-stateDiagram-v2
-    [*] --> Build
-    state "Build request" as Build
-    state "Throttle per device" as Throttle
-    state "Send dispatch" as Send
-    state "Successful response" as Success
-    state "Failed response" as Error
-    state "Read-back verification" as Verify
-    state "End cycle" as EndCycle
-
-    Build --> Throttle
-    Throttle --> Send
-    Send --> Success
-    Send --> Error
-    Success --> Verify
-    Verify --> EndCycle
-    Error --> EndCycle
-    EndCycle --> [*]
-```
-
----
-
 ## Request Parameters
 
-| Parameter | Required | Type | Description |
+| Parameter | Vendor-table Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Device serial number |
-| `setType` | Yes | string | Parameter enum, for example `enable_control` |
-| `value` | Yes | string or object | Parameter value. The structure depends on `setType` |
-| `requestId` | Yes | string | Unique request identifier, typically a 32-character string |
+| `deviceSn` | string | Yes | Device SN |
+| `setType` | string | Yes | Parameter enum, for example `enable_control` |
+| `value` | string | Yes | Parameter value, see [Global Parameters](./10_global_params.md) |
+| `requestId` | string | Yes | Unique request identifier, 32-character string |
 
----
-
-## Request Examples
-
-### Simple-value dispatch
+## Request Example
 
 ```json
 {
-    "deviceSn": "FDCJQ00003",
-    "setType": "enable_control",
-    "value": "0",
-    "requestId": "20260323153000123abcdef123456789"
-}
-```
-
-### Object-value dispatch
-
-```json
-{
-    "deviceSn": "TEST123456",
+    "deviceSn": "DEVICE_SN_1",
     "value": {
         "duration": 10,
         "percentage": 20,
         "type": "dischargeCommand"
     },
     "setType": "duration_and_power_charge_discharge",
-    "requestId": "20260323153000123abcdef123456789"
+    "requestId": "20260402093000123abcdef123456789"
 }
 ```
 
----
-
 ## Response Parameters
 
-| Parameter | Type | Description |
+| Parameter | Vendor-table Type | Description |
 | :--- | :--- | :--- |
-| `code` | int | Business status code, `0` means success |
-| `data` | null | Usually empty on success |
-| `message` | string | Result description |
-
----
+| `code` | int | `0` means success; any other value means failure |
+| `data` | string | The vendor table says `string`, while both success and failure samples return `null` |
+| `message` | string | Response description |
 
 ## Response Examples
 
@@ -116,6 +70,16 @@ stateDiagram-v2
 }
 ```
 
+### Response Timeout
+
+```json
+{
+    "code": 16,
+    "data": null,
+    "message": "PARAMETER_SETTING_RESPONSE_TIMEOUT"
+}
+```
+
 ### Device Not Responding
 
 ```json
@@ -126,17 +90,7 @@ stateDiagram-v2
 }
 ```
 
-### Parameter-Setting Response Timeout
-
-```json
-{
-    "code": 16,
-    "data": null,
-    "message": "PARAMETER_SETTING_RESPONSE_TIMEOUT"
-}
-```
-
-### Parameter-Setting Failure
+### Parameter-Setting Failed
 
 ```json
 {
@@ -146,14 +100,22 @@ stateDiagram-v2
 }
 ```
 
-### Request-Format Note
+### Too Many Requests
 
-- Use `Authorization: Bearer <access_token>`.
-- Use `Content-Type: application/json`.
-- The JSON body contains `deviceSn`, `setType`, `value`, and `requestId`.
+```json
+{
+    "code": 105,
+    "data": null,
+    "message": "TOO_MANY_REQUEST"
+}
+```
+
+## Baseline Note
+
+- The vendor parameter table labels `value` as `string`, but the same page publishes an object-valued example for `duration_and_power_charge_discharge`.
+- This page preserves the vendor table wording and the vendor example, without promoting that discrepancy into a new rule.
 
 ## Related Documentation
 
-- [Device Authorization API](./04_api_device_auth.md)
 - [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
 - [Global Parameters](./10_global_params.md)
