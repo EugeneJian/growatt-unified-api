@@ -15,6 +15,38 @@ interface MermaidRendererProps {
   mode?: MermaidRenderMode;
 }
 
+function parseSvgLength(value: string | null | undefined): number | null {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = value.trim();
+  if (!normalized || normalized.endsWith("%")) {
+    return null;
+  }
+
+  const parsed = Number.parseFloat(normalized);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+function getSvgIntrinsicSize(svgElement: SVGSVGElement): { width: number; height: number } | null {
+  const viewBox = svgElement.viewBox?.baseVal;
+  if (viewBox && viewBox.width > 0 && viewBox.height > 0) {
+    return {
+      width: viewBox.width,
+      height: viewBox.height,
+    };
+  }
+
+  const width = parseSvgLength(svgElement.getAttribute("width")) ?? parseSvgLength(svgElement.style.maxWidth);
+  const height = parseSvgLength(svgElement.getAttribute("height"));
+  if (!width || !height) {
+    return null;
+  }
+
+  return { width, height };
+}
+
 export function MermaidRenderer({ content, mode = "auto" }: MermaidRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const initializedModeRef = useRef<MermaidColorMode | null>(null);
@@ -88,11 +120,21 @@ export function MermaidRenderer({ content, mode = "auto" }: MermaidRendererProps
 
           const svgElement = wrapper.querySelector("svg");
           if (svgElement) {
+            const intrinsicSize = getSvgIntrinsicSize(svgElement);
             svgElement.classList.add("mermaid-svg");
-            svgElement.style.maxWidth = "none";
             svgElement.style.height = "auto";
             svgElement.setAttribute("role", "img");
             svgElement.setAttribute("aria-label", "Mermaid diagram");
+
+            if (intrinsicSize) {
+              wrapper.style.setProperty("--mermaid-svg-width", `${intrinsicSize.width}px`);
+              wrapper.setAttribute(
+                "data-mermaid-size",
+                intrinsicSize.width <= 560 && intrinsicSize.height <= 360 ? "compact" : "regular",
+              );
+              svgElement.setAttribute("width", `${intrinsicSize.width}`);
+              svgElement.setAttribute("height", `${intrinsicSize.height}`);
+            }
           }
 
           bindFunctions?.(wrapper);

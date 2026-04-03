@@ -655,6 +655,10 @@
   text-align: center;
 }
 
+.growatt-docs-content .mermaid-diagram[data-mermaid-size="compact"] {
+  padding: 12px;
+}
+
 .growatt-docs-content .mermaid-diagram[data-mermaid-mode="light"] {
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   border-color: #dbe6f0;
@@ -669,8 +673,9 @@
 
 .growatt-docs-content .mermaid-diagram svg {
   display: block;
-  width: max-content;
-  min-width: 100%;
+  width: var(--mermaid-svg-width, auto);
+  min-width: 0;
+  max-width: none;
   height: auto;
   margin: 0 auto;
 }
@@ -682,7 +687,7 @@
     border-radius: 14px;
   }
 
-  .growatt-docs-content .mermaid-diagram::after {
+  .growatt-docs-content .mermaid-diagram:not([data-mermaid-size="compact"])::after {
     content: "Swipe horizontally to view full diagram";
     display: block;
     margin-top: 8px;
@@ -691,12 +696,8 @@
     text-align: right;
   }
 
-  .growatt-docs-content .mermaid-diagram[data-mermaid-mode="dark"]::after {
+  .growatt-docs-content .mermaid-diagram[data-mermaid-mode="dark"]:not([data-mermaid-size="compact"])::after {
     color: #cbd5e1;
-  }
-
-  .growatt-docs-content .mermaid-diagram svg {
-    min-width: 720px;
   }
 }
 
@@ -729,8 +730,8 @@
     line-height: 1.7;
   }
 
-  .growatt-docs-content .mermaid-diagram svg {
-    min-width: 640px;
+  .growatt-docs-content .mermaid-diagram[data-mermaid-size="compact"] {
+    padding: 10px;
   }
 
   .growatt-codes-detail-grid,
