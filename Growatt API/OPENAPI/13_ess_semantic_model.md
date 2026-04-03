@@ -24,7 +24,7 @@ The telemetry scope in this appendix focuses on the VPP-relevant subset of the c
 
 Static capability metadata from `07_api_device_info.md` remains outside this runtime telemetry catalog.
 
-The normative topology coverage in this revision is limited to `Hybrid` and `AC-Couple`. `PV Only` and `Battery Only` remain reserved for future extension.
+This revision presents four public topology references: `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`. The normative runtime semantic, telemetry, and dispatch-validation coverage in the later sections remains limited to `Hybrid` and `AC-Couple`.
 
 ---
 
@@ -76,7 +76,7 @@ classDef dispatch fill:#fff7e6,stroke:#d48806,stroke-width:2px,stroke-dasharray:
 
 # 4. Topology + Semantic + Dispatch Model
 
-This revision defines two normative public topologies: `Hybrid` and `AC-Couple`. `PV Only` and `Battery Only` are intentionally left out of the normative model until their public runtime payload coverage is specified separately.
+This revision includes four public topology reference diagrams: `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`. Only `Hybrid` and `AC-Couple` are part of the normative runtime model in the later semantic, telemetry, and dispatch-validation sections.
 
 ## 4.1 Hybrid Topology
 
@@ -182,6 +182,52 @@ In the `AC-Couple` topology, two public meter boundaries are distinguished:
 * `Generation Meter`: bound to `genPower`
 
 If `ppv` is reported in an `AC-Couple` payload, it remains auxiliary device-local PV telemetry and does not replace the `Generation Meter` boundary signal.
+
+## 4.3 PV Only Topology
+
+```mermaid
+flowchart LR
+
+    classDef asset fill:#ffffff,stroke:#333,stroke-width:1.5px;
+
+    PV[PV]
+    Inverter[Inverter]
+    GridMeter[Grid Meter]
+    Load[Load]
+    Grid[Grid]
+
+    PV --> Inverter
+    Inverter --> Load
+    Inverter <--> GridMeter
+    GridMeter <--> Grid
+
+    class PV,Inverter,GridMeter,Load,Grid asset;
+```
+
+`PV Only` is included here as a physical topology reference only. This revision does not add public runtime semantic mappings, SPx definitions, or dispatch mappings specific to this topology.
+
+## 4.4 Battery Only Topology
+
+```mermaid
+flowchart LR
+
+    classDef asset fill:#ffffff,stroke:#333,stroke-width:1.5px;
+
+    Battery[Battery]
+    Inverter[Inverter]
+    GridMeter[Grid Meter]
+    Load[Load]
+    Grid[Grid]
+
+    Battery <--> Inverter
+    Inverter --> Load
+    Inverter <--> GridMeter
+    GridMeter <--> Grid
+
+    class Battery,Inverter,GridMeter,Load,Grid asset;
+```
+
+`Battery Only` is included here as a physical topology reference only. This revision does not add public runtime semantic mappings, SPx definitions, or dispatch mappings specific to this topology.
 
 ---
 
@@ -463,9 +509,9 @@ flowchart LR
 
 ---
 
-# 8. Telemetry Applicability Matrix
+# 8. Runtime Coverage Matrix
 
-## 8.1 Topology Coverage
+## 8.1 Runtime Coverage by Topology
 
 | Block | Hybrid | AC Couple |
 | ----- | ------ | --------- |
@@ -487,7 +533,7 @@ flowchart LR
 * `smartLoadPower` is optional and appears only when the published payload reports a dedicated smart-load channel.
 * `ppv` remains the core PV-source semantic signal in `Hybrid`.
 * In `AC-Couple`, `genPower` is the primary public generation-meter boundary signal and `ppv` remains auxiliary when present.
-* `PV Only` and `Battery Only` are outside the normative scope of this revision and remain future extensions.
+* `PV Only` and `Battery Only` are now included as physical topology references only and are not part of this revision's normative runtime coverage.
 
 ---
 
@@ -627,5 +673,5 @@ flowchart TD
 
 # 15. Executive Summary
 
-This specification unifies runtime topology, semantics, dispatch, and telemetry into one public model for the `Hybrid` and `AC-Couple` ESS topologies.
-Core semantic signals cover only the fields that drive direction and control logic, while the remaining public telemetry is cataloged by boundary or functional block so each data area is explicit.
+This specification organizes public ESS topology references, runtime semantics, dispatch, and telemetry into one public model, with reference topology diagrams for `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`.
+Normative runtime semantic, telemetry, and dispatch-validation coverage in this revision remains focused on `Hybrid` and `AC-Couple`, while `PV Only` and `Battery Only` are included as physical topology references only.

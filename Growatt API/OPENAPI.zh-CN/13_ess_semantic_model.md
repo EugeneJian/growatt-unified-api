@@ -24,7 +24,7 @@
 
 `07_api_device_info.md` 中的静态能力元数据不属于本运行时遥测目录。
 
-本次修订的规范化拓扑范围仅包含 `Hybrid` 与 `AC-Couple`。`PV Only` 与 `Battery Only` 仍保留为后续扩展。
+本次修订展示 4 类公开拓扑参考图：`Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only`。后续“运行时语义 / 遥测 / 调度校验”章节的规范化覆盖仍仅限于 `Hybrid` 与 `AC-Couple`。
 
 ---
 
@@ -76,7 +76,7 @@ classDef dispatch fill:#fff7e6,stroke:#d48806,stroke-width:2px,stroke-dasharray:
 
 # 4. 拓扑 + 语义 + 调度模型
 
-本次修订仅定义两个规范化的公开拓扑：`Hybrid` 与 `AC-Couple`。在其公开运行时 payload 覆盖范围单独定义之前，`PV Only` 与 `Battery Only` 暂不纳入规范模型。
+本章补充 4 类公开拓扑参考图：`Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only`。其中只有 `Hybrid` 与 `AC-Couple` 被纳入后续语义、遥测与调度校验章节的规范化运行时模型。
 
 ## 4.1 `Hybrid` 拓扑
 
@@ -182,6 +182,52 @@ flowchart LR
 * `Generation Meter`（发电表）：绑定 `genPower`
 
 如果 `AC-Couple` payload 中上报了 `ppv`，它仍然只是设备本地 PV 遥测的辅助信号，不能替代 `Generation Meter` 边界语义。
+
+## 4.3 `PV Only` 拓扑
+
+```mermaid
+flowchart LR
+
+    classDef asset fill:#ffffff,stroke:#333,stroke-width:1.5px;
+
+    PV["PV"]
+    Inverter["逆变器"]
+    GridMeter["电网表"]
+    Load["负载"]
+    Grid["电网"]
+
+    PV --> Inverter
+    Inverter --> Load
+    Inverter <--> GridMeter
+    GridMeter <--> Grid
+
+    class PV,Inverter,GridMeter,Load,Grid asset;
+```
+
+`PV Only` 在此仅作为物理拓扑参考图展示。本次修订未为该拓扑新增公开运行时语义、SPx 定义或调度映射。
+
+## 4.4 `Battery Only` 拓扑
+
+```mermaid
+flowchart LR
+
+    classDef asset fill:#ffffff,stroke:#333,stroke-width:1.5px;
+
+    Battery["电池"]
+    Inverter["逆变器"]
+    GridMeter["电网表"]
+    Load["负载"]
+    Grid["电网"]
+
+    Battery <--> Inverter
+    Inverter --> Load
+    Inverter <--> GridMeter
+    GridMeter <--> Grid
+
+    class Battery,Inverter,GridMeter,Load,Grid asset;
+```
+
+`Battery Only` 在此仅作为物理拓扑参考图展示。本次修订未为该拓扑新增公开运行时语义、SPx 定义或调度映射。
 
 ---
 
@@ -463,9 +509,9 @@ flowchart LR
 
 ---
 
-# 8. 遥测适用性矩阵
+# 8. 运行时覆盖矩阵
 
-## 8.1 拓扑覆盖
+## 8.1 按拓扑划分的运行时覆盖
 
 | 块 | Hybrid | AC Couple |
 | --- | --- | --- |
@@ -487,7 +533,7 @@ flowchart LR
 * `smartLoadPower` 为可选字段，仅在公开 payload 上报独立 smart-load 通道时出现。
 * `ppv` 在 `Hybrid` 中仍是核心 PV 源语义信号。
 * 在 `AC-Couple` 中，`genPower` 是首要的公开发电表边界信号，而 `ppv` 在出现时仍然只是辅助信号。
-* `PV Only` 与 `Battery Only` 不在本次规范范围内，保留为未来扩展。
+* `PV Only` 与 `Battery Only` 已补充为物理拓扑参考图，但不属于本次修订的规范化运行时覆盖范围。
 
 ---
 
@@ -627,5 +673,5 @@ flowchart TD
 
 # 15. 执行摘要
 
-本规范将 `Hybrid` 与 `AC-Couple` 两类储能拓扑的运行时拓扑、语义、调度与遥测统一到一个公开模型中。  
-核心语义信号仅覆盖决定方向与控制逻辑的字段，其余公开遥测则按计量边界或功能块进行编目，从而让每个数据区域的含义都明确可追踪。
+本规范将公开 ESS 拓扑参考、运行时语义、调度与遥测整理为一个统一模型，并补充了 `Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only` 4 类拓扑参考图。  
+本次修订的规范化运行时语义、遥测与调度校验覆盖仍聚焦于 `Hybrid` 与 `AC-Couple`，而 `PV Only` 与 `Battery Only` 仅作为物理拓扑参考展示。
