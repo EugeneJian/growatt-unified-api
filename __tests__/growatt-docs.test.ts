@@ -70,6 +70,7 @@ const EXPECTED_RUNTIME_TELEMETRY_FIELDS = [
   "data.batteryStatus",
   "data.deviceSn",
   "data.epvTotal",
+  "data.genPower",
   "data.etoGridToday",
   "data.etoGridTotal",
   "data.etoUserToday",
@@ -95,7 +96,6 @@ const EXPECTED_RUNTIME_TELEMETRY_FIELDS = [
 
 const EXAMPLE_ONLY_NON_VPP_TELEMETRY_FIELDS = [
   "data.backupPower",
-  "data.genPower",
   "data.pexPower",
 ] as const;
 
@@ -522,6 +522,7 @@ describe("growatt docs source-of-truth loader", () => {
       expect(page).not.toBeNull();
       expect(page?.markdown).toContain('"dataType": "dfcData"');
       expect(page?.markdown).toContain('"deviceSn": "DEVICE_SN_1"');
+      expect(page?.markdown).toContain("| `data.genPower` | double |");
       expect(page?.markdown).not.toContain("same as the query model");
       expect(page?.markdown).not.toContain("same model as query");
       expect(page?.markdown).not.toContain("与查询模型一致");
@@ -539,8 +540,10 @@ describe("growatt docs source-of-truth loader", () => {
 
     expect(queryDocEn?.markdown).toContain("| Parameter | Type | Description | Example |");
     expect(queryDocEn?.markdown).toContain('| `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) | `174.90` |');
+    expect(queryDocEn?.markdown).toContain('| `data.genPower` | double | Generation meter power for AC-couple topologies in W. This is an observational generation-boundary signal, not a grid import/export sign field | `0.00` |');
     expect(queryDocEn?.markdown).toContain('| `data.vac1` | double | Line voltage 1 in V | `236.90` |');
     expect(queryDocEn?.markdown).toContain('| `message` | string | Response description | `"SUCCESSFUL_OPERATION"` |');
+    expect(queryDocZh?.markdown).toContain("| `data.genPower` | double |");
 
     expect(queryDocZh?.markdown).toContain("| 参数名 | 类型 | 说明 | 示例 |");
     expect(queryDocZh?.markdown).toContain('| `data.reactivePower` | double | 无功功率（正值：容性，负值：感性） | `174.90` |');
@@ -642,6 +645,18 @@ describe("growatt docs source-of-truth loader", () => {
     expect(pushDoc?.markdown).toContain(
       "Grid meter power. Positive means grid import and negative means grid export, unit: W",
     );
+    expect(dataDoc?.markdown).toContain(
+      "Generation meter power for AC-couple topologies in W. This is an observational generation-boundary signal, not a grid import/export sign field",
+    );
+    expect(pushDoc?.markdown).toContain(
+      "Generation meter power for AC-couple topologies in W. This is an observational generation-boundary signal, not a grid import/export sign field",
+    );
+    expect(dataDoc?.markdown).toContain(
+      "Device-local PV power in W. Core for Hybrid; auxiliary when reported in AC-couple topologies",
+    );
+    expect(pushDoc?.markdown).toContain(
+      "Device-local PV power in W. Core for Hybrid; auxiliary when reported in AC-couple topologies",
+    );
     expect(dataDoc?.markdown).toContain("Battery state of charge (SOC) in percent");
     expect(pushDoc?.markdown).toContain("Battery state of health (SOH) `[0,100]`");
     expect(dataDoc?.markdown).toContain("grid-connected");
@@ -649,9 +664,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(dataDoc?.markdown).toContain("`data.payLoadPower`");
     expect(pushDoc?.markdown).toContain("`data.smartLoadPower`");
     expect(dataDoc?.markdown).toContain("`data.batteryList[].status`");
+    expect(dataDoc?.markdown).toContain("`data.genPower`");
+    expect(pushDoc?.markdown).toContain("`data.genPower`");
     expect(dataDoc?.markdown).not.toContain("| `data.backupPower` |");
     expect(dataDoc?.markdown).not.toContain("| `data.pexPower` |");
-    expect(dataDoc?.markdown).not.toContain("| `data.genPower` |");
 
     expect(globalDoc?.markdown).toContain("Export Limit.");
     expect(globalDoc?.markdown).toContain("`anti_backflow`");
@@ -715,10 +731,24 @@ describe("growatt docs source-of-truth loader", () => {
     const blockCatalogFields = extractAppendixBlockCatalogFields(semantic.markdown);
 
     expect(blockCatalogFields).toEqual(EXPECTED_APPENDIX_BLOCK_FIELDS);
-    expect(semantic.markdown).toContain("| >0    | Grid import |");
-    expect(semantic.markdown).toContain("| <0    | Grid export |");
+    expect(semantic.markdown).toContain("GridMeter[Grid Meter]");
+    expect(semantic.markdown).toContain("GenerationMeter[Generation Meter]");
+    expect(semantic.markdown).toContain(
+      "| SP2 | Grid Meter Exchange Sign | `meterPower` | Grid Meter | Hybrid, AC Couple |",
+    );
+    expect(semantic.markdown).toContain(
+      "| SP7 | Export Limit | `anti_backflow` (control parameter) | Grid Meter | Hybrid, AC Couple |",
+    );
+    expect(semantic.markdown).toContain(
+      "| SP8 | Generation Meter Power | `genPower` | Generation Meter | AC Couple only |",
+    );
+    expect(semantic.markdown).toContain("| >0 | Grid import |");
+    expect(semantic.markdown).toContain("| <0 | Grid export |");
+    expect(semantic.markdown).toContain("| Block | Hybrid | AC Couple |");
+    expect(semantic.markdown).not.toContain("| Block | PV Only | Hybrid | AC Couple | Battery Only |");
     expect(semantic.markdown).toContain("`batPower`");
     expect(semantic.markdown).toContain("`meterPower`");
+    expect(semantic.markdown).toContain("`genPower`");
     expect(semantic.markdown).toContain("`anti_backflow`");
     expect(semantic.markdown).not.toContain("batteryPower");
     expect(semantic.markdown).not.toContain("gridPower");
@@ -726,7 +756,6 @@ describe("growatt docs source-of-truth loader", () => {
     expect(semantic.markdown).not.toContain("loadPower");
     expect(semantic.markdown).not.toContain("backupPower");
     expect(semantic.markdown).not.toContain("pexPower");
-    expect(semantic.markdown).not.toContain("genPower");
   });
 
   it("adds the new runtime telemetry glossary terms in both locales", async () => {
@@ -742,7 +771,9 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixEn.markdown).toContain("| Smart-load power | Smart Load 负载功率 | smart-load power | `smartLoadPower` |");
     expect(appendixEn.markdown).not.toContain("`backupPower`");
     expect(appendixEn.markdown).not.toContain("`pexPower`");
-    expect(appendixEn.markdown).not.toContain("`genPower`");
+    expect(appendixEn.markdown).toContain("generation meter");
+    expect(appendixEn.markdown).toContain("generation meter power");
+    expect(appendixEn.markdown).toContain("`genPower`");
 
     expect(appendixZh.markdown).toContain("| 无功功率 | 无功功率 | reactive power | `reactivePower` |");
     expect(appendixZh.markdown).toContain("| 电网频率 | 电网频率 | grid frequency | `fac` |");
@@ -751,6 +782,8 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixZh.markdown).toContain("| Smart Load 负载功率 | Smart Load 负载功率 | smart-load power | `smartLoadPower` |");
     expect(appendixZh.markdown).not.toContain("`backupPower`");
     expect(appendixZh.markdown).not.toContain("`pexPower`");
-    expect(appendixZh.markdown).not.toContain("`genPower`");
+    expect(appendixZh.markdown).toContain("generation meter");
+    expect(appendixZh.markdown).toContain("generation meter power");
+    expect(appendixZh.markdown).toContain("genPower");
   });
 });

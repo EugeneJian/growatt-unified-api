@@ -24,19 +24,21 @@ The telemetry scope in this appendix focuses on the VPP-relevant subset of the c
 
 Static capability metadata from `07_api_device_info.md` remains outside this runtime telemetry catalog.
 
+The normative topology coverage in this revision is limited to `Hybrid` and `AC-Couple`. `PV Only` and `Battery Only` remain reserved for future extension.
+
 ---
 
 # 2. Core Principles
 
 ## 2.1 Layer Separation
 
-| Layer      | Description                           |
-| ---------- | ------------------------------------- |
-| Topology   | Physical energy paths                 |
-| Telemetry  | VPP-relevant public runtime payload fields |
-| Semantic   | Interpretation rules for core signals |
-| Dispatch   | Control commands and limits           |
-| Validation | Pass/Fail logic                       |
+| Layer | Description |
+| ----- | ----------- |
+| Topology | Physical energy paths |
+| Telemetry | VPP-relevant public runtime payload fields |
+| Semantic | Interpretation rules for core signals |
+| Dispatch | Control commands and limits |
+| Validation | Pass/Fail logic |
 
 ---
 
@@ -74,6 +76,10 @@ classDef dispatch fill:#fff7e6,stroke:#d48806,stroke-width:2px,stroke-dasharray:
 
 # 4. Topology + Semantic + Dispatch Model
 
+This revision defines two normative public topologies: `Hybrid` and `AC-Couple`. `PV Only` and `Battery Only` are intentionally left out of the normative model until their public runtime payload coverage is specified separately.
+
+## 4.1 Hybrid Topology
+
 ```mermaid
 flowchart LR
 
@@ -84,36 +90,98 @@ flowchart LR
     PV[PV]
     Battery[Battery]
     Inverter[Hybrid Inverter]
+    GridMeter[Grid Meter]
     Load[Load]
     Grid[Grid]
 
     PV --> Inverter
     Battery <--> Inverter
     Inverter --> Load
-    Inverter <--> Grid
+    Inverter <--> GridMeter
+    GridMeter <--> Grid
 
     SP1(SP1: batPower sign)
     SP2(SP2: meterPower sign)
-    SP3(SP3: ppv)
+    SP3(SP3: hybrid ppv)
     SP4(SP4: payLoadPower / smartLoadPower)
     SP7(SP7: anti_backflow)
 
     Battery -.-> SP1
-    Grid -.-> SP2
+    GridMeter -.-> SP2
     PV -.-> SP3
     Load -.-> SP4
-    Grid -.-> SP7
+    GridMeter -.-> SP7
 
     D1[Dispatch: Charge / Discharge]
     D2[Dispatch: Export Limit]
 
     D1 -.-> Battery
-    D2 -.-> Grid
+    D2 -.-> GridMeter
 
-    class PV,Battery,Inverter,Load,Grid asset;
+    class PV,Battery,Inverter,GridMeter,Load,Grid asset;
     class SP1,SP2,SP3,SP4,SP7 semantic;
     class D1,D2 dispatch;
 ```
+
+In the `Hybrid` topology, `ppv` remains the core public PV-source signal, while `meterPower` and `anti_backflow` are anchored at the dedicated grid-meter boundary between the inverter AC side and the utility grid.
+
+## 4.2 AC-Couple Topology
+
+```mermaid
+flowchart LR
+
+    classDef asset fill:#ffffff,stroke:#333,stroke-width:1.5px;
+    classDef semantic fill:#e6f3ff,stroke:#1f78b4,stroke-width:2px,stroke-dasharray: 5 5;
+    classDef dispatch fill:#fff7e6,stroke:#d48806,stroke-width:2px,stroke-dasharray: 4 3;
+
+    PV[PV Array]
+    PVInverter[PV Inverter]
+    GenerationMeter[Generation Meter]
+    ACBus[AC Bus]
+    ACInverter[AC-Couple Inverter]
+    Battery[Battery]
+    GridMeter[Grid Meter]
+    Load[Load]
+    Grid[Grid]
+
+    PV --> PVInverter
+    PVInverter --> GenerationMeter
+    GenerationMeter --> ACBus
+    ACBus <--> ACInverter
+    ACInverter <--> Battery
+    ACBus --> Load
+    ACBus <--> GridMeter
+    GridMeter <--> Grid
+
+    SP1(SP1: batPower sign)
+    SP2(SP2: meterPower sign)
+    SP4(SP4: payLoadPower / smartLoadPower)
+    SP7(SP7: anti_backflow)
+    SP8(SP8: genPower)
+
+    Battery -.-> SP1
+    GridMeter -.-> SP2
+    Load -.-> SP4
+    GridMeter -.-> SP7
+    GenerationMeter -.-> SP8
+
+    D1[Dispatch: Charge / Discharge]
+    D2[Dispatch: Export Limit]
+
+    D1 -.-> Battery
+    D2 -.-> GridMeter
+
+    class PV,PVInverter,GenerationMeter,ACBus,ACInverter,Battery,GridMeter,Load,Grid asset;
+    class SP1,SP2,SP4,SP7,SP8 semantic;
+    class D1,D2 dispatch;
+```
+
+In the `AC-Couple` topology, two public meter boundaries are distinguished:
+
+* `Grid Meter`: bound to `meterPower`, `etoUser*`, `etoGrid*`, and `anti_backflow`
+* `Generation Meter`: bound to `genPower`
+
+If `ppv` is reported in an `AC-Couple` payload, it remains auxiliary device-local PV telemetry and does not replace the `Generation Meter` boundary signal.
 
 ---
 
@@ -121,15 +189,16 @@ flowchart LR
 
 ## 5.1 Definition
 
-| SPx | Name               | Field                                  | Target       |
-| --- | ------------------ | -------------------------------------- | ------------ |
-| SP1 | Battery Power Sign | `batPower`                             | Battery      |
-| SP2 | Grid Exchange Sign | `meterPower`                           | Grid         |
-| SP3 | PV Power           | `ppv`                                  | PV           |
-| SP4 | Load Power         | `payLoadPower`, `smartLoadPower`       | Load         |
-| SP5 | SOC                | `batteryList[].soc`                    | Battery Pack |
-| SP6 | SOH                | `batteryList[].soh`                    | Battery Pack |
-| SP7 | Export Limit       | `anti_backflow` (control parameter)    | Grid         |
+| SPx | Name | Field | Target | Topology |
+| --- | ---- | ----- | ------ | -------- |
+| SP1 | Battery Power Sign | `batPower` | Battery | Hybrid, AC Couple |
+| SP2 | Grid Meter Exchange Sign | `meterPower` | Grid Meter | Hybrid, AC Couple |
+| SP3 | Hybrid PV Source Power | `ppv` | PV Source | Hybrid core; AC Couple optional |
+| SP4 | Load Power | `payLoadPower`, `smartLoadPower` | Load | Hybrid, AC Couple |
+| SP5 | SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
+| SP6 | SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
+| SP7 | Export Limit | `anti_backflow` (control parameter) | Grid Meter | Hybrid, AC Couple |
+| SP8 | Generation Meter Power | `genPower` | Generation Meter | AC Couple only |
 
 ---
 
@@ -137,29 +206,34 @@ flowchart LR
 
 ### SP1 - Battery Power
 
-| Value | Meaning     |
-| ----- | ----------- |
-| >0    | Charging    |
-| <0    | Discharging |
+| Value | Meaning |
+| ----- | ------- |
+| >0 | Charging |
+| <0 | Discharging |
 
 ---
 
-### SP2 - Grid Exchange
+### SP2 - Grid Meter Exchange
 
-| Value | Meaning     |
-| ----- | ----------- |
-| >0    | Grid import |
-| <0    | Grid export |
+| Value | Meaning |
+| ----- | ------- |
+| >0 | Grid import |
+| <0 | Grid export |
+
+`meterPower` is interpreted at the grid-meter boundary between the site AC side and the utility grid.
 
 ---
 
-### SP3 / SP4
+### SP3 / SP4 / SP8
 
 | Field | Rule |
 | ----- | ---- |
-| `ppv` | >= 0 |
-| `payLoadPower` | >= 0 |
-| `smartLoadPower` | >= 0 when reported |
+| `ppv` | `>= 0`; core Hybrid PV-source signal and optional auxiliary telemetry in AC-Couple |
+| `payLoadPower` | `>= 0` |
+| `smartLoadPower` | `>= 0` when reported |
+| `genPower` | `>= 0` when reported; AC-Couple generation-meter power with no import/export sign semantics |
+
+`genPower` is observational telemetry only in this appendix. It does not define a public dispatch target or export-direction sign rule.
 
 ---
 
@@ -174,7 +248,7 @@ flowchart LR
 
 ### SP7
 
-`anti_backflow` remains a dispatch/control semantic and is not treated as runtime telemetry in this appendix.
+`anti_backflow` remains a dispatch/control semantic anchored on the `Grid Meter` boundary and is not treated as runtime telemetry in this appendix.
 
 ---
 
@@ -182,16 +256,17 @@ flowchart LR
 
 ## 6.1 Core Semantic Signal Mapping
 
-| Public Signal | Field | Rule | Unit | Payloads |
-| ------------- | ----- | ---- | ---- | -------- |
-| Battery Power | `batPower` | >0 charge, <0 discharge | `W` | Query, Push |
-| Grid Exchange | `meterPower` | >0 import, <0 export | `W` | Query, Push |
-| PV Power | `ppv` | >= 0 | `W` | Query, Push |
-| Load Power | `payLoadPower` | Calculated site load | `W` | Query, Push |
-| Smart-load Power | `smartLoadPower` | Auxiliary load channel when present | `W` | Query, Push |
-| Battery SOC | `batteryList[].soc` | Per-pack SOC | `%` | Query, Push |
-| Battery SOH | `batteryList[].soh` | Per-pack SOH | `%` | Query, Push |
-| Export Limit | `anti_backflow` | Control-only grid export constraint | Control parameter | Dispatch |
+| Public Signal | Field | Rule | Unit | Payloads | Topology |
+| ------------- | ----- | ---- | ---- | -------- | -------- |
+| Battery Power | `batPower` | >0 charge, <0 discharge | `W` | Query, Push | Hybrid, AC Couple |
+| Grid Meter Exchange | `meterPower` | >0 import, <0 export at the grid-meter boundary | `W` | Query, Push | Hybrid, AC Couple |
+| Hybrid PV Source Power | `ppv` | >= 0; core in Hybrid and auxiliary when reported in AC-Couple | `W` | Query, Push | Hybrid core; AC Couple optional |
+| Generation Meter Power | `genPower` | >= 0 when reported at the generation-meter boundary | `W` | Query, Push | AC Couple |
+| Load Power | `payLoadPower` | Calculated site load | `W` | Query, Push | Hybrid, AC Couple |
+| Smart-load Power | `smartLoadPower` | Auxiliary load channel when present | `W` | Query, Push | Hybrid, AC Couple |
+| Battery SOC | `batteryList[].soc` | Per-pack SOC | `%` | Query, Push | Hybrid, AC Couple |
+| Battery SOH | `batteryList[].soh` | Per-pack SOH | `%` | Query, Push | Hybrid, AC Couple |
+| Export Limit | `anti_backflow` | Control-only grid-meter export constraint | Control parameter | Dispatch | Hybrid, AC Couple |
 
 ---
 
@@ -205,9 +280,10 @@ flowchart LR
     classDef dispatch fill:#fff7e6,stroke:#d48806,stroke-width:2px,stroke-dasharray: 4 3;
 
     Meta["Identity & Time<br/>deviceSn, utcTime, dataType"]
-    GridBlock["Grid Exchange<br/>meterPower, etoUser*, etoGrid*"]
+    GridMeterBlock["Grid Meter Boundary<br/>meterPower, etoUser*, etoGrid*"]
+    GenerationMeterBlock["Generation Meter Boundary<br/>genPower"]
     Electrical["Electrical Quality<br/>reactivePower, fac, vac1-3"]
-    PVBlock["PV Generation<br/>ppv, epvTotal"]
+    PVBlock["PV Source / Generation<br/>ppv, epvTotal"]
     SiteBlock["Site / Output Power<br/>pac, payLoadPower, smartLoadPower"]
     BatteryAgg["Battery Aggregate<br/>batPower, batteryStatus"]
     BatteryPack["Battery Pack Detail<br/>batteryList[] metrics"]
@@ -216,13 +292,15 @@ flowchart LR
 
     SP1("SP1: batPower sign")
     SP2("SP2: meterPower sign")
-    SP3("SP3: ppv")
+    SP3("SP3: hybrid ppv")
     SP4("SP4: payLoadPower / smartLoadPower")
     SP5("SP5: batteryList[].soc")
     SP6("SP6: batteryList[].soh")
+    SP8("SP8: genPower")
     Dispatch["Dispatch / Control<br/>deviceDispatch, anti_backflow"]
 
-    Meta --> GridBlock
+    Meta --> GridMeterBlock
+    Meta --> GenerationMeterBlock
     Meta --> Electrical
     Meta --> PVBlock
     Meta --> SiteBlock
@@ -231,19 +309,22 @@ flowchart LR
     Meta --> Runtime
     Meta --> Fault
 
-    GridBlock -.-> SP2
+    GridMeterBlock -.-> SP2
+    GenerationMeterBlock -.-> SP8
     PVBlock -.-> SP3
     SiteBlock -.-> SP4
     BatteryAgg -.-> SP1
     BatteryPack -.-> SP5
     BatteryPack -.-> SP6
     Dispatch -.-> BatteryAgg
-    Dispatch -.-> GridBlock
+    Dispatch -.-> GridMeterBlock
 
-    class Meta,GridBlock,Electrical,PVBlock,SiteBlock,BatteryAgg,BatteryPack,Runtime,Fault block;
-    class SP1,SP2,SP3,SP4,SP5,SP6 semantic;
+    class Meta,GridMeterBlock,GenerationMeterBlock,Electrical,PVBlock,SiteBlock,BatteryAgg,BatteryPack,Runtime,Fault block;
+    class SP1,SP2,SP3,SP4,SP5,SP6,SP8 semantic;
     class Dispatch dispatch;
 ```
+
+`Generation Meter Boundary` applies only to `AC-Couple`. `PV Source / Generation` remains a core semantic block in `Hybrid` and an optional auxiliary block in `AC-Couple` when `ppv` is reported.
 
 ---
 
@@ -251,7 +332,7 @@ flowchart LR
 
 | Category | Fields | Unit |
 | -------- | ------ | ---- |
-| Power | `meterPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `smartLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
+| Power | `meterPower`, `genPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `smartLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
 | Energy | `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal`, `epvTotal`, `batteryList[].echargeToday`, `batteryList[].echargeTotal`, `batteryList[].edischargeToday`, `batteryList[].edischargeTotal` | `kWh` |
 | Voltage | `vac1`, `vac2`, `vac3`, `batteryList[].vbat` | `V` |
 | Frequency | `fac` | `Hz` |
@@ -273,15 +354,21 @@ flowchart LR
 | `utcTime` | Query, Push | UTC timestamp in `yyyy-MM-dd HH:mm:ss` format |
 | `dataType` | Push | Push envelope discriminator with fixed public value `dfcData` |
 
-### Grid Exchange
+### Grid Meter Boundary
 
 | Field | Payloads | Description |
 | ----- | -------- | ----------- |
-| `meterPower` | Query, Push | Grid meter power. Positive means grid import and negative means grid export |
-| `etoUserToday` | Query, Push | Grid import energy today |
-| `etoUserTotal` | Query, Push | Total grid import energy |
-| `etoGridToday` | Query, Push | Grid export energy today |
-| `etoGridTotal` | Query, Push | Total grid export energy |
+| `meterPower` | Query, Push | Grid meter power at the grid-meter boundary. Positive means grid import and negative means grid export |
+| `etoUserToday` | Query, Push | Grid-meter-boundary import energy today |
+| `etoUserTotal` | Query, Push | Total grid-meter-boundary import energy |
+| `etoGridToday` | Query, Push | Grid-meter-boundary export energy today |
+| `etoGridTotal` | Query, Push | Total grid-meter-boundary export energy |
+
+### Generation Meter Boundary
+
+| Field | Payloads | Description |
+| ----- | -------- | ----------- |
+| `genPower` | Query, Push | Generation meter power for AC-couple topologies. Treat as a non-negative generation-boundary magnitude rather than a grid import/export sign field |
 
 ### Electrical Quality
 
@@ -293,11 +380,11 @@ flowchart LR
 | `vac2` | Query, Push | Line voltage 2 |
 | `vac3` | Query, Push | Line voltage 3 |
 
-### PV Generation
+### PV Source / Generation
 
 | Field | Payloads | Description |
 | ----- | -------- | ----------- |
-| `ppv` | Query, Push | PV power |
+| `ppv` | Query, Push | Device-local PV source power. Core in Hybrid; auxiliary when reported in AC-couple topologies |
 | `epvTotal` | Query, Push | Total PV generation |
 
 ### Site / Output Power
@@ -358,7 +445,7 @@ flowchart LR
 | -------- | ------ |
 | Charge | Battery |
 | Discharge | Battery |
-| Export Limit | Grid |
+| Export Limit | Grid Meter |
 | Mode | Inverter |
 
 ---
@@ -372,31 +459,35 @@ flowchart LR
 | Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow` |
 | Mode | `status`, `priority`, power blocks | Implementation-specific set types |
 
+`genPower` is observational telemetry for AC-couple validation in this revision and does not map to a public dispatch/control field.
+
 ---
 
 # 8. Telemetry Applicability Matrix
 
 ## 8.1 Topology Coverage
 
-| Block | PV Only | Hybrid | AC Couple | Battery Only |
-| ----- | ------- | ------ | --------- | ------------ |
-| Identity & Time | ✓ | ✓ | ✓ | ✓ |
-| Grid Exchange | ✓ | ✓ | ✓ | ✓ |
-| Electrical Quality | ✓ | ✓ | ✓ | ✓ |
-| PV Generation | ✓ | ✓ | ✓ | ✗ |
-| Site / Output Power | ✓ | ✓ | ✓ | ✓ |
-| Battery Aggregate | ✗ | ✓ | ✓ | ✓ |
-| Battery Pack Detail | ✗ | ✓ | ✓ | ✓ |
-| Runtime Mode | ✓ | ✓ | ✓ | ✓ |
-| Fault / Protection | ✓ | ✓ | ✓ | ✓ |
+| Block | Hybrid | AC Couple |
+| ----- | ------ | --------- |
+| Identity & Time | Core | Core |
+| Grid Meter Boundary | Core | Core |
+| Generation Meter Boundary | N/A | Core |
+| Electrical Quality | Core | Core |
+| PV Source / Generation | Core | Optional |
+| Site / Output Power | Core | Core |
+| Battery Aggregate | Core | Core |
+| Battery Pack Detail | Core | Core |
+| Runtime Mode | Core | Core |
+| Fault / Protection | Core | Core |
 
 ---
 
 ## 8.2 Notes
 
 * `smartLoadPower` is optional and appears only when the published payload reports a dedicated smart-load channel.
-* PV-only systems do not expose battery aggregate or battery pack telemetry.
-* Battery-only systems do not expose PV generation fields.
+* `ppv` remains the core PV-source semantic signal in `Hybrid`.
+* In `AC-Couple`, `genPower` is the primary public generation-meter boundary signal and `ppv` remains auxiliary when present.
+* `PV Only` and `Battery Only` are outside the normative scope of this revision and remain future extensions.
 
 ---
 
@@ -444,7 +535,7 @@ batPower remains positive and batteryList[].soc does not trend downward
 **Expected**
 
 * `meterPower` stays within the configured export boundary in the export direction
-* In export-limited mode, `meterPower` does not become more negative than the configured export limit
+* In export-limited mode, `meterPower` does not become more negative than the configured export limit at the meter boundary
 
 ---
 
@@ -538,14 +629,12 @@ flowchart TD
 
 ## Chinese
 
-本规范将运行时拓扑、语义、调度与遥测统一到同一套公开模型中。
-核心语义信号只覆盖真正影响方向判断和控制闭环的字段；其余公开 telemetry 则按块完整归档，确保每一块有哪些数据都能直接查到。
-
+鏈鑼冨皢杩愯鏃舵嫇鎵戙€佽涔夈€佽皟搴︿笌閬ユ祴缁熶竴鍒板悓涓€濂楀叕寮€妯″瀷涓€?鏍稿績璇箟淇″彿鍙鐩栫湡姝ｅ奖鍝嶆柟鍚戝垽鏂拰鎺у埗闂幆鐨勫瓧娈碉紱鍏朵綑鍏紑 telemetry 鍒欐寜鍧楀畬鏁村綊妗ｏ紝纭繚姣忎竴鍧楁湁鍝簺鏁版嵁閮借兘鐩存帴鏌ュ埌銆?
 ---
 
 ## English
 
-This specification unifies runtime topology, semantics, dispatch, and telemetry into one public model.
-Core semantic signals cover only the fields that drive direction and control logic, while the remaining public telemetry is fully cataloged by block so each data area is explicit.
+This specification unifies runtime topology, semantics, dispatch, and telemetry into one public model for the `Hybrid` and `AC-Couple` ESS topologies.
+Core semantic signals cover only the fields that drive direction and control logic, while the remaining public telemetry is cataloged by boundary or functional block so each data area is explicit.
 
 ---

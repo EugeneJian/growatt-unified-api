@@ -100,7 +100,8 @@ sequenceDiagram
 | `data.protectCode` | int | 保护主码 | `0` |
 | `data.protectSubCode` | int | 保护子码 | `0` |
 | `data.pac` | double | 交流输出功率，单位 W | `41.30` |
-| `data.ppv` | double | 设备本身的 PV 功率，单位 W | `14.30` |
+| `data.genPower` | double | AC-Couple 拓扑下的发电侧电表功率，单位 W；该字段表示发电边界观测值，不表示并网取电/馈电方向 | `0.00` |
+| `data.ppv` | double | 设备本地 PV 功率，单位 W；在 Hybrid 拓扑中为核心 PV 信号，在 AC-Couple 拓扑中如有上报则作为辅助遥测 | `14.30` |
 | `data.epvTotal` | double | PV 总发电能量，单位 kWh | `0.00` |
 | `data.payLoadPower` | double | 总负载功率（计算值），单位 W | `14.50` |
 | `data.smartLoadPower` | double | 设备具备独立 smart load 通道时上报的负载功率，单位 W | `0.00` |
