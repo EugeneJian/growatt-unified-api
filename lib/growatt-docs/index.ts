@@ -8,19 +8,19 @@ import {
   prepareGrowattMarkdown,
   renderGrowattMarkdownToHtml,
 } from "./markdown";
+
 export { GROWATT_CODES_SLUG, getGrowattCodesPage } from "./growatt-codes";
 
 const GROWATT_API_ROOT_DIR = path.join(process.cwd(), "Growatt API");
 const EN_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI");
 const ZH_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI.zh-CN");
-const GROWATT_DOCS_ROOT_DIR = path.join(process.cwd(), "docs");
 const README_FILE_NAME = "README.md";
 const EN_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.md";
 const ZH_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.zh-CN.md";
-const GROWATT_SEMANTIC_MODEL_FILE_NAME = "growatt-ess-semantic-model-preliminary-review.md";
-const GROWATT_SEMANTIC_MODEL_SOURCE_FILE = `docs/${GROWATT_SEMANTIC_MODEL_FILE_NAME}`;
 const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "12_ess_terminology.md";
+const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "13_ess_semantic_model.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
+
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
 export const GROWATT_APPENDIX_TERMINOLOGY_SLUG = "appendix-terminology";
 export const GROWATT_SEMANTIC_MODEL_SLUG = "semantic-model";
@@ -38,6 +38,7 @@ interface LocaleSourceConfig {
   openApiRootDir: string;
   quickGuideFileName: string;
   quickGuidePath: string;
+  semanticModelFileName: string;
   overviewFallbackTitle: string;
   quickGuideFallbackTitle: string;
 }
@@ -47,6 +48,7 @@ const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = 
     openApiRootDir: EN_OPENAPI_ROOT_DIR,
     quickGuideFileName: EN_QUICK_GUIDE_FILE_NAME,
     quickGuidePath: path.join(GROWATT_API_ROOT_DIR, EN_QUICK_GUIDE_FILE_NAME),
+    semanticModelFileName: GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
     overviewFallbackTitle: "Growatt Open API Documentation",
     quickGuideFallbackTitle: "Quick Guide",
   },
@@ -54,6 +56,7 @@ const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = 
     openApiRootDir: ZH_OPENAPI_ROOT_DIR,
     quickGuideFileName: ZH_QUICK_GUIDE_FILE_NAME,
     quickGuidePath: path.join(GROWATT_API_ROOT_DIR, ZH_QUICK_GUIDE_FILE_NAME),
+    semanticModelFileName: GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
     overviewFallbackTitle: "Growatt Open API 文档",
     quickGuideFallbackTitle: "快速指南",
   },
@@ -61,17 +64,17 @@ const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = 
 
 const APPENDIX_A_LABELS: Record<GrowattDocLocale, string> = {
   en: "Appendix A Growatt Codes",
-  "zh-CN": "附录A Growatt Codes",
+  "zh-CN": "附录 A Growatt Codes",
 };
 
 const APPENDIX_B_LABELS: Record<GrowattDocLocale, string> = {
   en: "Appendix B Glossary",
-  "zh-CN": "附录B 术语表",
+  "zh-CN": "附录 B 术语表",
 };
 
 const APPENDIX_C_LABELS: Record<GrowattDocLocale, string> = {
   en: "Appendix C Semantic Model",
-  "zh-CN": "附录C Semantic Model",
+  "zh-CN": "附录 C 语义模型",
 };
 
 export interface GrowattDocMeta {
@@ -174,8 +177,9 @@ function getLocaleSourceConfig(locale: GrowattDocLocale): LocaleSourceConfig {
 function buildGrowattInternalSlugMap(fileNames: string[]): Map<string, string> {
   const slugByFileName = buildGrowattSlugByFileName(fileNames);
 
-  // Keep legacy glossary links working after the glossary moves to appendix B.
+  // Keep appendix aliases stable even though these files are not part of the numbered doc nav.
   slugByFileName.set(GROWATT_TERMINOLOGY_DOC_FILE_NAME, GROWATT_APPENDIX_TERMINOLOGY_SLUG);
+  slugByFileName.set(GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME, GROWATT_SEMANTIC_MODEL_SLUG);
 
   return slugByFileName;
 }
@@ -201,7 +205,9 @@ export const getGrowattDocMetas = cache(
     const docFileNames = markdownFileNames
       .filter(
         (fileName) =>
-          fileName !== README_FILE_NAME && fileName !== GROWATT_TERMINOLOGY_DOC_FILE_NAME,
+          fileName !== README_FILE_NAME &&
+          fileName !== GROWATT_TERMINOLOGY_DOC_FILE_NAME &&
+          fileName !== GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
       )
       .sort(compareDocFiles);
 
@@ -310,9 +316,10 @@ export const getGrowattAppendixTerminologyPage = cache(
 
 export const getGrowattSemanticModelPage = cache(
   async (locale: GrowattDocLocale = "en"): Promise<GrowattSpecialMarkdownPage> => {
+    const sourceConfig = getLocaleSourceConfig(locale);
     const [docMetas, markdown] = await Promise.all([
       getGrowattDocMetas(locale),
-      fs.readFile(path.join(GROWATT_DOCS_ROOT_DIR, GROWATT_SEMANTIC_MODEL_FILE_NAME), "utf8"),
+      readOpenApiFile(sourceConfig.semanticModelFileName, locale),
     ]);
 
     const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
@@ -321,7 +328,7 @@ export const getGrowattSemanticModelPage = cache(
 
     return {
       slug: GROWATT_SEMANTIC_MODEL_SLUG,
-      fileName: GROWATT_SEMANTIC_MODEL_SOURCE_FILE,
+      fileName: sourceConfig.semanticModelFileName,
       title: APPENDIX_C_LABELS[locale],
       markdown,
       displayMarkdown,

@@ -1,8 +1,8 @@
 # Growatt ESS Semantic Model and Dispatch Specification
 
-**Version**: v1.0
-**Status**: Public Standard
-**Scope**: Growatt Unified OpenAPI / EMS VPP-relevant runtime telemetry semantics and dispatch validation
+**Version**: v1.0  
+**Status**: Public Standard  
+**Scope**: Growatt Unified OpenAPI / EMS VPP-relevant runtime telemetry semantics and dispatch validation  
 **Audience**: Integrators, solution architects, validation teams, and implementation teams
 
 ---
@@ -627,14 +627,5 @@ flowchart TD
 
 # 15. Executive Summary
 
-## Chinese
-
-鏈鑼冨皢杩愯鏃舵嫇鎵戙€佽涔夈€佽皟搴︿笌閬ユ祴缁熶竴鍒板悓涓€濂楀叕寮€妯″瀷涓€?鏍稿績璇箟淇″彿鍙鐩栫湡姝ｅ奖鍝嶆柟鍚戝垽鏂拰鎺у埗闂幆鐨勫瓧娈碉紱鍏朵綑鍏紑 telemetry 鍒欐寜鍧楀畬鏁村綊妗ｏ紝纭繚姣忎竴鍧楁湁鍝簺鏁版嵁閮借兘鐩存帴鏌ュ埌銆?
----
-
-## English
-
 This specification unifies runtime topology, semantics, dispatch, and telemetry into one public model for the `Hybrid` and `AC-Couple` ESS topologies.
 Core semantic signals cover only the fields that drive direction and control logic, while the remaining public telemetry is cataloged by boundary or functional block so each data area is explicit.
-
----

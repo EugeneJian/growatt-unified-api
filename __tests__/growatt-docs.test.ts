@@ -24,6 +24,8 @@ jest.mock("@/lib/growatt-docs/markdown", () => {
   };
 });
 
+import { promises as fs } from "node:fs";
+import path from "node:path";
 import {
   GROWATT_APPENDIX_TERMINOLOGY_SLUG,
   GROWATT_CODES_SLUG,
@@ -199,13 +201,14 @@ function extractAppendixBlockCatalogFields(markdown: string) {
 }
 
 describe("growatt docs source-of-truth loader", () => {
-  it("discovers numbered OPENAPI docs and excludes README plus appendix-only glossary from doc list", async () => {
+  it("discovers numbered OPENAPI docs and excludes README plus appendix-only glossary and semantic docs from the doc list", async () => {
     const docs = await getGrowattDocMetas("en");
     const fileNames = docs.map((doc) => doc.fileName);
 
     expect(fileNames.length).toBeGreaterThan(0);
     expect(fileNames).not.toContain("README.md");
     expect(fileNames).not.toContain("12_ess_terminology.md");
+    expect(fileNames).not.toContain("13_ess_semantic_model.md");
     expect(fileNames[0]).toMatch(/^01_/);
   });
 
@@ -306,7 +309,7 @@ describe("growatt docs source-of-truth loader", () => {
     }
   });
 
-  it("loads appendix terminology alias pages and the shared semantic model page", async () => {
+  it("loads locale-specific appendix terminology and semantic model pages", async () => {
     const [appendixTermEn, appendixTermZh, semanticEn, semanticZh] = await Promise.all([
       getGrowattAppendixTerminologyPage("en"),
       getGrowattAppendixTerminologyPage("zh-CN"),
@@ -319,22 +322,29 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixTermEn.fileName).toBe("12_ess_terminology.md");
     expect(appendixTermZh.fileName).toBe("12_ess_terminology.md");
     expect(appendixTermEn.title).toBe("Appendix B Glossary");
-    expect(appendixTermZh.title).toBe("附录B 术语表");
+    expect(appendixTermZh.title).toBe("附录 B 术语表");
     expect(appendixTermEn.markdown).toContain("state of charge (SOC)");
     expect(appendixTermZh.markdown).toContain("公开术语表");
     expect(appendixTermEn.displayMarkdown).not.toContain("12_ess_terminology");
+    expect(appendixTermEn.displayMarkdown).toContain("/growatt-openapi/semantic-model");
+    expect(appendixTermZh.displayMarkdown).toContain("/growatt-openapi/semantic-model");
 
     expect(semanticEn.slug).toBe(GROWATT_SEMANTIC_MODEL_SLUG);
     expect(semanticZh.slug).toBe(GROWATT_SEMANTIC_MODEL_SLUG);
-    expect(semanticEn.fileName).toBe("docs/growatt-ess-semantic-model-preliminary-review.md");
-    expect(semanticZh.fileName).toBe("docs/growatt-ess-semantic-model-preliminary-review.md");
+    expect(semanticEn.fileName).toBe("13_ess_semantic_model.md");
+    expect(semanticZh.fileName).toBe("13_ess_semantic_model.md");
     expect(semanticEn.title).toBe("Appendix C Semantic Model");
-    expect(semanticZh.title).toBe("附录C Semantic Model");
-    expect(semanticEn.markdown).toBe(semanticZh.markdown);
+    expect(semanticZh.title).toBe("附录 C 语义模型");
+    expect(semanticEn.markdown).not.toBe(semanticZh.markdown);
     expect(semanticEn.markdown).toContain("# Growatt ESS Semantic Model and Dispatch Specification");
+    expect(semanticEn.markdown).not.toContain("## Chinese");
+    expect(semanticZh.markdown).toContain("# Growatt ESS 语义模型与调度规范");
+    expect(semanticZh.markdown).not.toContain("## English");
     expect(semanticEn.markdown).toContain("**Status**: Public Standard");
+    expect(semanticZh.markdown).toContain("本规范将 `Hybrid` 与 `AC-Couple` 两类储能拓扑的运行时拓扑、语义、调度与遥测统一到一个公开模型中。");
     expect(semanticEn.markdown).not.toContain("Amber / AGL / Origin / Evergen");
     expect(semanticEn.markdown).not.toContain("对外口径");
+    expect(semanticZh.markdown).not.toContain("閺堫剝顫夐懠鍐ㄧ殺");
     expect(countMermaidBlocks(semanticEn.markdown)).toBeGreaterThanOrEqual(5);
   });
 
@@ -371,13 +381,17 @@ describe("growatt docs source-of-truth loader", () => {
 
     expect(docsEn.map((doc) => doc.fileName)).not.toContain("12_ess_terminology.md");
     expect(docsZh.map((doc) => doc.fileName)).not.toContain("12_ess_terminology.md");
+    expect(docsEn.map((doc) => doc.fileName)).not.toContain("13_ess_semantic_model.md");
+    expect(docsZh.map((doc) => doc.fileName)).not.toContain("13_ess_semantic_model.md");
     expect(glossaryEn).toBeNull();
     expect(glossaryZh).toBeNull();
     expect(appendixEn.title).toBe("Appendix B Glossary");
-    expect(appendixZh.title).toBe("附录B 术语表");
+    expect(appendixZh.title).toBe("附录 B 术语表");
     expect(appendixEn.markdown).toContain("state of charge (SOC)");
     expect(appendixEn.markdown).toContain("Export Limit");
+    expect(appendixEn.markdown).toContain("[ESS Semantic Model](./13_ess_semantic_model.md)");
     expect(appendixZh.markdown).toContain("state of charge (SOC)");
+    expect(appendixZh.markdown).toContain("[ESS 语义模型](./13_ess_semantic_model.md)");
     expect(appendixZh.markdown).not.toContain("基线来源：");
   });
 
@@ -405,7 +419,7 @@ describe("growatt docs source-of-truth loader", () => {
         slug: GROWATT_CODES_SLUG,
         labelByLocale: expect.objectContaining({
           en: "Appendix A Growatt Codes",
-          "zh-CN": "附录A Growatt Codes",
+          "zh-CN": "附录 A Growatt Codes",
         }),
         placement: "afterDocs",
       }),
@@ -415,7 +429,7 @@ describe("growatt docs source-of-truth loader", () => {
         slug: GROWATT_APPENDIX_TERMINOLOGY_SLUG,
         labelByLocale: expect.objectContaining({
           en: "Appendix B Glossary",
-          "zh-CN": "附录B 术语表",
+          "zh-CN": "附录 B 术语表",
         }),
         placement: "afterDocs",
       }),
@@ -425,11 +439,27 @@ describe("growatt docs source-of-truth loader", () => {
         slug: GROWATT_SEMANTIC_MODEL_SLUG,
         labelByLocale: expect.objectContaining({
           en: "Appendix C Semantic Model",
-          "zh-CN": "附录C Semantic Model",
+          "zh-CN": "附录 C 语义模型",
         }),
         placement: "afterDocs",
       }),
     );
+  });
+
+  it("removes the legacy shared semantic-model loader path", async () => {
+    const [loaderSource, semanticPageSource] = await Promise.all([
+      fs.readFile(path.join(process.cwd(), "lib", "growatt-docs", "index.ts"), "utf8"),
+      fs.readFile(
+        path.join(process.cwd(), "app", "growatt-openapi", "semantic-model", "page.tsx"),
+        "utf8",
+      ),
+    ]);
+
+    expect(loaderSource).toContain('const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "13_ess_semantic_model.md";');
+    expect(loaderSource).not.toContain("growatt-ess-semantic-model-preliminary-review.md");
+    expect(loaderSource).not.toContain("path.join(process.cwd(), \"docs\")");
+    expect(semanticPageSource).toContain("公开语义模型与调度校验标准。");
+    expect(semanticPageSource).not.toContain("鍏紑");
   });
 
   it("loads fault-code appendix content from the enterprise SSOT", async () => {
@@ -764,10 +794,15 @@ describe("growatt docs source-of-truth loader", () => {
       getGrowattAppendixTerminologyPage("zh-CN"),
     ]);
 
+    expect(appendixEn.markdown).toContain("| Grid meter | 电网表 | grid meter | `meterPower`, `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal` |");
+    expect(appendixEn.markdown).toContain("| Grid meter power | 电网表功率 | grid meter power | `meterPower` |");
+    expect(appendixEn.markdown).toContain("| Generation meter | 发电表 | generation meter | `genPower` |");
+    expect(appendixEn.markdown).toContain("| Generation meter power | 发电表功率 | generation meter power | `genPower` |");
     expect(appendixEn.markdown).toContain("| Reactive power | 无功功率 | reactive power | `reactivePower` |");
     expect(appendixEn.markdown).toContain("| Grid frequency | 电网频率 | grid frequency | `fac` |");
     expect(appendixEn.markdown).toContain("| Line voltage | 线电压 | line voltage | `vac1`, `vac2`, `vac3` |");
     expect(appendixEn.markdown).toContain("| Battery pack status | 电池包状态 | battery pack status | `batteryList[].status` |");
+    expect(appendixEn.markdown).toContain("| Load power | 负载功率 | load power | `payLoadPower`, `smartLoadPower` |");
     expect(appendixEn.markdown).toContain("| Smart-load power | Smart Load 负载功率 | smart-load power | `smartLoadPower` |");
     expect(appendixEn.markdown).not.toContain("`backupPower`");
     expect(appendixEn.markdown).not.toContain("`pexPower`");
@@ -775,10 +810,15 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixEn.markdown).toContain("generation meter power");
     expect(appendixEn.markdown).toContain("`genPower`");
 
+    expect(appendixZh.markdown).toContain("| 电网表 | 电网表 | grid meter | `meterPower`, `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal` |");
+    expect(appendixZh.markdown).toContain("| 电网表功率 | 电网表功率 | grid meter power | `meterPower` |");
+    expect(appendixZh.markdown).toContain("| 发电表 | 发电表 | generation meter | `genPower` |");
+    expect(appendixZh.markdown).toContain("| 发电表功率 | 发电表功率 | generation meter power | `genPower` |");
     expect(appendixZh.markdown).toContain("| 无功功率 | 无功功率 | reactive power | `reactivePower` |");
     expect(appendixZh.markdown).toContain("| 电网频率 | 电网频率 | grid frequency | `fac` |");
     expect(appendixZh.markdown).toContain("| 线电压 | 线电压 | line voltage | `vac1`, `vac2`, `vac3` |");
     expect(appendixZh.markdown).toContain("| 电池包状态 | 电池包状态 | battery pack status | `batteryList[].status` |");
+    expect(appendixZh.markdown).toContain("| 负载功率 | 负载功率 | load power | `payLoadPower`, `smartLoadPower` |");
     expect(appendixZh.markdown).toContain("| Smart Load 负载功率 | Smart Load 负载功率 | smart-load power | `smartLoadPower` |");
     expect(appendixZh.markdown).not.toContain("`backupPower`");
     expect(appendixZh.markdown).not.toContain("`pexPower`");
