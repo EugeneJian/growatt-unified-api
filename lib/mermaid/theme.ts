@@ -293,5 +293,14 @@ export function buildMermaidConfig(mode: MermaidColorMode): MermaidConfig {
     themeVariables: getMermaidThemeVariables(mode),
     themeCSS: getMermaidThemeCss(mode),
     securityLevel: "loose",
+    flowchart: {
+      useMaxWidth: false,
+      htmlLabels: true,
+      diagramPadding: 6,
+      nodeSpacing: 28,
+      rankSpacing: 34,
+      padding: 10,
+      wrappingWidth: 140,
+    },
   };
 }
