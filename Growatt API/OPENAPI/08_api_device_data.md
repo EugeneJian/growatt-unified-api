@@ -153,8 +153,9 @@ sequenceDiagram
 | `data.protectCode` | int | Protection main code | `0` |
 | `data.protectSubCode` | int | Protection sub-code | `0` |
 | `data.pac` | double | AC output power in W | `41.30` |
-| `data.genPower` | double | Generation meter power for AC-couple topologies in W. This is an observational generation-boundary signal, not a grid import/export sign field | `0.00` |
-| `data.ppv` | double | Device-local PV power in W. Core for Hybrid; auxiliary when reported in AC-couple topologies | `14.30` |
+| `data.pexPower` | double | External generation power in W for third-party meter / Solar Inverter sources. Treat as a non-negative external-generation magnitude, not a grid import/export sign field | `14.30` |
+| `data.genPower` | double | Generator power in W for off-grid runtime when a generator source is present. Treat as a non-negative generator magnitude, not an AC-couple external-generation boundary signal | `0.00` |
+| `data.ppv` | double | Device-local PV power in W. Core for Hybrid; auxiliary when reported alongside `pexPower` in AC-couple topologies | `14.30` |
 | `data.epvTotal` | double | Total PV generation in kWh | `0.00` |
 | `data.payLoadPower` | double | Total load power (calculated) in W | `14.50` |
 | `data.smartLoadPower` | double | Smart-load power when the device reports a dedicated smart-load channel, unit: W | `0.00` |

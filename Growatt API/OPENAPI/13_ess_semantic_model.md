@@ -136,7 +136,7 @@ flowchart LR
 
     PV[PV Array]
     PVInverter[PV Inverter]
-    GenerationMeter[Generation Meter]
+    ExternalGeneration[External Generation]
     ACBus[AC Bus]
     ACInverter[AC-Couple Inverter]
     Battery[Battery]
@@ -145,8 +145,8 @@ flowchart LR
     Grid[Grid]
 
     PV --> PVInverter
-    PVInverter --> GenerationMeter
-    GenerationMeter --> ACBus
+    PVInverter --> ExternalGeneration
+    ExternalGeneration --> ACBus
     ACBus <--> ACInverter
     ACInverter <--> Battery
     ACBus --> Load
@@ -157,13 +157,13 @@ flowchart LR
     SP2(SP2: meterPower sign)
     SP4(SP4: payLoadPower / smartLoadPower)
     SP7(SP7: anti_backflow)
-    SP8(SP8: genPower)
+    SP8(SP8: pexPower)
 
     Battery -.-> SP1
     GridMeter -.-> SP2
     Load -.-> SP4
     GridMeter -.-> SP7
-    GenerationMeter -.-> SP8
+    ExternalGeneration -.-> SP8
 
     D1[Dispatch: Charge / Discharge]
     D2[Dispatch: Export Limit]
@@ -171,17 +171,19 @@ flowchart LR
     D1 -.-> Battery
     D2 -.-> GridMeter
 
-    class PV,PVInverter,GenerationMeter,ACBus,ACInverter,Battery,GridMeter,Load,Grid asset;
+    class PV,PVInverter,ExternalGeneration,ACBus,ACInverter,Battery,GridMeter,Load,Grid asset;
     class SP1,SP2,SP4,SP7,SP8 semantic;
     class D1,D2 dispatch;
 ```
 
-In the `AC-Couple` topology, two public meter boundaries are distinguished:
+In the `AC-Couple` topology, two public power boundaries are distinguished:
 
 * `Grid Meter`: bound to `meterPower`, `etoUser*`, `etoGrid*`, and `anti_backflow`
-* `Generation Meter`: bound to `genPower`
+* `External Generation`: bound to `pexPower`
 
-If `ppv` is reported in an `AC-Couple` payload, it remains auxiliary device-local PV telemetry and does not replace the `Generation Meter` boundary signal.
+If `ppv` is reported in an `AC-Couple` payload, it remains auxiliary device-local PV telemetry and does not replace the `External Generation` boundary signal `pexPower`.
+
+`genPower`, when reported, represents off-grid `generator power` and is not part of the AC-couple external-generation boundary model in this appendix.
 
 ## 4.3 PV Only Topology
 
@@ -244,7 +246,7 @@ flowchart LR
 | SP5 | SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
 | SP6 | SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
 | SP7 | Export Limit | `anti_backflow` (control parameter) | Grid Meter | Hybrid, AC Couple |
-| SP8 | Generation Meter Power | `genPower` | Generation Meter | AC Couple only |
+| SP8 | External Generation Power | `pexPower` | External Generation | AC Couple only |
 
 ---
 
@@ -274,12 +276,14 @@ flowchart LR
 
 | Field | Rule |
 | ----- | ---- |
-| `ppv` | `>= 0`; core Hybrid PV-source signal and optional auxiliary telemetry in AC-Couple |
+| `ppv` | `>= 0`; core Hybrid PV-source signal and optional auxiliary telemetry in AC-Couple alongside `pexPower` |
 | `payLoadPower` | `>= 0` |
 | `smartLoadPower` | `>= 0` when reported |
-| `genPower` | `>= 0` when reported; AC-Couple generation-meter power with no import/export sign semantics |
+| `pexPower` | `>= 0` when reported; AC-Couple external generation power for third-party meter / Solar Inverter sources with no import/export sign semantics |
 
-`genPower` is observational telemetry only in this appendix. It does not define a public dispatch target or export-direction sign rule.
+`pexPower` is observational telemetry only in this appendix. It does not define a public dispatch target or export-direction sign rule.
+
+`genPower` is generator power for off-grid runtime when reported. It is retained as auxiliary telemetry and is not mapped to a public boundary SPx or dispatch target in this appendix.
 
 ---
 
@@ -306,8 +310,9 @@ flowchart LR
 | ------------- | ----- | ---- | ---- | -------- | -------- |
 | Battery Power | `batPower` | >0 charge, <0 discharge | `W` | Query, Push | Hybrid, AC Couple |
 | Grid Meter Exchange | `meterPower` | >0 import, <0 export at the grid-meter boundary | `W` | Query, Push | Hybrid, AC Couple |
-| Hybrid PV Source Power | `ppv` | >= 0; core in Hybrid and auxiliary when reported in AC-Couple | `W` | Query, Push | Hybrid core; AC Couple optional |
-| Generation Meter Power | `genPower` | >= 0 when reported at the generation-meter boundary | `W` | Query, Push | AC Couple |
+| Hybrid PV Source Power | `ppv` | >= 0; core in Hybrid and auxiliary when reported alongside `pexPower` in AC-Couple | `W` | Query, Push | Hybrid core; AC Couple optional |
+| External Generation Power | `pexPower` | >= 0 when reported at the external-generation boundary | `W` | Query, Push | AC Couple |
+| Generator Power | `genPower` | >= 0 when reported for off-grid generator runtime; not an AC-Couple boundary signal | `W` | Query, Push | Off-grid runtime only |
 | Load Power | `payLoadPower` | Calculated site load | `W` | Query, Push | Hybrid, AC Couple |
 | Smart-load Power | `smartLoadPower` | Auxiliary load channel when present | `W` | Query, Push | Hybrid, AC Couple |
 | Battery SOC | `batteryList[].soc` | Per-pack SOC | `%` | Query, Push | Hybrid, AC Couple |
@@ -327,12 +332,13 @@ flowchart LR
 
     Meta["Identity & Time<br/>deviceSn, utcTime, dataType"]
     GridMeterBlock["Grid Meter Boundary<br/>meterPower, etoUser*, etoGrid*"]
-    GenerationMeterBlock["Generation Meter Boundary<br/>genPower"]
+    ExternalGenerationBlock["External Generation Boundary<br/>pexPower"]
     Electrical["Electrical Quality<br/>reactivePower, fac, vac1-3"]
     PVBlock["PV Source / Generation<br/>ppv, epvTotal"]
     SiteBlock["Site / Output Power<br/>pac, payLoadPower, smartLoadPower"]
     BatteryAgg["Battery Aggregate<br/>batPower, batteryStatus"]
     BatteryPack["Battery Pack Detail<br/>batteryList[] metrics"]
+    GeneratorBlock["Generator / Off-grid Source<br/>genPower"]
     Runtime["Runtime Mode<br/>status, priority"]
     Fault["Fault / Protection<br/>fault*, protect*"]
 
@@ -342,21 +348,22 @@ flowchart LR
     SP4("SP4: payLoadPower / smartLoadPower")
     SP5("SP5: batteryList[].soc")
     SP6("SP6: batteryList[].soh")
-    SP8("SP8: genPower")
+    SP8("SP8: pexPower")
     Dispatch["Dispatch / Control<br/>deviceDispatch, anti_backflow"]
 
     Meta --> GridMeterBlock
-    Meta --> GenerationMeterBlock
+    Meta --> ExternalGenerationBlock
     Meta --> Electrical
     Meta --> PVBlock
     Meta --> SiteBlock
     Meta --> BatteryAgg
     Meta --> BatteryPack
+    Meta --> GeneratorBlock
     Meta --> Runtime
     Meta --> Fault
 
     GridMeterBlock -.-> SP2
-    GenerationMeterBlock -.-> SP8
+    ExternalGenerationBlock -.-> SP8
     PVBlock -.-> SP3
     SiteBlock -.-> SP4
     BatteryAgg -.-> SP1
@@ -365,12 +372,12 @@ flowchart LR
     Dispatch -.-> BatteryAgg
     Dispatch -.-> GridMeterBlock
 
-    class Meta,GridMeterBlock,GenerationMeterBlock,Electrical,PVBlock,SiteBlock,BatteryAgg,BatteryPack,Runtime,Fault block;
+    class Meta,GridMeterBlock,ExternalGenerationBlock,Electrical,PVBlock,SiteBlock,BatteryAgg,BatteryPack,GeneratorBlock,Runtime,Fault block;
     class SP1,SP2,SP3,SP4,SP5,SP6,SP8 semantic;
     class Dispatch dispatch;
 ```
 
-`Generation Meter Boundary` applies only to `AC-Couple`. `PV Source / Generation` remains a core semantic block in `Hybrid` and an optional auxiliary block in `AC-Couple` when `ppv` is reported.
+`External Generation Boundary` applies only to `AC-Couple`. `Generator / Off-grid Source` is auxiliary runtime telemetry for generator-equipped off-grid modes and is not mapped to a public boundary SPx in this revision. `PV Source / Generation` remains a core semantic block in `Hybrid` and an optional auxiliary block in `AC-Couple` when `ppv` is reported.
 
 ---
 
@@ -378,7 +385,7 @@ flowchart LR
 
 | Category | Fields | Unit |
 | -------- | ------ | ---- |
-| Power | `meterPower`, `genPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `smartLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
+| Power | `meterPower`, `pexPower`, `genPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `smartLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
 | Energy | `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal`, `epvTotal`, `batteryList[].echargeToday`, `batteryList[].echargeTotal`, `batteryList[].edischargeToday`, `batteryList[].edischargeTotal` | `kWh` |
 | Voltage | `vac1`, `vac2`, `vac3`, `batteryList[].vbat` | `V` |
 | Frequency | `fac` | `Hz` |
@@ -410,11 +417,17 @@ flowchart LR
 | `etoGridToday` | Query, Push | Grid-meter-boundary export energy today |
 | `etoGridTotal` | Query, Push | Total grid-meter-boundary export energy |
 
-### Generation Meter Boundary
+### External Generation Boundary
 
 | Field | Payloads | Description |
 | ----- | -------- | ----------- |
-| `genPower` | Query, Push | Generation meter power for AC-couple topologies. Treat as a non-negative generation-boundary magnitude rather than a grid import/export sign field |
+| `pexPower` | Query, Push | External generation power for AC-couple topologies, typically sourced from a third-party meter or Solar Inverter. Treat as a non-negative external-generation magnitude rather than a grid import/export sign field |
+
+### Generator / Off-grid Source
+
+| Field | Payloads | Description |
+| ----- | -------- | ----------- |
+| `genPower` | Query, Push | Generator power for off-grid runtime when a generator source is present. Treat as a non-negative generator magnitude, not as an AC-couple external-generation boundary signal |
 
 ### Electrical Quality
 
@@ -430,7 +443,7 @@ flowchart LR
 
 | Field | Payloads | Description |
 | ----- | -------- | ----------- |
-| `ppv` | Query, Push | Device-local PV source power. Core in Hybrid; auxiliary when reported in AC-couple topologies |
+| `ppv` | Query, Push | Device-local PV source power. Core in Hybrid; auxiliary when reported alongside `pexPower` in AC-couple topologies |
 | `epvTotal` | Query, Push | Total PV generation |
 
 ### Site / Output Power
@@ -505,7 +518,9 @@ flowchart LR
 | Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow` |
 | Mode | `status`, `priority`, power blocks | Implementation-specific set types |
 
-`genPower` is observational telemetry for AC-couple validation in this revision and does not map to a public dispatch/control field.
+`pexPower` is observational telemetry for AC-couple external-generation validation in this revision and does not map to a public dispatch/control field.
+
+`genPower` remains auxiliary generator telemetry for off-grid runtime and also does not map to a public dispatch/control field.
 
 ---
 
@@ -517,7 +532,7 @@ flowchart LR
 | ----- | ------ | --------- |
 | Identity & Time | Core | Core |
 | Grid Meter Boundary | Core | Core |
-| Generation Meter Boundary | N/A | Core |
+| External Generation Boundary | N/A | Core |
 | Electrical Quality | Core | Core |
 | PV Source / Generation | Core | Optional |
 | Site / Output Power | Core | Core |
@@ -532,7 +547,8 @@ flowchart LR
 
 * `smartLoadPower` is optional and appears only when the published payload reports a dedicated smart-load channel.
 * `ppv` remains the core PV-source semantic signal in `Hybrid`.
-* In `AC-Couple`, `genPower` is the primary public generation-meter boundary signal and `ppv` remains auxiliary when present.
+* In `AC-Couple`, `pexPower` is the primary public external-generation boundary signal and `ppv` remains auxiliary when present.
+* `genPower` is documented as auxiliary generator telemetry for off-grid runtime and remains outside this revision's normative Hybrid / AC-Couple boundary coverage.
 * `PV Only` and `Battery Only` are now included as physical topology references only and are not part of this revision's normative runtime coverage.
 
 ---
@@ -674,4 +690,4 @@ flowchart TD
 # 15. Executive Summary
 
 This specification organizes public ESS topology references, runtime semantics, dispatch, and telemetry into one public model, with reference topology diagrams for `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`.
-Normative runtime semantic, telemetry, and dispatch-validation coverage in this revision remains focused on `Hybrid` and `AC-Couple`, while `PV Only` and `Battery Only` are included as physical topology references only.
+Normative runtime semantic, telemetry, and dispatch-validation coverage in this revision remains focused on `Hybrid` and `AC-Couple`, using `pexPower` as the AC-couple external-generation boundary signal while retaining `genPower` only as auxiliary off-grid generator telemetry. `PV Only` and `Battery Only` remain physical topology references only.

@@ -15,10 +15,11 @@
 | 额定功率 | 额定功率 | rated power | `nominalPower`, `batteryNominalPower` | 正文使用 `rated power`，但 vendor key 保持原名。 |
 | 额定容量 | 额定容量 | rated capacity | `batteryCapacity` | 用于表示电池额定能量容量，单位 Wh。 |
 | 采集器 | 采集器 | datalogger | `datalogSn`, `datalogDeviceTypeName` | 不建议替换成 `collector`。 |
-| 电网表 | 电网表 | grid meter | `meterPower`, `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal` | 表示站点与公用电网之间的边界计量设备；在 AC-couple 拓扑中要与发电表区分。 |
+| 电网表 | 电网表 | grid meter | `meterPower`, `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal` | 表示站点与公用电网之间的边界计量设备；在 AC-couple 拓扑中要与外部发电边界区分。 |
 | 电网表功率 | 电网表功率 | grid meter power | `meterPower` | 在电网表边界上，正值表示 `grid import`，负值表示 `grid export`。 |
-| 发电表 | 发电表 | generation meter | `genPower` | 表示 AC-couple 拓扑下 PV 发电侧与站点交流母线之间的边界计量设备。 |
-| 发电表功率 | 发电表功率 | generation meter power | `genPower` | 用于 AC-couple 拓扑下的发电边界功率；应视为非负观测量，而不是取电/送电方向字段。 |
+| 外部发电边界 | 外部发电边界 | external generation boundary | `pexPower` | 表示 AC-couple 拓扑下的外部发电边界，通常来源于第三方电表或 Solar Inverter。 |
+| 外部发电功率 | 外部发电功率 | external generation power | `pexPower` | 用于表示第三方电表 / Solar Inverter 的发电功率；应视为非负观测量，而不是取电/送电方向字段。 |
+| 发电机功率 | 发电机功率 | generator power | `genPower` | 用于上报离网场景下的发电机功率；它不是 AC-couple 外部发电边界信号。 |
 | 电网取电 | 电网取电 | grid import | `meterPower`, `etoUserToday`, `etoUserTotal` | 用于表示从公用电网取入的功率或电量。 |
 | 向电网送电 | 向电网送电 | grid export | `meterPower`, `etoGridToday`, `etoGridTotal` | 正文优先使用 `grid export`，避免混用 `feed-in`。 |
 | 无功功率 | 无功功率 | reactive power | `reactivePower` | 需要时保留容性/感性的符号说明。 |
@@ -30,7 +31,7 @@
 | 电池包状态 | 电池包状态 | battery pack status | `batteryList[].status` | 用于 payload 明确返回单个电池包状态码的场景。 |
 | 电池功率 | 电池功率 | battery power | `batPower` | 首次出现时说明符号方向：正值充电，负值放电。 |
 | 充放电电量 | 充放电电量 | charged energy today / total charged energy / discharged energy today / total discharged energy | `echargeToday`, `echargeTotal`, `edischargeToday`, `edischargeTotal` | 优先使用明确的电量表达，而不是泛化的充放电量说法。 |
-| PV 功率 | PV 功率 | PV power | `ppv` | 用于设备本地 PV 遥测；在 AC-couple 拓扑中它仍是辅助信号，不替代发电表语义。 |
+| PV 功率 | PV 功率 | PV power | `ppv` | 用于设备本地 PV 遥测；在 AC-couple 拓扑中它仍是辅助信号，不替代外部发电边界语义。 |
 | PV 累计发电量 | PV 累计发电量 | total PV generation | `epvTotal` | 单位在字段说明上下文中保留。 |
 | 防逆流 | 防逆流 | Export Limit | `anti_backflow` | 对外公开术语与 API 设计语境优先使用 `Export Limit`，但 vendor key 保持不变。 |
 | 负载功率 | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | 字段名中的 vendor key 拼写保持不变。 |
