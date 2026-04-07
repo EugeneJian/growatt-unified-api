@@ -32,6 +32,12 @@ The current published materials contain an internal wording mismatch:
 
 The published split docs follow the global section.
 
+### 5. What are the per-device request limits for telemetry and dispatch?
+
+- Telemetry polling via `getDeviceData`: `1 request / min / device`
+- Dispatch and dispatch read-back via `deviceDispatch` / `readDeviceDispatch`: `1 request / 5 sec / device` (`12 RPM`)
+- If the per-device limit is exceeded, the API may return `TOO_MANY_REQUEST` with `code` `105`.
+
 ## Integration Observations
 
 The following observations come from environment reports under `test/` and are kept for implementation reference only:

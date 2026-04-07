@@ -742,6 +742,45 @@ describe("growatt docs source-of-truth loader", () => {
     expect(dispatchDocZh?.markdown).toContain("| 请求次数限制 | `105` | `null` | `TOO_MANY_REQUEST` |");
   });
 
+  it("documents per-device telemetry and dispatch request pacing in both locales", async () => {
+    const [
+      dataDocEn,
+      dataDocZh,
+      dispatchDocEn,
+      dispatchDocZh,
+      readDispatchDocEn,
+      readDispatchDocZh,
+      faqDocEn,
+      faqDocZh,
+    ] = await Promise.all([
+      getGrowattDocBySlug("08_api_device_data", "en"),
+      getGrowattDocBySlug("08_api_device_data", "zh-CN"),
+      getGrowattDocBySlug("05_api_device_dispatch", "en"),
+      getGrowattDocBySlug("05_api_device_dispatch", "zh-CN"),
+      getGrowattDocBySlug("06_api_read_dispatch", "en"),
+      getGrowattDocBySlug("06_api_read_dispatch", "zh-CN"),
+      getGrowattDocBySlug("11_api_troubleshooting", "en"),
+      getGrowattDocBySlug("11_api_troubleshooting", "zh-CN"),
+    ]);
+
+    expect(dataDocEn?.markdown).toContain("`1 request / min / device`");
+    expect(dataDocEn?.markdown).toContain("`TOO_MANY_REQUEST`");
+    expect(dataDocZh?.markdown).toContain("`1 request / min / device`");
+    expect(dataDocZh?.markdown).toContain("`TOO_MANY_REQUEST`");
+
+    expect(dispatchDocEn?.markdown).toContain("`1 request / 5 sec / device` (`12 RPM`)");
+    expect(dispatchDocZh?.markdown).toContain("`1 request / 5 sec / device`（`12 RPM`）");
+    expect(readDispatchDocEn?.markdown).toContain("`1 request / 5 sec / device` (`12 RPM`)");
+    expect(readDispatchDocZh?.markdown).toContain("`1 request / 5 sec / device`（`12 RPM`）");
+
+    expect(faqDocEn?.markdown).toContain("`1 request / min / device`");
+    expect(faqDocEn?.markdown).toContain("`1 request / 5 sec / device` (`12 RPM`)");
+    expect(faqDocEn?.markdown).toContain("`code` `105`");
+    expect(faqDocZh?.markdown).toContain("`1 request / min / device`");
+    expect(faqDocZh?.markdown).toContain("`1 request / 5 sec / device`（`12 RPM`）");
+    expect(faqDocZh?.markdown).toContain("`code` `105`");
+  });
+
   it("keeps integration-only findings inside explicit observation sections", async () => {
     const [guideEn, guideZh, faqEn, faqZh] = await Promise.all([
       getGrowattQuickGuide("en"),

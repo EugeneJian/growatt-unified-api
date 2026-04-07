@@ -32,6 +32,12 @@
 
 公开拆分文档采用全局章节的统一写法。
 
+### 5. 遥测与下发的设备级请求频率上限是多少？
+
+- 遥测轮询 `getDeviceData`：`1 request / min / device`
+- 下发与下发回读 `deviceDispatch` / `readDeviceDispatch`：`1 request / 5 sec / device`（`12 RPM`）
+- 超过设备级频率限制时，接口可能返回 `TOO_MANY_REQUEST`，对应 `code` `105`。
+
 ## 联调观察
 
 以下内容来自仓库 `test/` 目录中的环境联调记录，仅供实现参考：
