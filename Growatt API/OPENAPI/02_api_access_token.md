@@ -82,9 +82,9 @@ sequenceDiagram
 {
     "access_token": "<masked_access_token>",
     "refresh_token": "<masked_refresh_token>",
-    "refresh_expires_in": 2592000,
+    "refresh_expires_in": 2585309,
     "token_type": "Bearer",
-    "expires_in": 7200
+    "expires_in": 604733
 }
 ```
 
@@ -92,6 +92,8 @@ sequenceDiagram
 
 - This page uses one shared response model for `authorization_code` and `client_credentials`.
 - Claims such as "`client_credentials` normally omits `refresh_token`" are not promoted into the published API description unless they are defined by the endpoint docs themselves.
+- The latest global authorization-code run on 2026-03-27 observed `expires_in=604733` and `refresh_expires_in=2585309`.
+- TTL values should be read from the live response instead of being hard-coded from sample numbers.
 
 ## Related Documentation
 

@@ -89,5 +89,5 @@ sequenceDiagram
 ## 附录
 
 - [附录A Growatt Codes](/growatt-openapi/growatt-codes)
-- [附录B 术语表](/growatt-openapi/appendix-terminology)
-- [附录C Semantic Model](/growatt-openapi/semantic-model)
+- [附录B 术语表](./12_ess_terminology.md)
+- [附录C 语义模型](./13_ess_semantic_model.md)

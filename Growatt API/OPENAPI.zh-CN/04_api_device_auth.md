@@ -170,7 +170,7 @@ sequenceDiagram
 | 参数名 | 厂商表格类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，成功示例为 `null`，部分失败示例为数组 |
+| `data` | string | 厂商表格原文写作 `string`；公开成功示例为 `null`，最新全球成功实测返回过 `1`，部分失败示例为数组 |
 | `message` | string | 返回说明 |
 
 ### 返回示例
@@ -179,6 +179,14 @@ sequenceDiagram
 {
     "code": 0,
     "data": null,
+    "message": "SUCCESSFUL_OPERATION"
+}
+```
+
+```json
+{
+    "code": 0,
+    "data": 1,
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
@@ -206,6 +214,12 @@ sequenceDiagram
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
 ```
+
+### 最新全球实测观察（2026-03-27）
+
+- 最新全球授权码联调使用 `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` 直接成功，且本轮未要求 `pinCode`。
+- 该次成功响应返回了 `data: 1`。
+- 同一份报告明确区分了 `deviceSn=WCK6584462` 与 `datalogSn=ZGQ0E820UH`；设备级接口使用的是 `deviceSn`。
 
 ## 3 获取已授权的设备列表
 

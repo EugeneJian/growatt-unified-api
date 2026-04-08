@@ -42,10 +42,49 @@ The published split docs follow the global section.
 
 The following observations come from environment reports under `test/` and are kept for implementation reference only:
 
+- The latest global authorization-code run on 2026-03-27 used `GET /#/login?...`, `POST /prod-api/login`, and `GET /prod-api/auth` before `POST /oauth2/token`.
 - Multiple environment reports use JSON bodies for `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice`.
 - Multiple reports recommend using the raw `deviceSn` for device-level APIs and avoiding `datalogSn` or display-prefixed values.
 - Some reports observe `WRONG_GRANT_TYPE` when `client_credentials` calls `getDeviceList`.
 - Some reports observe object-shaped `readDeviceDispatch.data` payloads for particular `setType` values.
+
+### 6. Which entry points were observed in the latest global authorization-code run?
+
+The 2026-03-27 global environment report recorded this path:
+
+- Frontend login page: `GET /#/login?...`
+- User login submit: `POST /prod-api/login`
+- Authorization-code step: `GET /prod-api/auth`
+- Token exchange: `POST /oauth2/token`
+
+### 7. Should device-level APIs use `deviceSn` or `datalogSn`?
+
+Use `deviceSn`.
+
+- The latest global report returned `deviceSn=WCK6584462` and `datalogSn=ZGQ0E820UH`.
+- The same run used `deviceSn` for `bindDevice`, `getDeviceInfo`, `getDeviceData`, and `unbindDevice`.
+
+### 8. Can `bindDevice` succeed with `data: 1` instead of `null`?
+
+Yes.
+
+- The latest global success sample returned `{"code":0,"data":1,"message":"SUCCESSFUL_OPERATION"}`.
+- Treat `code=0` as success and do not hard-code the success shape to `data: null` only.
+
+### 9. Should TTL logic rely on sample numbers such as `7200`?
+
+No.
+
+- The latest global token run observed `expires_in=604733` and `refresh_expires_in=2585309`.
+- The subsequent refresh observed `expires_in=604800` and `refresh_expires_in=2592000`.
+- Always read TTL values from the live response.
+
+### 10. Can the old access token still be used after `refresh` succeeds?
+
+No in the latest global run.
+
+- After `POST /oauth2/refresh` succeeded on 2026-03-27, the previous access token immediately returned `TOKEN_IS_INVALID`.
+- Follow-up reads and unbinds had to switch to the fresh token.
 
 ## Related Documentation
 

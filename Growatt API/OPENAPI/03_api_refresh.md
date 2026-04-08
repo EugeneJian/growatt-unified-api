@@ -92,13 +92,16 @@ sequenceDiagram
     "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
-    "expires_in": 7200
+    "expires_in": 604800
 }
 ```
 
 ## Implementation Note
 
 - The original source sample mixes JSON and inline comments in a malformed way; this page rewrites it into equivalent readable JSON without changing the field contract.
+- The latest global refresh run on 2026-03-27 returned `expires_in=604800` and `refresh_expires_in=2592000`.
+- In that same run, the previous access token immediately returned `TOKEN_IS_INVALID` after a successful refresh.
+- Replace the old access token immediately after refresh, and always treat the live response as the TTL source of truth.
 
 ## Related Documentation
 
