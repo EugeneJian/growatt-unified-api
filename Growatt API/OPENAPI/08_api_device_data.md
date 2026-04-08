@@ -4,6 +4,8 @@
 
 - Query high-frequency runtime data for a device by device serial number.
 - The API returns only device results that the current token is allowed to access; unauthorized devices return `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`.
+- Maximum telemetry request rate: `1 request / min / device`.
+- If this per-device limit is exceeded, the API may return `TOO_MANY_REQUEST`.
 
 ## Request URL
 

@@ -4,6 +4,8 @@
 
 - 根据设备序列号查询指定设备的高频数据。
 - 接口仅返回当前 token 有权限访问的设备查询结果；无权限设备会返回 `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`。
+- 遥测请求频率上限：`1 request / min / device`。
+- 超过该设备级频率限制时，接口可能返回 `TOO_MANY_REQUEST`。
 
 ## 请求 URL
 

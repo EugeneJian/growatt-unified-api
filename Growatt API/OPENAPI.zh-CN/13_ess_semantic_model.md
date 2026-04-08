@@ -103,14 +103,12 @@ flowchart LR
     SP1("SP1: batPower 符号")
     SP2("SP2: meterPower 符号")
     SP3("SP3: Hybrid ppv")
-    SP4("SP4: payLoadPower / smartLoadPower")
-    SP7("SP7: anti_backflow")
+    SP4("SP4: payLoadPower")
 
     Battery -.-> SP1
     GridMeter -.-> SP2
     PV -.-> SP3
     Load -.-> SP4
-    GridMeter -.-> SP7
 
     D1["调度: 充电 / 放电"]
     D2["调度: Export Limit"]
@@ -119,11 +117,11 @@ flowchart LR
     D2 -.-> GridMeter
 
     class PV,Battery,Inverter,GridMeter,Load,Grid asset;
-    class SP1,SP2,SP3,SP4,SP7 semantic;
+    class SP1,SP2,SP3,SP4 semantic;
     class D1,D2 dispatch;
 ```
 
-在 `Hybrid` 拓扑中，`ppv` 仍是公开的核心 PV 源信号；`meterPower` 与 `anti_backflow` 则锚定在逆变器交流侧与公用电网之间的专用电网表边界。
+在 `Hybrid` 拓扑中，`ppv` 仍是公开的核心 PV 源信号，`meterPower` 则是电网表边界上的可观测功率信号。`anti_backflow` 是作用在同一边界上的 Export Limit 设置值，应通过 dispatch / read-dispatch 链路回读，而不是当作运行时遥测字段。
 
 ## 4.2 `AC-Couple` 拓扑
 
@@ -155,14 +153,12 @@ flowchart LR
 
     SP1("SP1: batPower 符号")
     SP2("SP2: meterPower 符号")
-    SP4("SP4: payLoadPower / smartLoadPower")
-    SP7("SP7: anti_backflow")
+    SP4("SP4: payLoadPower")
     SP8("SP8: pexPower")
 
     Battery -.-> SP1
     GridMeter -.-> SP2
     Load -.-> SP4
-    GridMeter -.-> SP7
     ExternalGeneration -.-> SP8
 
     D1["调度: 充电 / 放电"]
@@ -172,16 +168,18 @@ flowchart LR
     D2 -.-> GridMeter
 
     class PV,PVInverter,ExternalGeneration,ACBus,ACInverter,Battery,GridMeter,Load,Grid asset;
-    class SP1,SP2,SP4,SP7,SP8 semantic;
+    class SP1,SP2,SP4,SP8 semantic;
     class D1,D2 dispatch;
 ```
 
 在 `AC-Couple` 拓扑中，需要区分两个公开功率边界：
 
-* `Grid Meter`（电网表）：绑定 `meterPower`、`etoUser*`、`etoGrid*` 与 `anti_backflow`
+* `Grid Meter`（电网表）：绑定 `meterPower`、`etoUser*` 与 `etoGrid*`
 * `External Generation`（外部发电边界）：绑定 `pexPower`
 
 如果 `AC-Couple` payload 中上报了 `ppv`，它仍然只是设备本地 PV 遥测的辅助信号，不能替代 `External Generation` 边界信号 `pexPower`。
+
+`anti_backflow` 在 `AC-Couple` 中不是边界遥测信号，而是 Export Limit 设置值。其配置值应通过 dispatch / read-dispatch 链路回读；实际并网送电行为仍通过电网表边界上的 `meterPower` 符号来观测。
 
 `genPower` 在上报时表示离网场景下的 `generator power`（发电机功率），不属于本附录中的 AC-couple 外部发电边界模型。
 
@@ -242,10 +240,10 @@ flowchart LR
 | SP1 | 电池功率符号 | `batPower` | Battery | Hybrid, AC Couple |
 | SP2 | 电网表交换符号 | `meterPower` | Grid Meter | Hybrid, AC Couple |
 | SP3 | Hybrid PV 源功率 | `ppv` | PV Source | Hybrid core; AC Couple optional |
-| SP4 | 负载功率 | `payLoadPower`, `smartLoadPower` | Load | Hybrid, AC Couple |
+| SP4 | 负载功率 | `payLoadPower` | Load | Hybrid, AC Couple |
 | SP5 | SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
 | SP6 | SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
-| SP7 | Export Limit | `anti_backflow` (control parameter) | Grid Meter | Hybrid, AC Couple |
+| SP7 | Export Limit 设置值 | `anti_backflow` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
 | SP8 | 外部发电功率 | `pexPower` | External Generation | AC Couple only |
 
 ---
@@ -278,7 +276,6 @@ flowchart LR
 | --- | --- |
 | `ppv` | `>= 0`；在 `Hybrid` 中是核心 PV 源信号，在 `AC-Couple` 中若与 `pexPower` 同时上报则为可选辅助遥测 |
 | `payLoadPower` | `>= 0` |
-| `smartLoadPower` | 上报时应满足 `>= 0` |
 | `pexPower` | 上报时应满足 `>= 0`；表示第三方电表 / Solar Inverter 的外部发电功率，不带取电/送电方向语义 |
 
 本附录中的 `pexPower` 仅作为观测遥测使用，不定义公开调度目标，也不承担送电方向符号语义。
@@ -298,7 +295,7 @@ flowchart LR
 
 ### SP7
 
-`anti_backflow` 仍是锚定在 `Grid Meter` 边界上的调度/控制语义，不作为本附录中的运行时遥测字段处理。
+`anti_backflow` 是调度设置值，不是运行时遥测。其配置值通过 dispatch / read-dispatch 链路回读。实际并网取电/送电行为仍通过电网表边界上的 SP2（`meterPower`）来观测，其中 `>0` 表示取电，`<0` 表示送电。
 
 ---
 
@@ -314,12 +311,12 @@ flowchart LR
 | 外部发电功率 | `pexPower` | 在外部发电边界上报时应满足 >= 0 | `W` | Query, Push | AC Couple |
 | 发电机功率 | `genPower` | 上报时应满足 >= 0；用于离网发电机运行场景，不是 AC-Couple 边界信号 | `W` | Query, Push | Off-grid runtime only |
 | 负载功率 | `payLoadPower` | 站点计算负载 | `W` | Query, Push | Hybrid, AC Couple |
-| Smart Load 负载功率 | `smartLoadPower` | 存在时表示辅助负载通道 | `W` | Query, Push | Hybrid, AC Couple |
 | 电池 SOC | `batteryList[].soc` | 单 pack SOC | `%` | Query, Push | Hybrid, AC Couple |
 | 电池 SOH | `batteryList[].soh` | 单 pack SOH | `%` | Query, Push | Hybrid, AC Couple |
-| Export Limit | `anti_backflow` | 仅控制用的电网表送电约束 | Control parameter | Dispatch | Hybrid, AC Couple |
 
 ---
+
+`anti_backflow` 有意不纳入本表的运行时遥测映射。它是一个通过 dispatch / read-dispatch 链路回读的 Export Limit 设置值，而不是运行时遥测字段。实际送电行为应通过 `meterPower` 的符号以及电网表电量计数（`etoGrid*`、`etoUser*`）来观测。
 
 ## 6.2 遥测块关系
 
@@ -335,7 +332,7 @@ flowchart LR
     ExternalGenerationBlock["外部发电边界<br/>pexPower"]
     Electrical["电气质量<br/>reactivePower, fac, vac1-3"]
     PVBlock["PV 源 / 发电<br/>ppv, epvTotal"]
-    SiteBlock["站点 / 输出功率<br/>pac, payLoadPower, smartLoadPower"]
+    SiteBlock["站点 / 输出功率<br/>pac, payLoadPower"]
     BatteryAgg["电池聚合<br/>batPower, batteryStatus"]
     BatteryPack["电池包明细<br/>batteryList[] metrics"]
     GeneratorBlock["发电机 / 离网电源<br/>genPower"]
@@ -345,11 +342,11 @@ flowchart LR
     SP1("SP1: batPower 符号")
     SP2("SP2: meterPower 符号")
     SP3("SP3: Hybrid ppv")
-    SP4("SP4: payLoadPower / smartLoadPower")
+    SP4("SP4: payLoadPower")
     SP5("SP5: batteryList[].soc")
     SP6("SP6: batteryList[].soh")
     SP8("SP8: pexPower")
-    Dispatch["调度 / 控制<br/>deviceDispatch, anti_backflow"]
+    Dispatch["调度 / 设置回读<br/>deviceDispatch, read-dispatch, anti_backflow"]
 
     Meta --> GridMeterBlock
     Meta --> ExternalGenerationBlock
@@ -385,7 +382,7 @@ flowchart LR
 
 | 类别 | 字段 | 单位 |
 | --- | --- | --- |
-| 功率 | `meterPower`, `pexPower`, `genPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `smartLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
+| 功率 | `meterPower`, `pexPower`, `genPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
 | 电量 | `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal`, `epvTotal`, `batteryList[].echargeToday`, `batteryList[].echargeTotal`, `batteryList[].edischargeToday`, `batteryList[].edischargeTotal` | `kWh` |
 | 电压 | `vac1`, `vac2`, `vac3`, `batteryList[].vbat` | `V` |
 | 频率 | `fac` | `Hz` |
@@ -452,7 +449,6 @@ flowchart LR
 | --- | --- | --- |
 | `pac` | Query, Push | 交流输出功率 |
 | `payLoadPower` | Query, Push | 计算得到的总负载功率 |
-| `smartLoadPower` | Query, Push | 设备上报独立 smart-load 通道时的 Smart Load 负载功率 |
 
 ### 电池聚合
 
@@ -515,12 +511,14 @@ flowchart LR
 | --- | --- | --- |
 | Charge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
 | Discharge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow` |
+| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow`（dispatch setting；通过 read-dispatch 回读） |
 | Mode | `status`, `priority`, power blocks | 具体实现相关的 setType |
 
 在本次修订中，`pexPower` 仅用于 `AC-Couple` 外部发电边界校验观测，不映射到公开调度/控制字段。
 
 `genPower` 仍保留为离网发电机运行的辅助遥测，也不映射到公开调度/控制字段。
+
+`anti_backflow` 是通过 dispatch / read-dispatch 链路回读的 Export Limit 设置值。实际送电方向与幅值仍通过 `meterPower`（负值表示送电）以及 `etoGrid*` / `etoUser*` 来观测。
 
 ---
 
@@ -545,7 +543,7 @@ flowchart LR
 
 ## 8.2 说明
 
-* `smartLoadPower` 为可选字段，仅在公开 payload 上报独立 smart-load 通道时出现。
+* `payLoadPower` 是本附录中唯一建模的公开负载语义信号。
 * `ppv` 在 `Hybrid` 中仍是核心 PV 源语义信号。
 * 在 `AC-Couple` 中，`pexPower` 是首要的公开外部发电边界信号，而 `ppv` 在出现时仍然只是辅助信号。
 * `genPower` 被记录为离网发电机辅助遥测，仍不属于本次修订的规范化 Hybrid / AC-Couple 边界覆盖范围。
@@ -596,6 +594,8 @@ batPower remains positive and batteryList[].soc does not trend downward
 
 **期望**
 
+* 配置后的 `anti_backflow` 设置值可通过 dispatch / read-dispatch 链路读回，并与目标 Export Limit 一致
+* 实际送电行为通过 `meterPower` 观测，其中负值表示送电
 * `meterPower` 在送电方向上保持在已配置的导出边界以内
 * 在 Export Limit 生效时，`meterPower` 在电网表边界上不应比配置的导出限制更负
 

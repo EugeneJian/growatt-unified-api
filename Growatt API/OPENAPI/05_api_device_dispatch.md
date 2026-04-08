@@ -4,7 +4,7 @@
 
 - Set device parameters by device SN.
 - The API returns results only for devices that the current token is allowed to access; unauthorized devices return `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`.
-- Current frequency limit: one call every 5 seconds per device.
+- Maximum dispatch request rate: `1 request / 5 sec / device` (`12 RPM`).
 
 ## Request URL
 

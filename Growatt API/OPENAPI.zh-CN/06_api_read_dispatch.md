@@ -4,7 +4,7 @@
 
 - 根据设备 SN 读取设备相关参数。
 - 接口仅返回当前 token 有权限访问的设备读取结果；无权限设备会返回 `DEVICE_SN_DOES_NOT_HAVE_PERMISSION`。
-- 当前接口频率：每个设备 5 秒一次。
+- 下发回读请求频率上限：`1 request / 5 sec / device`（`12 RPM`）。
 
 ## 请求 URL
 

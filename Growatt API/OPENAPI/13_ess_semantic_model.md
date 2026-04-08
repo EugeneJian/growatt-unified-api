@@ -103,14 +103,12 @@ flowchart LR
     SP1(SP1: batPower sign)
     SP2(SP2: meterPower sign)
     SP3(SP3: hybrid ppv)
-    SP4(SP4: payLoadPower / smartLoadPower)
-    SP7(SP7: anti_backflow)
+    SP4(SP4: payLoadPower)
 
     Battery -.-> SP1
     GridMeter -.-> SP2
     PV -.-> SP3
     Load -.-> SP4
-    GridMeter -.-> SP7
 
     D1[Dispatch: Charge / Discharge]
     D2[Dispatch: Export Limit]
@@ -119,11 +117,11 @@ flowchart LR
     D2 -.-> GridMeter
 
     class PV,Battery,Inverter,GridMeter,Load,Grid asset;
-    class SP1,SP2,SP3,SP4,SP7 semantic;
+    class SP1,SP2,SP3,SP4 semantic;
     class D1,D2 dispatch;
 ```
 
-In the `Hybrid` topology, `ppv` remains the core public PV-source signal, while `meterPower` and `anti_backflow` are anchored at the dedicated grid-meter boundary between the inverter AC side and the utility grid.
+In the `Hybrid` topology, `ppv` remains the core public PV-source signal and `meterPower` remains the observable grid-meter boundary signal. `anti_backflow` is the export-limit setting applied at that same boundary and is read back through the dispatch/read-dispatch flow rather than through runtime telemetry.
 
 ## 4.2 AC-Couple Topology
 
@@ -155,14 +153,12 @@ flowchart LR
 
     SP1(SP1: batPower sign)
     SP2(SP2: meterPower sign)
-    SP4(SP4: payLoadPower / smartLoadPower)
-    SP7(SP7: anti_backflow)
+    SP4(SP4: payLoadPower)
     SP8(SP8: pexPower)
 
     Battery -.-> SP1
     GridMeter -.-> SP2
     Load -.-> SP4
-    GridMeter -.-> SP7
     ExternalGeneration -.-> SP8
 
     D1[Dispatch: Charge / Discharge]
@@ -172,16 +168,18 @@ flowchart LR
     D2 -.-> GridMeter
 
     class PV,PVInverter,ExternalGeneration,ACBus,ACInverter,Battery,GridMeter,Load,Grid asset;
-    class SP1,SP2,SP4,SP7,SP8 semantic;
+    class SP1,SP2,SP4,SP8 semantic;
     class D1,D2 dispatch;
 ```
 
 In the `AC-Couple` topology, two public power boundaries are distinguished:
 
-* `Grid Meter`: bound to `meterPower`, `etoUser*`, `etoGrid*`, and `anti_backflow`
+* `Grid Meter`: bound to `meterPower`, `etoUser*`, and `etoGrid*`
 * `External Generation`: bound to `pexPower`
 
 If `ppv` is reported in an `AC-Couple` payload, it remains auxiliary device-local PV telemetry and does not replace the `External Generation` boundary signal `pexPower`.
+
+`anti_backflow` is not a telemetry boundary signal in `AC-Couple`. It is the export-limit setting read back through the dispatch/read-dispatch flow, while actual export behavior is observed from the `meterPower` sign at the grid-meter boundary.
 
 `genPower`, when reported, represents off-grid `generator power` and is not part of the AC-couple external-generation boundary model in this appendix.
 
@@ -242,10 +240,10 @@ flowchart LR
 | SP1 | Battery Power Sign | `batPower` | Battery | Hybrid, AC Couple |
 | SP2 | Grid Meter Exchange Sign | `meterPower` | Grid Meter | Hybrid, AC Couple |
 | SP3 | Hybrid PV Source Power | `ppv` | PV Source | Hybrid core; AC Couple optional |
-| SP4 | Load Power | `payLoadPower`, `smartLoadPower` | Load | Hybrid, AC Couple |
+| SP4 | Load Power | `payLoadPower` | Load | Hybrid, AC Couple |
 | SP5 | SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
 | SP6 | SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
-| SP7 | Export Limit | `anti_backflow` (control parameter) | Grid Meter | Hybrid, AC Couple |
+| SP7 | Export Limit Setting | `anti_backflow` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
 | SP8 | External Generation Power | `pexPower` | External Generation | AC Couple only |
 
 ---
@@ -278,7 +276,6 @@ flowchart LR
 | ----- | ---- |
 | `ppv` | `>= 0`; core Hybrid PV-source signal and optional auxiliary telemetry in AC-Couple alongside `pexPower` |
 | `payLoadPower` | `>= 0` |
-| `smartLoadPower` | `>= 0` when reported |
 | `pexPower` | `>= 0` when reported; AC-Couple external generation power for third-party meter / Solar Inverter sources with no import/export sign semantics |
 
 `pexPower` is observational telemetry only in this appendix. It does not define a public dispatch target or export-direction sign rule.
@@ -298,7 +295,7 @@ flowchart LR
 
 ### SP7
 
-`anti_backflow` remains a dispatch/control semantic anchored on the `Grid Meter` boundary and is not treated as runtime telemetry in this appendix.
+`anti_backflow` is a dispatch setting value, not runtime telemetry. Its configured value is returned through the dispatch/read-dispatch flow. Actual grid export/import behavior is observed from SP2 (`meterPower`) at the grid-meter boundary, with `>0` = import and `<0` = export.
 
 ---
 
@@ -314,12 +311,12 @@ flowchart LR
 | External Generation Power | `pexPower` | >= 0 when reported at the external-generation boundary | `W` | Query, Push | AC Couple |
 | Generator Power | `genPower` | >= 0 when reported for off-grid generator runtime; not an AC-Couple boundary signal | `W` | Query, Push | Off-grid runtime only |
 | Load Power | `payLoadPower` | Calculated site load | `W` | Query, Push | Hybrid, AC Couple |
-| Smart-load Power | `smartLoadPower` | Auxiliary load channel when present | `W` | Query, Push | Hybrid, AC Couple |
 | Battery SOC | `batteryList[].soc` | Per-pack SOC | `%` | Query, Push | Hybrid, AC Couple |
 | Battery SOH | `batteryList[].soh` | Per-pack SOH | `%` | Query, Push | Hybrid, AC Couple |
-| Export Limit | `anti_backflow` | Control-only grid-meter export constraint | Control parameter | Dispatch | Hybrid, AC Couple |
 
 ---
+
+`anti_backflow` is intentionally excluded from this runtime telemetry mapping. It is an export-limit setting read back through the dispatch/read-dispatch flow rather than a runtime telemetry field. Actual export behavior is observed through `meterPower` sign plus the grid-meter energy counters (`etoGrid*`, `etoUser*`).
 
 ## 6.2 Telemetry Block Relationship
 
@@ -335,7 +332,7 @@ flowchart LR
     ExternalGenerationBlock["External Generation Boundary<br/>pexPower"]
     Electrical["Electrical Quality<br/>reactivePower, fac, vac1-3"]
     PVBlock["PV Source / Generation<br/>ppv, epvTotal"]
-    SiteBlock["Site / Output Power<br/>pac, payLoadPower, smartLoadPower"]
+    SiteBlock["Site / Output Power<br/>pac, payLoadPower"]
     BatteryAgg["Battery Aggregate<br/>batPower, batteryStatus"]
     BatteryPack["Battery Pack Detail<br/>batteryList[] metrics"]
     GeneratorBlock["Generator / Off-grid Source<br/>genPower"]
@@ -345,11 +342,11 @@ flowchart LR
     SP1("SP1: batPower sign")
     SP2("SP2: meterPower sign")
     SP3("SP3: hybrid ppv")
-    SP4("SP4: payLoadPower / smartLoadPower")
+    SP4("SP4: payLoadPower")
     SP5("SP5: batteryList[].soc")
     SP6("SP6: batteryList[].soh")
     SP8("SP8: pexPower")
-    Dispatch["Dispatch / Control<br/>deviceDispatch, anti_backflow"]
+    Dispatch["Dispatch / Setting Readback<br/>deviceDispatch, read-dispatch, anti_backflow"]
 
     Meta --> GridMeterBlock
     Meta --> ExternalGenerationBlock
@@ -385,7 +382,7 @@ flowchart LR
 
 | Category | Fields | Unit |
 | -------- | ------ | ---- |
-| Power | `meterPower`, `pexPower`, `genPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `smartLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
+| Power | `meterPower`, `pexPower`, `genPower`, `batPower`, `ppv`, `pac`, `payLoadPower`, `batteryList[].chargePower`, `batteryList[].dischargePower` | `W` |
 | Energy | `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal`, `epvTotal`, `batteryList[].echargeToday`, `batteryList[].echargeTotal`, `batteryList[].edischargeToday`, `batteryList[].edischargeTotal` | `kWh` |
 | Voltage | `vac1`, `vac2`, `vac3`, `batteryList[].vbat` | `V` |
 | Frequency | `fac` | `Hz` |
@@ -452,7 +449,6 @@ flowchart LR
 | ----- | -------- | ----------- |
 | `pac` | Query, Push | AC output power |
 | `payLoadPower` | Query, Push | Calculated total load power |
-| `smartLoadPower` | Query, Push | Dedicated smart-load power when the device reports a smart-load channel |
 
 ### Battery Aggregate
 
@@ -515,12 +511,14 @@ flowchart LR
 | -------- | ----------------------- | -------------- |
 | Charge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
 | Discharge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow` |
+| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow` (dispatch setting; read back via read-dispatch) |
 | Mode | `status`, `priority`, power blocks | Implementation-specific set types |
 
 `pexPower` is observational telemetry for AC-couple external-generation validation in this revision and does not map to a public dispatch/control field.
 
 `genPower` remains auxiliary generator telemetry for off-grid runtime and also does not map to a public dispatch/control field.
+
+`anti_backflow` is the configured export-limit setting read back via the dispatch/read-dispatch flow. Actual export direction and magnitude remain observed from `meterPower` (negative = export) together with `etoGrid*` / `etoUser*`.
 
 ---
 
@@ -545,7 +543,7 @@ flowchart LR
 
 ## 8.2 Notes
 
-* `smartLoadPower` is optional and appears only when the published payload reports a dedicated smart-load channel.
+* `payLoadPower` is the only public load semantic signal modeled in this appendix.
 * `ppv` remains the core PV-source semantic signal in `Hybrid`.
 * In `AC-Couple`, `pexPower` is the primary public external-generation boundary signal and `ppv` remains auxiliary when present.
 * `genPower` is documented as auxiliary generator telemetry for off-grid runtime and remains outside this revision's normative Hybrid / AC-Couple boundary coverage.
@@ -596,6 +594,8 @@ batPower remains positive and batteryList[].soc does not trend downward
 
 **Expected**
 
+* configured `anti_backflow` setting is read from the dispatch/read-dispatch flow and matches the intended export limit
+* actual export behavior is observed from `meterPower`, where negative values indicate export
 * `meterPower` stays within the configured export boundary in the export direction
 * In export-limited mode, `meterPower` does not become more negative than the configured export limit at the meter boundary
 
