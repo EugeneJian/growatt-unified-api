@@ -170,7 +170,7 @@ sequenceDiagram
 | Parameter | Vendor-table Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`; successful samples use `null` and partial failures use arrays |
+| `data` | string | The vendor table says `string`; published successful samples use `null`, the latest global success sample returned `1`, and partial failures use arrays |
 | `message` | string | Response description |
 
 ### Response Examples
@@ -179,6 +179,14 @@ sequenceDiagram
 {
     "code": 0,
     "data": null,
+    "message": "SUCCESSFUL_OPERATION"
+}
+```
+
+```json
+{
+    "code": 0,
+    "data": 1,
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
@@ -206,6 +214,12 @@ sequenceDiagram
     "message": "DEVICE_SN_DOES_NOT_HAVE_PERMISSION"
 }
 ```
+
+### Latest Global Observation (2026-03-27)
+
+- The latest global authorization-code run used `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` and succeeded without `pinCode`.
+- The successful response in that run returned `data: 1`.
+- The same report distinguished `deviceSn=WCK6584462` from `datalogSn=ZGQ0E820UH`; device-level APIs used `deviceSn`.
 
 ## 3 Get Authorized Devices
 

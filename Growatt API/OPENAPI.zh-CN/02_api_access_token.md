@@ -82,9 +82,9 @@ sequenceDiagram
 {
     "access_token": "<masked_access_token>",
     "refresh_token": "<masked_refresh_token>",
-    "refresh_expires_in": 2592000,
+    "refresh_expires_in": 2585309,
     "token_type": "Bearer",
-    "expires_in": 7200
+    "expires_in": 604733
 }
 ```
 
@@ -92,6 +92,8 @@ sequenceDiagram
 
 - 本接口未按 `grant_type` 将返回字段拆成两套规则。
 - 因此本页不把 `client_credentials` 扩写成“最小返回结构”或“默认不返回 `refresh_token`”。
+- 2026-03-27 最新全球授权码实测中，`expires_in=604733`、`refresh_expires_in=2585309`。
+- 实现时应以实时响应返回的 TTL 为准，不应把示例数值写死到代码里。
 
 ## 相关文档
 

@@ -89,5 +89,5 @@ For the consolidated integration guide, see:
 ## Appendix
 
 - [Appendix A Growatt Codes](/growatt-openapi/growatt-codes)
-- [Appendix B Glossary](/growatt-openapi/appendix-terminology)
-- [Appendix C Semantic Model](/growatt-openapi/semantic-model)
+- [Appendix B Glossary](./12_ess_terminology.md)
+- [Appendix C Semantic Model](./13_ess_semantic_model.md)

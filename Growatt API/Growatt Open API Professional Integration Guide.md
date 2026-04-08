@@ -29,10 +29,15 @@ flowchart TD
 
 ### `authorization_code`
 
-1. Call `POST /oauth2/token`
-2. Call `POST /oauth2/getDeviceList`
-3. Call `POST /oauth2/bindDevice`
-4. Continue with device query, dispatch, and read-back APIs
+Observed global flow on 2026-03-27:
+
+1. Open the frontend login page `GET /#/login?...`
+2. Submit credentials through `POST /prod-api/login`
+3. Obtain the authorization code through `GET /prod-api/auth`
+4. Exchange the code through `POST /oauth2/token`
+5. Call `POST /oauth2/getDeviceList`
+6. Call `POST /oauth2/bindDevice`
+7. Continue with device query, dispatch, and read-back APIs
 
 ### `client_credentials`
 
@@ -67,8 +72,13 @@ flowchart TD
 
 The following findings come from environment reports under `test/` and are kept for implementation reference only:
 
+- The latest global authorization-code run on 2026-03-27 used `GET /#/login?...`, `POST /prod-api/login`, and `GET /prod-api/auth` before `POST /oauth2/token`.
 - Multiple reports use JSON bodies for device-level APIs.
-- Multiple reports recommend sending raw `deviceSn` values instead of `datalogSn` or display-prefixed labels.
+- The latest global candidate-device report returned `deviceSn=WCK6584462` and `datalogSn=ZGQ0E820UH`; device-level APIs used `deviceSn`.
+- The latest global `bindDevice` run succeeded with `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` and returned `data: 1`.
+- In that same authorization-code run, the tested global device did not require `pinCode`; this does not change the published client-mode requirement.
+- The latest global token run returned `expires_in=604733` and `refresh_expires_in=2585309`; the subsequent refresh returned `expires_in=604800` and `refresh_expires_in=2592000`.
+- After a successful `POST /oauth2/refresh`, the previous access token immediately returned `TOKEN_IS_INVALID`; follow-up reads and unbinds had to switch to the fresh token.
 - Some reports observe `WRONG_GRANT_TYPE` when `client_credentials` calls `getDeviceList`.
 - Some reports observe object-shaped `readDeviceDispatch.data` values for certain `setType` values.
 
@@ -80,6 +90,9 @@ These findings should not replace the endpoint-level API descriptions.
 - [ ] Kept `redirect_uri` in both token request examples
 - [ ] Treated `bindDevice.pinCode` as required in client mode
 - [ ] Treated `readDeviceDispatch.requestId` as required
+- [ ] For global authorization-code integrations, handled `/#/login`, `/prod-api/login`, and `/prod-api/auth`
+- [ ] Read `expires_in` and `refresh_expires_in` from runtime responses instead of hard-coding sample values
+- [ ] Replaced the old access token immediately after a successful `refresh`
 - [ ] Implemented the three `setType` entries published in `10_global_params.md`
 - [ ] Aligned public ESS terminology to [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
 - [ ] Kept integration observations in the compatibility layer instead of promoting them into endpoint descriptions

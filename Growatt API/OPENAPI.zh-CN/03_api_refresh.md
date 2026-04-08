@@ -92,13 +92,16 @@ sequenceDiagram
     "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
-    "expires_in": 7200
+    "expires_in": 604800
 }
 ```
 
 ## 实现说明
 
 - 原始来源示例在 JSON 注释排版上有格式问题；本页仅将其改写成等价、可读的 JSON 示例，不改变字段约束。
+- 2026-03-27 最新全球 `refresh` 实测返回 `expires_in=604800`、`refresh_expires_in=2592000`。
+- 在同一轮实测里，`refresh` 成功后旧 access token 会立即返回 `TOKEN_IS_INVALID`。
+- 实现时应在刷新成功后立刻替换旧 access token，并始终以实时响应值作为 TTL 依据。
 
 ## 相关文档
 

@@ -29,10 +29,15 @@ flowchart TD
 
 ### `authorization_code`
 
-1. 调用 `POST /oauth2/token`
-2. 调用 `POST /oauth2/getDeviceList`
-3. 调用 `POST /oauth2/bindDevice`
-4. 调用设备查询、调度和回读接口
+2026-03-27 全球环境实测主流程：
+
+1. 打开前端登录页 `GET /#/login?...`
+2. 通过 `POST /prod-api/login` 提交登录
+3. 通过 `GET /prod-api/auth` 获取授权码
+4. 通过 `POST /oauth2/token` 换取 token 对
+5. 调用 `POST /oauth2/getDeviceList`
+6. 调用 `POST /oauth2/bindDevice`
+7. 调用设备查询、调度和回读接口
 
 ### `client_credentials`
 
@@ -67,8 +72,13 @@ flowchart TD
 
 以下内容来自仓库 `test/` 目录中的环境记录，仅供实现参考：
 
+- 最新全球授权码联调（2026-03-27）在 `POST /oauth2/token` 之前，实际经过了 `GET /#/login?...`、`POST /prod-api/login`、`GET /prod-api/auth` 三步。
 - 多份记录使用 JSON body 调用设备级接口。
-- 多份记录建议传纯 `deviceSn`，不要混用 `datalogSn` 或展示前缀。
+- 最新全球候选设备记录返回 `deviceSn=WCK6584462`、`datalogSn=ZGQ0E820UH`；设备级接口使用的是 `deviceSn`。
+- 最新全球 `bindDevice` 记录使用 `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` 直接成功，返回 `data: 1`。
+- 在同一条授权码实测链路里，这台全球环境设备未要求 `pinCode`；这不改变公开文档中“客户端模式下必填”的规范口径。
+- 最新全球 `token` 实测返回 `expires_in=604733`、`refresh_expires_in=2585309`；随后 `refresh` 返回 `expires_in=604800`、`refresh_expires_in=2592000`。
+- `POST /oauth2/refresh` 成功后，旧 access token 会立即返回 `TOKEN_IS_INVALID`；后续读取和解绑必须切换到 fresh token。
 - 个别记录观察到 `client_credentials` 调 `getDeviceList` 返回 `WRONG_GRANT_TYPE`。
 - 个别记录观察到 `readDeviceDispatch.data` 会随 `setType` 返回对象结构。
 
@@ -80,6 +90,9 @@ flowchart TD
 - [ ] 已在两个 token 模式示例中保留 `redirect_uri`
 - [ ] 已将 `bindDevice.pinCode` 视为客户端模式必填
 - [ ] 已将 `readDeviceDispatch.requestId` 视为必填
+- [ ] 面向全球授权码接入时，已处理 `/#/login`、`/prod-api/login`、`/prod-api/auth`
+- [ ] 已按运行时返回值读取 `expires_in` / `refresh_expires_in`，而不是写死示例 TTL
+- [ ] 已在 `refresh` 成功后立刻替换旧 access token
 - [ ] 已按 `10_global_params.md` 中的 3 个 `setType` 实现基础映射
 - [ ] 已对照 [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology) 理解公开储能术语
 - [ ] 已将联调经验留在兼容层，而不是提升为端点规范
