@@ -12,12 +12,14 @@
 不可以。
 
 - `POST /oauth2/getDeviceList` 仅在 `authorization_code` 模式下支持。
+- 2026-04-23 AU 全量实测中，使用 `client_credentials` 调用该接口返回 `code=103`、`message="WRONG_GRANT_TYPE"`。
 
 ### 2. `bindDevice` 什么时候必须传 `pinCode`？
 
 公开参数表中明确写明：
 
 - `deviceSnList[].pinCode`：客户端模式下必填。
+- 在授权码模式下，该字段携带时可被接受；部分环境或设备可能要求对象数组并携带 `pinCode`。
 
 ### 3. `readDeviceDispatch` 的 `requestId` 是必填吗？
 
@@ -45,7 +47,9 @@
 - 2026-03-27 最新全球授权码联调在 `POST /oauth2/token` 之前，实际经过了 `GET /#/login?...`、`POST /prod-api/login`、`GET /prod-api/auth`。
 - 多份联调记录将 `bindDevice`、`getDeviceInfo`、`getDeviceData`、`deviceDispatch`、`readDeviceDispatch`、`unbindDevice` 作为 JSON body 接口处理。
 - 多份联调记录建议在设备级接口中使用纯 `deviceSn`，避免误用 `datalogSn` 或展示前缀值。
-- 个别联调记录观察到 `client_credentials` 调用 `getDeviceList` 时返回 `WRONG_GRANT_TYPE`。
+- 2026-04-23 AU 全量报告观察到 `client_credentials` token 请求无论是否携带 `redirect_uri`，响应都仅包含 `access_token`、`token_type`、`expires_in`。
+- 2026-04-23 AU 全量报告观察到 `client_credentials` 调用 `getDeviceList` 返回 `WRONG_GRANT_TYPE`（`code=103`）。
+- 2026-04-23 AU 全量报告中，授权码模式使用对象数组并携带 `pinCode` 执行 `bindDevice` 成功。
 - 个别联调记录观察到 `readDeviceDispatch.data` 会随 `setType` 出现对象结构；该现象保留为实现观察，不作为端点规范。
 
 ### 6. 最新全球授权码联调实际经过了哪些入口？

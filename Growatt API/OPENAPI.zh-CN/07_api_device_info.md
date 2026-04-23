@@ -92,6 +92,9 @@ sequenceDiagram
         "datalogDeviceTypeName": "ShineWiFi-X",
         "dtc": 5100,
         "communicationVersion": "ZABA-0021",
+        "unifiedAPIver": null,
+        "deviceVersion": null,
+        "datalogVersion": "7.6.1.9",
         "existBattery": true,
         "batterySn": "BATTERY_SN_1",
         "batteryModel": "ARK 5.12-25.6XH-A1",
@@ -130,6 +133,9 @@ sequenceDiagram
 | `datalogDeviceTypeName` | string | 采集器类型名称 | `"ShineWiFi-X"` |
 | `dtc` | int | 设备类型数字编码 | `5100` |
 | `communicationVersion` | string | 固件通讯版本 | `"ZABA-0021"` |
+| `unifiedAPIver` | string \| null | 统一 API 版本；未返回时为 `null` | `null` |
+| `deviceVersion` | string \| null | 设备固件版本；未返回时为 `null` | `null` |
+| `datalogVersion` | string \| null | 采集器固件版本；未返回时为 `null` | `"7.6.1.9"` |
 | `existBattery` | boolean | 是否有电池 | `true` |
 | `batterySn` | string | 电池序列号 | `"BATTERY_SN_1"` |
 | `batteryModel` | string | 电池型号 | `"ARK 5.12-25.6XH-A1"` |

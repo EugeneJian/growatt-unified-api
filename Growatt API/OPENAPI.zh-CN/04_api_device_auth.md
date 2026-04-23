@@ -94,6 +94,13 @@ sequenceDiagram
 }
 ```
 
+```json
+{
+    "code": 103,
+    "message": "WRONG_GRANT_TYPE"
+}
+```
+
 ### `data` 字段说明
 
 | 参数名 | 说明 |
@@ -127,9 +134,9 @@ sequenceDiagram
 
 | 参数名 | 类型 | 是否必传 | 说明 |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | array | 是 | 非空，设备序列号及 `pinCode` 列表 |
+| `deviceSnList` | array | 是 | 非空，设备序列号对象列表 |
 | `deviceSnList[].deviceSn` | string | 是 | 设备序列号 |
-| `deviceSnList[].pinCode` | string | 客户端模式下必填 | 设备 `PinCode` |
+| `deviceSnList[].pinCode` | string | 客户端模式下必填；授权码模式下可选但可接受 | 设备 `PinCode`；部分环境或设备在授权码模式下也可能要求携带 |
 
 ### 请求示例
 
@@ -143,6 +150,19 @@ sequenceDiagram
         },
         {
             "deviceSn": "DEVICE_SN_2"
+        }
+    ]
+}
+```
+
+#### 授权码模式在需要时携带 `pinCode`
+
+```json
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "DEVICE_SN_1",
+            "pinCode": "PIN001"
         }
     ]
 }
@@ -215,11 +235,13 @@ sequenceDiagram
 }
 ```
 
-### 最新全球实测观察（2026-03-27）
+### 近期实测观察
 
 - 最新全球授权码联调使用 `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` 直接成功，且本轮未要求 `pinCode`。
 - 该次成功响应返回了 `data: 1`。
 - 同一份报告明确区分了 `deviceSn=WCK6584462` 与 `datalogSn=ZGQ0E820UH`；设备级接口使用的是 `deviceSn`。
+- 2026-04-23 AU 全量实测中，授权码模式使用对象数组并携带 `pinCode` 绑定成功。
+- 同一轮 AU 实测确认 `client_credentials` 调用 `getDeviceList` 返回 `{"code":103,"message":"WRONG_GRANT_TYPE"}`。
 
 ## 3 获取已授权的设备列表
 

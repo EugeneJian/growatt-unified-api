@@ -90,6 +90,7 @@ const EXPECTED_RUNTIME_TELEMETRY_FIELDS = [
   "data.protectSubCode",
   "data.reactivePower",
   "data.smartLoadPower",
+  "data.soc",
   "data.status",
   "data.utcTime",
   "data.vac1",
@@ -97,8 +98,9 @@ const EXPECTED_RUNTIME_TELEMETRY_FIELDS = [
   "data.vac3",
 ] as const;
 
-const EXAMPLE_ONLY_NON_VPP_TELEMETRY_FIELDS = [
+const EXPECTED_ENDPOINT_TELEMETRY_FIELDS = [
   "data.backupPower",
+  ...EXPECTED_RUNTIME_TELEMETRY_FIELDS,
 ] as const;
 
 const EXPECTED_SEMANTIC_APPENDIX_BLOCK_FIELDS = [
@@ -494,7 +496,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(codes.severityGroups[2]?.categories[0]?.records[0]?.code).toBe(1000);
   });
 
-  it("keeps redirect_uri in both token grant examples", async () => {
+  it("documents grant-specific token request and response shapes", async () => {
     const [tokenDocEn, tokenDocZh] = await Promise.all([
       getGrowattDocBySlug("02_api_access_token", "en"),
       getGrowattDocBySlug("02_api_access_token", "zh-CN"),
@@ -502,8 +504,33 @@ describe("growatt docs source-of-truth loader", () => {
 
     expect(tokenDocEn).not.toBeNull();
     expect(tokenDocZh).not.toBeNull();
-    expect(tokenDocEn?.markdown.match(/redirect_uri/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
-    expect(tokenDocZh?.markdown.match(/redirect_uri/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
+
+    const tokenEn = tokenDocEn!.markdown;
+    const tokenZh = tokenDocZh!.markdown;
+    const authCodeResponseEn =
+      tokenEn
+        .split("## `authorization_code` Mode Response Example")[1]
+        ?.split("## `client_credentials` Mode Response Parameters")[0] ?? "";
+    const clientCredentialsResponseEn =
+      tokenEn
+        .split("## `client_credentials` Mode Response Example")[1]
+        ?.split("## Implementation Note")[0] ?? "";
+
+    expect(tokenEn).toContain(
+      "| `redirect_uri` | Required in authorization-code mode; optional / compatibility-accepted in client-credentials mode |",
+    );
+    expect(tokenEn).toContain("### `client_credentials` Mode With Compatibility `redirect_uri`");
+    expect(tokenEn).toContain("## `client_credentials` Mode Response Parameters");
+    expect(authCodeResponseEn).toContain('"refresh_token": "<masked_refresh_token>"');
+    expect(authCodeResponseEn).toContain('"refresh_expires_in": 2585309');
+    expect(clientCredentialsResponseEn).toContain('"access_token": "<masked_access_token>"');
+    expect(clientCredentialsResponseEn).toContain('"expires_in": 604800');
+    expect(clientCredentialsResponseEn).not.toContain("refresh_token");
+    expect(clientCredentialsResponseEn).not.toContain("refresh_expires_in");
+
+    expect(tokenZh).toContain("`client_credentials` 模式兼容携带 `redirect_uri`");
+    expect(tokenZh).toContain("## `client_credentials` 模式返回参数说明");
+    expect(tokenZh).toContain("2026-04-23 AU");
   });
 
   it("marks readDeviceDispatch requestId as required in both locales", async () => {
@@ -538,8 +565,11 @@ describe("growatt docs source-of-truth loader", () => {
       expect(page?.markdown).toContain("anti_backflow");
       expect(page?.markdown).not.toContain("enable_control");
       expect(page?.markdown).toContain('"message": "RESPONSE_MESSAGE"');
+      expect(page?.markdown).toContain('"data": "<endpoint-dependent>"');
       expect(page?.markdown).toContain("`code` | `data` | `message`");
       expect(page?.markdown).toContain('| `18` | `null` | `"READ_DEVICE_PARAM_FAIL"` |');
+      expect(page?.markdown).toContain('| `103` |');
+      expect(page?.markdown).toContain("WRONG_GRANT_TYPE");
       expect(page?.markdown).toContain('| `105` | `null` | `"TOO_MANY_REQUEST"` |');
     }
   });
@@ -598,27 +628,20 @@ describe("growatt docs source-of-truth loader", () => {
     for (const page of [queryEn, queryZh]) {
       expect(page).not.toBeNull();
       expect(extractExampleTelemetryFieldPaths(page!.markdown)).toEqual(
-        uniqueSorted([
-          ...EXPECTED_RUNTIME_TELEMETRY_FIELDS,
-          ...EXAMPLE_ONLY_NON_VPP_TELEMETRY_FIELDS,
-        ]),
+        uniqueSorted(EXPECTED_ENDPOINT_TELEMETRY_FIELDS),
       );
       expect(extractTableTelemetryFieldPaths(page!.markdown)).toEqual(
-        uniqueSorted(EXPECTED_RUNTIME_TELEMETRY_FIELDS),
+        uniqueSorted(EXPECTED_ENDPOINT_TELEMETRY_FIELDS),
       );
     }
 
     for (const page of [pushEn, pushZh]) {
       expect(page).not.toBeNull();
       expect(extractExampleTelemetryFieldPaths(page!.markdown, { includeDataType: true })).toEqual(
-        uniqueSorted([
-          "dataType",
-          ...EXPECTED_RUNTIME_TELEMETRY_FIELDS,
-          ...EXAMPLE_ONLY_NON_VPP_TELEMETRY_FIELDS,
-        ]),
+        uniqueSorted(["dataType", ...EXPECTED_ENDPOINT_TELEMETRY_FIELDS]),
       );
       expect(extractTableTelemetryFieldPaths(page!.markdown)).toEqual(
-        uniqueSorted(["dataType", ...EXPECTED_RUNTIME_TELEMETRY_FIELDS]),
+        uniqueSorted(["dataType", ...EXPECTED_ENDPOINT_TELEMETRY_FIELDS]),
       );
     }
 
@@ -643,6 +666,12 @@ describe("growatt docs source-of-truth loader", () => {
     expect(infoDocEn?.markdown).toContain('| `deviceTypeName` | string | Device type name | `"min"` |');
     expect(infoDocEn?.markdown).toContain('| `existBattery` | boolean | Whether the device has a battery | `true` |');
     expect(infoDocEn?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | Battery rated power in W | `2500` |');
+    expect(infoDocEn?.markdown).toContain('| `unifiedAPIver` | string \\| null | Unified API version when reported; `null` when unavailable | `null` |');
+    expect(infoDocEn?.markdown).toContain('| `deviceVersion` | string \\| null | Device firmware version when reported; `null` when unavailable | `null` |');
+    expect(infoDocEn?.markdown).toContain('| `datalogVersion` | string \\| null | Datalogger firmware version when reported; `null` when unavailable | `"7.6.1.9"` |');
+    expect(infoDocZh?.markdown).toContain("`unifiedAPIver`");
+    expect(infoDocZh?.markdown).toContain("`deviceVersion`");
+    expect(infoDocZh?.markdown).toContain("`datalogVersion`");
 
     expect(infoDocZh?.markdown).toContain("| 参数名 | 类型 | 说明 | 示例 |");
     expect(infoDocZh?.markdown).toContain('| `deviceTypeName` | string | 设备大类型名称 | `"min"` |');
@@ -700,6 +729,9 @@ describe("growatt docs source-of-truth loader", () => {
       "Device-local PV power in W. Core for Hybrid; auxiliary when reported alongside `pexPower` in AC-couple topologies",
     );
     expect(dataDoc?.markdown).toContain("Battery state of charge (SOC) in percent");
+    expect(dataDoc?.markdown).toContain(
+      "System-level battery state of charge (SOC) in percent",
+    );
     expect(pushDoc?.markdown).toContain("Battery state of health (SOH) `[0,100]`");
     expect(dataDoc?.markdown).toContain("grid-connected");
     expect(pushDoc?.markdown).toContain("grid-connected");
@@ -710,7 +742,12 @@ describe("growatt docs source-of-truth loader", () => {
     expect(pushDoc?.markdown).toContain("`data.genPower`");
     expect(dataDoc?.markdown).toContain("`data.pexPower`");
     expect(pushDoc?.markdown).toContain("`data.pexPower`");
-    expect(dataDoc?.markdown).not.toContain("| `data.backupPower` |");
+    expect(dataDoc?.markdown).toContain(
+      "| `data.backupPower` | double | Backup output power in W when reported. Public endpoint field; not part of Appendix C VPP core semantic telemetry | `0.20` |",
+    );
+    expect(pushDoc?.markdown).toContain(
+      "| `data.backupPower` | double | Backup output power in W when reported. Public endpoint field; not part of Appendix C VPP core semantic telemetry | `0.20` |",
+    );
 
     expect(globalDoc?.markdown).toContain("Export Limit.");
     expect(globalDoc?.markdown).toContain("`anti_backflow`");
@@ -781,12 +818,14 @@ describe("growatt docs source-of-truth loader", () => {
     expect(faqDocZh?.markdown).toContain("`code` `105`");
   });
 
-  it("keeps integration-only findings inside explicit observation sections", async () => {
-    const [guideEn, guideZh, faqEn, faqZh] = await Promise.all([
+  it("documents formal 103 grant boundaries while keeping remaining observations explicit", async () => {
+    const [guideEn, guideZh, faqEn, faqZh, authEn, authZh] = await Promise.all([
       getGrowattQuickGuide("en"),
       getGrowattQuickGuide("zh-CN"),
       getGrowattDocBySlug("11_api_troubleshooting", "en"),
       getGrowattDocBySlug("11_api_troubleshooting", "zh-CN"),
+      getGrowattDocBySlug("04_api_device_auth", "en"),
+      getGrowattDocBySlug("04_api_device_auth", "zh-CN"),
     ]);
 
     expect(guideEn.markdown.indexOf("## 5 Integration Observations")).toBeGreaterThan(-1);
@@ -800,12 +839,34 @@ describe("growatt docs source-of-truth loader", () => {
     expect(guideZh.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
       guideZh.markdown.indexOf("## 5 联调观察"),
     );
-    expect(faqEn?.markdown.indexOf("WRONG_GRANT_TYPE") ?? -1).toBeGreaterThan(
+    expect(faqEn?.markdown).toContain('`message="WRONG_GRANT_TYPE"`');
+    expect(faqEn?.markdown.indexOf("client_credentials` token responses") ?? -1).toBeGreaterThan(
       faqEn?.markdown.indexOf("## Integration Observations") ?? -1,
     );
-    expect(faqZh?.markdown.indexOf("WRONG_GRANT_TYPE") ?? -1).toBeGreaterThan(
+    expect(faqZh?.markdown).toContain('`message="WRONG_GRANT_TYPE"`');
+    expect(faqZh?.markdown.indexOf("client_credentials` token 请求") ?? -1).toBeGreaterThan(
       faqZh?.markdown.indexOf("## 联调观察") ?? -1,
     );
+    expect(authEn?.markdown).toContain('"code": 103');
+    expect(authEn?.markdown).toContain('"message": "WRONG_GRANT_TYPE"');
+    expect(authZh?.markdown).toContain('"code": 103');
+    expect(authZh?.markdown).toContain('"message": "WRONG_GRANT_TYPE"');
+  });
+
+  it("publishes the AU full-report doc-fix change record", async () => {
+    const changeRecord = await fs.readFile(
+      path.join(process.cwd(), "docs", "oauth2-au-full-report-vs-docs-fix-2026-04-23.md"),
+      "utf8",
+    );
+
+    expect(changeRecord).toContain(
+      "test/oauth2-openApi-platform-au-full-test-report-2026-04-23.en.md",
+    );
+    expect(changeRecord).toContain("client_credentials");
+    expect(changeRecord).toContain("WRONG_GRANT_TYPE");
+    expect(changeRecord).toContain("data.soc");
+    expect(changeRecord).toContain("backupPower");
+    expect(changeRecord).toContain("not part of the Appendix C VPP core semantic model");
   });
 
   it("publishes a complete runtime telemetry block catalog in appendix C", async () => {
@@ -828,6 +889,15 @@ describe("growatt docs source-of-truth loader", () => {
       "| SP8 | External Generation Power | `pexPower` | External Generation | AC Couple only |",
     );
     expect(semantic.markdown).toContain(
+      "| SP9 | System SOC | `soc` | Battery Aggregate | Hybrid, AC Couple |",
+    );
+    expect(semantic.markdown).toContain(
+      "| System SOC | `soc` | Overall ESS battery system SOC | `%` | Query, Push | Hybrid, AC Couple |",
+    );
+    expect(semantic.markdown).toContain(
+      "| `soc` | Query, Push | System-level battery state of charge for the whole ESS battery system |",
+    );
+    expect(semantic.markdown).toContain(
       "`anti_backflow` is a dispatch setting value, not runtime telemetry.",
     );
     expect(semantic.markdown).toContain(
@@ -843,6 +913,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(semantic.markdown).toContain("| <0 | Grid export |");
     expect(semantic.markdown).toContain("| External Generation Boundary | N/A | Core |");
     expect(semantic.markdown).toContain("`batPower`");
+    expect(semantic.markdown).toContain("`soc`");
     expect(semantic.markdown).toContain("`meterPower`");
     expect(semantic.markdown).toContain("`genPower`");
     expect(semantic.markdown).toContain("`pexPower`");

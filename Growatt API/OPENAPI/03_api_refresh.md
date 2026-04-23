@@ -3,7 +3,8 @@
 ## Brief Description
 
 - Use `refresh_token` to refresh `access_token`.
-- This documentation treats it as a generic refresh interface and does not add further grant-type-specific carve-outs.
+- This endpoint applies only when the previous token response issued a `refresh_token`.
+- In the 2026-04-23 AU full run, `authorization_code` issued a refresh token and `client_credentials` did not.
 
 ## Request URL
 
@@ -59,7 +60,7 @@ sequenceDiagram
 | Parameter | Required | Description |
 | :--- | :--- | :--- |
 | `grant_type` | Yes | Must be `refresh_token` |
-| `refresh_token` | Yes | Previous refresh token used to obtain a new access token |
+| `refresh_token` | Yes | Previous refresh token used to obtain a new access token; normally from an `authorization_code` token response |
 | `client_id` | Yes | The `client_id` issued to the third-party platform |
 | `client_secret` | Yes | The `client_secret` issued to the third-party platform |
 
@@ -99,6 +100,8 @@ sequenceDiagram
 ## Implementation Note
 
 - The original source sample mixes JSON and inline comments in a malformed way; this page rewrites it into equivalent readable JSON without changing the field contract.
+- Do not call this endpoint for a `client_credentials` token unless the token response explicitly included `refresh_token`.
+- The 2026-04-23 AU full run confirmed that `client_credentials` token responses did not include `refresh_token` or `refresh_expires_in`.
 - The latest global refresh run on 2026-03-27 returned `expires_in=604800` and `refresh_expires_in=2592000`.
 - In that same run, the previous access token immediately returned `TOKEN_IS_INVALID` after a successful refresh.
 - Replace the old access token immediately after refresh, and always treat the live response as the TTL source of truth.

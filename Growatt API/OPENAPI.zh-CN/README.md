@@ -31,7 +31,7 @@ sequenceDiagram
     participant Push as WebhookAPI
 
     Platform->>OAuth: POST /oauth2/token
-    OAuth-->>Platform: 返回 token 对
+    OAuth-->>Platform: 返回 access token 或 token 对
     Platform->>OAuth: 执行 bindDevice 流程
     OAuth-->>Platform: 返回已授权设备集合
     Platform->>Device: 查询设备信息与数据
@@ -74,7 +74,8 @@ sequenceDiagram
 
 ## 关键说明
 
-- `POST /oauth2/token` 的两个公开示例都包含 `redirect_uri`。
+- `authorization_code` token 请求要求 `redirect_uri`，并返回可刷新的 token 集。
+- `client_credentials` token 请求可不携带 `redirect_uri`；2026-04-23 AU 实测返回 access-token-only 字段。
 - `POST /oauth2/getDeviceList` 仅在 `authorization_code` 模式下支持。
 - `POST /oauth2/bindDevice` 中，`deviceSnList[].pinCode` 在客户端模式下必填。
 - `POST /oauth2/readDeviceDispatch` 的参数表将 `requestId` 标为必填。

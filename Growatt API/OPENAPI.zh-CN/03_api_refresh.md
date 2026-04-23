@@ -3,7 +3,8 @@
 ## 简要描述
 
 - 使用 `refresh_token` 刷新 `access_token`。
-- 文档将本接口描述为通用刷新接口，没有再按 `grant_type` 细分模式边界。
+- 本接口仅适用于上一次 token 响应已经签发 `refresh_token` 的场景。
+- 2026-04-23 AU 全量实测中，`authorization_code` 签发了 refresh token，`client_credentials` 未签发 refresh token。
 
 ## 请求 URL
 
@@ -59,7 +60,7 @@ sequenceDiagram
 | 参数名 | 是否必传 | 说明 |
 | :--- | :--- | :--- |
 | `grant_type` | 是 | 必须为 `refresh_token` |
-| `refresh_token` | 是 | 旧的 `refresh_token`，用于换取新的访问令牌 |
+| `refresh_token` | 是 | 旧的 `refresh_token`，用于换取新的访问令牌；通常来自 `authorization_code` token 响应 |
 | `client_id` | 是 | 第三方在平台申请的 `client_id` |
 | `client_secret` | 是 | 第三方在平台申请的 `client_secret` |
 
@@ -99,6 +100,8 @@ sequenceDiagram
 ## 实现说明
 
 - 原始来源示例在 JSON 注释排版上有格式问题；本页仅将其改写成等价、可读的 JSON 示例，不改变字段约束。
+- 除非 token 响应明确返回了 `refresh_token`，否则不要对 `client_credentials` token 调用本接口。
+- 2026-04-23 AU 全量实测确认 `client_credentials` token 响应不包含 `refresh_token` 或 `refresh_expires_in`。
 - 2026-03-27 最新全球 `refresh` 实测返回 `expires_in=604800`、`refresh_expires_in=2592000`。
 - 在同一轮实测里，`refresh` 成功后旧 access token 会立即返回 `TOKEN_IS_INVALID`。
 - 实现时应在刷新成功后立刻替换旧 access token，并始终以实时响应值作为 TTL 依据。

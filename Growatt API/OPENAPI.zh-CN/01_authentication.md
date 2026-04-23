@@ -32,16 +32,16 @@ flowchart TD
 ## Token 相关规则
 
 - 两种模式都通过 `POST /oauth2/token` 获取 `access_token`。
-- 两个 token 请求示例都携带了 `redirect_uri`。
-- `POST /oauth2/refresh` 的前提是持有 `refresh_token`；文档未再按 `grant_type` 对刷新能力做进一步拆分。
-- token 返回字段表统一列出了 `access_token`、`refresh_token`、`refresh_expires_in`、`token_type`、`expires_in`。
+- `authorization_code` 模式下，`redirect_uri` 必填，token 响应返回 `access_token`、`refresh_token`、`refresh_expires_in`、`token_type`、`expires_in`。
+- `client_credentials` 模式下，`redirect_uri` 为可选 / 兼容接受字段。2026-04-23 AU 全量实测中，携带或不携带 `redirect_uri` 均可获取 token，响应仅返回 `access_token`、`token_type`、`expires_in`。
+- `POST /oauth2/refresh` 仅适用于上一次 token 响应签发了 `refresh_token` 的场景；不要默认假设 `client_credentials` token 一定可以刷新。
 
 ## 能力矩阵
 
 | 能力 | `authorization_code` | `client_credentials` |
 | :--- | :--- | :--- |
 | 获取 access token | 支持 | 支持 |
-| 刷新 access token | 通过 `POST /oauth2/refresh` 提供 | 文档对两种模式未再额外拆分差异 |
+| 刷新 access token | 签发了 `refresh_token` 时支持 | 2026-04-23 AU `client_credentials` 响应未签发 `refresh_token`，因此不可按 refresh 流程处理 |
 | 获取可授权设备列表 `getDeviceList` | 支持 | 不支持 |
 | 授权设备 `bindDevice` | 支持 | 支持，且 `pinCode` 为客户端模式必填 |
 | 获取已授权设备列表 `getDeviceListAuthed` | 支持 | 支持 |
@@ -63,13 +63,13 @@ sequenceDiagram
     Growatt-->>App: 校验凭据
     App->>Server: 发送授权上下文
     Server->>Growatt: 用 code 换取 token
-    Growatt-->>Server: 返回 token 对
+    Growatt-->>Server: 返回 token 响应
     Server->>Growatt: 携带 access token 调用 API
     Growatt-->>Server: 返回接口结果
     Server-->>App: 返回结果
     App-->>User: 展示结果
 
-    Note over Server,Growatt: token 过期时执行刷新
+    Note over Server,Growatt: 签发 refresh token 时可在过期后刷新
 ```
 
 ## 实施提示

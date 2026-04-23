@@ -94,6 +94,13 @@ sequenceDiagram
 }
 ```
 
+```json
+{
+    "code": 103,
+    "message": "WRONG_GRANT_TYPE"
+}
+```
+
 ### `data` Fields
 
 | Parameter | Description |
@@ -127,9 +134,9 @@ sequenceDiagram
 
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `deviceSnList` | array | Yes | Non-empty list of device serials and `pinCode` values |
+| `deviceSnList` | array | Yes | Non-empty list of device serial entries |
 | `deviceSnList[].deviceSn` | string | Yes | Device serial number |
-| `deviceSnList[].pinCode` | string | Required in client mode | Device `PinCode` |
+| `deviceSnList[].pinCode` | string | Required in client mode; optional but accepted in authorization-code mode | Device `PinCode`. Some environments or devices may require it even in authorization-code mode |
 
 ### Request Examples
 
@@ -143,6 +150,19 @@ sequenceDiagram
         },
         {
             "deviceSn": "DEVICE_SN_2"
+        }
+    ]
+}
+```
+
+#### Authorization-Code Mode With `pinCode` When Required
+
+```json
+{
+    "deviceSnList": [
+        {
+            "deviceSn": "DEVICE_SN_1",
+            "pinCode": "PIN001"
         }
     ]
 }
@@ -215,11 +235,13 @@ sequenceDiagram
 }
 ```
 
-### Latest Global Observation (2026-03-27)
+### Recent Live Observations
 
 - The latest global authorization-code run used `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` and succeeded without `pinCode`.
 - The successful response in that run returned `data: 1`.
 - The same report distinguished `deviceSn=WCK6584462` from `datalogSn=ZGQ0E820UH`; device-level APIs used `deviceSn`.
+- The 2026-04-23 AU full run used authorization-code mode with object form plus `pinCode` and succeeded.
+- The same AU run confirmed that `client_credentials` calling `getDeviceList` returns `{"code":103,"message":"WRONG_GRANT_TYPE"}`.
 
 ## 3 Get Authorized Devices
 

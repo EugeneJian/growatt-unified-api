@@ -1,6 +1,6 @@
 # Growatt ESS Semantic Model and Dispatch Specification
 
-**Version**: v1.0  
+**Version**: v1.1
 **Status**: Public Standard  
 **Scope**: Growatt Unified OpenAPI / EMS VPP-relevant runtime telemetry semantics and dispatch validation  
 **Audience**: Integrators, solution architects, validation teams, and implementation teams
@@ -25,6 +25,8 @@ The telemetry scope in this appendix focuses on the VPP-relevant subset of the c
 Static capability metadata from `07_api_device_info.md` remains outside this runtime telemetry catalog.
 
 This revision presents four public topology references: `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`. The normative runtime semantic, telemetry, and dispatch-validation coverage in the later sections remains limited to `Hybrid` and `AC-Couple`.
+
+Revision v1.1 adds top-level `soc` as the system-level SOC for the whole ESS battery system and keeps `batteryList[].soc` as the per-pack SOC signal.
 
 ---
 
@@ -241,10 +243,11 @@ flowchart LR
 | SP2 | Grid Meter Exchange Sign | `meterPower` | Grid Meter | Hybrid, AC Couple |
 | SP3 | Hybrid PV Source Power | `ppv` | PV Source | Hybrid core; AC Couple optional |
 | SP4 | Load Power | `payLoadPower` | Load | Hybrid, AC Couple |
-| SP5 | SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
-| SP6 | SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
+| SP5 | Battery Pack SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
+| SP6 | Battery Pack SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
 | SP7 | Export Limit Setting | `anti_backflow` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
 | SP8 | External Generation Power | `pexPower` | External Generation | AC Couple only |
+| SP9 | System SOC | `soc` | Battery Aggregate | Hybrid, AC Couple |
 
 ---
 
@@ -284,12 +287,13 @@ flowchart LR
 
 ---
 
-### SP5 / SP6
+### SP5 / SP6 / SP9
 
 | Field | Rule |
 | ----- | ---- |
-| `batteryList[].soc` | `[0,100]` |
-| `batteryList[].soh` | `[0,100]` |
+| `soc` | `[0,100]`; system-level SOC for the whole ESS battery system |
+| `batteryList[].soc` | `[0,100]`; per-pack SOC |
+| `batteryList[].soh` | `[0,100]`; per-pack SOH |
 
 ---
 
@@ -311,8 +315,9 @@ flowchart LR
 | External Generation Power | `pexPower` | >= 0 when reported at the external-generation boundary | `W` | Query, Push | AC Couple |
 | Generator Power | `genPower` | >= 0 when reported for off-grid generator runtime; not an AC-Couple boundary signal | `W` | Query, Push | Off-grid runtime only |
 | Load Power | `payLoadPower` | Calculated site load | `W` | Query, Push | Hybrid, AC Couple |
-| Battery SOC | `batteryList[].soc` | Per-pack SOC | `%` | Query, Push | Hybrid, AC Couple |
-| Battery SOH | `batteryList[].soh` | Per-pack SOH | `%` | Query, Push | Hybrid, AC Couple |
+| System SOC | `soc` | Overall ESS battery system SOC | `%` | Query, Push | Hybrid, AC Couple |
+| Battery Pack SOC | `batteryList[].soc` | Per-pack SOC | `%` | Query, Push | Hybrid, AC Couple |
+| Battery Pack SOH | `batteryList[].soh` | Per-pack SOH | `%` | Query, Push | Hybrid, AC Couple |
 
 ---
 
@@ -333,7 +338,7 @@ flowchart LR
     Electrical["Electrical Quality<br/>reactivePower, fac, vac1-3"]
     PVBlock["PV Source / Generation<br/>ppv, epvTotal"]
     SiteBlock["Site / Output Power<br/>pac, payLoadPower"]
-    BatteryAgg["Battery Aggregate<br/>batPower, batteryStatus"]
+    BatteryAgg["Battery Aggregate<br/>batPower, batteryStatus, soc"]
     BatteryPack["Battery Pack Detail<br/>batteryList[] metrics"]
     GeneratorBlock["Generator / Off-grid Source<br/>genPower"]
     Runtime["Runtime Mode<br/>status, priority"]
@@ -346,6 +351,7 @@ flowchart LR
     SP5("SP5: batteryList[].soc")
     SP6("SP6: batteryList[].soh")
     SP8("SP8: pexPower")
+    SP9("SP9: soc")
     Dispatch["Dispatch / Setting Readback<br/>deviceDispatch, read-dispatch, anti_backflow"]
 
     Meta --> GridMeterBlock
@@ -364,13 +370,14 @@ flowchart LR
     PVBlock -.-> SP3
     SiteBlock -.-> SP4
     BatteryAgg -.-> SP1
+    BatteryAgg -.-> SP9
     BatteryPack -.-> SP5
     BatteryPack -.-> SP6
     Dispatch -.-> BatteryAgg
     Dispatch -.-> GridMeterBlock
 
     class Meta,GridMeterBlock,ExternalGenerationBlock,Electrical,PVBlock,SiteBlock,BatteryAgg,BatteryPack,GeneratorBlock,Runtime,Fault block;
-    class SP1,SP2,SP3,SP4,SP5,SP6,SP8 semantic;
+    class SP1,SP2,SP3,SP4,SP5,SP6,SP8,SP9 semantic;
     class Dispatch dispatch;
 ```
 
@@ -386,7 +393,7 @@ flowchart LR
 | Energy | `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal`, `epvTotal`, `batteryList[].echargeToday`, `batteryList[].echargeTotal`, `batteryList[].edischargeToday`, `batteryList[].edischargeTotal` | `kWh` |
 | Voltage | `vac1`, `vac2`, `vac3`, `batteryList[].vbat` | `V` |
 | Frequency | `fac` | `Hz` |
-| Percentage | `batteryList[].soc`, `batteryList[].soh` | `%` |
+| Percentage | `soc`, `batteryList[].soc`, `batteryList[].soh` | `%` |
 | Current | `batteryList[].ibat` | `A` |
 | Code / Enum | `status`, `priority`, `batteryStatus`, `batteryList[].status`, `faultCode`, `faultSubCode`, `protectCode`, `protectSubCode`, `dataType` | Code / enum |
 
@@ -455,6 +462,7 @@ flowchart LR
 | Field | Payloads | Description |
 | ----- | -------- | ----------- |
 | `batPower` | Query, Push | Aggregate battery charge/discharge power. Positive means charging and negative means discharging |
+| `soc` | Query, Push | System-level battery state of charge for the whole ESS battery system |
 | `batteryStatus` | Query, Push | Overall battery status code |
 
 ### Battery Pack Detail
@@ -509,8 +517,8 @@ flowchart LR
 
 | Dispatch | Observed Runtime Fields | Control Fields |
 | -------- | ----------------------- | -------------- |
-| Charge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Discharge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
+| Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
+| Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
 | Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow` (dispatch setting; read back via read-dispatch) |
 | Mode | `status`, `priority`, power blocks | Implementation-specific set types |
 
@@ -571,12 +579,13 @@ flowchart LR
 **Expected**
 
 * `batPower` > 0
-* `batteryList[].soc` is non-decreasing over the observation window
+* `soc` is non-decreasing over the observation window when reported
+* `batteryList[].soc` is non-decreasing per pack when pack details are reported
 
 **Pass**
 
 ```text
-batPower remains positive and batteryList[].soc does not trend downward
+batPower remains positive and SOC does not trend downward
 ```
 
 ---
@@ -586,7 +595,8 @@ batPower remains positive and batteryList[].soc does not trend downward
 **Expected**
 
 * `batPower` < 0
-* `batteryList[].soc` is non-increasing over the observation window
+* `soc` is non-increasing over the observation window when reported
+* `batteryList[].soc` is non-increasing per pack when pack details are reported
 
 ---
 
@@ -671,7 +681,7 @@ flowchart TD
     Telemetry[Telemetry window]
     Check1{"batPower sign OK?"}
     Check2{"meterPower boundary OK when export-limited?"}
-    Check3{"batteryList[].soc trend OK?"}
+    Check3{"soc / batteryList[].soc trend OK?"}
     Pass[PASS]
     Fail[FAIL]
 
@@ -691,3 +701,4 @@ flowchart TD
 
 This specification organizes public ESS topology references, runtime semantics, dispatch, and telemetry into one public model, with reference topology diagrams for `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`.
 Normative runtime semantic, telemetry, and dispatch-validation coverage in this revision remains focused on `Hybrid` and `AC-Couple`, using `pexPower` as the AC-couple external-generation boundary signal while retaining `genPower` only as auxiliary off-grid generator telemetry. `PV Only` and `Battery Only` remain physical topology references only.
+System-level `soc` is the public overall ESS battery SOC signal, while `batteryList[].soc` remains the per-pack SOC detail.

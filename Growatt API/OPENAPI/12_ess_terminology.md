@@ -26,7 +26,7 @@ This page standardizes the bilingual ESS terminology used in the public Growatt 
 | Grid frequency | 电网频率 | grid frequency | `fac` | Use `Hz` in field-level unit descriptions. |
 | Line voltage | 线电压 | line voltage | `vac1`, `vac2`, `vac3` | Use for per-line voltage values in V. |
 | Grid operating mode | 并网 / 离网 | grid-connected / off-grid | Runtime status values `5`-`8` | Prefer `grid-connected` over `on-grid`. |
-| Battery charge level | 电池荷电状态 | state of charge (SOC) | `batteryList[].soc` | First mention should include the acronym. |
+| Battery charge level | 电池荷电状态 | state of charge (SOC) | `soc`, `batteryList[].soc` | `soc` is system-level SOC; `batteryList[].soc` is per-pack SOC. First mention should include the acronym. |
 | Battery health | 电池健康状态 | state of health (SOH) | `batteryList[].soh` | First mention should include the acronym. |
 | Battery pack status | 电池包状态 | battery pack status | `batteryList[].status` | Use for per-pack status codes when the payload exposes them. |
 | Battery power | 电池功率 | battery power | `batPower` | Explain the sign convention when first used: positive = charging, negative = discharging. |

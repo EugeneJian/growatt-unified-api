@@ -12,12 +12,14 @@ This page is split into two layers:
 No.
 
 - `POST /oauth2/getDeviceList` is supported only in `authorization_code` mode.
+- In the 2026-04-23 AU full run, calling this endpoint with `client_credentials` returned `code=103` and `message="WRONG_GRANT_TYPE"`.
 
 ### 2. When is `pinCode` required in `bindDevice`?
 
 The published parameter table states:
 
 - `deviceSnList[].pinCode`: required in client mode.
+- In authorization-code mode, the field is accepted when supplied; some environments or devices may require object form plus `pinCode`.
 
 ### 3. Is `requestId` required in `readDeviceDispatch`?
 
@@ -45,7 +47,9 @@ The following observations come from environment reports under `test/` and are k
 - The latest global authorization-code run on 2026-03-27 used `GET /#/login?...`, `POST /prod-api/login`, and `GET /prod-api/auth` before `POST /oauth2/token`.
 - Multiple environment reports use JSON bodies for `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice`.
 - Multiple reports recommend using the raw `deviceSn` for device-level APIs and avoiding `datalogSn` or display-prefixed values.
-- Some reports observe `WRONG_GRANT_TYPE` when `client_credentials` calls `getDeviceList`.
+- The 2026-04-23 AU full report observed `client_credentials` token responses with and without `redirect_uri`; both returned only `access_token`, `token_type`, and `expires_in`.
+- The 2026-04-23 AU full report observed `WRONG_GRANT_TYPE` (`code=103`) when `client_credentials` called `getDeviceList`.
+- The 2026-04-23 AU full report used authorization-code `bindDevice` with object form plus `pinCode` and succeeded.
 - Some reports observe object-shaped `readDeviceDispatch.data` payloads for particular `setType` values.
 
 ### 6. Which entry points were observed in the latest global authorization-code run?

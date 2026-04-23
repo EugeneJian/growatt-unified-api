@@ -66,18 +66,19 @@ sequenceDiagram
 ```json
 {
     "code": 0,
-    "data": {},
+    "data": "<endpoint-dependent>",
     "message": "RESPONSE_MESSAGE"
 }
 ```
 
 | Scenario | `code` | `data` | `message` |
 | :--- | :--- | :--- | :--- |
-| Successful operation | `0` | `{}` | `"SUCCESSFUL_OPERATION"` |
+| Successful operation | `0` | Endpoint-dependent: object, array, number, `null`, or empty array depending on endpoint | `"SUCCESSFUL_OPERATION"` |
 | Device SN does not have permission | `12` | `["DEVICE_SN_1"]` | `"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"` |
 | Token is invalid | `2` | Not returned | `"TOKEN_IS_INVALID"` |
 | Device offline | `5` | `null` | `"DEVICE_OFFLINE"` |
 | Read device parameter failed | `18` | `null` | `"READ_DEVICE_PARAM_FAIL"` |
+| Wrong grant type | `103` | Not returned | `"WRONG_GRANT_TYPE"` |
 | Parameter-setting response timeout | `16` | `null` | `"PARAMETER_SETTING_RESPONSE_TIMEOUT"` |
 | Parameter-setting device not responding | `15` | `null` | `"PARAMETER_SETTING_DEVICE_NOT_RESPONDING"` |
 | Parameter-setting failed | `6` | `null` | `"PARAMETER_SETTING_FAILED"` |

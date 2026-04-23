@@ -1,6 +1,6 @@
 # Growatt ESS 语义模型与调度规范
 
-**版本**: v1.0  
+**版本**: v1.1
 **状态**: Public Standard  
 **范围**: Growatt Unified OpenAPI / EMS 中与 VPP 相关的运行时遥测语义与调度校验  
 **面向对象**: 集成方、方案架构师、校验团队与实施团队
@@ -25,6 +25,8 @@
 `07_api_device_info.md` 中的静态能力元数据不属于本运行时遥测目录。
 
 本次修订展示 4 类公开拓扑参考图：`Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only`。后续“运行时语义 / 遥测 / 调度校验”章节的规范化覆盖仍仅限于 `Hybrid` 与 `AC-Couple`。
+
+v1.1 新增顶层 `soc` 作为整个 ESS 电池系统的系统级 SOC，并保留 `batteryList[].soc` 作为单个电池包的 SOC 信号。
 
 ---
 
@@ -241,10 +243,11 @@ flowchart LR
 | SP2 | 电网表交换符号 | `meterPower` | Grid Meter | Hybrid, AC Couple |
 | SP3 | Hybrid PV 源功率 | `ppv` | PV Source | Hybrid core; AC Couple optional |
 | SP4 | 负载功率 | `payLoadPower` | Load | Hybrid, AC Couple |
-| SP5 | SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
-| SP6 | SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
+| SP5 | 电池包 SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
+| SP6 | 电池包 SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
 | SP7 | Export Limit 设置值 | `anti_backflow` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
 | SP8 | 外部发电功率 | `pexPower` | External Generation | AC Couple only |
+| SP9 | 系统级 SOC | `soc` | Battery Aggregate | Hybrid, AC Couple |
 
 ---
 
@@ -284,12 +287,13 @@ flowchart LR
 
 ---
 
-### SP5 / SP6
+### SP5 / SP6 / SP9
 
 | 字段 | 规则 |
 | --- | --- |
-| `batteryList[].soc` | `[0,100]` |
-| `batteryList[].soh` | `[0,100]` |
+| `soc` | `[0,100]`；整个 ESS 电池系统的系统级 SOC |
+| `batteryList[].soc` | `[0,100]`；单 pack SOC |
+| `batteryList[].soh` | `[0,100]`；单 pack SOH |
 
 ---
 
@@ -311,8 +315,9 @@ flowchart LR
 | 外部发电功率 | `pexPower` | 在外部发电边界上报时应满足 >= 0 | `W` | Query, Push | AC Couple |
 | 发电机功率 | `genPower` | 上报时应满足 >= 0；用于离网发电机运行场景，不是 AC-Couple 边界信号 | `W` | Query, Push | Off-grid runtime only |
 | 负载功率 | `payLoadPower` | 站点计算负载 | `W` | Query, Push | Hybrid, AC Couple |
-| 电池 SOC | `batteryList[].soc` | 单 pack SOC | `%` | Query, Push | Hybrid, AC Couple |
-| 电池 SOH | `batteryList[].soh` | 单 pack SOH | `%` | Query, Push | Hybrid, AC Couple |
+| 系统级 SOC | `soc` | 整个 ESS 电池系统的总 SOC | `%` | Query, Push | Hybrid, AC Couple |
+| 电池包 SOC | `batteryList[].soc` | 单 pack SOC | `%` | Query, Push | Hybrid, AC Couple |
+| 电池包 SOH | `batteryList[].soh` | 单 pack SOH | `%` | Query, Push | Hybrid, AC Couple |
 
 ---
 
@@ -333,7 +338,7 @@ flowchart LR
     Electrical["电气质量<br/>reactivePower, fac, vac1-3"]
     PVBlock["PV 源 / 发电<br/>ppv, epvTotal"]
     SiteBlock["站点 / 输出功率<br/>pac, payLoadPower"]
-    BatteryAgg["电池聚合<br/>batPower, batteryStatus"]
+    BatteryAgg["电池聚合<br/>batPower, batteryStatus, soc"]
     BatteryPack["电池包明细<br/>batteryList[] metrics"]
     GeneratorBlock["发电机 / 离网电源<br/>genPower"]
     Runtime["运行模式<br/>status, priority"]
@@ -346,6 +351,7 @@ flowchart LR
     SP5("SP5: batteryList[].soc")
     SP6("SP6: batteryList[].soh")
     SP8("SP8: pexPower")
+    SP9("SP9: soc")
     Dispatch["调度 / 设置回读<br/>deviceDispatch, read-dispatch, anti_backflow"]
 
     Meta --> GridMeterBlock
@@ -364,13 +370,14 @@ flowchart LR
     PVBlock -.-> SP3
     SiteBlock -.-> SP4
     BatteryAgg -.-> SP1
+    BatteryAgg -.-> SP9
     BatteryPack -.-> SP5
     BatteryPack -.-> SP6
     Dispatch -.-> BatteryAgg
     Dispatch -.-> GridMeterBlock
 
     class Meta,GridMeterBlock,ExternalGenerationBlock,Electrical,PVBlock,SiteBlock,BatteryAgg,BatteryPack,GeneratorBlock,Runtime,Fault block;
-    class SP1,SP2,SP3,SP4,SP5,SP6,SP8 semantic;
+    class SP1,SP2,SP3,SP4,SP5,SP6,SP8,SP9 semantic;
     class Dispatch dispatch;
 ```
 
@@ -386,7 +393,7 @@ flowchart LR
 | 电量 | `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal`, `epvTotal`, `batteryList[].echargeToday`, `batteryList[].echargeTotal`, `batteryList[].edischargeToday`, `batteryList[].edischargeTotal` | `kWh` |
 | 电压 | `vac1`, `vac2`, `vac3`, `batteryList[].vbat` | `V` |
 | 频率 | `fac` | `Hz` |
-| 百分比 | `batteryList[].soc`, `batteryList[].soh` | `%` |
+| 百分比 | `soc`, `batteryList[].soc`, `batteryList[].soh` | `%` |
 | 电流 | `batteryList[].ibat` | `A` |
 | 代码 / 枚举 | `status`, `priority`, `batteryStatus`, `batteryList[].status`, `faultCode`, `faultSubCode`, `protectCode`, `protectSubCode`, `dataType` | Code / enum |
 
@@ -455,6 +462,7 @@ flowchart LR
 | 字段 | Payload | 说明 |
 | --- | --- | --- |
 | `batPower` | Query, Push | 聚合电池充放电功率。正值表示充电，负值表示放电 |
+| `soc` | Query, Push | 整个 ESS 电池系统的系统级电池荷电状态 |
 | `batteryStatus` | Query, Push | 电池总体状态码 |
 
 ### 电池包明细
@@ -509,8 +517,8 @@ flowchart LR
 
 | 调度 | 观测运行时字段 | 控制字段 |
 | --- | --- | --- |
-| Charge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Discharge | `batPower`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
+| Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
+| Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
 | Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow`（dispatch setting；通过 read-dispatch 回读） |
 | Mode | `status`, `priority`, power blocks | 具体实现相关的 setType |
 
@@ -571,12 +579,13 @@ flowchart LR
 **期望**
 
 * `batPower` > 0
-* `batteryList[].soc` 在观测窗口内单调不减
+* `soc` 在上报时应在观测窗口内单调不减
+* `batteryList[].soc` 在电池包明细上报时应按 pack 单调不减
 
 **Pass**
 
 ```text
-batPower remains positive and batteryList[].soc does not trend downward
+batPower remains positive and SOC does not trend downward
 ```
 
 ---
@@ -586,7 +595,8 @@ batPower remains positive and batteryList[].soc does not trend downward
 **期望**
 
 * `batPower` < 0
-* `batteryList[].soc` 在观测窗口内单调不增
+* `soc` 在上报时应在观测窗口内单调不增
+* `batteryList[].soc` 在电池包明细上报时应按 pack 单调不增
 
 ---
 
@@ -671,7 +681,7 @@ flowchart TD
     Telemetry["遥测窗口"]
     Check1{"batPower 符号是否正确?"}
     Check2{"meterPower 在 Export Limit 下是否满足边界?"}
-    Check3{"batteryList[].soc 趋势是否正确?"}
+    Check3{"soc / batteryList[].soc 趋势是否正确?"}
     Pass["PASS"]
     Fail["FAIL"]
 
@@ -691,3 +701,4 @@ flowchart TD
 
 本规范将公开 ESS 拓扑参考、运行时语义、调度与遥测整理为一个统一模型，并补充了 `Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only` 4 类拓扑参考图。  
 本次修订的规范化运行时语义、遥测与调度校验覆盖仍聚焦于 `Hybrid` 与 `AC-Couple`，其中 `pexPower` 被定义为 AC-couple 的外部发电边界信号，而 `genPower` 仅保留为离网发电机辅助遥测。`PV Only` 与 `Battery Only` 仍仅作为物理拓扑参考展示。
+系统级 `soc` 是公开的整体 ESS 电池 SOC 信号，`batteryList[].soc` 仍表示单个电池包 SOC 明细。

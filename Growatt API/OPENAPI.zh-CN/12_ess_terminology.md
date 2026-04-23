@@ -26,7 +26,7 @@
 | 电网频率 | 电网频率 | grid frequency | `fac` | 字段级单位说明统一写为 `Hz`。 |
 | 线电压 | 线电压 | line voltage | `vac1`, `vac2`, `vac3` | 用于各相/各线电压字段，单位 V。 |
 | 电网运行方式 | 并网 / 离网 | grid-connected / off-grid | 运行状态值 `5`-`8` | 并网状态优先写 `grid-connected`，不优先使用 `on-grid`。 |
-| 电池荷电状态 | 电池荷电状态 | state of charge (SOC) | `batteryList[].soc` | 首次出现优先带出缩写。 |
+| 电池荷电状态 | 电池荷电状态 | state of charge (SOC) | `soc`, `batteryList[].soc` | `soc` 为系统级 SOC，`batteryList[].soc` 为单 pack SOC；首次出现优先带出缩写。 |
 | 电池健康状态 | 电池健康状态 | state of health (SOH) | `batteryList[].soh` | 首次出现优先带出缩写。 |
 | 电池包状态 | 电池包状态 | battery pack status | `batteryList[].status` | 用于 payload 明确返回单个电池包状态码的场景。 |
 | 电池功率 | 电池功率 | battery power | `batPower` | 首次出现时说明符号方向：正值充电，负值放电。 |

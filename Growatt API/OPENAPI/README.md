@@ -31,7 +31,7 @@ sequenceDiagram
     participant Push as WebhookAPI
 
     Platform->>OAuth: POST /oauth2/token
-    OAuth-->>Platform: Return token pair
+    OAuth-->>Platform: Return access token or token pair
     Platform->>OAuth: Run bindDevice flow
     OAuth-->>Platform: Return authorized set
     Platform->>Device: Query info and data
@@ -74,7 +74,8 @@ sequenceDiagram
 
 ## Key Notes
 
-- Both published examples for `POST /oauth2/token` include `redirect_uri`.
+- `authorization_code` token requests require `redirect_uri` and return a refreshable token set.
+- `client_credentials` token requests may omit `redirect_uri`; the 2026-04-23 AU run returned access-token-only fields.
 - `POST /oauth2/getDeviceList` is supported only in `authorization_code` mode.
 - In `POST /oauth2/bindDevice`, `deviceSnList[].pinCode` is required in client mode.
 - The parameter table for `POST /oauth2/readDeviceDispatch` marks `requestId` as required.

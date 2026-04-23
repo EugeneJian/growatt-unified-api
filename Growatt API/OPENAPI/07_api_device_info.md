@@ -92,6 +92,9 @@ sequenceDiagram
         "datalogDeviceTypeName": "ShineWiFi-X",
         "dtc": 5100,
         "communicationVersion": "ZABA-0021",
+        "unifiedAPIver": null,
+        "deviceVersion": null,
+        "datalogVersion": "7.6.1.9",
         "existBattery": true,
         "batterySn": "BATTERY_SN_1",
         "batteryModel": "ARK 5.12-25.6XH-A1",
@@ -130,6 +133,9 @@ sequenceDiagram
 | `datalogDeviceTypeName` | string | Datalogger type name | `"ShineWiFi-X"` |
 | `dtc` | int | Numeric device-type code | `5100` |
 | `communicationVersion` | string | Firmware communication version | `"ZABA-0021"` |
+| `unifiedAPIver` | string \| null | Unified API version when reported; `null` when unavailable | `null` |
+| `deviceVersion` | string \| null | Device firmware version when reported; `null` when unavailable | `null` |
+| `datalogVersion` | string \| null | Datalogger firmware version when reported; `null` when unavailable | `"7.6.1.9"` |
 | `existBattery` | boolean | Whether the device has a battery | `true` |
 | `batterySn` | string | Battery serial number | `"BATTERY_SN_1"` |
 | `batteryModel` | string | Battery model | `"ARK 5.12-25.6XH-A1"` |

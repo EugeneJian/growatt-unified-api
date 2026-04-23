@@ -32,16 +32,16 @@ flowchart TD
 ## Token Rules
 
 - Both grant types use `POST /oauth2/token` to obtain `access_token`.
-- Both token request examples include `redirect_uri`.
-- `POST /oauth2/refresh` requires a `refresh_token`; this documentation does not further split refresh behavior by grant type.
-- The token field table lists `access_token`, `refresh_token`, `refresh_expires_in`, `token_type`, and `expires_in` as one shared response model.
+- In `authorization_code` mode, `redirect_uri` is required and the token response returns `access_token`, `refresh_token`, `refresh_expires_in`, `token_type`, and `expires_in`.
+- In `client_credentials` mode, `redirect_uri` is optional / compatibility-accepted. The 2026-04-23 AU full run accepted requests both with and without `redirect_uri` and returned only `access_token`, `token_type`, and `expires_in`.
+- `POST /oauth2/refresh` applies only when the previous token response issued a `refresh_token`; do not assume a `client_credentials` token can be refreshed unless its response explicitly includes `refresh_token`.
 
 ## Capability Matrix
 
 | Capability | `authorization_code` | `client_credentials` |
 | :--- | :--- | :--- |
 | Get access token | Supported | Supported |
-| Refresh access token | Provided by `POST /oauth2/refresh` | Same endpoint behavior is published for both modes |
+| Refresh access token | Supported when a `refresh_token` was issued | Not available in the 2026-04-23 AU `client_credentials` response because no `refresh_token` was issued |
 | Get candidate devices `getDeviceList` | Supported | Not supported |
 | Bind devices `bindDevice` | Supported | Supported, and `pinCode` is required in client mode |
 | Get authorized devices `getDeviceListAuthed` | Supported | Supported |
@@ -63,13 +63,13 @@ sequenceDiagram
     Growatt-->>App: Verify credentials
     App->>Server: Send authorization context
     Server->>Growatt: Exchange code for token
-    Growatt-->>Server: Return token pair
+    Growatt-->>Server: Return token response
     Server->>Growatt: Call API with access token
     Growatt-->>Server: Return API result
     Server-->>App: Return result
     App-->>User: Show result
 
-    Note over Server,Growatt: Refresh token on expiry
+    Note over Server,Growatt: Refresh token on expiry when a refresh token was issued
 ```
 
 ## Implementation Pointers

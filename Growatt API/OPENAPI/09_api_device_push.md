@@ -36,6 +36,7 @@ sequenceDiagram
         "fac": 50.03,
         "backupPower": 0.20,
         "batPower": 0.00,
+        "soc": 67,
         "pac": 41.30,
         "etoUserToday": 3.10,
         "meterPower": 0.00,
@@ -91,6 +92,7 @@ sequenceDiagram
 | `data.meterPower` | double | Grid meter power. Positive means grid import and negative means grid export, unit: W | `0.00` |
 | `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) | `174.90` |
 | `data.fac` | double | Grid frequency in Hz | `50.03` |
+| `data.backupPower` | double | Backup output power in W when reported. Public endpoint field; not part of Appendix C VPP core semantic telemetry | `0.20` |
 | `data.etoUserToday` | double | Grid import energy today in kWh | `3.10` |
 | `data.etoUserTotal` | double | Total grid import energy in kWh | `44.80` |
 | `data.etoGridToday` | double | Grid export energy today in kWh | `1.50` |
@@ -108,6 +110,7 @@ sequenceDiagram
 | `data.smartLoadPower` | double | Smart-load power when the device reports a dedicated smart-load channel, unit: W | `0.00` |
 | `data.batteryStatus` | int | Overall battery status | `0` |
 | `data.batPower` | double | Battery power. Positive = charging, negative = discharging, `0` = idle, unit: W | `0.00` |
+| `data.soc` | int | System-level battery state of charge (SOC) in percent; represents the overall ESS battery system SOC | `67` |
 | `data.priority` | int | Operating priority | `0` |
 | `data.status` | int | Runtime status code | `6` |
 | `data.utcTime` | string | UTC timestamp in `yyyy-MM-dd HH:mm:ss` format | `"2026-03-13 07:48:25"` |

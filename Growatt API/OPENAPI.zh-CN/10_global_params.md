@@ -66,18 +66,19 @@ sequenceDiagram
 ```json
 {
     "code": 0,
-    "data": {},
+    "data": "<endpoint-dependent>",
     "message": "RESPONSE_MESSAGE"
 }
 ```
 
 | 场景 | `code` | `data` | `message` |
 | :--- | :--- | :--- | :--- |
-| 操作成功 | `0` | `{}` | `"SUCCESSFUL_OPERATION"` |
+| 操作成功 | `0` | 随接口而定：可能是对象、数组、数字、`null` 或空数组 | `"SUCCESSFUL_OPERATION"` |
 | 设备 SN 无权限 | `12` | `["DEVICE_SN_1"]` | `"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"` |
 | Token 无效 | `2` | 未返回 | `"TOKEN_IS_INVALID"` |
 | 设备离线 | `5` | `null` | `"DEVICE_OFFLINE"` |
 | 读取设备参数失败 | `18` | `null` | `"READ_DEVICE_PARAM_FAIL"` |
+| 授权模式错误 | `103` | 未返回 | `"WRONG_GRANT_TYPE"` |
 | 参数设置响应超时 | `16` | `null` | `"PARAMETER_SETTING_RESPONSE_TIMEOUT"` |
 | 参数设置设备无响应 | `15` | `null` | `"PARAMETER_SETTING_DEVICE_NOT_RESPONDING"` |
 | 参数设置失败 | `6` | `null` | `"PARAMETER_SETTING_FAILED"` |
