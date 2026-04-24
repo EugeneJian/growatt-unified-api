@@ -27,11 +27,13 @@ jest.mock("@/lib/growatt-docs/markdown", () => {
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import {
+  GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
   GROWATT_APPENDIX_TERMINOLOGY_SLUG,
   GROWATT_CODES_SLUG,
   GROWATT_QUICK_GUIDE_SLUG,
   GROWATT_RELEASE_NOTES_SLUG,
   GROWATT_SEMANTIC_MODEL_SLUG,
+  getGrowattAppendixDOpenApiSupportScopePage,
   getGrowattAppendixTerminologyPage,
   getGrowattCodesPage,
   getGrowattDocBySlug,
@@ -207,7 +209,7 @@ function extractAppendixBlockCatalogFields(markdown: string) {
 }
 
 describe("growatt docs source-of-truth loader", () => {
-  it("discovers numbered OPENAPI docs and excludes README plus appendix-only glossary and semantic docs from the doc list", async () => {
+  it("discovers numbered OPENAPI docs and excludes README plus appendix-only docs from the doc list", async () => {
     const docs = await getGrowattDocMetas("en");
     const fileNames = docs.map((doc) => doc.fileName);
 
@@ -215,6 +217,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(fileNames).not.toContain("README.md");
     expect(fileNames).not.toContain("12_ess_terminology.md");
     expect(fileNames).not.toContain("13_ess_semantic_model.md");
+    expect(fileNames).not.toContain("14_appendix_d_openapi_support_scope.md");
     expect(fileNames[0]).toMatch(/^01_/);
   });
 
@@ -227,16 +230,21 @@ describe("growatt docs source-of-truth loader", () => {
     expect(overview.html).toContain("/growatt-openapi/growatt-codes");
     expect(overview.html).toContain("/growatt-openapi/appendix-terminology");
     expect(overview.html).toContain("/growatt-openapi/semantic-model");
+    expect(overview.html).toContain("/growatt-openapi/appendix-d-openapi-support-scope");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/02_api_access_token");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/growatt-codes");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
     expect(overview.displayMarkdown).toContain("/growatt-openapi/semantic-model");
+    expect(overview.displayMarkdown).toContain("/growatt-openapi/appendix-d-openapi-support-scope");
     expect(overview.displayMarkdown).not.toContain("12_ess_terminology");
     expect(overview.displayMarkdown.indexOf("/growatt-openapi/growatt-codes")).toBeLessThan(
       overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology"),
     );
     expect(overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology")).toBeLessThan(
       overview.displayMarkdown.indexOf("/growatt-openapi/semantic-model"),
+    );
+    expect(overview.displayMarkdown.indexOf("/growatt-openapi/semantic-model")).toBeLessThan(
+      overview.displayMarkdown.indexOf("/growatt-openapi/appendix-d-openapi-support-scope"),
     );
     expect(overview.markdown).not.toContain("Baseline source:");
     expect(overview.markdown).not.toContain("vendor baseline");
@@ -318,7 +326,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(releaseNotes.markdown).toContain("`readDeviceDispatch`");
   });
 
-  it("publishes appendix A/B/C links in both overview locales", async () => {
+  it("publishes appendix A/B/C links in both overview locales and appendix D in the English overview", async () => {
     const [overviewEn, overviewZh] = await Promise.all([
       getGrowattOverview("en"),
       getGrowattOverview("zh-CN"),
@@ -339,14 +347,21 @@ describe("growatt docs source-of-truth loader", () => {
         overview.displayMarkdown.indexOf("/growatt-openapi/semantic-model"),
       );
     }
+
+    expect(overviewEn.displayMarkdown).toContain("/growatt-openapi/appendix-d-openapi-support-scope");
+    expect(overviewEn.displayMarkdown.indexOf("/growatt-openapi/semantic-model")).toBeLessThan(
+      overviewEn.displayMarkdown.indexOf("/growatt-openapi/appendix-d-openapi-support-scope"),
+    );
   });
 
-  it("loads locale-specific appendix terminology and semantic model pages", async () => {
-    const [appendixTermEn, appendixTermZh, semanticEn, semanticZh] = await Promise.all([
+  it("loads locale-specific appendix terminology, semantic model, and appendix D pages", async () => {
+    const [appendixTermEn, appendixTermZh, semanticEn, semanticZh, appendixDEn, appendixDZh] = await Promise.all([
       getGrowattAppendixTerminologyPage("en"),
       getGrowattAppendixTerminologyPage("zh-CN"),
       getGrowattSemanticModelPage("en"),
       getGrowattSemanticModelPage("zh-CN"),
+      getGrowattAppendixDOpenApiSupportScopePage("en"),
+      getGrowattAppendixDOpenApiSupportScopePage("zh-CN"),
     ]);
 
     expect(appendixTermEn.slug).toBe(GROWATT_APPENDIX_TERMINOLOGY_SLUG);
@@ -378,6 +393,15 @@ describe("growatt docs source-of-truth loader", () => {
     expect(semanticEn.markdown).not.toContain("对外口径");
     expect(semanticZh.markdown).not.toContain("閺堫剝顫夐懠鍐ㄧ殺");
     expect(countMermaidBlocks(semanticEn.markdown)).toBeGreaterThanOrEqual(5);
+    expect(appendixDEn.slug).toBe(GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG);
+    expect(appendixDZh.slug).toBe(GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG);
+    expect(appendixDEn.fileName).toBe("14_appendix_d_openapi_support_scope.md");
+    expect(appendixDZh.fileName).toBe("14_appendix_d_openapi_support_scope.md");
+    expect(appendixDEn.title).toBe("Appendix D OpenAPI Product Support Scope");
+    expect(appendixDEn.markdown).toContain("CEC-listed Growatt inverter / PCE and battery product models");
+    expect(appendixDEn.markdown).toContain("Pending Confirmation");
+    expect(appendixDEn.displayMarkdown).not.toContain("14_appendix_d_openapi_support_scope");
+    expect(appendixDZh.markdown).toContain("待确认");
   });
 
   it("restores expected Mermaid diagrams across overview, endpoint docs, and quick guide", async () => {
@@ -415,6 +439,8 @@ describe("growatt docs source-of-truth loader", () => {
     expect(docsZh.map((doc) => doc.fileName)).not.toContain("12_ess_terminology.md");
     expect(docsEn.map((doc) => doc.fileName)).not.toContain("13_ess_semantic_model.md");
     expect(docsZh.map((doc) => doc.fileName)).not.toContain("13_ess_semantic_model.md");
+    expect(docsEn.map((doc) => doc.fileName)).not.toContain("14_appendix_d_openapi_support_scope.md");
+    expect(docsZh.map((doc) => doc.fileName)).not.toContain("14_appendix_d_openapi_support_scope.md");
     expect(glossaryEn).toBeNull();
     expect(glossaryZh).toBeNull();
     expect(appendixEn.title).toBe("Appendix B Glossary");
@@ -427,7 +453,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixZh.markdown).not.toContain("基线来源：");
   });
 
-  it("registers quick guide, release notes, and appendix A/B/C special pages in navigation order", () => {
+  it("registers quick guide, release notes, and appendix A/B/C/D special pages in navigation order", () => {
     const specialPages = getGrowattSpecialPages();
 
     expect(specialPages.map((page) => page.slug)).toEqual([
@@ -436,6 +462,7 @@ describe("growatt docs source-of-truth loader", () => {
       GROWATT_CODES_SLUG,
       GROWATT_APPENDIX_TERMINOLOGY_SLUG,
       GROWATT_SEMANTIC_MODEL_SLUG,
+      GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
     ]);
     expect(specialPages[0]).toEqual(
       expect.objectContaining({
@@ -483,6 +510,16 @@ describe("growatt docs source-of-truth loader", () => {
         labelByLocale: expect.objectContaining({
           en: "Appendix C Semantic Model",
           "zh-CN": "附录 C 语义模型",
+        }),
+        placement: "afterDocs",
+      }),
+    );
+    expect(specialPages[5]).toEqual(
+      expect.objectContaining({
+        slug: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
+        labelByLocale: expect.objectContaining({
+          en: "Appendix D OpenAPI Product Support Scope",
+          "zh-CN": "\u9644\u5f55 D OpenAPI \u4ea7\u54c1\u652f\u6301\u8303\u56f4",
         }),
         placement: "afterDocs",
       }),

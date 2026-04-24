@@ -22,12 +22,16 @@ const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-04-24.en.m
 const ZH_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-04-24.md";
 const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "12_ess_terminology.md";
 const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "13_ess_semantic_model.md";
+const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME =
+  "14_appendix_d_openapi_support_scope.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
 
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
 export const GROWATT_RELEASE_NOTES_SLUG = "release-notes";
 export const GROWATT_APPENDIX_TERMINOLOGY_SLUG = "appendix-terminology";
 export const GROWATT_SEMANTIC_MODEL_SLUG = "semantic-model";
+export const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG =
+  "appendix-d-openapi-support-scope";
 
 export type GrowattDocLocale = "en" | "zh-CN";
 
@@ -93,6 +97,11 @@ const APPENDIX_B_LABELS: Record<GrowattDocLocale, string> = {
 const APPENDIX_C_LABELS: Record<GrowattDocLocale, string> = {
   en: "Appendix C Semantic Model",
   "zh-CN": "附录 C 语义模型",
+};
+
+const APPENDIX_D_LABELS: Record<GrowattDocLocale, string> = {
+  en: "Appendix D OpenAPI Product Support Scope",
+  "zh-CN": "\u9644\u5f55 D OpenAPI \u4ea7\u54c1\u652f\u6301\u8303\u56f4",
 };
 
 export interface GrowattDocMeta {
@@ -166,6 +175,14 @@ export function getGrowattSpecialPages(): GrowattSpecialPageNavMeta[] {
       },
       placement: "afterDocs",
     },
+    {
+      slug: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
+      labelByLocale: {
+        en: APPENDIX_D_LABELS.en,
+        "zh-CN": APPENDIX_D_LABELS["zh-CN"],
+      },
+      placement: "afterDocs",
+    },
   ];
 }
 
@@ -211,6 +228,10 @@ function buildGrowattInternalSlugMap(fileNames: string[]): Map<string, string> {
   // Keep appendix aliases stable even though these files are not part of the numbered doc nav.
   slugByFileName.set(GROWATT_TERMINOLOGY_DOC_FILE_NAME, GROWATT_APPENDIX_TERMINOLOGY_SLUG);
   slugByFileName.set(GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME, GROWATT_SEMANTIC_MODEL_SLUG);
+  slugByFileName.set(
+    GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME,
+    GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
+  );
 
   return slugByFileName;
 }
@@ -238,7 +259,8 @@ export const getGrowattDocMetas = cache(
         (fileName) =>
           fileName !== README_FILE_NAME &&
           fileName !== GROWATT_TERMINOLOGY_DOC_FILE_NAME &&
-          fileName !== GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
+          fileName !== GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME &&
+          fileName !== GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME,
       )
       .sort(compareDocFiles);
 
@@ -384,6 +406,28 @@ export const getGrowattSemanticModelPage = cache(
       slug: GROWATT_SEMANTIC_MODEL_SLUG,
       fileName: sourceConfig.semanticModelFileName,
       title: APPENDIX_C_LABELS[locale],
+      markdown,
+      displayMarkdown,
+      html,
+    };
+  },
+);
+
+export const getGrowattAppendixDOpenApiSupportScopePage = cache(
+  async (locale: GrowattDocLocale = "en"): Promise<GrowattSpecialMarkdownPage> => {
+    const [docMetas, markdown] = await Promise.all([
+      getGrowattDocMetas(locale),
+      readOpenApiFile(GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME, locale),
+    ]);
+
+    const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
+    const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
+    const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
+
+    return {
+      slug: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
+      fileName: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME,
+      title: APPENDIX_D_LABELS[locale],
       markdown,
       displayMarkdown,
       html,
