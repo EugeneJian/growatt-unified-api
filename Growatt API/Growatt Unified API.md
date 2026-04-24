@@ -639,7 +639,7 @@ sequenceDiagram
 
 **Request Method**
 *   `POST`
-*   The `ContentType` of the request must be `application/x-www-form-urlencoded;`
+*   The `ContentType` of the request must be `application/json;`
 *   The request header must carry a valid `access_token` placed in the `Authorization` parameter, and it must include the prefix `Bearer `.
 
 **Http body parameters and description:**
@@ -647,9 +647,21 @@ sequenceDiagram
 | Parameter Name | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | Yes | string | Device SN, example: xxxxxxx |
-| `setType` | Yes | string | Setting parameter enum, example: `enable_control` |
-| `value` | Yes | string | Setting parameter value. See "Global Parameter Description" |
+| `setType` | Yes | string | Setting parameter enum, example: `export_limit` |
+| `value` | Yes | string | Setting parameter value. The public payload shape depends on `setType` and may be an array, object, or scalar number. See "Global Parameter Description" |
 | `requestId` | Yes | String | Unique identifier for this request (32-character string: current time + random number, e.g., yyyyMMddHHmmssSSSxxxxxxxxxxxxxxx) |
+
+**Public OAuth2 dispatch `setType` surface**
+
+| `setType` | `value` shape | Description |
+| :--- | :--- | :--- |
+| `time_slot_charge_discharge` | Array | Time-slot charge/discharge schedule |
+| `duration_and_power_charge_discharge` | Object | Duration, percentage, and command type |
+| `export_limit` | Object | Export-limit enable flag plus percentage |
+| `enable_control` | Scalar number | VPP control enable switch |
+| `active_power_derating_percentage` | Scalar number | Active-power derating percentage |
+| `active_power_percentage` | Scalar number | Active-power percentage |
+| `remote_charge_discharge_power` | Scalar number | Remote charge/discharge power |
 
 **Interface return parameters and description:**
 
@@ -664,8 +676,11 @@ sequenceDiagram
 ```json
 {
     "deviceSn": "FDCJQ00003",
-    "setType": "enable_control",
-    "value": "0",
+    "setType": "export_limit",
+    "value": {
+        "exportLimitEnabled": 1,
+        "percentage": 20
+    },
     "requestId": "32-character string (yyyyMMddHHmmssSSSxxxxxxxxxxxxxxx)"
 }
 ```
@@ -717,11 +732,11 @@ sequenceDiagram
 *   Current interface frequency limit: once every 5 seconds per device.
 
 **Request URL**
-*   `/oauth2/readDdeviceDispatch`
+*   `/oauth2/readDeviceDispatch`
 
 **Request Method**
 *   `POST`
-*   The `ContentType` of the request must be `application/x-www-form-urlencoded;`
+*   The `ContentType` of the request must be `application/json;`
 
 **HTTP Header parameters and description:**
 
@@ -734,7 +749,7 @@ sequenceDiagram
 | Parameter Name | Required | Type | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | Yes | string | Device SN, example: xxxxxxx |
-| `setType` | Yes | string | Setting parameter enum, example: `time_slot_charge_discharge` |
+| `setType` | Yes | string | Setting parameter enum, example: `export_limit` |
 | `requestId` | Yes | string | Unique identifier for this request |
 
 **Interface return parameters and description:**
@@ -742,7 +757,7 @@ sequenceDiagram
 | Parameter Name | Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | Interface return status code. 0 - Success, Others - Failure |
-| `data` | string | Returned data |
+| `data` | string | Returned data. Public success payloads may be arrays, objects, or scalar numbers depending on `setType` |
 | `message` | string | Return description |
 
 **Request Example**
@@ -750,7 +765,8 @@ sequenceDiagram
 ```json
 {
     "deviceSn": "FDCJQ00003",
-    "setType": "time_slot_charge_discharge"
+    "setType": "export_limit",
+    "requestId": "32-character string (yyyyMMddHHmmssSSSxxxxxxxxxxxxxxx)"
 }
 ```
 
@@ -760,24 +776,34 @@ sequenceDiagram
 ```json
 {
     "code": 0,
+    "data": {
+        "exportLimitEnabled": 1,
+        "percentage": 20
+    },
+    "message": "success"
+}
+```
+
+**Additional Public Read-Back Shapes**
+```json
+{
+    "code": 0,
     "data": [
         {
-            "startTime": 60,
-            "endTime": 420,
+            "startTime": "16:00",
+            "endTime": "18:00",
             "percentage": 80
-        },
-        {
-            "startTime": 840,
-            "endTime": 1020,
-            "percentage": 80
-        },
-        {
-            "startTime": 0,
-            "endTime": 0,
-            "percentage": 0
         }
     ],
     "message": "success"
+}
+```
+
+```json
+{
+    "code": 0,
+    "data": 1,
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
@@ -1119,6 +1145,7 @@ sequenceDiagram
 
 | Parameter Name | Parameter Description | Parameter Value Description |
 | :--- | :--- | :--- |
+| `export_limit` | Export Limit | `exportLimitEnabled`: Export-limit enable switch<br>`percentage`: export-limit percentage, range `[-100, 100]`<br>Positive values mean export limiting; negative values mean forward-flow control |
 | `enable_control` | Control permission | 0: Disable<br>1: Enable<br>Default: Disable |
 | `power_on_off_command` | Power on/off command | 0: Power off<br>1: Power on<br>Default: Power on<br>Not stored<br>Using this protocol to control the inverter requires enabling this register |
 | `system_time_setting` | System time setting | Example: 2024-10-10 13:14:14 |

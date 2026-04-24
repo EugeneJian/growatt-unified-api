@@ -19,12 +19,11 @@
 ## 回读校验流程（概念）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["需要当前参数值"] --> B["使用 deviceSn setType requestId 构造请求"]
     B --> C["调用 readDeviceDispatch 接口"]
     C --> D{"响应 code"}
-    D -->|"0"| E["解析 data 数组"]
+    D -->|"0"| E["解析 data 数组 / 对象 / 数值"]
     D -->|"5 或 16"| F["延迟后重试"]
     D -->|"7 或其他"| G["停止并检查权限或设备类型"]
     E --> H["与预期下发计划进行比对"]
@@ -35,7 +34,6 @@ flowchart TD
 ## 回读校验流程（时序）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Scheduler as DispatchScheduler
     participant API as OAuthAPI
@@ -59,7 +57,7 @@ sequenceDiagram
 | 参数名 | 厂商表格类型 | 是否必选 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | 是 | 设备 SN |
-| `setType` | string | 是 | 设置的参数枚举，例如 `time_slot_charge_discharge` |
+| `setType` | string | 是 | 设置的参数枚举，例如 `export_limit` |
 | `requestId` | string | 是 | 表示本次调用唯一标识 |
 
 ## 请求示例
@@ -67,7 +65,7 @@ sequenceDiagram
 ```json
 {
     "deviceSn": "DEVICE_SN_1",
-    "setType": "time_slot_charge_discharge",
+    "setType": "export_limit",
     "requestId": "20260402093000123abcdef123456789"
 }
 ```
@@ -77,12 +75,12 @@ sequenceDiagram
 | 参数名 | 厂商表格类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，成功示例为数组 |
+| `data` | string | 厂商表格原文写作 `string`，但公开成功返回会随 `setType` 返回数组、对象或数值 |
 | `message` | string | 返回说明 |
 
 ## 返回示例
 
-### 读取成功
+### 读取成功：数组型
 
 ```json
 {
@@ -100,6 +98,29 @@ sequenceDiagram
         }
     ],
     "message": "success"
+}
+```
+
+### 读取成功：对象型
+
+```json
+{
+    "code": 0,
+    "data": {
+        "exportLimitEnabled": 1,
+        "percentage": 20
+    },
+    "message": "success"
+}
+```
+
+### 读取成功：数值型
+
+```json
+{
+    "code": 0,
+    "data": 1,
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
@@ -135,15 +156,17 @@ sequenceDiagram
 
 ## 实现说明
 
-- 参数表将 `requestId` 标为必填，但原始请求示例漏写了它。本页按参数表保留为必填字段。
-- 返回表将 `data` 标为 `string`，但成功示例给出的是数组结构。
+- 参数表将 `requestId` 标为必填，但厂商请求示例漏写了它。本页按参数表保留为必填字段。
+- 返回表将 `data` 标为 `string`，但公开成功返回实际包含数组、对象和数值型。
 
-## 联调观察
+## 正式公开的成功形态
 
-- 现有 `test/` 目录中的部分联调记录显示，某些 `setType` 在特定环境下可能返回对象结构。
-- 这类现象仅作为实现观察保留，不提升为端点规范。
+- 数组：`time_slot_charge_discharge`
+- 对象：`duration_and_power_charge_discharge`、`export_limit`
+- 数值：`enable_control`、`active_power_derating_percentage`、`active_power_percentage`、`remote_charge_discharge_power`
 
 ## 相关文档
 
 - [设备调度 API](./05_api_device_dispatch.md)
 - [全局参数说明](./10_global_params.md)
+- [储能术语表](./12_ess_terminology.md)

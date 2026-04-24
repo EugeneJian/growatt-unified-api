@@ -19,12 +19,11 @@
 ## Read-Back Verification Flow (Concept)
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["Need current parameter value"] --> B["Build request with device sn set type and request id"]
     B --> C["Call readDeviceDispatch API"]
     C --> D{"Response code"}
-    D -->|"0"| E["Parse data array"]
+    D -->|"0"| E["Parse data array / object / scalar"]
     D -->|"5 or 16"| F["Retry with delay"]
     D -->|"7 or other"| G["Stop and inspect permission or device type"]
     E --> H["Compare with expected dispatch plan"]
@@ -35,7 +34,6 @@ flowchart TD
 ## Read-Back Verification Flow (Sequence)
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Scheduler as DispatchScheduler
     participant API as OAuthAPI
@@ -59,7 +57,7 @@ sequenceDiagram
 | Parameter | Vendor-table Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | Yes | Device SN |
-| `setType` | string | Yes | Parameter enum, for example `time_slot_charge_discharge` |
+| `setType` | string | Yes | Parameter enum, for example `export_limit` |
 | `requestId` | string | Yes | Unique request identifier |
 
 ## Request Example
@@ -67,7 +65,7 @@ sequenceDiagram
 ```json
 {
     "deviceSn": "DEVICE_SN_1",
-    "setType": "time_slot_charge_discharge",
+    "setType": "export_limit",
     "requestId": "20260402093000123abcdef123456789"
 }
 ```
@@ -77,12 +75,12 @@ sequenceDiagram
 | Parameter | Vendor-table Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`, while the success sample is an array |
+| `data` | string | The vendor table says `string`, but the public success payload depends on `setType` and may be an array, object, or scalar number |
 | `message` | string | Response description |
 
 ## Response Examples
 
-### Successful Read
+### Successful Read: Array Shape
 
 ```json
 {
@@ -100,6 +98,29 @@ sequenceDiagram
         }
     ],
     "message": "success"
+}
+```
+
+### Successful Read: Object Shape
+
+```json
+{
+    "code": 0,
+    "data": {
+        "exportLimitEnabled": 1,
+        "percentage": 20
+    },
+    "message": "success"
+}
+```
+
+### Successful Read: Scalar Shape
+
+```json
+{
+    "code": 0,
+    "data": 1,
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
@@ -135,13 +156,14 @@ sequenceDiagram
 
 ## Implementation Note
 
-- The parameter table marks `requestId` as required, even though the request sample omits it. This page follows the parameter table.
-- The response table labels `data` as `string`, while the success sample is an array.
+- The parameter table marks `requestId` as required, even though the vendor request sample omits it. This page follows the parameter table.
+- The response table labels `data` as `string`, while the public success payloads include array, object, and scalar-number shapes.
 
-## Integration Observations
+## Documented Success Shapes
 
-- Some environment reports under `test/` show object-shaped read-back payloads for certain `setType` values.
-- That behavior is kept here only as an implementation observation.
+- Array: `time_slot_charge_discharge`
+- Object: `duration_and_power_charge_discharge`, `export_limit`
+- Scalar number: `enable_control`, `active_power_derating_percentage`, `active_power_percentage`, `remote_charge_discharge_power`
 
 ## Related Documentation
 

@@ -6,7 +6,7 @@
 
 - 中文拆分发布文档：`Growatt API/OPENAPI.zh-CN/*.md`
 - 英文拆分发布文档：`Growatt API/OPENAPI/*.md`
-- 附录B 术语表：[/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
+- 附录 B 术语表：[/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
 - 联调观察来源：仓库 `test/` 目录中的环境记录
 
 ## 2 支持的集成路径
@@ -14,7 +14,6 @@
 ### 集成流程
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["申请 client_id / client_secret"] --> B{"选择 OAuth 模式"}
     B -->|"authorization_code"| C["登录 Growatt 并换取 token 对"]
@@ -65,7 +64,9 @@ flowchart TD
 
 - `POST /oauth2/token` 的两个公开示例都包含 `redirect_uri`。
 - `POST /oauth2/readDeviceDispatch` 的参数表要求 `requestId`，但公开请求示例正文漏写了它。
-- `POST /oauth2/deviceDispatch` 的参数表把 `value` 写成 `string`，但同页示例传入了对象。
+- `10_global_params.md` 现在公开发布的调度 `setType` 共 7 个：`time_slot_charge_discharge`、`duration_and_power_charge_discharge`、`export_limit`、`enable_control`、`active_power_derating_percentage`、`active_power_percentage`、`remote_charge_discharge_power`。
+- `readDeviceDispatch.data` 会随 `setType` 返回数组、对象或数值。
+- `POST /oauth2/deviceDispatch` 的参数表把 `value` 写成 `string`，但公开 `setType` 请求形态实际包含数组、对象和数值。
 - `POST /oauth2/getDeviceData` 的局部头部表写作 `token`，而全局章节统一写作 `Authorization: Bearer xxxxxxx`。
 
 ## 5 联调观察
@@ -80,7 +81,6 @@ flowchart TD
 - 最新全球 `token` 实测返回 `expires_in=604733`、`refresh_expires_in=2585309`；随后 `refresh` 返回 `expires_in=604800`、`refresh_expires_in=2592000`。
 - `POST /oauth2/refresh` 成功后，旧 access token 会立即返回 `TOKEN_IS_INVALID`；后续读取和解绑必须切换到 fresh token。
 - 个别记录观察到 `client_credentials` 调 `getDeviceList` 返回 `WRONG_GRANT_TYPE`。
-- 个别记录观察到 `readDeviceDispatch.data` 会随 `setType` 返回对象结构。
 
 这些现象不应替代端点文档中的 API 说明。
 
@@ -93,6 +93,6 @@ flowchart TD
 - [ ] 面向全球授权码接入时，已处理 `/#/login`、`/prod-api/login`、`/prod-api/auth`
 - [ ] 已按运行时返回值读取 `expires_in` / `refresh_expires_in`，而不是写死示例 TTL
 - [ ] 已在 `refresh` 成功后立刻替换旧 access token
-- [ ] 已按 `10_global_params.md` 中的 3 个 `setType` 实现基础映射
+- [ ] 已按 `10_global_params.md` 中的 7 个公开 `setType` 实现基础映射
 - [ ] 已对照 [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology) 理解公开储能术语
 - [ ] 已将联调经验留在兼容层，而不是提升为端点规范

@@ -19,7 +19,6 @@
 ## Dispatch Control State
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 stateDiagram-v2
     [*] --> Build
     state "Build Command" as Build
@@ -51,11 +50,37 @@ stateDiagram-v2
 | Parameter | Vendor-table Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | Yes | Device SN |
-| `setType` | string | Yes | Parameter enum, for example `duration_and_power_charge_discharge` |
-| `value` | string | Yes | Parameter value, see [Global Parameters](./10_global_params.md) |
+| `setType` | string | Yes | Parameter enum, for example `export_limit` |
+| `value` | string | Yes | Parameter value. The vendor table says `string`, but the actual payload shape depends on `setType` and may be an array, object, or scalar number. See [Global Parameters](./10_global_params.md) |
 | `requestId` | string | Yes | Unique request identifier, 32-character string |
 
+## Public `setType` Surface
+
+| `setType` | `value` shape | Summary |
+| :--- | :--- | :--- |
+| `time_slot_charge_discharge` | Array | Time-slot charge/discharge schedule |
+| `duration_and_power_charge_discharge` | Object | Duration, percentage, and command type |
+| `export_limit` | Object | Export-limit enable flag plus percentage |
+| `enable_control` | Scalar number | VPP control enable switch |
+| `active_power_derating_percentage` | Scalar number | Active-power derating percentage |
+| `active_power_percentage` | Scalar number | Active-power percentage |
+| `remote_charge_discharge_power` | Scalar number | Remote charge/discharge power |
+
 ## Request Example
+
+```json
+{
+    "deviceSn": "DEVICE_SN_1",
+    "value": {
+        "exportLimitEnabled": 1,
+        "percentage": 20
+    },
+    "setType": "export_limit",
+    "requestId": "20260402093000123abcdef123456789"
+}
+```
+
+## Additional Object-Valued Example
 
 ```json
 {
@@ -101,8 +126,8 @@ stateDiagram-v2
 
 ## Implementation Note
 
-- The parameter table labels `value` as `string`, but the same page publishes an object-valued example for `duration_and_power_charge_discharge`.
-- This page preserves both pieces of source wording without turning that discrepancy into a new API rule.
+- The vendor table labels `value` as `string`, but the published public `setType` surface includes array, object, and scalar-number payloads.
+- This page keeps the vendor table wording while documenting the actual payload shapes published in the latest dated baseline snapshot.
 
 ## Related Documentation
 

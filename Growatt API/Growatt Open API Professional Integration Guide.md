@@ -14,7 +14,6 @@ This is an entry guide. Endpoint parameters, examples, and response codes are ma
 ### Integration Flow
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["Obtain client_id / client_secret"] --> B{"Choose OAuth mode"}
     B -->|"authorization_code"| C["User logs into Growatt and exchanges a token pair"]
@@ -65,7 +64,9 @@ Observed global flow on 2026-03-27:
 
 - Both published examples for `POST /oauth2/token` include `redirect_uri`.
 - The parameter table for `POST /oauth2/readDeviceDispatch` requires `requestId`, while the published request sample omits it.
-- The parameter table for `POST /oauth2/deviceDispatch` labels `value` as `string`, while the same page publishes an object-valued example.
+- The public dispatch surface now publishes seven `setType` entries in `10_global_params.md`: `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `export_limit`, `enable_control`, `active_power_derating_percentage`, `active_power_percentage`, and `remote_charge_discharge_power`.
+- `readDeviceDispatch.data` is `setType`-dependent and may be an array, object, or scalar number.
+- The parameter table for `POST /oauth2/deviceDispatch` labels `value` as `string`, while the public `setType` surface includes array, object, and scalar-number payloads.
 - The local header table for `POST /oauth2/getDeviceData` uses `token`, while the global section uses `Authorization: Bearer xxxxxxx`.
 
 ## 5 Integration Observations
@@ -80,7 +81,6 @@ The following findings come from environment reports under `test/` and are kept 
 - The latest global token run returned `expires_in=604733` and `refresh_expires_in=2585309`; the subsequent refresh returned `expires_in=604800` and `refresh_expires_in=2592000`.
 - After a successful `POST /oauth2/refresh`, the previous access token immediately returned `TOKEN_IS_INVALID`; follow-up reads and unbinds had to switch to the fresh token.
 - Some reports observe `WRONG_GRANT_TYPE` when `client_credentials` calls `getDeviceList`.
-- Some reports observe object-shaped `readDeviceDispatch.data` values for certain `setType` values.
 
 These findings should not replace the endpoint-level API descriptions.
 
@@ -93,6 +93,6 @@ These findings should not replace the endpoint-level API descriptions.
 - [ ] For global authorization-code integrations, handled `/#/login`, `/prod-api/login`, and `/prod-api/auth`
 - [ ] Read `expires_in` and `refresh_expires_in` from runtime responses instead of hard-coding sample values
 - [ ] Replaced the old access token immediately after a successful `refresh`
-- [ ] Implemented the three `setType` entries published in `10_global_params.md`
+- [ ] Implemented the seven public `setType` entries published in `10_global_params.md`
 - [ ] Aligned public ESS terminology to [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
 - [ ] Kept integration observations in the compatibility layer instead of promoting them into endpoint descriptions

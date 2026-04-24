@@ -123,7 +123,7 @@ flowchart LR
     class D1,D2 dispatch;
 ```
 
-在 `Hybrid` 拓扑中，`ppv` 仍是公开的核心 PV 源信号，`meterPower` 则是电网表边界上的可观测功率信号。`anti_backflow` 是作用在同一边界上的 Export Limit 设置值，应通过 dispatch / read-dispatch 链路回读，而不是当作运行时遥测字段。
+在 `Hybrid` 拓扑中，`ppv` 仍是公开的核心 PV 源信号，`meterPower` 则是电网表边界上的可观测功率信号。`export_limit` 是作用在同一边界上的 Export Limit 设置值，应通过 dispatch / read-dispatch 链路回读，而不是当作运行时遥测字段。
 
 ## 4.2 `AC-Couple` 拓扑
 
@@ -181,7 +181,7 @@ flowchart LR
 
 如果 `AC-Couple` payload 中上报了 `ppv`，它仍然只是设备本地 PV 遥测的辅助信号，不能替代 `External Generation` 边界信号 `pexPower`。
 
-`anti_backflow` 在 `AC-Couple` 中不是边界遥测信号，而是 Export Limit 设置值。其配置值应通过 dispatch / read-dispatch 链路回读；实际并网送电行为仍通过电网表边界上的 `meterPower` 符号来观测。
+`export_limit` 在 `AC-Couple` 中不是边界遥测信号，而是 Export Limit 设置值。其配置值应通过 dispatch / read-dispatch 链路回读；实际并网送电行为仍通过电网表边界上的 `meterPower` 符号来观测。
 
 `genPower` 在上报时表示离网场景下的 `generator power`（发电机功率），不属于本附录中的 AC-couple 外部发电边界模型。
 
@@ -245,7 +245,7 @@ flowchart LR
 | SP4 | 负载功率 | `payLoadPower` | Load | Hybrid, AC Couple |
 | SP5 | 电池包 SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
 | SP6 | 电池包 SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
-| SP7 | Export Limit 设置值 | `anti_backflow` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
+| SP7 | Export Limit 设置值 | `export_limit` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
 | SP8 | 外部发电功率 | `pexPower` | External Generation | AC Couple only |
 | SP9 | 系统级 SOC | `soc` | Battery Aggregate | Hybrid, AC Couple |
 
@@ -299,7 +299,7 @@ flowchart LR
 
 ### SP7
 
-`anti_backflow` 是调度设置值，不是运行时遥测。其配置值通过 dispatch / read-dispatch 链路回读。实际并网取电/送电行为仍通过电网表边界上的 SP2（`meterPower`）来观测，其中 `>0` 表示取电，`<0` 表示送电。
+`export_limit` 是调度设置值，不是运行时遥测。其配置值通过 dispatch / read-dispatch 链路回读。实际并网取电/送电行为仍通过电网表边界上的 SP2（`meterPower`）来观测，其中 `>0` 表示取电，`<0` 表示送电。
 
 ---
 
@@ -321,7 +321,7 @@ flowchart LR
 
 ---
 
-`anti_backflow` 有意不纳入本表的运行时遥测映射。它是一个通过 dispatch / read-dispatch 链路回读的 Export Limit 设置值，而不是运行时遥测字段。实际送电行为应通过 `meterPower` 的符号以及电网表电量计数（`etoGrid*`、`etoUser*`）来观测。
+`export_limit` 有意不纳入本表的运行时遥测映射。它是一个通过 dispatch / read-dispatch 链路回读的 Export Limit 设置值，而不是运行时遥测字段。实际送电行为应通过 `meterPower` 的符号以及电网表电量计数（`etoGrid*`、`etoUser*`）来观测。
 
 ## 6.2 遥测块关系
 
@@ -352,7 +352,7 @@ flowchart LR
     SP6("SP6: batteryList[].soh")
     SP8("SP8: pexPower")
     SP9("SP9: soc")
-    Dispatch["调度 / 设置回读<br/>deviceDispatch, read-dispatch, anti_backflow"]
+    Dispatch["调度 / 设置回读<br/>deviceDispatch, read-dispatch, export_limit"]
 
     Meta --> GridMeterBlock
     Meta --> ExternalGenerationBlock
@@ -509,7 +509,7 @@ flowchart LR
 | Charge | Battery |
 | Discharge | Battery |
 | Export Limit | Grid Meter |
-| Mode | Inverter |
+| Control | Inverter |
 
 ---
 
@@ -517,16 +517,18 @@ flowchart LR
 
 | 调度 | 观测运行时字段 | 控制字段 |
 | --- | --- | --- |
-| Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow`（dispatch setting；通过 read-dispatch 回读） |
-| Mode | `status`, `priority`, power blocks | 具体实现相关的 setType |
+| Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
+| Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
+| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `export_limit`（dispatch setting；通过 read-dispatch 回读） |
+| Control | `status`, `priority`, power blocks | `enable_control`, `active_power_derating_percentage`, `active_power_percentage` |
 
 在本次修订中，`pexPower` 仅用于 `AC-Couple` 外部发电边界校验观测，不映射到公开调度/控制字段。
 
 `genPower` 仍保留为离网发电机运行的辅助遥测，也不映射到公开调度/控制字段。
 
-`anti_backflow` 是通过 dispatch / read-dispatch 链路回读的 Export Limit 设置值。实际送电方向与幅值仍通过 `meterPower`（负值表示送电）以及 `etoGrid*` / `etoUser*` 来观测。
+`export_limit` 是通过 dispatch / read-dispatch 链路回读的 Export Limit 设置值。实际送电方向与幅值仍通过 `meterPower`（负值表示送电）以及 `etoGrid*` / `etoUser*` 来观测。
+
+`enable_control`、`active_power_derating_percentage`、`active_power_percentage` 和 `remote_charge_discharge_power` 都属于通过 dispatch / read-dispatch 回读的控制型参数，不纳入本附录的运行时遥测映射。
 
 ---
 
@@ -604,7 +606,7 @@ batPower remains positive and SOC does not trend downward
 
 **期望**
 
-* 配置后的 `anti_backflow` 设置值可通过 dispatch / read-dispatch 链路读回，并与目标 Export Limit 一致
+* 配置后的 `export_limit` 设置值可通过 dispatch / read-dispatch 链路读回，并与目标 Export Limit 一致
 * 实际送电行为通过 `meterPower` 观测，其中负值表示送电
 * `meterPower` 在送电方向上保持在已配置的导出边界以内
 * 在 Export Limit 生效时，`meterPower` 在电网表边界上不应比配置的导出限制更负

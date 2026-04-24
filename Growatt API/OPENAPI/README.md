@@ -60,6 +60,7 @@ sequenceDiagram
 
 ## Quick Navigation
 
+- [Release Notes](/growatt-openapi/release-notes)
 - [Authentication Guide](./01_authentication.md)
 - [Get access_token API](./02_api_access_token.md)
 - [OAuth2-refresh API](./03_api_refresh.md)
@@ -85,6 +86,7 @@ sequenceDiagram
 
 For the consolidated integration guide, see:
 
+- [Release Notes](/growatt-openapi/release-notes)
 - [../Growatt Open API Professional Integration Guide.md](../Growatt Open API Professional Integration Guide.md)
 
 ## Appendix

@@ -123,7 +123,7 @@ flowchart LR
     class D1,D2 dispatch;
 ```
 
-In the `Hybrid` topology, `ppv` remains the core public PV-source signal and `meterPower` remains the observable grid-meter boundary signal. `anti_backflow` is the export-limit setting applied at that same boundary and is read back through the dispatch/read-dispatch flow rather than through runtime telemetry.
+In the `Hybrid` topology, `ppv` remains the core public PV-source signal and `meterPower` remains the observable grid-meter boundary signal. `export_limit` is the export-limit setting applied at that same boundary and is read back through the dispatch/read-dispatch flow rather than through runtime telemetry.
 
 ## 4.2 AC-Couple Topology
 
@@ -181,7 +181,7 @@ In the `AC-Couple` topology, two public power boundaries are distinguished:
 
 If `ppv` is reported in an `AC-Couple` payload, it remains auxiliary device-local PV telemetry and does not replace the `External Generation` boundary signal `pexPower`.
 
-`anti_backflow` is not a telemetry boundary signal in `AC-Couple`. It is the export-limit setting read back through the dispatch/read-dispatch flow, while actual export behavior is observed from the `meterPower` sign at the grid-meter boundary.
+`export_limit` is not a telemetry boundary signal in `AC-Couple`. It is the export-limit setting read back through the dispatch/read-dispatch flow, while actual export behavior is observed from the `meterPower` sign at the grid-meter boundary.
 
 `genPower`, when reported, represents off-grid `generator power` and is not part of the AC-couple external-generation boundary model in this appendix.
 
@@ -245,7 +245,7 @@ flowchart LR
 | SP4 | Load Power | `payLoadPower` | Load | Hybrid, AC Couple |
 | SP5 | Battery Pack SOC | `batteryList[].soc` | Battery Pack | Hybrid, AC Couple |
 | SP6 | Battery Pack SOH | `batteryList[].soh` | Battery Pack | Hybrid, AC Couple |
-| SP7 | Export Limit Setting | `anti_backflow` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
+| SP7 | Export Limit Setting | `export_limit` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |
 | SP8 | External Generation Power | `pexPower` | External Generation | AC Couple only |
 | SP9 | System SOC | `soc` | Battery Aggregate | Hybrid, AC Couple |
 
@@ -299,7 +299,7 @@ flowchart LR
 
 ### SP7
 
-`anti_backflow` is a dispatch setting value, not runtime telemetry. Its configured value is returned through the dispatch/read-dispatch flow. Actual grid export/import behavior is observed from SP2 (`meterPower`) at the grid-meter boundary, with `>0` = import and `<0` = export.
+`export_limit` is a dispatch setting value, not runtime telemetry. Its configured value is returned through the dispatch/read-dispatch flow. Actual grid export/import behavior is observed from SP2 (`meterPower`) at the grid-meter boundary, with `>0` = import and `<0` = export.
 
 ---
 
@@ -321,7 +321,7 @@ flowchart LR
 
 ---
 
-`anti_backflow` is intentionally excluded from this runtime telemetry mapping. It is an export-limit setting read back through the dispatch/read-dispatch flow rather than a runtime telemetry field. Actual export behavior is observed through `meterPower` sign plus the grid-meter energy counters (`etoGrid*`, `etoUser*`).
+`export_limit` is intentionally excluded from this runtime telemetry mapping. It is an export-limit setting read back through the dispatch/read-dispatch flow rather than a runtime telemetry field. Actual export behavior is observed through `meterPower` sign plus the grid-meter energy counters (`etoGrid*`, `etoUser*`).
 
 ## 6.2 Telemetry Block Relationship
 
@@ -352,7 +352,7 @@ flowchart LR
     SP6("SP6: batteryList[].soh")
     SP8("SP8: pexPower")
     SP9("SP9: soc")
-    Dispatch["Dispatch / Setting Readback<br/>deviceDispatch, read-dispatch, anti_backflow"]
+    Dispatch["Dispatch / Setting Readback<br/>deviceDispatch, read-dispatch, export_limit"]
 
     Meta --> GridMeterBlock
     Meta --> ExternalGenerationBlock
@@ -509,7 +509,7 @@ flowchart LR
 | Charge | Battery |
 | Discharge | Battery |
 | Export Limit | Grid Meter |
-| Mode | Inverter |
+| Control | Inverter |
 
 ---
 
@@ -517,16 +517,18 @@ flowchart LR
 
 | Dispatch | Observed Runtime Fields | Control Fields |
 | -------- | ----------------------- | -------------- |
-| Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge` |
-| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `anti_backflow` (dispatch setting; read back via read-dispatch) |
-| Mode | `status`, `priority`, power blocks | Implementation-specific set types |
+| Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
+| Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
+| Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `export_limit` (dispatch setting; read back via read-dispatch) |
+| Control | `status`, `priority`, power blocks | `enable_control`, `active_power_derating_percentage`, `active_power_percentage` |
 
 `pexPower` is observational telemetry for AC-couple external-generation validation in this revision and does not map to a public dispatch/control field.
 
 `genPower` remains auxiliary generator telemetry for off-grid runtime and also does not map to a public dispatch/control field.
 
-`anti_backflow` is the configured export-limit setting read back via the dispatch/read-dispatch flow. Actual export direction and magnitude remain observed from `meterPower` (negative = export) together with `etoGrid*` / `etoUser*`.
+`export_limit` is the configured export-limit setting read back via the dispatch/read-dispatch flow. Actual export direction and magnitude remain observed from `meterPower` (negative = export) together with `etoGrid*` / `etoUser*`.
+
+`enable_control`, `active_power_derating_percentage`, `active_power_percentage`, and `remote_charge_discharge_power` are control parameters read back through the dispatch/read-dispatch surface. They are not part of this appendix's runtime telemetry mapping.
 
 ---
 
@@ -604,7 +606,7 @@ batPower remains positive and SOC does not trend downward
 
 **Expected**
 
-* configured `anti_backflow` setting is read from the dispatch/read-dispatch flow and matches the intended export limit
+* configured `export_limit` setting is read from the dispatch/read-dispatch flow and matches the intended export limit
 * actual export behavior is observed from `meterPower`, where negative values indicate export
 * `meterPower` stays within the configured export boundary in the export direction
 * In export-limited mode, `meterPower` does not become more negative than the configured export limit at the meter boundary

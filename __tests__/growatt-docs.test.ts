@@ -30,6 +30,7 @@ import {
   GROWATT_APPENDIX_TERMINOLOGY_SLUG,
   GROWATT_CODES_SLUG,
   GROWATT_QUICK_GUIDE_SLUG,
+  GROWATT_RELEASE_NOTES_SLUG,
   GROWATT_SEMANTIC_MODEL_SLUG,
   getGrowattAppendixTerminologyPage,
   getGrowattCodesPage,
@@ -37,6 +38,7 @@ import {
   getGrowattDocMetas,
   getGrowattOverview,
   getGrowattQuickGuide,
+  getGrowattReleaseNotesPage,
   getGrowattSemanticModelPage,
   getGrowattSpecialPages,
 } from "@/lib/growatt-docs";
@@ -267,6 +269,18 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.markdown).not.toContain("vendor baseline");
   });
 
+  it("loads and renders the English customer-facing release notes page", async () => {
+    const releaseNotes = await getGrowattReleaseNotesPage("en");
+
+    expect(releaseNotes.slug).toBe(GROWATT_RELEASE_NOTES_SLUG);
+    expect(releaseNotes.fileName).toBe("customer-api-doc-change-note-2026-04-24.en.md");
+    expect(releaseNotes.title).toBe("Growatt Open API Documentation Change Notice (Customer-Facing)");
+    expect(releaseNotes.html).toContain("<article>");
+    expect(releaseNotes.markdown).toContain("## 2. Key Changes");
+    expect(releaseNotes.markdown).toContain("`export_limit`");
+    expect(releaseNotes.markdown).toContain("`readDeviceDispatch`");
+  });
+
   it("loads localized Chinese overview and doc titles without mojibake", async () => {
     const [overview, docs] = await Promise.all([
       getGrowattOverview("zh-CN"),
@@ -294,6 +308,16 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.markdown).not.toContain("厂商基线");
   });
 
+  it("loads localized Chinese release notes markdown", async () => {
+    const releaseNotes = await getGrowattReleaseNotesPage("zh-CN");
+
+    expect(releaseNotes.slug).toBe(GROWATT_RELEASE_NOTES_SLUG);
+    expect(releaseNotes.fileName).toBe("customer-api-doc-change-note-2026-04-24.md");
+    expect(releaseNotes.title).toBe("Growatt Open API 文档变更说明（面向客户）");
+    expect(releaseNotes.markdown).toContain("`export_limit`");
+    expect(releaseNotes.markdown).toContain("`readDeviceDispatch`");
+  });
+
   it("publishes appendix A/B/C links in both overview locales", async () => {
     const [overviewEn, overviewZh] = await Promise.all([
       getGrowattOverview("en"),
@@ -301,9 +325,13 @@ describe("growatt docs source-of-truth loader", () => {
     ]);
 
     for (const overview of [overviewEn, overviewZh]) {
+      expect(overview.displayMarkdown).toContain("/growatt-openapi/release-notes");
       expect(overview.displayMarkdown).toContain("/growatt-openapi/growatt-codes");
       expect(overview.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
       expect(overview.displayMarkdown).toContain("/growatt-openapi/semantic-model");
+      expect(overview.displayMarkdown.indexOf("/growatt-openapi/release-notes")).toBeLessThan(
+        overview.displayMarkdown.indexOf("/growatt-openapi/growatt-codes"),
+      );
       expect(overview.displayMarkdown.indexOf("/growatt-openapi/growatt-codes")).toBeLessThan(
         overview.displayMarkdown.indexOf("/growatt-openapi/appendix-terminology"),
       );
@@ -399,11 +427,12 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixZh.markdown).not.toContain("基线来源：");
   });
 
-  it("registers quick guide and appendix A/B/C special pages in navigation order", () => {
+  it("registers quick guide, release notes, and appendix A/B/C special pages in navigation order", () => {
     const specialPages = getGrowattSpecialPages();
 
     expect(specialPages.map((page) => page.slug)).toEqual([
       GROWATT_QUICK_GUIDE_SLUG,
+      GROWATT_RELEASE_NOTES_SLUG,
       GROWATT_CODES_SLUG,
       GROWATT_APPENDIX_TERMINOLOGY_SLUG,
       GROWATT_SEMANTIC_MODEL_SLUG,
@@ -420,6 +449,16 @@ describe("growatt docs source-of-truth loader", () => {
     );
     expect(specialPages[1]).toEqual(
       expect.objectContaining({
+        slug: GROWATT_RELEASE_NOTES_SLUG,
+        labelByLocale: expect.objectContaining({
+          en: "Release Notes",
+          "zh-CN": "版本说明",
+        }),
+        placement: "beforeDocs",
+      }),
+    );
+    expect(specialPages[2]).toEqual(
+      expect.objectContaining({
         slug: GROWATT_CODES_SLUG,
         labelByLocale: expect.objectContaining({
           en: "Appendix A Growatt Codes",
@@ -428,7 +467,7 @@ describe("growatt docs source-of-truth loader", () => {
         placement: "afterDocs",
       }),
     );
-    expect(specialPages[2]).toEqual(
+    expect(specialPages[3]).toEqual(
       expect.objectContaining({
         slug: GROWATT_APPENDIX_TERMINOLOGY_SLUG,
         labelByLocale: expect.objectContaining({
@@ -438,7 +477,7 @@ describe("growatt docs source-of-truth loader", () => {
         placement: "afterDocs",
       }),
     );
-    expect(specialPages[3]).toEqual(
+    expect(specialPages[4]).toEqual(
       expect.objectContaining({
         slug: GROWATT_SEMANTIC_MODEL_SLUG,
         labelByLocale: expect.objectContaining({
@@ -461,7 +500,10 @@ describe("growatt docs source-of-truth loader", () => {
 
     expect(loaderSource).toContain('const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "13_ess_semantic_model.md";');
     expect(loaderSource).not.toContain("growatt-ess-semantic-model-preliminary-review.md");
-    expect(loaderSource).not.toContain("path.join(process.cwd(), \"docs\")");
+    expect(loaderSource).toContain('const GROWATT_DOCS_ROOT_DIR = path.join(process.cwd(), "docs");');
+    expect(loaderSource).toContain(
+      'const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-04-24.en.md";',
+    );
     expect(semanticPageSource).toContain("公开语义模型与调度校验标准。");
     expect(semanticPageSource).not.toContain("鍏紑");
   });
@@ -562,8 +604,14 @@ describe("growatt docs source-of-truth loader", () => {
       expect(page?.markdown).toContain("READ_DEVICE_PARAM_FAIL");
       expect(page?.markdown).toContain("time_slot_charge_discharge");
       expect(page?.markdown).toContain("duration_and_power_charge_discharge");
-      expect(page?.markdown).toContain("anti_backflow");
-      expect(page?.markdown).not.toContain("enable_control");
+      expect(page?.markdown).toContain("export_limit");
+      expect(page?.markdown).toContain("enable_control");
+      expect(page?.markdown).toContain("active_power_derating_percentage");
+      expect(page?.markdown).toContain("active_power_percentage");
+      expect(page?.markdown).toContain("remote_charge_discharge_power");
+      expect(page?.markdown).toContain("exportLimitEnabled");
+      expect(page?.markdown).not.toContain("anti_backflow");
+      expect(page?.markdown).not.toContain("antiBackflowEnabled");
       expect(page?.markdown).toContain('"message": "RESPONSE_MESSAGE"');
       expect(page?.markdown).toContain('"data": "<endpoint-dependent>"');
       expect(page?.markdown).toContain("`code` | `data` | `message`");
@@ -750,7 +798,7 @@ describe("growatt docs source-of-truth loader", () => {
     );
 
     expect(globalDoc?.markdown).toContain("Export Limit.");
-    expect(globalDoc?.markdown).toContain("`anti_backflow`");
+    expect(globalDoc?.markdown).toContain("`export_limit`");
 
     expect(faqDoc?.displayMarkdown).toContain(
       "[ESS Terminology Glossary](/growatt-openapi/appendix-terminology)",
@@ -771,12 +819,43 @@ describe("growatt docs source-of-truth loader", () => {
     expect(dispatchDocEn?.markdown).toContain("| Scenario | `code` | `data` | `message` |");
     expect(dispatchDocEn?.markdown).toContain("| Response timeout | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |");
     expect(dispatchDocEn?.markdown).toContain("| Too many requests | `105` | `null` | `TOO_MANY_REQUEST` |");
+    expect(dispatchDocEn?.markdown).toContain("## Public `setType` Surface");
+    expect(dispatchDocEn?.markdown).toContain("`export_limit`");
+    expect(dispatchDocEn?.markdown).toContain("`remote_charge_discharge_power`");
 
     expect(dispatchDocZh?.markdown).toContain("## 返回格式示例");
     expect(dispatchDocZh?.markdown).toContain('"message": "RESPONSE_MESSAGE"');
     expect(dispatchDocZh?.markdown).toContain("| 场景 | `code` | `data` | `message` |");
     expect(dispatchDocZh?.markdown).toContain("| 参数设置响应超时 | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |");
     expect(dispatchDocZh?.markdown).toContain("| 请求次数限制 | `105` | `null` | `TOO_MANY_REQUEST` |");
+    expect(dispatchDocZh?.markdown).toContain("`export_limit`");
+    expect(dispatchDocZh?.markdown).toContain("`remote_charge_discharge_power`");
+  });
+
+  it("documents readDeviceDispatch success payloads as array object and scalar shapes", async () => {
+    const [readDispatchEn, readDispatchZh] = await Promise.all([
+      getGrowattDocBySlug("06_api_read_dispatch", "en"),
+      getGrowattDocBySlug("06_api_read_dispatch", "zh-CN"),
+    ]);
+
+    expect(readDispatchEn).not.toBeNull();
+    expect(readDispatchZh).not.toBeNull();
+
+    expect(readDispatchEn?.markdown).toContain("Parse data array / object / scalar");
+    expect(readDispatchEn?.markdown).toContain("## Documented Success Shapes");
+    expect(readDispatchEn?.markdown).toContain('"exportLimitEnabled": 1');
+    expect(readDispatchEn?.markdown).toContain('"data": 1');
+    expect(readDispatchEn?.markdown).toContain(
+      "Scalar number: `enable_control`, `active_power_derating_percentage`, `active_power_percentage`, `remote_charge_discharge_power`",
+    );
+
+    expect(readDispatchZh?.markdown).toContain("解析 data 数组 / 对象 / 数值");
+    expect(readDispatchZh?.markdown).toContain("## 正式公开的成功形态");
+    expect(readDispatchZh?.markdown).toContain('"exportLimitEnabled": 1');
+    expect(readDispatchZh?.markdown).toContain('"data": 1');
+    expect(readDispatchZh?.markdown).toContain(
+      "数值：`enable_control`、`active_power_derating_percentage`、`active_power_percentage`、`remote_charge_discharge_power`",
+    );
   });
 
   it("documents per-device telemetry and dispatch request pacing in both locales", async () => {
@@ -831,6 +910,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(guideEn.markdown.indexOf("## 5 Integration Observations")).toBeGreaterThan(-1);
     expect(guideZh.markdown.indexOf("## 5 联调观察")).toBeGreaterThan(-1);
     expect(faqEn?.markdown.indexOf("## Integration Observations")).toBeGreaterThan(-1);
+    expect(guideEn.markdown).toContain("seven `setType` entries");
+    expect(guideEn.markdown).not.toContain("three `setType` entries");
+    expect(guideZh.markdown).toContain("7 个公开 `setType`");
+    expect(guideZh.markdown).not.toContain("3 个 `setType`");
     expect(faqZh?.markdown.indexOf("## 联调观察")).toBeGreaterThan(-1);
 
     expect(guideEn.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
@@ -883,7 +966,7 @@ describe("growatt docs source-of-truth loader", () => {
       "| SP4 | Load Power | `payLoadPower` | Load | Hybrid, AC Couple |",
     );
     expect(semantic.markdown).toContain(
-      "| SP7 | Export Limit Setting | `anti_backflow` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |",
+      "| SP7 | Export Limit Setting | `export_limit` (dispatch readback setting) | Grid Meter | Hybrid, AC Couple |",
     );
     expect(semantic.markdown).toContain(
       "| SP8 | External Generation Power | `pexPower` | External Generation | AC Couple only |",
@@ -898,16 +981,16 @@ describe("growatt docs source-of-truth loader", () => {
       "| `soc` | Query, Push | System-level battery state of charge for the whole ESS battery system |",
     );
     expect(semantic.markdown).toContain(
-      "`anti_backflow` is a dispatch setting value, not runtime telemetry.",
+      "`export_limit` is a dispatch setting value, not runtime telemetry.",
     );
     expect(semantic.markdown).toContain(
-      "`anti_backflow` is intentionally excluded from this runtime telemetry mapping.",
+      "`export_limit` is intentionally excluded from this runtime telemetry mapping.",
     );
     expect(semantic.markdown).toContain(
       "Actual export direction and magnitude remain observed from `meterPower`",
     );
     expect(semantic.markdown).toContain(
-      'Dispatch["Dispatch / Setting Readback<br/>deviceDispatch, read-dispatch, anti_backflow"]',
+      'Dispatch["Dispatch / Setting Readback<br/>deviceDispatch, read-dispatch, export_limit"]',
     );
     expect(semantic.markdown).toContain("| >0 | Grid import |");
     expect(semantic.markdown).toContain("| <0 | Grid export |");
@@ -917,8 +1000,13 @@ describe("growatt docs source-of-truth loader", () => {
     expect(semantic.markdown).toContain("`meterPower`");
     expect(semantic.markdown).toContain("`genPower`");
     expect(semantic.markdown).toContain("`pexPower`");
-    expect(semantic.markdown).toContain("`anti_backflow`");
-    expect(semantic.markdown).not.toContain("SP7(SP7: anti_backflow)");
+    expect(semantic.markdown).toContain("`export_limit`");
+    expect(semantic.markdown).toContain("`remote_charge_discharge_power`");
+    expect(semantic.markdown).toContain("`enable_control`");
+    expect(semantic.markdown).toContain("`active_power_derating_percentage`");
+    expect(semantic.markdown).toContain("`active_power_percentage`");
+    expect(semantic.markdown).not.toContain("SP7(SP7: export_limit)");
+    expect(semantic.markdown).not.toContain("`anti_backflow`");
     expect(semantic.markdown).not.toContain(
       "| Export Limit | `anti_backflow` | Control-only grid-meter export constraint | Control parameter | Dispatch | Hybrid, AC Couple |",
     );

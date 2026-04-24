@@ -19,7 +19,6 @@
 ## 调度控制状态
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 stateDiagram-v2
     [*] --> Build
     state "构造命令" as Build
@@ -51,11 +50,37 @@ stateDiagram-v2
 | 参数名 | 厂商表格类型 | 是否必选 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | 是 | 设备 SN |
-| `setType` | string | 是 | 设置的参数枚举，例如 `enable_control` |
-| `value` | string | 是 | 设置的参数值，见 [全局参数说明](./10_global_params.md) |
+| `setType` | string | 是 | 设置的参数枚举，例如 `export_limit` |
+| `value` | string | 是 | 设置的参数值。厂商表格写为 `string`，但实际请求形态会随 `setType` 而变化，可能是数组、对象或数值。详见 [全局参数说明](./10_global_params.md) |
 | `requestId` | string | 是 | 本次调用唯一标识，32 位字符串 |
 
+## 公开 `setType` 范围
+
+| `setType` | `value` 形态 | 说明 |
+| :--- | :--- | :--- |
+| `time_slot_charge_discharge` | 数组 | 分时段充放电时间表 |
+| `duration_and_power_charge_discharge` | 对象 | 时长、百分比与指令类型 |
+| `export_limit` | 对象 | 防逆流开关和百分比 |
+| `enable_control` | 数值 | VPP 控制开关 |
+| `active_power_derating_percentage` | 数值 | 有功功率降额百分比 |
+| `active_power_percentage` | 数值 | 有功功率百分比 |
+| `remote_charge_discharge_power` | 数值 | 远程充放电功率 |
+
 ## 请求示例
+
+```json
+{
+    "deviceSn": "DEVICE_SN_1",
+    "value": {
+        "exportLimitEnabled": 1,
+        "percentage": 20
+    },
+    "setType": "export_limit",
+    "requestId": "20260402093000123abcdef123456789"
+}
+```
+
+## 附加的对象型示例
 
 ```json
 {
@@ -75,7 +100,7 @@ stateDiagram-v2
 | 参数名 | 厂商表格类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，成功与失败示例均为 `null` |
+| `data` | string | 厂商表格原文写作 `string`，但成功与失败示例均为 `null` |
 | `message` | string | 返回说明 |
 
 ## 返回格式示例
@@ -95,16 +120,17 @@ stateDiagram-v2
 | 设置成功 | `0` | `null` | `PARAMETER_SETTING_SUCCESSFUL` |
 | 设备离线 | `5` | `null` | `DEVICE_OFFLINE` |
 | 参数设置响应超时 | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |
-| 设备未回复 | `15` | `null` | `PARAMETER_SETTING_DEVICE_NOT_RESPONDING` |
-| 设备回复失败 | `6` | `null` | `PARAMETER_SETTING_FAILED` |
+| 设备未回应 | `15` | `null` | `PARAMETER_SETTING_DEVICE_NOT_RESPONDING` |
+| 参数设置失败 | `6` | `null` | `PARAMETER_SETTING_FAILED` |
 | 请求次数限制 | `105` | `null` | `TOO_MANY_REQUEST` |
 
 ## 实现说明
 
-- 参数表将 `value` 标为 `string`，但同页示例在 `duration_and_power_charge_discharge` 场景下传入的是 JSON 对象。
-- 本页保留表格原文，同时保留对象型示例，不把这种差异扩写成新的接口规则。
+- 厂商表格把 `value` 标为 `string`，但最新基线公开的 `setType` 请求形态实际包含数组、对象和数值。
+- 本页在保留原表格口径的同时，把最新日期快照中发布的公开形态一并列出。
 
 ## 相关文档
 
 - [读取设备调度参数 API](./06_api_read_dispatch.md)
 - [全局参数说明](./10_global_params.md)
+- [储能术语表](./12_ess_terminology.md)

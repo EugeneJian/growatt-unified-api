@@ -60,6 +60,7 @@ sequenceDiagram
 
 ## 快速导航
 
+- [版本说明](/growatt-openapi/release-notes)
 - [身份认证说明](./01_authentication.md)
 - [获取 access_token 接口](./02_api_access_token.md)
 - [OAuth2-refresh 接口](./03_api_refresh.md)
@@ -85,6 +86,7 @@ sequenceDiagram
 
 如需阅读整合型说明，请参阅：
 
+- [版本说明](/growatt-openapi/release-notes)
 - [../Growatt Open API Professional Integration Guide.zh-CN.md](../Growatt Open API Professional Integration Guide.zh-CN.md)
 
 ## 附录

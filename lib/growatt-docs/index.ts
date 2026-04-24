@@ -12,16 +12,20 @@ import {
 export { GROWATT_CODES_SLUG, getGrowattCodesPage } from "./growatt-codes";
 
 const GROWATT_API_ROOT_DIR = path.join(process.cwd(), "Growatt API");
+const GROWATT_DOCS_ROOT_DIR = path.join(process.cwd(), "docs");
 const EN_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI");
 const ZH_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI.zh-CN");
 const README_FILE_NAME = "README.md";
 const EN_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.md";
 const ZH_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.zh-CN.md";
+const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-04-24.en.md";
+const ZH_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-04-24.md";
 const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "12_ess_terminology.md";
 const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "13_ess_semantic_model.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
 
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
+export const GROWATT_RELEASE_NOTES_SLUG = "release-notes";
 export const GROWATT_APPENDIX_TERMINOLOGY_SLUG = "appendix-terminology";
 export const GROWATT_SEMANTIC_MODEL_SLUG = "semantic-model";
 
@@ -38,9 +42,12 @@ interface LocaleSourceConfig {
   openApiRootDir: string;
   quickGuideFileName: string;
   quickGuidePath: string;
+  releaseNotesFileName: string;
+  releaseNotesPath: string;
   semanticModelFileName: string;
   overviewFallbackTitle: string;
   quickGuideFallbackTitle: string;
+  releaseNotesFallbackTitle: string;
 }
 
 const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = {
@@ -48,18 +55,29 @@ const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = 
     openApiRootDir: EN_OPENAPI_ROOT_DIR,
     quickGuideFileName: EN_QUICK_GUIDE_FILE_NAME,
     quickGuidePath: path.join(GROWATT_API_ROOT_DIR, EN_QUICK_GUIDE_FILE_NAME),
+    releaseNotesFileName: EN_RELEASE_NOTES_FILE_NAME,
+    releaseNotesPath: path.join(GROWATT_DOCS_ROOT_DIR, EN_RELEASE_NOTES_FILE_NAME),
     semanticModelFileName: GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
     overviewFallbackTitle: "Growatt Open API Documentation",
     quickGuideFallbackTitle: "Quick Guide",
+    releaseNotesFallbackTitle: "Release Notes",
   },
   "zh-CN": {
     openApiRootDir: ZH_OPENAPI_ROOT_DIR,
     quickGuideFileName: ZH_QUICK_GUIDE_FILE_NAME,
     quickGuidePath: path.join(GROWATT_API_ROOT_DIR, ZH_QUICK_GUIDE_FILE_NAME),
+    releaseNotesFileName: ZH_RELEASE_NOTES_FILE_NAME,
+    releaseNotesPath: path.join(GROWATT_DOCS_ROOT_DIR, ZH_RELEASE_NOTES_FILE_NAME),
     semanticModelFileName: GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
     overviewFallbackTitle: "Growatt Open API 文档",
     quickGuideFallbackTitle: "快速指南",
+    releaseNotesFallbackTitle: "版本说明",
   },
+};
+
+const RELEASE_NOTES_LABELS: Record<GrowattDocLocale, string> = {
+  en: "Release Notes",
+  "zh-CN": "版本说明",
 };
 
 const APPENDIX_A_LABELS: Record<GrowattDocLocale, string> = {
@@ -113,6 +131,14 @@ export function getGrowattSpecialPages(): GrowattSpecialPageNavMeta[] {
     {
       slug: GROWATT_QUICK_GUIDE_SLUG,
       labelByLocale: { en: "Quick Guide", "zh-CN": "快速指南" },
+      placement: "beforeDocs",
+    },
+    {
+      slug: GROWATT_RELEASE_NOTES_SLUG,
+      labelByLocale: {
+        en: RELEASE_NOTES_LABELS.en,
+        "zh-CN": RELEASE_NOTES_LABELS["zh-CN"],
+      },
       placement: "beforeDocs",
     },
     {
@@ -176,6 +202,11 @@ function getLocaleSourceConfig(locale: GrowattDocLocale): LocaleSourceConfig {
 
 function buildGrowattInternalSlugMap(fileNames: string[]): Map<string, string> {
   const slugByFileName = buildGrowattSlugByFileName(fileNames);
+
+  slugByFileName.set(EN_QUICK_GUIDE_FILE_NAME, GROWATT_QUICK_GUIDE_SLUG);
+  slugByFileName.set(ZH_QUICK_GUIDE_FILE_NAME, GROWATT_QUICK_GUIDE_SLUG);
+  slugByFileName.set(EN_RELEASE_NOTES_FILE_NAME, GROWATT_RELEASE_NOTES_SLUG);
+  slugByFileName.set(ZH_RELEASE_NOTES_FILE_NAME, GROWATT_RELEASE_NOTES_SLUG);
 
   // Keep appendix aliases stable even though these files are not part of the numbered doc nav.
   slugByFileName.set(GROWATT_TERMINOLOGY_DOC_FILE_NAME, GROWATT_APPENDIX_TERMINOLOGY_SLUG);
@@ -286,6 +317,29 @@ export const getGrowattQuickGuide = cache(
       slug: GROWATT_QUICK_GUIDE_SLUG,
       fileName: sourceConfig.quickGuideFileName,
       title: extractMarkdownTitle(markdown, sourceConfig.quickGuideFallbackTitle),
+      markdown,
+      displayMarkdown,
+      html,
+    };
+  },
+);
+
+export const getGrowattReleaseNotesPage = cache(
+  async (locale: GrowattDocLocale = "en"): Promise<GrowattSpecialMarkdownPage> => {
+    const sourceConfig = getLocaleSourceConfig(locale);
+    const [docMetas, markdown] = await Promise.all([
+      getGrowattDocMetas(locale),
+      fs.readFile(sourceConfig.releaseNotesPath, "utf8"),
+    ]);
+
+    const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
+    const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
+    const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
+
+    return {
+      slug: GROWATT_RELEASE_NOTES_SLUG,
+      fileName: sourceConfig.releaseNotesFileName,
+      title: extractMarkdownTitle(markdown, sourceConfig.releaseNotesFallbackTitle),
       markdown,
       displayMarkdown,
       html,

@@ -15,10 +15,9 @@
 ## 环境与参数决策流程（概念）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["开始调用 API"] --> B{"环境"}
-    B -->|"Production"| C["使用生产域名"]
+    B -->|"Production"| C["使用正式域名"]
     B -->|"Test"| D["使用测试域名"]
     C --> E["附加 bearer token"]
     D --> E
@@ -32,7 +31,6 @@ flowchart TD
 ## 环境与权限处理（时序）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Client as IntegrationService
     participant API as OAuthAPI
@@ -86,15 +84,32 @@ sequenceDiagram
 
 ## 设备参数说明
 
-- 下表只保留本页列出的 `setType`。
+- 下表仅保留本页公开发布的 7 个 `setType`。
 
 | 参数名 | 参数说明 | 参数值说明 |
 | :--- | :--- | :--- |
-| `time_slot_charge_discharge` | 分时段充放电；`percentage` 范围 `[-100,100]`，`percentage > 0` 充电，`percentage < 0` 放电；`startTime` / `endTime` 为 UTC 时间 | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
-| `duration_and_power_charge_discharge` | 充放电时长和功率百分比；`percentage` 范围 `[0,100]`；支持 `selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
-| `anti_backflow` | 防逆流设置；`antiBackflowEnabled` 为启用开关；`percentage` 范围 `[-100,100]`，正值为逆流控制，负值为顺流控制 | `{ "antiBackflowEnabled": 1, "percentage": 20 }` |
+| `time_slot_charge_discharge` | 分时段充放电。`percentage` 范围 `[-100,100]`；`percentage > 0` 充电，`percentage < 0` 放电；`startTime` / `endTime` 为 UTC 时间；最多可配置 16 段时间 | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
+| `duration_and_power_charge_discharge` | 充放电时长和功率百分比。`percentage` 范围 `[0,100]`；支持 `selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
+| `export_limit` | 防逆流设置。`exportLimitEnabled` 为启用开关；`percentage` 范围 `[-100,100]`；正值表示逆流控制，负值表示顺流控制 | `{ "exportLimitEnabled": 1, "percentage": 20 }` |
+| `enable_control` | 是否启用 VPP 控制 | `1` 表示启用，`0` 表示关闭 |
+| `active_power_derating_percentage` | 有功功率百分比降额 | 数值范围 `[0,100]`，例如 `50` |
+| `active_power_percentage` | 有功功率百分比 | 数值范围 `[0,100]`，例如 `60` |
+| `remote_charge_discharge_power` | 远程充放电功率 | 数值范围 `[-100,100]`；正值表示充电，负值表示放电 |
+
+## 按 `setType` 区分的回读示例
+
+| `setType` | 请求示例 | `readDeviceDispatch.data` 示例 | 返回形态 |
+| :--- | :--- | :--- | :--- |
+| `time_slot_charge_discharge` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "time_slot_charge_discharge" }` | `[{ "startTime": "16:00", "endTime": "18:00", "percentage": 80 }]` | 数组 |
+| `duration_and_power_charge_discharge` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "duration_and_power_charge_discharge" }` | `{ "remotePowerControlEnable": 1, "duration": 10, "percentage": 80, "acChargingEnabled": 1 }` | 对象 |
+| `export_limit` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "export_limit" }` | `{ "exportLimitEnabled": 1, "percentage": 20 }` | 对象 |
+| `enable_control` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "enable_control" }` | `1` | 数值 |
+| `active_power_derating_percentage` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "active_power_derating_percentage" }` | `50` | 数值 |
+| `active_power_percentage` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "active_power_percentage" }` | `60` | 数值 |
+| `remote_charge_discharge_power` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "remote_charge_discharge_power" }` | `-30` | 数值 |
 
 ## 相关文档
 
 - [设备调度 API](./05_api_device_dispatch.md)
 - [读取设备调度参数 API](./06_api_read_dispatch.md)
+- [储能术语表](./12_ess_terminology.md)
