@@ -94,3 +94,4 @@ For the consolidated integration guide, see:
 - [Appendix A Growatt Codes](/growatt-openapi/growatt-codes)
 - [Appendix B Glossary](./12_ess_terminology.md)
 - [Appendix C Semantic Model](./13_ess_semantic_model.md)
+- [Appendix D OpenAPI Product Support Scope](./14_appendix_d_openapi_support_scope.md)

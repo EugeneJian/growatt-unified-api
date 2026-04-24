@@ -32,7 +32,10 @@ const GUIDE_FILES = [
     ),
   },
 ];
-const README_OPTIONAL_DOC_FILES = new Set(["12_ess_terminology.md"]);
+const README_OPTIONAL_DOC_FILES = new Set([
+  "12_ess_terminology.md",
+  "14_appendix_d_openapi_support_scope.md",
+]);
 const FORBIDDEN_OFFICIAL_DOC_PATTERN = /9290/;
 const UNMASKED_TOKEN_FIELD_PATTERN =
   /"(access_token|refresh_token)"\s*:\s*"(?!<masked_(?:access|refresh)_token>")[^"]{16,}"/;
