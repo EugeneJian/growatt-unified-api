@@ -30,6 +30,8 @@ import {
   GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
   GROWATT_APPENDIX_TERMINOLOGY_SLUG,
   GROWATT_CODES_SLUG,
+  GROWATT_PROTOCOL_MAPPING_HREF,
+  GROWATT_PROTOCOL_MAPPING_SLUG,
   GROWATT_QUICK_GUIDE_SLUG,
   GROWATT_RELEASE_NOTES_SLUG,
   GROWATT_SEMANTIC_MODEL_SLUG,
@@ -453,12 +455,13 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixZh.markdown).not.toContain("基线来源：");
   });
 
-  it("registers quick guide, release notes, and appendix A/B/C/D special pages in navigation order", () => {
+  it("registers quick guide, release notes, protocol SSOT, and appendix A/B/C/D special pages in navigation order", () => {
     const specialPages = getGrowattSpecialPages();
 
     expect(specialPages.map((page) => page.slug)).toEqual([
       GROWATT_QUICK_GUIDE_SLUG,
       GROWATT_RELEASE_NOTES_SLUG,
+      GROWATT_PROTOCOL_MAPPING_SLUG,
       GROWATT_CODES_SLUG,
       GROWATT_APPENDIX_TERMINOLOGY_SLUG,
       GROWATT_SEMANTIC_MODEL_SLUG,
@@ -486,6 +489,17 @@ describe("growatt docs source-of-truth loader", () => {
     );
     expect(specialPages[2]).toEqual(
       expect.objectContaining({
+        slug: GROWATT_PROTOCOL_MAPPING_SLUG,
+        href: GROWATT_PROTOCOL_MAPPING_HREF,
+        labelByLocale: expect.objectContaining({
+          en: "Protocol SSOT",
+          "zh-CN": "协议 SSOT",
+        }),
+        placement: "afterDocs",
+      }),
+    );
+    expect(specialPages[3]).toEqual(
+      expect.objectContaining({
         slug: GROWATT_CODES_SLUG,
         labelByLocale: expect.objectContaining({
           en: "Appendix A Growatt Codes",
@@ -494,7 +508,7 @@ describe("growatt docs source-of-truth loader", () => {
         placement: "afterDocs",
       }),
     );
-    expect(specialPages[3]).toEqual(
+    expect(specialPages[4]).toEqual(
       expect.objectContaining({
         slug: GROWATT_APPENDIX_TERMINOLOGY_SLUG,
         labelByLocale: expect.objectContaining({
@@ -504,7 +518,7 @@ describe("growatt docs source-of-truth loader", () => {
         placement: "afterDocs",
       }),
     );
-    expect(specialPages[4]).toEqual(
+    expect(specialPages[5]).toEqual(
       expect.objectContaining({
         slug: GROWATT_SEMANTIC_MODEL_SLUG,
         labelByLocale: expect.objectContaining({
@@ -514,7 +528,7 @@ describe("growatt docs source-of-truth loader", () => {
         placement: "afterDocs",
       }),
     );
-    expect(specialPages[5]).toEqual(
+    expect(specialPages[6]).toEqual(
       expect.objectContaining({
         slug: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
         labelByLocale: expect.objectContaining({

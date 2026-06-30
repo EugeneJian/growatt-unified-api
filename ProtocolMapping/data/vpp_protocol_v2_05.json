@@ -1,0 +1,5983 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "path": "ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf",
+    "document_name": "古瑞瓦特逆变器VPP通信协议",
+    "protocol_version": "V2.05",
+    "document_date": "2026-05-29",
+    "converted_at": "2026-06-30T20:21:47.430757+00:00"
+  },
+  "register_profiles": [
+    {
+      "id": "fc03_vpp_protocol_params_30000_32099",
+      "module_cn": "VPP 协议参数",
+      "function_code": "0x03",
+      "register_type": "holding_register",
+      "address_ranges_raw": "30000~32099",
+      "applicability": {
+        "authority": "source_documents",
+        "plain_conclusion_cn": "0x03 地址 30000 动态返回设备机型 DTC，用于识别设备属于哪一种机型；返回的 DTC 必须存在于当前支持 DTC SSOT。",
+        "summary_cn": "流程：读 30000 → 在 DTC SSOT 匹配 code → 按匹配到的机型类型解释 VPP 寄存器。",
+        "decision_steps_cn": [],
+        "notices_cn": "若单个寄存器备注写明 DTC 限制，以该行备注为准；下方 DTC code 即当前支持清单。",
+        "rules_cn": [
+          "DTC SSOT 将 VPP 0x03: 30000~32099 和 VPP 0x04: 31000~31999 列为公用寄存器字段。",
+          "VPP V2.05 在地址 30000 定义“设备机型（DTC）”，备注为“见表3-1”。",
+          "VPP V2.05 附表 3-1 的 DTC code 必须在当前支持 DTC SSOT 中可匹配。"
+        ],
+        "field_level_note_cn": "逐寄存器适用性以 registers[].applicable_dtc_or_model 和 notes 为准。",
+        "sources": [
+          {
+            "document": "机型 DTC 及固件命名规范 V06",
+            "section": "3.1 逆变器与储能机公用寄存器字段",
+            "evidence": "VPP 协议参数 0x03: 30000~32099；0x04: 31000~31999。"
+          },
+          {
+            "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+            "page": 7,
+            "section": "2.1 保持寄存器",
+            "evidence": "地址 30000 为“设备机型（DTC）”，备注“见表3-1”。"
+          },
+          {
+            "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+            "page": 22,
+            "section": "附表 3-1 DTC码描述",
+            "evidence": "附表列出类型、机型、DTC码。"
+          },
+          {
+            "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+            "page": 20,
+            "section": "0x04 交流侧信息",
+            "evidence": "地址 31132 备注“仅DTC为 21304~21305、21308~21309 的机型使用”。"
+          }
+        ],
+        "supported_dtc_records": [
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL BL",
+            "dtc": 3501,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL BL-UP",
+            "dtc": 3502,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL HU",
+            "dtc": 3503,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL HUB",
+            "dtc": 3504,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 1000-3000TL BL",
+            "dtc": 3701,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 3000TL BL-UP",
+            "dtc": 3735,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 3000-6000TL AU",
+            "dtc": 3715,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 3000-6000TL AUB",
+            "dtc": 3716,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 4-10KTL3 BH-UP",
+            "dtc": 3725,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 4-10KTL3 BH-UP",
+            "dtc": 3601,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 3000-6000TL-HU",
+            "dtc": 21304,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 3000-6000TL-HU(BR)",
+            "dtc": 21305,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 3000-6000TL-HU(IT)",
+            "dtc": 21308,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 2500-6000TL-HU(EU)",
+            "dtc": 21309,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "MIN 2500-6000TL-XH/XH2/XHE/XA",
+            "dtc": 5100,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "MOD 3-10KTL3-XH/BP、\nMID 11-30KTL3-XH、\nMID 8-15KTL3-XHL/JP",
+            "dtc": 5400,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "MOD 3-15KTL3-HU、\nMID 33-50KTL3-HU",
+            "dtc": 5401,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "WIT 4-15K-HU、\nWIT 17-25K-HU",
+            "dtc": 5603,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "WIT 4-25K-XHU",
+            "dtc": 5605,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIS 100K-AM;\nWIT 50-100K-H/HE/HU/A/AE/AU;\nWIT 50-100K-H/HE/HU/A/AE/AU-US;\nWIT 28-55K-H/HE/HU/A/AE/AU-US L2",
+            "dtc": 5600,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIT29.9-50K-XHU",
+            "dtc": 5601,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIS 200-215K-AMA",
+            "dtc": 5801,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIS 125K-AM",
+            "dtc": 5604,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MIC/MIN 2500-6000TL-X/X2；\nMIN 2500-6000TL-X/X2/X2(Pro)/X2(Pro.E);",
+            "dtc": 5200,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MIN 7-10KTL-X/X2/X2(E)",
+            "dtc": 5201,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MID 17-25KTL3-X;\nMID 20-30KTL3-X2;\nMID 25-30KTL3-X2 Pro/X2 Pro.E\nMID 33-50KTL3-X2/X2 Pro/X2 Pro.E\nMID 30-40KTL3-X;\nMID 33-36KTL3-X(Pro.E);\nMID 3-33KTL3-X3;",
+            "dtc": 5001,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MOD 3-15KTL3-X;\nMOD 3-15KTL3-X2(Pro);\nMOD 12-20KTL3-X2;\nMOD 12-20KTL3-X2(E);\nMOD 3-33KTL3-X3;",
+            "dtc": 5002,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 50-100KTL3 LV/MV",
+            "dtc": 5000,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAC 30-70KTL3-X;\nMAC 15-36KTL3-XL;\nMAC 50-70KTL3-X2;\nMAC 30-36KTL3-XL2;",
+            "dtc": 5003,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 175-253KTL3-X HV",
+            "dtc": 5500,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 80-150KTL3-X LV/MV、\nMAX 100-150KYL3-X2 LV/MV",
+            "dtc": 5501,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 320-350KTL3-X\n描述",
+            "dtc": 5502,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          }
+        ],
+        "supported_dtc_groups": [
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "dtc_values": [
+              3501,
+              3502,
+              3503,
+              3504,
+              3701,
+              3735,
+              3715,
+              3716,
+              3725,
+              3601,
+              21304,
+              21305,
+              21308,
+              21309
+            ],
+            "records": [
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL BL",
+                "dtc": 3501,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL BL-UP",
+                "dtc": 3502,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL HU",
+                "dtc": 3503,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL HUB",
+                "dtc": 3504,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 1000-3000TL BL",
+                "dtc": 3701,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 3000TL BL-UP",
+                "dtc": 3735,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 3000-6000TL AU",
+                "dtc": 3715,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 3000-6000TL AUB",
+                "dtc": 3716,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 4-10KTL3 BH-UP",
+                "dtc": 3725,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 4-10KTL3 BH-UP",
+                "dtc": 3601,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 3000-6000TL-HU",
+                "dtc": 21304,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 3000-6000TL-HU(BR)",
+                "dtc": 21305,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 3000-6000TL-HU(IT)",
+                "dtc": 21308,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 2500-6000TL-HU(EU)",
+                "dtc": 21309,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "dtc_values": [
+              5100,
+              5400,
+              5401,
+              5603,
+              5605
+            ],
+            "records": [
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "MIN 2500-6000TL-XH/XH2/XHE/XA",
+                "dtc": 5100,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "MOD 3-10KTL3-XH/BP、\nMID 11-30KTL3-XH、\nMID 8-15KTL3-XHL/JP",
+                "dtc": 5400,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "MOD 3-15KTL3-HU、\nMID 33-50KTL3-HU",
+                "dtc": 5401,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "WIT 4-15K-HU、\nWIT 17-25K-HU",
+                "dtc": 5603,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "WIT 4-25K-XHU",
+                "dtc": 5605,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "dtc_values": [
+              5600,
+              5601,
+              5801,
+              5604
+            ],
+            "records": [
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIS 100K-AM;\nWIT 50-100K-H/HE/HU/A/AE/AU;\nWIT 50-100K-H/HE/HU/A/AE/AU-US;\nWIT 28-55K-H/HE/HU/A/AE/AU-US L2",
+                "dtc": 5600,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIT29.9-50K-XHU",
+                "dtc": 5601,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIS 200-215K-AMA",
+                "dtc": 5801,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIS 125K-AM",
+                "dtc": 5604,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "dtc_values": [
+              5200,
+              5201,
+              5001,
+              5002
+            ],
+            "records": [
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MIC/MIN 2500-6000TL-X/X2；\nMIN 2500-6000TL-X/X2/X2(Pro)/X2(Pro.E);",
+                "dtc": 5200,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MIN 7-10KTL-X/X2/X2(E)",
+                "dtc": 5201,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MID 17-25KTL3-X;\nMID 20-30KTL3-X2;\nMID 25-30KTL3-X2 Pro/X2 Pro.E\nMID 33-50KTL3-X2/X2 Pro/X2 Pro.E\nMID 30-40KTL3-X;\nMID 33-36KTL3-X(Pro.E);\nMID 3-33KTL3-X3;",
+                "dtc": 5001,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MOD 3-15KTL3-X;\nMOD 3-15KTL3-X2(Pro);\nMOD 12-20KTL3-X2;\nMOD 12-20KTL3-X2(E);\nMOD 3-33KTL3-X3;",
+                "dtc": 5002,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "dtc_values": [
+              5000,
+              5003,
+              5500,
+              5501,
+              5502
+            ],
+            "records": [
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 50-100KTL3 LV/MV",
+                "dtc": 5000,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAC 30-70KTL3-X;\nMAC 15-36KTL3-XL;\nMAC 50-70KTL3-X2;\nMAC 30-36KTL3-XL2;",
+                "dtc": 5003,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 175-253KTL3-X HV",
+                "dtc": 5500,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 80-150KTL3-X LV/MV、\nMAX 100-150KYL3-X2 LV/MV",
+                "dtc": 5501,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 320-350KTL3-X\n描述",
+                "dtc": 5502,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              }
+            ]
+          }
+        ],
+        "supported_dtc_count": 32
+      },
+      "registers": [
+        {
+          "address": "30000",
+          "field_name": "设备机型（DTC）",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "见表3-1",
+          "sequence": "1",
+          "address_start": 30000,
+          "address_end": 30000,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30001",
+          "field_name": "SN",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "2",
+          "address_start": 30001,
+          "address_end": 30015,
+          "quantity": 15,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30016",
+          "field_name": "额定功率(Pn)",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "3",
+          "address_start": 30016,
+          "address_end": 30017,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30018",
+          "field_name": "最大有功功率(Pmax)",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "4",
+          "address_start": 30018,
+          "address_end": 30019,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30020",
+          "field_name": "最大无功功率（Qmax馈入电网）",
+          "data_type": "UINT32",
+          "unit": "VA R",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "5",
+          "address_start": 30020,
+          "address_end": 30021,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30022",
+          "field_name": "最大无功功率（Qmax吸收电网）",
+          "data_type": "UINT32",
+          "unit": "VA R",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "6",
+          "address_start": 30022,
+          "address_end": 30023,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30024",
+          "field_name": "最大视在功率(Smax)",
+          "data_type": "UINT32",
+          "unit": "VA",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "7",
+          "address_start": 30024,
+          "address_end": 30025,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30026",
+          "field_name": "BDC额定充放功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "8",
+          "address_start": 30026,
+          "address_end": 30027,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30028",
+          "field_name": "PV 输入最大功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "9",
+          "address_start": 30028,
+          "address_end": 30029,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30030",
+          "field_name": "电池类型",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：铅酸电池\n1：锂电池",
+          "sequence": "10",
+          "address_start": 30030,
+          "address_end": 30030,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30031",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "逆变器版本信息",
+          "sequence": "11",
+          "address_start": 30031,
+          "address_end": 30059,
+          "quantity": 29,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30060",
+          "field_name": "控制芯片软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\nDN",
+          "sequence": "12",
+          "address_start": 30060,
+          "address_end": 30060,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30061",
+          "field_name": "控制芯片软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\nAA",
+          "sequence": "13",
+          "address_start": 30061,
+          "address_end": 30061,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30062",
+          "field_name": "控制芯片版本号1",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\n09",
+          "sequence": "14",
+          "address_start": 30062,
+          "address_end": 30062,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30063",
+          "field_name": "控制芯片版本号2",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\n51",
+          "sequence": "15",
+          "address_start": 30063,
+          "address_end": 30063,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30064",
+          "field_name": "控制芯片版本号3",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\n01",
+          "sequence": "16",
+          "address_start": 30064,
+          "address_end": 30064,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30065",
+          "field_name": "监控芯片软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\nZB",
+          "sequence": "17",
+          "address_start": 30065,
+          "address_end": 30065,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30066",
+          "field_name": "监控芯片软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\nDB",
+          "sequence": "18",
+          "address_start": 30066,
+          "address_end": 30066,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30067",
+          "field_name": "监控芯片版本号",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以MOD-XH为例：\n12\n储能电池版本信息",
+          "sequence": "19",
+          "address_start": 30067,
+          "address_end": 30067,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            7
+          ]
+        },
+        {
+          "address": "30068",
+          "field_name": "控制芯片1软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：WA",
+          "sequence": "20",
+          "address_start": 30068,
+          "address_end": 30068,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30069",
+          "field_name": "控制芯片1软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：AA",
+          "sequence": "21",
+          "address_start": 30069,
+          "address_end": 30069,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30070",
+          "field_name": "控制芯片1版本号",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：09",
+          "sequence": "22",
+          "address_start": 30070,
+          "address_end": 30070,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30071",
+          "field_name": "控制芯片2软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：QA",
+          "sequence": "23",
+          "address_start": 30071,
+          "address_end": 30071,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30072",
+          "field_name": "控制芯片2软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：BA",
+          "sequence": "24",
+          "address_start": 30072,
+          "address_end": 30072,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30073",
+          "field_name": "控制芯片2版本号",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：09",
+          "sequence": "25",
+          "address_start": 30073,
+          "address_end": 30073,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30074",
+          "field_name": "监控芯片1软件版本名称",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：QB",
+          "sequence": "26",
+          "address_start": 30074,
+          "address_end": 30074,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30075",
+          "field_name": "监控芯片1软件版本名称",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：AA",
+          "sequence": "27",
+          "address_start": 30075,
+          "address_end": 30075,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30076",
+          "field_name": "监控芯片1芯片版本号",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：09",
+          "sequence": "28",
+          "address_start": 30076,
+          "address_end": 30076,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30077",
+          "field_name": "监控芯片2软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：ZE",
+          "sequence": "29",
+          "address_start": 30077,
+          "address_end": 30077,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30078",
+          "field_name": "监控芯片2软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：BA",
+          "sequence": "30",
+          "address_start": 30078,
+          "address_end": 30078,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30079",
+          "field_name": "监控芯片2版本号",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "以APX5.0为例：09\n电表版本信息",
+          "sequence": "31",
+          "address_start": 30079,
+          "address_end": 30079,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30080",
+          "field_name": "控制芯片软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "前两位，例：ZO",
+          "sequence": "32",
+          "address_start": 30080,
+          "address_end": 30080,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30081",
+          "field_name": "控制芯片软件代号",
+          "data_type": "UINT16",
+          "unit": "ASCII",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "后两位，例：AA",
+          "sequence": "33",
+          "address_start": 30081,
+          "address_end": 30081,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30082",
+          "field_name": "控制芯片版本号",
+          "data_type": "UINT16",
+          "unit": "Digit",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "例：02",
+          "sequence": "34",
+          "address_start": 30082,
+          "address_end": 30082,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30083",
+          "field_name": "保留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "保留\nVPP协议版本信息",
+          "sequence": "35",
+          "address_start": 30083,
+          "address_end": 30083,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30084",
+          "field_name": "保留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "保留",
+          "sequence": "36",
+          "address_start": 30084,
+          "address_end": 30098,
+          "quantity": 15,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30099",
+          "field_name": "VPP协议版本号",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "200表示V2.00，201\n表示V2.01，200及\n以后的版本支持安\n规参数协议",
+          "sequence": "37",
+          "address_start": 30099,
+          "address_end": 30099,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "VPP 协议参数 - 0x03 Holding Register",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30100",
+          "field_name": "控制权限",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：使能\n默认值：0\n采用此协议控制逆\n变器需要使能",
+          "sequence": "38",
+          "address_start": 30100,
+          "address_end": 30100,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            8
+          ]
+        },
+        {
+          "address": "30101",
+          "field_name": "开关机命令",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：关机\n1：开机\n9：旁路模式\n默认值：1\n不存储",
+          "sequence": "39",
+          "address_start": 30101,
+          "address_end": 30101,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            8,
+            9
+          ]
+        },
+        {
+          "address": "30102",
+          "field_name": "国家/区域编号",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "见附录表3-5",
+          "sequence": "40",
+          "address_start": 30102,
+          "address_end": 30102,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30103",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "41",
+          "address_start": 30103,
+          "address_end": 30103,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30104",
+          "field_name": "系统时间",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "见附录表3-6",
+          "sequence": "42",
+          "address_start": 30104,
+          "address_end": 30109,
+          "quantity": 6,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30110",
+          "field_name": "预留",
+          "data_type": "UINT32",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "43",
+          "address_start": 30110,
+          "address_end": 30111,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30112",
+          "field_name": "通信地址",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[1，255]\n默认值：1",
+          "sequence": "44",
+          "address_start": 30112,
+          "address_end": 30112,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30113",
+          "field_name": "通信波特率",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：9600 bps\n1：38400 bps\n默认值：0",
+          "sequence": "45",
+          "address_start": 30113,
+          "address_end": 30113,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30114",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "46",
+          "address_start": 30114,
+          "address_end": 30114,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30115",
+          "field_name": "SYN使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "离网盒子使能\n0：不使能\n1：使能\n默认值：0",
+          "sequence": "47",
+          "address_start": 30115,
+          "address_end": 30115,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30116",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "48",
+          "address_start": 30116,
+          "address_end": 30149,
+          "quantity": 34,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "系统命令控制信息：30100~30149",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30150",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "49",
+          "address_start": 30150,
+          "address_end": 30150,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30151",
+          "field_name": "有功功率百分比降额",
+          "data_type": "UINT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "限功率百分比：[0，\n100]\n默认值：100",
+          "sequence": "50",
+          "address_start": 30151,
+          "address_end": 30151,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30152",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "51",
+          "address_start": 30152,
+          "address_end": 30153,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30154",
+          "field_name": "有功功率百分比",
+          "data_type": "UINT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "限功率百分比：[0，\n100]\n默认值：100\n该寄存器和有功功\n率百分比降额\n(30151)取较小者作\n为实际有功限制值\n不存储",
+          "sequence": "52",
+          "address_start": 30154,
+          "address_end": 30154,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30155",
+          "field_name": "EPS离网使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：使能\n默认值：0",
+          "sequence": "53",
+          "address_start": 30155,
+          "address_end": 30155,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30156",
+          "field_name": "EPS离网频率",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：50Hz\n1：60Hz\n默认值：0",
+          "sequence": "54",
+          "address_start": 30156,
+          "address_end": 30156,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30157",
+          "field_name": "EPS离网电压(3)",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "默认值：0\n各机型范围见备注\n（3）",
+          "sequence": "55",
+          "address_start": 30157,
+          "address_end": 30157,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30158",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "56",
+          "address_start": 30158,
+          "address_end": 30159,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30160",
+          "field_name": "无功功率百分比",
+          "data_type": "INT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，70]\n默认值：0",
+          "sequence": "57",
+          "address_start": 30160,
+          "address_end": 30160,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            9
+          ]
+        },
+        {
+          "address": "30161",
+          "field_name": "无功功率模式",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0： PF=1\n1： PF 值设置\n4： 容性无功功率百\n分比（-）\n5： 感性无功功率百\n分比（+）\n默认值：0\n设置逻辑见附录3.6",
+          "sequence": "58",
+          "address_start": 30161,
+          "address_end": 30161,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30162",
+          "field_name": "功率因数",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，2000]∪[18000，\n20000]\n默认值：20000\n实际功率因数PF=\n（寄存器值 -\n10000）*0.0001",
+          "sequence": "59",
+          "address_start": 30162,
+          "address_end": 30162,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30163",
+          "field_name": "预留",
+          "data_type": "INT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "60",
+          "address_start": 30163,
+          "address_end": 30163,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30164",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "-",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "预留为无功曲线",
+          "sequence": "61",
+          "address_start": 30164,
+          "address_end": 30199,
+          "quantity": 36,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30200",
+          "field_name": "防逆流使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能防逆流\n1: 使能电表1防逆\n流\n2：预留\n3: 使能(外部)CT防\n逆流\n4: 使能(内部)CT防\n逆流\n默认值：0\n3-4仅部分机型使\n用，具体区分见备注\n（7）\n逻辑见附录3.3.2",
+          "sequence": "62",
+          "address_start": 30200,
+          "address_end": 30200,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30201",
+          "field_name": "防逆流功率百分比",
+          "data_type": "INT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[-100，100]\n默认值：0\n正值：逆流控制\n负值：顺流控制",
+          "sequence": "63",
+          "address_start": 30201,
+          "address_end": 30201,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30202",
+          "field_name": "失效功率百分比",
+          "data_type": "UINT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，100]\n默认值：0\n30202-30203防逆流\n失效和通信失效共\n用",
+          "sequence": "64",
+          "address_start": 30202,
+          "address_end": 30202,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30203",
+          "field_name": "失效时间",
+          "data_type": "UINT16",
+          "unit": "s",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[1，300]\n默认值：30",
+          "sequence": "65",
+          "address_start": 30203,
+          "address_end": 30203,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10
+          ]
+        },
+        {
+          "address": "30204",
+          "field_name": "通信失效功能使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：485通信失效使\n能\n2：USB通讯失效使\n能\n3：485和USB任一\n通讯失效就失效的\n使能\n4：485和USB都通\n讯失效才失效的使\n能\n默认值：0\n控制逻辑见附录\n3.3.2",
+          "sequence": "66",
+          "address_start": 30204,
+          "address_end": 30204,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            10,
+            11
+          ]
+        },
+        {
+          "address": "30205",
+          "field_name": "超逆流使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：使能\n默认值：0\n使用安规范围见备\n注（8）",
+          "sequence": "67",
+          "address_start": 30205,
+          "address_end": 30205,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            11
+          ]
+        },
+        {
+          "address": "30206",
+          "field_name": "防逆流馈电功率变化速率",
+          "data_type": "UINT16",
+          "unit": " %Pn/s",
+          "scale": "0.01",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，20000]\n默认值：27\n使用安规范围见备\n注（8）",
+          "sequence": "68",
+          "address_start": 30206,
+          "address_end": 30206,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            11
+          ]
+        },
+        {
+          "address": "30207",
+          "field_name": "单相防逆流控制使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：使能\n默认值：0",
+          "sequence": "69",
+          "address_start": 30207,
+          "address_end": 30207,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            11
+          ]
+        },
+        {
+          "address": "30208",
+          "field_name": "防逆流保护模式（2）",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：默认模式\n1：软硬件联合控制\n模式\n2：软件控制模式\n3：硬件控制模式\n默认值：0\n仅户用并网光储机、\n户用并网光伏机使\n用\n使用安规范围见备\n注（8）",
+          "sequence": "70",
+          "address_start": 30208,
+          "address_end": 30208,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            11
+          ]
+        },
+        {
+          "address": "30209",
+          "field_name": "并离网自动切换使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：自动\n1：手动\n默认值：0",
+          "sequence": "71",
+          "address_start": 30209,
+          "address_end": 30209,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            11
+          ]
+        },
+        {
+          "address": "30210",
+          "field_name": "并离网设置",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "手动模式下修改并\n离网及油机模式\n0：并网\n1：离网\n2：油机\n默认值：0\n30209为1时才能设\n置",
+          "sequence": "72",
+          "address_start": 30210,
+          "address_end": 30210,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            11,
+            12
+          ]
+        },
+        {
+          "address": "30211",
+          "field_name": "R相有功功率",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，额定功率/3]\n默认值：额定功率/3",
+          "sequence": "73",
+          "address_start": 30211,
+          "address_end": 30211,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30212",
+          "field_name": "S相有功功率",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，额定功率/3]\n默认值：额定功率/3",
+          "sequence": "74",
+          "address_start": 30212,
+          "address_end": 30212,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30213",
+          "field_name": "T相有功功率",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，额定功率/3]\n默认值：额定功率/3",
+          "sequence": "75",
+          "address_start": 30213,
+          "address_end": 30213,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30214",
+          "field_name": "有功单相控制使能",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：合相控制\n1：单相控制\n默认值：0",
+          "sequence": "76",
+          "address_start": 30214,
+          "address_end": 30214,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30215",
+          "field_name": "市电充电最大功率限值",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，65535]\nAC充电使能开启时\n有效\n默认不限制（65535）\n超出额定功率时不\n限制",
+          "sequence": "77",
+          "address_start": 30215,
+          "address_end": 30215,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30216",
+          "field_name": "市电充电最大功率限值Ⅱ",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，65535]\nAC充电使能开启时\n有效，和30215取较\n小控制\n默认不限制（65535）\n超出额定功率时不\n限制\n不存储",
+          "sequence": "78",
+          "address_start": 30216,
+          "address_end": 30216,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30217",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "79",
+          "address_start": 30217,
+          "address_end": 30249,
+          "quantity": 33,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "交流侧控制设置信息：30150~30249",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30250",
+          "field_name": "油机额定功率",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，10000]\n默认值：逆变器额定\n功率",
+          "sequence": "80",
+          "address_start": 30250,
+          "address_end": 30250,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "油机控制模块：30250~30299",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30251",
+          "field_name": "油机充电功率",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，10000]\n默认值：逆变器额定\n功率",
+          "sequence": "81",
+          "address_start": 30251,
+          "address_end": 30251,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "油机控制模块：30250~30299",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30252",
+          "field_name": "油机使能",
+          "data_type": "BOOL",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：油机不使能\n1：油机使能\n默认值：0",
+          "sequence": "82",
+          "address_start": 30252,
+          "address_end": 30252,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "油机控制模块：30250~30299",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30253",
+          "field_name": "离网下油机启动 SOC",
+          "data_type": "UINT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，100]\n默认值：20",
+          "sequence": "83",
+          "address_start": 30253,
+          "address_end": 30253,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "油机控制模块：30250~30299",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30254",
+          "field_name": "离网下油机停止 SOC",
+          "data_type": "UINT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，100]\n默认值：50",
+          "sequence": "84",
+          "address_start": 30254,
+          "address_end": 30254,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "油机控制模块：30250~30299",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30255",
+          "field_name": "油机热机时长设置",
+          "data_type": "UINT16",
+          "unit": "s",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，3600]\n默认值：60",
+          "sequence": "85",
+          "address_start": 30255,
+          "address_end": 30255,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "油机控制模块：30250~30299",
+          "source_pages": [
+            12
+          ]
+        },
+        {
+          "address": "30256",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "86",
+          "address_start": 30256,
+          "address_end": 30299,
+          "quantity": 44,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "油机控制模块：30250~30299",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30300",
+          "field_name": "电池簇索引",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，3]\n设置该寄存器为x，\n则读写的[30400，\n30406]、[30474，\n30475]及[30496，\n30499]信息属于第x\n簇电池\n默认值：0，表示当\n前电池信息适用于\n所有电池簇",
+          "sequence": "87",
+          "address_start": 30300,
+          "address_end": 30300,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30301",
+          "field_name": "需量管理使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：需量管理不使能\n1：需量管理使能\n默认值：0",
+          "sequence": "88",
+          "address_start": 30301,
+          "address_end": 30301,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30302",
+          "field_name": "需量管理逆流功率限值",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，65535]\n默认值：不限制\n（65535），超出额\n定功率时不限制",
+          "sequence": "89",
+          "address_start": 30302,
+          "address_end": 30302,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30303",
+          "field_name": "需量管理顺流功率限值",
+          "data_type": "UINT16",
+          "unit": "K W",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，65535]\n默认值：不限制\n(65535)，超出额定\n功率时不限制",
+          "sequence": "90",
+          "address_start": 30303,
+          "address_end": 30303,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30304",
+          "field_name": "Peak shaving备电 SOC",
+          "data_type": "UINT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，100]\n默认值：50",
+          "sequence": "91",
+          "address_start": 30304,
+          "address_end": 30304,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30305",
+          "field_name": "Peak shaving 使能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：使能\n默认值：0",
+          "sequence": "92",
+          "address_start": 30305,
+          "address_end": 30305,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30306",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "93",
+          "address_start": 30306,
+          "address_end": 30379,
+          "quantity": 74,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30380~30399",
+          "field_name": "时间段优先级",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "第1~20段时间段的\n电池充放电优先级\n模式\n0：负载优先\n1/2：根据时间段正\n负值判断电池/电网\n优先\n3：纯光伏储能\n4：闲置充电模式\n5：预留\n6：闲置模式\n7：预留\n默认值：1",
+          "sequence": "94",
+          "address_start": 30380,
+          "address_end": 30399,
+          "quantity": 20,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13
+          ]
+        },
+        {
+          "address": "30400",
+          "field_name": "电池系统最大充电功率（预留）",
+          "data_type": "UINT32",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "95",
+          "address_start": 30400,
+          "address_end": 30401,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            13,
+            14
+          ]
+        },
+        {
+          "address": "30402",
+          "field_name": "电池系统最大放电功率（预留）",
+          "data_type": "UINT32",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "96",
+          "address_start": 30402,
+          "address_end": 30403,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30404",
+          "field_name": "充电截止SOC",
+          "data_type": "UINT8",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[10，100]\n默认值：100",
+          "sequence": "97",
+          "address_start": 30404,
+          "address_end": 30404,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30405",
+          "field_name": "并网放电截止SOC",
+          "data_type": "UINT8",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[10，100]\n默认值：10",
+          "sequence": "98",
+          "address_start": 30405,
+          "address_end": 30405,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30406",
+          "field_name": "负载优先放电截止 SOC（1）",
+          "data_type": "UINT8",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[10，100]\n默认值：10\n仅户用储能一体机\n系列机型使用",
+          "sequence": "99",
+          "address_start": 30406,
+          "address_end": 30406,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30407",
+          "field_name": "远程功率控制使能",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：使能\n默认值：0\n不存储\n30407~30474逻辑\n见附录3.5",
+          "sequence": "100",
+          "address_start": 30407,
+          "address_end": 30407,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30408",
+          "field_name": "远程功率控制充电时长",
+          "data_type": "UINT16",
+          "unit": "min",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不限时间\n1~1440min：按照设\n定时间控制功率时\n长\n默认值：0\n不存储",
+          "sequence": "101",
+          "address_start": 30408,
+          "address_end": 30408,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30409",
+          "field_name": "远程充放电功率",
+          "data_type": "INT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[-100，100]\n默认值：0\n正值：充电\n负值：放电\n不存储",
+          "sequence": "102",
+          "address_start": 30409,
+          "address_end": 30409,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30410",
+          "field_name": "AC充电使能",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：不使能\n1：使能AC充电，\n优先采用PV充电，\n其次采用AC充电\n2：使能AC充电，\n仅AC充电\n商用储能逆变器默\n认值为1，其他机型\n默认值为0",
+          "sequence": "103",
+          "address_start": 30410,
+          "address_end": 30410,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30411",
+          "field_name": "分时段充放电（20 段）",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "30412~30471为时\n间段设置，默认值均\n为0\n见附表3-2",
+          "sequence": "104",
+          "address_start": 30411,
+          "address_end": 30471,
+          "quantity": 61,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30472",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "105",
+          "address_start": 30472,
+          "address_end": 30473,
+          "quantity": 2,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14
+          ]
+        },
+        {
+          "address": "30474",
+          "field_name": "充放电功率实际控制值",
+          "data_type": "INT16",
+          "unit": "%",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[-100，100]\n正值：充电\n负值：放电",
+          "sequence": "106",
+          "address_start": 30474,
+          "address_end": 30474,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            14,
+            15
+          ]
+        },
+        {
+          "address": "30475",
+          "field_name": "离网放电截止SOC",
+          "data_type": "UINT8",
+          "unit": "%",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[10，100]\n默认值：10",
+          "sequence": "107",
+          "address_start": 30475,
+          "address_end": 30475,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            15
+          ]
+        },
+        {
+          "address": "30476",
+          "field_name": "分时段充放电默认模式",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "用于分时段充放电\n模式下，时间段以外\n的模式设置\n0：负载优先\n1：电池优先\n2：电网优先\n默认值：0",
+          "sequence": "108",
+          "address_start": 30476,
+          "address_end": 30476,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            15
+          ]
+        },
+        {
+          "address": "30477",
+          "field_name": "设置时间段清零使能（4）",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，1]\n默认值：0\n使能后在后续设置\n时间段数（30411）\n时，会将原有时间段\n信息（30380~30399、\n30412-30471）全部\n自动清零并保存",
+          "sequence": "109",
+          "address_start": 30477,
+          "address_end": 30477,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            15
+          ]
+        },
+        {
+          "address": "30478",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "110",
+          "address_start": 30478,
+          "address_end": 30494,
+          "quantity": 17,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            15
+          ]
+        },
+        {
+          "address": "30495",
+          "field_name": "电池唤醒功能",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "W",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "设1给电池下发一\n次唤醒指令",
+          "sequence": "111",
+          "address_start": 30495,
+          "address_end": 30495,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            15
+          ]
+        },
+        {
+          "address": "30496",
+          "field_name": "电池充电截止电压",
+          "data_type": "UINT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "铅酸电池使用\n[0，15000]\n按照电压等级区分\n默认值：\n电压等级127V：\n6500；\n227V：10000；\n其余电压等级默认\n值：8000\n仅商用储能逆变器\n使用",
+          "sequence": "112",
+          "address_start": 30496,
+          "address_end": 30496,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            15
+          ]
+        },
+        {
+          "address": "30497",
+          "field_name": "电池放电截止电压",
+          "data_type": "UINT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "铅酸电池使用\n[0，15000]\n按照电压等级区分\n默认值：\n电压等级127V：\n3800；\n电压等级227V：\n7500；\n其余电压等级默认\n值：6500\n仅商用储能逆变器\n使用",
+          "sequence": "113",
+          "address_start": 30497,
+          "address_end": 30497,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            15,
+            16
+          ]
+        },
+        {
+          "address": "30498",
+          "field_name": "电池最大充电电流",
+          "data_type": "UINT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "铅酸电池使用\n[0，2000]\n仅商用储能逆变器\n使用\n默认值见备注（5）",
+          "sequence": "114",
+          "address_start": 30498,
+          "address_end": 30498,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            16
+          ]
+        },
+        {
+          "address": "30499",
+          "field_name": "电池最大放电电流",
+          "data_type": "UINT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "铅酸电池使用\n[0，2000]\n仅商用储能逆变器\n使用\n默认值见备注（6）",
+          "sequence": "115",
+          "address_start": 30499,
+          "address_end": 30499,
+          "quantity": 1,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "电池功率控制设置信息：30300~30499（4）",
+          "source_pages": [
+            16
+          ]
+        },
+        {
+          "address": "30500",
+          "field_name": "详见《古瑞瓦特逆变器VPP通信协议之安规参数》",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "116",
+          "address_start": 30500,
+          "address_end": 30999,
+          "quantity": 500,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "安规参数信息：30500~30999",
+          "source_pages": [
+            16
+          ]
+        },
+        {
+          "address": "32000",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RW",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "机型 EPS离网电压\n0：230V\n1：208V\n2：240V\n3：220V\n4：127V\n5：277V\n6：254V",
+          "sequence": "117",
+          "address_start": 32000,
+          "address_end": 32099,
+          "quantity": 100,
+          "function_code": "0x03",
+          "register_type": "holding_register",
+          "section": "储能系统信息：32000~32099",
+          "source_pages": [
+            16
+          ]
+        }
+      ],
+      "sections": [
+        "系统命令控制信息：30100~30149",
+        "交流侧控制设置信息：30150~30249",
+        "油机控制模块：30250~30299",
+        "电池功率控制设置信息：30300~30499（4）",
+        "安规参数信息：30500~30999",
+        "储能系统信息：32000~32099"
+      ]
+    },
+    {
+      "id": "fc04_vpp_protocol_params_31000_31999",
+      "module_cn": "VPP 协议参数",
+      "function_code": "0x04",
+      "register_type": "input_register",
+      "address_ranges_raw": "31000~31999",
+      "applicability": {
+        "authority": "source_documents",
+        "plain_conclusion_cn": "0x03 地址 30000 动态返回设备机型 DTC，用于识别设备属于哪一种机型；返回的 DTC 必须存在于当前支持 DTC SSOT。",
+        "summary_cn": "流程：读 30000 → 在 DTC SSOT 匹配 code → 按匹配到的机型类型解释 VPP 寄存器。",
+        "decision_steps_cn": [],
+        "notices_cn": "若单个寄存器备注写明 DTC 限制，以该行备注为准；下方 DTC code 即当前支持清单。",
+        "rules_cn": [
+          "DTC SSOT 将 VPP 0x03: 30000~32099 和 VPP 0x04: 31000~31999 列为公用寄存器字段。",
+          "VPP V2.05 在地址 30000 定义“设备机型（DTC）”，备注为“见表3-1”。",
+          "VPP V2.05 附表 3-1 的 DTC code 必须在当前支持 DTC SSOT 中可匹配。"
+        ],
+        "field_level_note_cn": "逐寄存器适用性以 registers[].applicable_dtc_or_model 和 notes 为准。",
+        "sources": [
+          {
+            "document": "机型 DTC 及固件命名规范 V06",
+            "section": "3.1 逆变器与储能机公用寄存器字段",
+            "evidence": "VPP 协议参数 0x03: 30000~32099；0x04: 31000~31999。"
+          },
+          {
+            "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+            "page": 7,
+            "section": "2.1 保持寄存器",
+            "evidence": "地址 30000 为“设备机型（DTC）”，备注“见表3-1”。"
+          },
+          {
+            "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+            "page": 22,
+            "section": "附表 3-1 DTC码描述",
+            "evidence": "附表列出类型、机型、DTC码。"
+          },
+          {
+            "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+            "page": 20,
+            "section": "0x04 交流侧信息",
+            "evidence": "地址 31132 备注“仅DTC为 21304~21305、21308~21309 的机型使用”。"
+          }
+        ],
+        "supported_dtc_records": [
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL BL",
+            "dtc": 3501,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL BL-UP",
+            "dtc": 3502,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL HU",
+            "dtc": 3503,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 3000-6000TL HUB",
+            "dtc": 3504,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 1000-3000TL BL",
+            "dtc": 3701,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 3000TL BL-UP",
+            "dtc": 3735,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 3000-6000TL AU",
+            "dtc": 3715,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 3000-6000TL AUB",
+            "dtc": 3716,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPA 4-10KTL3 BH-UP",
+            "dtc": 3725,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPH 4-10KTL3 BH-UP",
+            "dtc": 3601,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 3000-6000TL-HU",
+            "dtc": 21304,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 3000-6000TL-HU(BR)",
+            "dtc": 21305,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 3000-6000TL-HU(IT)",
+            "dtc": 21308,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "model_full_name": "SPM 2500-6000TL-HU(EU)",
+            "dtc": 21309,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "MIN 2500-6000TL-XH/XH2/XHE/XA",
+            "dtc": 5100,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "MOD 3-10KTL3-XH/BP、\nMID 11-30KTL3-XH、\nMID 8-15KTL3-XHL/JP",
+            "dtc": 5400,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "MOD 3-15KTL3-HU、\nMID 33-50KTL3-HU",
+            "dtc": 5401,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "WIT 4-15K-HU、\nWIT 17-25K-HU",
+            "dtc": 5603,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "model_full_name": "WIT 4-25K-XHU",
+            "dtc": 5605,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIS 100K-AM;\nWIT 50-100K-H/HE/HU/A/AE/AU;\nWIT 50-100K-H/HE/HU/A/AE/AU-US;\nWIT 28-55K-H/HE/HU/A/AE/AU-US L2",
+            "dtc": 5600,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIT29.9-50K-XHU",
+            "dtc": 5601,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIS 200-215K-AMA",
+            "dtc": 5801,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "model_full_name": "WIS 125K-AM",
+            "dtc": 5604,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MIC/MIN 2500-6000TL-X/X2；\nMIN 2500-6000TL-X/X2/X2(Pro)/X2(Pro.E);",
+            "dtc": 5200,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MIN 7-10KTL-X/X2/X2(E)",
+            "dtc": 5201,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MID 17-25KTL3-X;\nMID 20-30KTL3-X2;\nMID 25-30KTL3-X2 Pro/X2 Pro.E\nMID 33-50KTL3-X2/X2 Pro/X2 Pro.E\nMID 30-40KTL3-X;\nMID 33-36KTL3-X(Pro.E);\nMID 3-33KTL3-X3;",
+            "dtc": 5001,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 22
+            }
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "model_full_name": "MOD 3-15KTL3-X;\nMOD 3-15KTL3-X2(Pro);\nMOD 12-20KTL3-X2;\nMOD 12-20KTL3-X2(E);\nMOD 3-33KTL3-X3;",
+            "dtc": 5002,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 50-100KTL3 LV/MV",
+            "dtc": 5000,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAC 30-70KTL3-X;\nMAC 15-36KTL3-XL;\nMAC 50-70KTL3-X2;\nMAC 30-36KTL3-XL2;",
+            "dtc": 5003,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 175-253KTL3-X HV",
+            "dtc": 5500,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 80-150KTL3-X LV/MV、\nMAX 100-150KYL3-X2 LV/MV",
+            "dtc": 5501,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "model_full_name": "MAX 320-350KTL3-X\n描述",
+            "dtc": 5502,
+            "source": {
+              "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+              "section": "附表 3-1 DTC码描述",
+              "page": 23
+            }
+          }
+        ],
+        "supported_dtc_groups": [
+          {
+            "type_cn": "户用（并离网）储能一体机",
+            "dtc_values": [
+              3501,
+              3502,
+              3503,
+              3504,
+              3701,
+              3735,
+              3715,
+              3716,
+              3725,
+              3601,
+              21304,
+              21305,
+              21308,
+              21309
+            ],
+            "records": [
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL BL",
+                "dtc": 3501,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL BL-UP",
+                "dtc": 3502,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL HU",
+                "dtc": 3503,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 3000-6000TL HUB",
+                "dtc": 3504,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 1000-3000TL BL",
+                "dtc": 3701,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 3000TL BL-UP",
+                "dtc": 3735,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 3000-6000TL AU",
+                "dtc": 3715,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 3000-6000TL AUB",
+                "dtc": 3716,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPA 4-10KTL3 BH-UP",
+                "dtc": 3725,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPH 4-10KTL3 BH-UP",
+                "dtc": 3601,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 3000-6000TL-HU",
+                "dtc": 21304,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 3000-6000TL-HU(BR)",
+                "dtc": 21305,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 3000-6000TL-HU(IT)",
+                "dtc": 21308,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用（并离网）储能一体机",
+                "model_full_name": "SPM 2500-6000TL-HU(EU)",
+                "dtc": 21309,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "户用预备储能逆变器",
+            "dtc_values": [
+              5100,
+              5400,
+              5401,
+              5603,
+              5605
+            ],
+            "records": [
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "MIN 2500-6000TL-XH/XH2/XHE/XA",
+                "dtc": 5100,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "MOD 3-10KTL3-XH/BP、\nMID 11-30KTL3-XH、\nMID 8-15KTL3-XHL/JP",
+                "dtc": 5400,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "MOD 3-15KTL3-HU、\nMID 33-50KTL3-HU",
+                "dtc": 5401,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "WIT 4-15K-HU、\nWIT 17-25K-HU",
+                "dtc": 5603,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用预备储能逆变器",
+                "model_full_name": "WIT 4-25K-XHU",
+                "dtc": 5605,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "商用储能逆变器",
+            "dtc_values": [
+              5600,
+              5601,
+              5801,
+              5604
+            ],
+            "records": [
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIS 100K-AM;\nWIT 50-100K-H/HE/HU/A/AE/AU;\nWIT 50-100K-H/HE/HU/A/AE/AU-US;\nWIT 28-55K-H/HE/HU/A/AE/AU-US L2",
+                "dtc": 5600,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIT29.9-50K-XHU",
+                "dtc": 5601,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIS 200-215K-AMA",
+                "dtc": 5801,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "商用储能逆变器",
+                "model_full_name": "WIS 125K-AM",
+                "dtc": 5604,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "户用光伏逆变器",
+            "dtc_values": [
+              5200,
+              5201,
+              5001,
+              5002
+            ],
+            "records": [
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MIC/MIN 2500-6000TL-X/X2；\nMIN 2500-6000TL-X/X2/X2(Pro)/X2(Pro.E);",
+                "dtc": 5200,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MIN 7-10KTL-X/X2/X2(E)",
+                "dtc": 5201,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MID 17-25KTL3-X;\nMID 20-30KTL3-X2;\nMID 25-30KTL3-X2 Pro/X2 Pro.E\nMID 33-50KTL3-X2/X2 Pro/X2 Pro.E\nMID 30-40KTL3-X;\nMID 33-36KTL3-X(Pro.E);\nMID 3-33KTL3-X3;",
+                "dtc": 5001,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 22
+                }
+              },
+              {
+                "type_cn": "户用光伏逆变器",
+                "model_full_name": "MOD 3-15KTL3-X;\nMOD 3-15KTL3-X2(Pro);\nMOD 12-20KTL3-X2;\nMOD 12-20KTL3-X2(E);\nMOD 3-33KTL3-X3;",
+                "dtc": 5002,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              }
+            ]
+          },
+          {
+            "type_cn": "工商业光伏逆变器",
+            "dtc_values": [
+              5000,
+              5003,
+              5500,
+              5501,
+              5502
+            ],
+            "records": [
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 50-100KTL3 LV/MV",
+                "dtc": 5000,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAC 30-70KTL3-X;\nMAC 15-36KTL3-XL;\nMAC 50-70KTL3-X2;\nMAC 30-36KTL3-XL2;",
+                "dtc": 5003,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 175-253KTL3-X HV",
+                "dtc": 5500,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 80-150KTL3-X LV/MV、\nMAX 100-150KYL3-X2 LV/MV",
+                "dtc": 5501,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              },
+              {
+                "type_cn": "工商业光伏逆变器",
+                "model_full_name": "MAX 320-350KTL3-X\n描述",
+                "dtc": 5502,
+                "source": {
+                  "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+                  "section": "附表 3-1 DTC码描述",
+                  "page": 23
+                }
+              }
+            ]
+          }
+        ],
+        "supported_dtc_count": 32
+      },
+      "registers": [
+        {
+          "address": "31000",
+          "field_name": "逆变器工作状态",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：待机\n1：自检\n2：预留\n3：故障\n4：升级\n5：PV在线&电池\n离线&并网\n6：PV离线（或在\n线）&电池在线&\n并网\n7：PV在线&电池\n在线&离网\n8：PV离线&电池\n在线&离网\n9：旁路运行",
+          "sequence": "1",
+          "address_start": 31000,
+          "address_end": 31000,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31001",
+          "field_name": "电池工作状态",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：电池待机\n1：电池断开\n2：电池充电运行\n3：电池放电运行\n4：故障\n5：升级",
+          "sequence": "2",
+          "address_start": 31001,
+          "address_end": 31001,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31002",
+          "field_name": "工作优先级",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：负载优先\n1：电池优先\n2：电网优先",
+          "sequence": "3",
+          "address_start": 31002,
+          "address_end": 31002,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31003",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "4",
+          "address_start": 31003,
+          "address_end": 31004,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31005",
+          "field_name": "故障主码",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "见附表3-3",
+          "sequence": "5",
+          "address_start": 31005,
+          "address_end": 31005,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31006",
+          "field_name": "故障子码",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "见附表3-3",
+          "sequence": "6",
+          "address_start": 31006,
+          "address_end": 31006,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31007",
+          "field_name": "保护主码",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "见附表3-4",
+          "sequence": "7",
+          "address_start": 31007,
+          "address_end": 31007,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31008",
+          "field_name": "保护子码",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "见附表3-4",
+          "sequence": "8",
+          "address_start": 31008,
+          "address_end": 31008,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31009",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "9",
+          "address_start": 31009,
+          "address_end": 31009,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "工作状态信息：31000~31009",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31010",
+          "field_name": "PV1电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "10",
+          "address_start": 31010,
+          "address_end": 31010,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31011",
+          "field_name": "PV1电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "11",
+          "address_start": 31011,
+          "address_end": 31011,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31012",
+          "field_name": "PV2电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "12",
+          "address_start": 31012,
+          "address_end": 31012,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31013",
+          "field_name": "PV2电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "13",
+          "address_start": 31013,
+          "address_end": 31013,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31014",
+          "field_name": "PV3电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "14",
+          "address_start": 31014,
+          "address_end": 31014,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31015",
+          "field_name": "PV3电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "15",
+          "address_start": 31015,
+          "address_end": 31015,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            18
+          ]
+        },
+        {
+          "address": "31016",
+          "field_name": "PV4电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "16",
+          "address_start": 31016,
+          "address_end": 31016,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31017",
+          "field_name": "PV4电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "17",
+          "address_start": 31017,
+          "address_end": 31017,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31018",
+          "field_name": "PV5电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "18",
+          "address_start": 31018,
+          "address_end": 31018,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31019",
+          "field_name": "PV5电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "19",
+          "address_start": 31019,
+          "address_end": 31019,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31020",
+          "field_name": "PV6电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "20",
+          "address_start": 31020,
+          "address_end": 31020,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31021",
+          "field_name": "PV6电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "21",
+          "address_start": 31021,
+          "address_end": 31021,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31022",
+          "field_name": "PV7电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "22",
+          "address_start": 31022,
+          "address_end": 31022,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31023",
+          "field_name": "PV7电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "23",
+          "address_start": 31023,
+          "address_end": 31023,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31024",
+          "field_name": "PV8电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "24",
+          "address_start": 31024,
+          "address_end": 31024,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31025",
+          "field_name": "PV8电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "25",
+          "address_start": 31025,
+          "address_end": 31025,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31026",
+          "field_name": "PV9电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "26",
+          "address_start": 31026,
+          "address_end": 31026,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31027",
+          "field_name": "PV9电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "27",
+          "address_start": 31027,
+          "address_end": 31027,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31028",
+          "field_name": "PV10电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "28",
+          "address_start": 31028,
+          "address_end": 31028,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31029",
+          "field_name": "PV10电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "29",
+          "address_start": 31029,
+          "address_end": 31029,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31030",
+          "field_name": "PV11电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "30",
+          "address_start": 31030,
+          "address_end": 31030,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31031",
+          "field_name": "PV11电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "31",
+          "address_start": 31031,
+          "address_end": 31031,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31032",
+          "field_name": "PV12电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "32",
+          "address_start": 31032,
+          "address_end": 31032,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31033",
+          "field_name": "PV12电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "33",
+          "address_start": 31033,
+          "address_end": 31033,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31034",
+          "field_name": "PV13电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "34",
+          "address_start": 31034,
+          "address_end": 31034,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31035",
+          "field_name": "PV13电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "35",
+          "address_start": 31035,
+          "address_end": 31035,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31036",
+          "field_name": "PV14电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "36",
+          "address_start": 31036,
+          "address_end": 31036,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31037",
+          "field_name": "PV14电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "37",
+          "address_start": 31037,
+          "address_end": 31037,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31038",
+          "field_name": "PV15电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "38",
+          "address_start": 31038,
+          "address_end": 31038,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31039",
+          "field_name": "PV15电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "39",
+          "address_start": 31039,
+          "address_end": 31039,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31040",
+          "field_name": "PV16电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "40",
+          "address_start": 31040,
+          "address_end": 31040,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31041",
+          "field_name": "PV16电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "41",
+          "address_start": 31041,
+          "address_end": 31041,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31042",
+          "field_name": "预留",
+          "data_type": "INT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "42",
+          "address_start": 31042,
+          "address_end": 31057,
+          "quantity": 16,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31058",
+          "field_name": "PV输入功率",
+          "data_type": "INT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "43",
+          "address_start": 31058,
+          "address_end": 31059,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31060",
+          "field_name": "PV总发电能量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "44",
+          "address_start": 31060,
+          "address_end": 31061,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31062",
+          "field_name": "预留",
+          "data_type": "UINT32",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "45",
+          "address_start": 31062,
+          "address_end": 31099,
+          "quantity": 38,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "PV参数：31010~31099",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31100",
+          "field_name": "有功功率",
+          "data_type": "INT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "正值：向电网馈电\n负值：从电网取电",
+          "sequence": "46",
+          "address_start": 31100,
+          "address_end": 31101,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31102",
+          "field_name": "无功功率",
+          "data_type": "INT32",
+          "unit": "VA",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "正值：容性\n负值：感性",
+          "sequence": "47",
+          "address_start": 31102,
+          "address_end": 31103,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31104",
+          "field_name": "预留",
+          "data_type": "INT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "48",
+          "address_start": 31104,
+          "address_end": 31104,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31105",
+          "field_name": "电网频率",
+          "data_type": "UINT16",
+          "unit": "Hz",
+          "scale": "0.01",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "49",
+          "address_start": 31105,
+          "address_end": 31105,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31106",
+          "field_name": "电网电压/电网AB 线电压",
+          "data_type": "UINT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "当输出方式为\nL/N， 电压电流分\n别取电网电压和\n电网电流",
+          "sequence": "50",
+          "address_start": 31106,
+          "address_end": 31106,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31107",
+          "field_name": "电网BC线电压",
+          "data_type": "UINT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "51",
+          "address_start": 31107,
+          "address_end": 31107,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            19
+          ]
+        },
+        {
+          "address": "31108",
+          "field_name": "电网CA线电压",
+          "data_type": "UINT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "52",
+          "address_start": 31108,
+          "address_end": 31108,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31109",
+          "field_name": "电网电流/电网A 相电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "53",
+          "address_start": 31109,
+          "address_end": 31109,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31110",
+          "field_name": "电网B相电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "54",
+          "address_start": 31110,
+          "address_end": 31110,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31111",
+          "field_name": "电网C相电流",
+          "data_type": "INT16",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "55",
+          "address_start": 31111,
+          "address_end": 31111,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31112",
+          "field_name": "电表功率",
+          "data_type": "INT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "正：从电网取电\n负：向电网馈电",
+          "sequence": "56",
+          "address_start": 31112,
+          "address_end": 31113,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31114",
+          "field_name": "逆变器温度",
+          "data_type": "INT16",
+          "unit": "℃",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[-400，1250]",
+          "sequence": "57",
+          "address_start": 31114,
+          "address_end": 31114,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31115",
+          "field_name": "预留",
+          "data_type": "INT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "58",
+          "address_start": 31115,
+          "address_end": 31115,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31116",
+          "field_name": "预留",
+          "data_type": "INT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "59",
+          "address_start": 31116,
+          "address_end": 31116,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31117",
+          "field_name": "预留",
+          "data_type": "INT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "60",
+          "address_start": 31117,
+          "address_end": 31117,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31118",
+          "field_name": "当天到用户的能量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "61",
+          "address_start": 31118,
+          "address_end": 31119,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31120",
+          "field_name": "到用户的总能量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "62",
+          "address_start": 31120,
+          "address_end": 31121,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31122",
+          "field_name": "当天到电网的能量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "63",
+          "address_start": 31122,
+          "address_end": 31123,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31124",
+          "field_name": "到电网的总能量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "64",
+          "address_start": 31124,
+          "address_end": 31125,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31126",
+          "field_name": "第三方逆变器输出有功功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "65",
+          "address_start": 31126,
+          "address_end": 31127,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31128",
+          "field_name": "GEN口有功功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "GEN口可接入第\n三方逆变器、智能\n负载或油机",
+          "sequence": "66",
+          "address_start": 31128,
+          "address_end": 31129,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31130",
+          "field_name": "EPS离网有功功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "67",
+          "address_start": 31130,
+          "address_end": 31131,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31132",
+          "field_name": "独立智能负载有功功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "DTC 21304~21305、21308~21309",
+          "protocol_version": "V2.05",
+          "notes": "仅DTC为\n21304~21305、\n21308~21309的机\n型使用",
+          "sequence": "68",
+          "address_start": 31132,
+          "address_end": 31133,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ],
+          "applicable_dtc_ranges": [
+            {
+              "start": 21304,
+              "end": 21305,
+              "raw": "21304~21305"
+            },
+            {
+              "start": 21308,
+              "end": 21309,
+              "raw": "21308~21309"
+            }
+          ],
+          "applicability_source": "VPP register note"
+        },
+        {
+          "address": "31134",
+          "field_name": "保留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "69",
+          "address_start": 31134,
+          "address_end": 31199,
+          "quantity": 66,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "交流侧信息：31100~31199",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31200",
+          "field_name": "充放电功率",
+          "data_type": "INT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "正值：充电\n负值：放电",
+          "sequence": "70",
+          "address_start": 31200,
+          "address_end": 31201,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31202",
+          "field_name": "电池日充电电量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "71",
+          "address_start": 31202,
+          "address_end": 31203,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31204",
+          "field_name": "电池累计充电量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "72",
+          "address_start": 31204,
+          "address_end": 31205,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31206",
+          "field_name": "电池日放电电量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "73",
+          "address_start": 31206,
+          "address_end": 31207,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31208",
+          "field_name": "电池累计放电量",
+          "data_type": "UINT32",
+          "unit": "KWH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "74",
+          "address_start": 31208,
+          "address_end": 31209,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31210",
+          "field_name": "电池允许最大充电功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "75",
+          "address_start": 31210,
+          "address_end": 31211,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31212",
+          "field_name": "电池允许最大放电功率",
+          "data_type": "UINT32",
+          "unit": "W",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "76",
+          "address_start": 31212,
+          "address_end": 31213,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31214",
+          "field_name": "电池电压",
+          "data_type": "INT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "77",
+          "address_start": 31214,
+          "address_end": 31214,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20
+          ]
+        },
+        {
+          "address": "31215",
+          "field_name": "电池电流",
+          "data_type": "INT32",
+          "unit": "A",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "正：充电\n负：放电",
+          "sequence": "78",
+          "address_start": 31215,
+          "address_end": 31216,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            20,
+            21
+          ]
+        },
+        {
+          "address": "31217",
+          "field_name": "SOC",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，100]",
+          "sequence": "79",
+          "address_start": 31217,
+          "address_end": 31217,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31218",
+          "field_name": "SOH",
+          "data_type": "UINT8",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[0，100]",
+          "sequence": "80",
+          "address_start": 31218,
+          "address_end": 31218,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31219",
+          "field_name": "电池充满容量（FCC）",
+          "data_type": "UINT32",
+          "unit": "AH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "81",
+          "address_start": 31219,
+          "address_end": 31220,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31221",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "预留为电池剩余\n容量（RM）",
+          "sequence": "82",
+          "address_start": 31221,
+          "address_end": 31222,
+          "quantity": 2,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31223",
+          "field_name": "电池环境温度",
+          "data_type": "INT16",
+          "unit": "℃",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "[-400，1250]",
+          "sequence": "83",
+          "address_start": 31223,
+          "address_end": 31223,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31224",
+          "field_name": "预留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "预留为电池最高\n温度",
+          "sequence": "84",
+          "address_start": 31224,
+          "address_end": 31224,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31225",
+          "field_name": "簇总数量",
+          "data_type": "UINT16",
+          "unit": "1",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "85",
+          "address_start": 31225,
+          "address_end": 31225,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31226",
+          "field_name": "单簇下模块数量",
+          "data_type": "UINT16",
+          "unit": "1",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "86",
+          "address_start": 31226,
+          "address_end": 31226,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31227",
+          "field_name": "模组额定电压",
+          "data_type": "UINT16",
+          "unit": "V",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "87",
+          "address_start": 31227,
+          "address_end": 31227,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31228",
+          "field_name": "模组额定容量",
+          "data_type": "UINT16",
+          "unit": "AH",
+          "scale": "0.1",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "88",
+          "address_start": 31228,
+          "address_end": 31228,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31229",
+          "field_name": "电池工作状态",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "0：电池待机\n1：电池断开\n2：电池充电运行\n3：电池放电运行\n4：故障\n5：升级",
+          "sequence": "89",
+          "address_start": 31229,
+          "address_end": 31229,
+          "quantity": 1,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31230",
+          "field_name": "保留",
+          "data_type": "UINT16",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "-",
+          "sequence": "90",
+          "address_start": 31230,
+          "address_end": 31299,
+          "quantity": 70,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31300~31399",
+          "field_name": "31300~31399内容参考31200~31299",
+          "data_type": "参考",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "参考前一簇电池信息定义",
+          "sequence": "91",
+          "address_start": 31300,
+          "address_end": 31399,
+          "quantity": 100,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第二簇电池信息：（包括BDC和BMS）：31300~31399",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31400~31499",
+          "field_name": "31400~31499内容参考31200~31299",
+          "data_type": "参考",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "参考前一簇电池信息定义",
+          "sequence": "92",
+          "address_start": 31400,
+          "address_end": 31499,
+          "quantity": 100,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第三簇电池信息：（包括BDC和BMS）：31400~31499",
+          "source_pages": [
+            21
+          ]
+        },
+        {
+          "address": "31500~31599",
+          "field_name": "31500~31599内容参考31200~31299",
+          "data_type": "参考",
+          "unit": "-",
+          "scale": "-",
+          "access": "RO",
+          "applicable_dtc_or_model": "VPP",
+          "protocol_version": "V2.05",
+          "notes": "参考前一簇电池信息定义",
+          "sequence": "93",
+          "address_start": 31500,
+          "address_end": 31599,
+          "quantity": 100,
+          "function_code": "0x04",
+          "register_type": "input_register",
+          "section": "第四簇电池信息：（包括BDC和BMS）：31500~31599",
+          "source_pages": [
+            21
+          ]
+        }
+      ],
+      "sections": [
+        "工作状态信息：31000~31009",
+        "PV参数：31010~31099",
+        "交流侧信息：31100~31199",
+        "第一簇电池信息：（包括BDC和BMS）：31200~31299",
+        "第二簇电池信息：（包括BDC和BMS）：31300~31399",
+        "第三簇电池信息：（包括BDC和BMS）：31400~31499",
+        "第四簇电池信息：（包括BDC和BMS）：31500~31599"
+      ]
+    }
+  ],
+  "stats": {
+    "holding_register_rows": 117,
+    "input_register_rows": 93,
+    "holding_register_span_count": 1100,
+    "input_register_span_count": 600
+  }
+}

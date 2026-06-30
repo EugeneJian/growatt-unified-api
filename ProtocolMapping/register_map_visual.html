@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>公用寄存器地址 Range 可视化图</title>
+<style>
+  body{margin:0;background:#f6f8fb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif;color:#172033;}
+  .wrap{max-width:1280px;margin:24px auto;padding:20px;}
+  .topbar{display:flex;justify-content:flex-end;align-items:center;margin-bottom:12px;}
+  .card{background:white;border-radius:18px;box-shadow:0 8px 28px rgba(20,35,60,.10);padding:24px;}
+  h1{font-size:28px;margin:0 0 6px 0;}
+  .sub{color:#657086;font-size:14px;margin-bottom:18px;}
+  svg{width:100%;height:auto;display:block;border-radius:14px;background:#fff;}
+  .legend{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px;font-size:13px;}
+  .legend div{background:#f7f9fc;border:1px solid #e6ebf2;border-radius:12px;padding:10px 12px;}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px;}
+  .note{margin-top:16px;background:#fff8e6;border:1px solid #ffe0a3;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.65;}
+  .section-card{margin-top:22px;background:white;border-radius:18px;box-shadow:0 8px 28px rgba(20,35,60,.10);padding:24px;}
+  .section-head{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:end;justify-content:space-between;margin-bottom:14px;}
+  .section-head h2{font-size:24px;margin:0;}
+  .section-head .sub{margin:0;}
+  .source-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .source-chip{display:inline-flex;align-items:center;border:1px solid #dde6f2;border-radius:999px;background:#f8fafc;padding:4px 10px;font-size:12px;color:#344057;}
+  .dtc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+  .dtc-type{border:1px solid #dde6f2;background:#f8fafc;border-radius:12px;padding:13px 14px;text-align:left;cursor:pointer;color:#172033;min-height:112px;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease,background .15s ease;}
+  .dtc-type:hover{transform:translateY(-1px);border-color:#9db6d8;box-shadow:0 8px 18px rgba(20,35,60,.08);}
+  .dtc-type.active{border-color:#2f6fed;background:#eaf1ff;box-shadow:0 8px 18px rgba(47,111,237,.14);}
+  .dtc-type .type-name{font-size:17px;font-weight:800;letter-spacing:0;}
+  .dtc-type .count{font-size:28px;font-weight:800;margin-top:8px;}
+  .dtc-type .cats{font-size:12px;color:#657086;margin-top:4px;line-height:1.35;}
+  .dtc-panel{border:1px solid #dde6f2;border-radius:12px;background:#fff;}
+  .dtc-panel-head{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;padding:12px 14px;background:#f7f9fc;border-bottom:1px solid #dde6f2;}
+  .dtc-panel-title{font-size:17px;font-weight:800;}
+  .dtc-panel-meta{font-size:13px;color:#657086;}
+  .dtc-code-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:14px;align-items:start;}
+  .empty-state{padding:18px;color:#657086;}
+  .mono{font-family:Menlo,Consolas,monospace;}
+  @media(max-width:980px){.dtc-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+  @media(max-width:620px){.wrap{padding:14px;}.card,.section-card{padding:16px;border-radius:12px;}.dtc-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div id="languageSwitch"></div>
+  </div>
+  <div class="card">
+    <h1 data-i18n="map.hero_title">逆变器与储能机公用寄存器地址 Range 可视化图</h1>
+    <div class="sub" data-i18n="map.hero_subtitle">按 Modbus 功能码拆分为两条地址泳道：0x03 保持寄存器、0x04 输入寄存器。</div>
+
+<svg viewBox="0 0 1500 1180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="公用寄存器地址 Range 可视化图" data-i18n-aria-label="map.page_title">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#102030" flood-opacity="0.13"/>
+    </filter>
+    <linearGradient id="g03" x1="0" x2="1"><stop offset="0" stop-color="#2f6fed"/><stop offset="1" stop-color="#6fa0ff"/></linearGradient>
+    <linearGradient id="g04" x1="0" x2="1"><stop offset="0" stop-color="#15a076"/><stop offset="1" stop-color="#5ed3ae"/></linearGradient>
+    <linearGradient id="warn" x1="0" x2="1"><stop offset="0" stop-color="#ff9f1a"/><stop offset="1" stop-color="#ffd166"/></linearGradient>
+    <style>
+      .title{font:700 30px 'PingFang SC','Microsoft YaHei',Arial;fill:#172033}
+      .small{font:400 18px 'PingFang SC','Microsoft YaHei',Arial;fill:#657086}
+      .laneTitle{font:700 22px 'PingFang SC','Microsoft YaHei',Arial;fill:#172033}
+      .addr{font:700 16px 'Menlo','Consolas',monospace;fill:#526071}
+      .label{font:700 18px 'PingFang SC','Microsoft YaHei',Arial;fill:white}
+      .meta{font:400 14px 'PingFang SC','Microsoft YaHei',Arial;fill:white;opacity:.95}
+      .dark{fill:#172033}
+      .axis{stroke:#c8d1de;stroke-width:2}
+      .grid{stroke:#e7ecf3;stroke-width:1}
+      .dash{stroke:#a9b5c5;stroke-dasharray:7 7;stroke-width:2}
+      .map-link{cursor:pointer}
+      .map-link rect{transition:stroke-width .15s ease,stroke .15s ease}
+      .map-link:hover rect,.map-link:focus rect{stroke:#172033;stroke-width:4}
+      .map-link text{pointer-events:none}
+    </style>
+  </defs>
+
+  <text x="54" y="56" class="title" data-i18n="map.svg_title">公用寄存器字段 · Address Map</text>
+  <text x="54" y="88" class="small" data-i18n="map.svg_subtitle">设备层 DTC / 固件 / 协议解析的公共地址空间视图：用功能码 + 地址范围共同确定语义。</text>
+
+  <!-- Legend inside SVG -->
+  <rect x="1020" y="34" width="28" height="18" rx="5" fill="url(#g03)"/><text x="1058" y="50" class="small" data-i18n="map.legend.fc03_title">0x03 保持寄存器</text>
+  <rect x="1020" y="66" width="28" height="18" rx="5" fill="url(#g04)"/><text x="1058" y="82" class="small" data-i18n="map.legend.fc04_title">0x04 输入寄存器</text>
+  <rect x="1230" y="50" width="28" height="18" rx="5" fill="url(#warn)"/><text x="1268" y="66" class="small" data-i18n="map.svg_overlap_notice">重叠/注意</text>
+
+  <!-- columns -->
+  <rect x="50" y="125" width="1398" height="920" rx="22" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="110" y="170" class="laneTitle" data-i18n="map.svg_address_range">地址段</text>
+  <text x="340" y="170" class="laneTitle" data-i18n="map.svg_holding_lane">0x03 Holding / 保持寄存器</text>
+  <text x="940" y="170" class="laneTitle" data-i18n="map.svg_input_lane">0x04 Input / 输入寄存器</text>
+
+  <line x1="260" y1="130" x2="260" y2="1045" class="axis"/>
+  <line x1="860" y1="130" x2="860" y2="1045" class="axis"/>
+
+  <!-- row grid -->
+  <g>
+    <line x1="50" y1="200" x2="1448" y2="200" class="grid"/>
+    <line x1="50" y1="270" x2="1448" y2="270" class="grid"/>
+    <line x1="50" y1="340" x2="1448" y2="340" class="grid"/>
+    <line x1="50" y1="410" x2="1448" y2="410" class="grid"/>
+    <line x1="50" y1="480" x2="1448" y2="480" class="grid"/>
+    <line x1="50" y1="550" x2="1448" y2="550" class="grid"/>
+    <line x1="50" y1="620" x2="1448" y2="620" class="grid"/>
+    <line x1="50" y1="690" x2="1448" y2="690" class="grid"/>
+    <line x1="50" y1="760" x2="1448" y2="760" class="grid"/>
+    <line x1="50" y1="830" x2="1448" y2="830" class="grid"/>
+    <line x1="50" y1="900" x2="1448" y2="900" class="grid"/>
+    <line x1="50" y1="970" x2="1448" y2="970" class="grid"/>
+  </g>
+
+  <!-- address labels -->
+  <text x="90" y="244" class="addr">4000~4215</text>
+  <text x="82" y="314" class="addr">5000~5079</text>
+  <text x="82" y="384" class="addr">5080~7639</text>
+  <text x="82" y="454" class="addr">5400~7959</text>
+  <text x="82" y="524" class="addr">6500~6624</text>
+  <text x="74" y="594" class="addr">7960~8079</text>
+  <text x="74" y="664" class="addr">8560~8739</text>
+  <text x="66" y="734" class="addr">10000~10124</text>
+  <text x="66" y="804" class="addr">20000~24688</text>
+  <text x="66" y="874" class="addr">30000~32099</text>
+  <text x="66" y="944" class="addr">32768~42866</text>
+  <text x="66" y="1014" class="addr">52000~52124</text>
+
+  <!-- blocks 0x04 -->
+  <g filter="url(#shadow)">
+    <a class="map-link" href="register_detail.html#fc04_battery_pm_data_4000_4215" aria-label="打开 0x04 电池 PM 数据详细寄存器表">
+      <title>打开详细寄存器表：0x04 电池 PM 数据 4000~4215</title>
+      <rect x="930" y="216" width="430" height="48" rx="13" fill="url(#g04)"/>
+      <text x="952" y="238" class="label" data-module-key="module.battery_pm_data">电池 PM 数据</text><text x="952" y="258" class="meta">216 regs · 4000~4215 · 快速输入数据</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc04_battery_bm_data_5080_7639" aria-label="打开 0x04 电池 BM 数据详细寄存器表">
+      <title>打开详细寄存器表：0x04 电池 BM 数据 5080~7639</title>
+      <rect x="930" y="356" width="430" height="48" rx="13" fill="url(#g04)"/>
+      <text x="952" y="378" class="label" data-module-key="module.battery_bm_data">电池 BM 数据</text><text x="952" y="398" class="meta">2560 regs · 5080~7639 · 快速输入数据</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc04_one_click_upgrade_6500_6624" aria-label="打开 0x04 一键升级功能详细寄存器表">
+      <title>打开详细寄存器表：0x04 一键升级功能 6500~6624</title>
+      <rect x="930" y="496" width="430" height="48" rx="13" fill="url(#g04)"/>
+      <text x="952" y="518" class="label" data-module-key="module.one_click_upgrade">一键升级功能</text><text x="952" y="538" class="meta">125 regs · 6500~6624</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc04_vpp_protocol_params_31000_31999" aria-label="打开 0x04 VPP 协议参数详细寄存器表">
+      <title>打开详细寄存器表：0x04 VPP 协议参数 31000~31999</title>
+      <rect x="930" y="846" width="430" height="48" rx="13" fill="url(#g04)"/>
+      <text x="952" y="868" class="label" data-module-key="module.vpp_protocol_params">VPP 协议参数</text><text x="952" y="888" class="meta">1000 regs · 31000~31999 · 与 0x03 地址重叠</text>
+    </a>
+  </g>
+
+  <!-- blocks 0x03 -->
+  <g filter="url(#shadow)">
+    <a class="map-link" href="register_detail.html#fc03_battery_pm_data_5000_5079_7960_8079" aria-label="打开 0x03 电池 PM 数据详细寄存器表">
+      <title>打开详细寄存器表：0x03 电池 PM 数据 5000~5079 / 7960~8079</title>
+      <rect x="320" y="286" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="308" class="label" data-module-key="module.battery_pm_data" data-module-part="a">电池 PM 数据 · Part A</text><text x="342" y="328" class="meta">80 regs · 5000~5079</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_battery_bm_data_5400_7959_8560_8739" aria-label="打开 0x03 电池 BM 数据详细寄存器表">
+      <title>打开详细寄存器表：0x03 电池 BM 数据 5400~7959 / 8560~8739</title>
+      <rect x="320" y="426" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="448" class="label" data-module-key="module.battery_bm_data" data-module-part="a">电池 BM 数据 · Part A</text><text x="342" y="468" class="meta">2560 regs · 5400~7959</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_battery_pm_data_5000_5079_7960_8079" aria-label="打开 0x03 电池 PM 数据详细寄存器表">
+      <title>打开详细寄存器表：0x03 电池 PM 数据 5000~5079 / 7960~8079</title>
+      <rect x="320" y="566" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="588" class="label" data-module-key="module.battery_pm_data" data-module-part="b">电池 PM 数据 · Part B</text><text x="342" y="608" class="meta">120 regs · 7960~8079</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_battery_bm_data_5400_7959_8560_8739" aria-label="打开 0x03 电池 BM 数据详细寄存器表">
+      <title>打开详细寄存器表：0x03 电池 BM 数据 5400~7959 / 8560~8739</title>
+      <rect x="320" y="636" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="658" class="label" data-module-key="module.battery_bm_data" data-module-part="b">电池 BM 数据 · Part B</text><text x="342" y="678" class="meta">180 regs · 8560~8739</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_inverter_parallel_grid_10000_10124" aria-label="打开 0x03 逆变器并网并机功能详细寄存器表">
+      <title>打开详细寄存器表：0x03 逆变器并网并机功能 10000~10124</title>
+      <rect x="320" y="706" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="728" class="label" data-module-key="module.inverter_parallel_grid">逆变器并网并机功能</text><text x="342" y="748" class="meta">125 regs · 10000~10124</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_collector_wifi_certificate_20000_24688" aria-label="打开 0x03 福达采集器配网证书 WiFi 参数详细寄存器表">
+      <title>打开详细寄存器表：0x03 福达采集器配网 / 证书 / WiFi 参数 20000~24688</title>
+      <rect x="320" y="776" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="798" class="label" data-module-key="module.collector_wifi_certificate">福达采集器配网 / 证书 / WiFi 参数</text><text x="342" y="818" class="meta">4689 regs · 20000~24688</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_vpp_protocol_params_30000_32099" aria-label="打开 0x03 VPP 协议参数详细寄存器表">
+      <title>打开详细寄存器表：0x03 VPP 协议参数 30000~32099</title>
+      <rect x="320" y="846" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="868" class="label" data-module-key="module.vpp_protocol_params">VPP 协议参数</text><text x="342" y="888" class="meta">2100 regs · 30000~32099</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_event_log_32768_42866" aria-label="打开 0x03 事件日志功能详细寄存器表">
+      <title>打开详细寄存器表：0x03 事件日志功能 32768~42866</title>
+      <rect x="320" y="916" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="938" class="label" data-module-key="module.event_log">事件日志功能</text><text x="342" y="958" class="meta">10099 regs · 32768~42866</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_sunspec_protocol_params_40000_42000" aria-label="打开 0x03 SunSpec 协议参数详细寄存器表">
+      <title>打开详细寄存器表：0x03 SunSpec 协议参数 40000~42000</title>
+      <rect x="500" y="936" width="270" height="48" rx="13" fill="url(#warn)"/>
+      <text x="522" y="958" class="label dark" data-module-key="module.sunspec_protocol_params">SunSpec 协议参数</text><text x="522" y="978" class="meta dark">2001 regs · 40000~42000</text>
+    </a>
+
+    <a class="map-link" href="register_detail.html#fc03_one_click_install_diagnosis_52000_52124" aria-label="打开 0x03 一键安装诊断功能详细寄存器表">
+      <title>打开详细寄存器表：0x03 一键安装诊断功能 52000~52124</title>
+      <rect x="320" y="986" width="450" height="48" rx="13" fill="url(#g03)"/>
+      <text x="342" y="1008" class="label" data-module-key="module.one_click_install_diagnosis">一键安装诊断功能</text><text x="342" y="1028" class="meta">125 regs · 52000~52124</text>
+    </a>
+  </g>
+
+  <!-- overlap markers -->
+  <line x1="790" y1="870" x2="920" y2="870" class="dash"/>
+  <text x="790" y="840" class="small" data-i18n="map.svg_same_address_different_fc">同一地址段，不同功能码</text>
+  <path d="M770 940 C825 925, 865 925, 920 940" fill="none" stroke="#ff9f1a" stroke-width="3" stroke-dasharray="8 8"/>
+  <text x="790" y="1008" class="small" data-i18n="map.svg_sunspec_overlap">SunSpec 位于事件日志地址范围内：需由协议/上下文隔离</text>
+
+  <!-- bottom callout -->
+  <rect x="50" y="1070" width="1398" height="74" rx="18" fill="#eef6ff" stroke="#cfe4ff"/>
+  <text x="78" y="1102" class="laneTitle" data-i18n="map.svg_reading_logic_title">读取逻辑建议</text>
+  <text x="260" y="1102" class="small" data-i18n="map.svg_reading_logic_line_1">不要只用地址判断语义；应使用：设备 DTC + 功能码 + 寄存器地址 + 协议版本 / Profile 共同解析。</text>
+  <text x="260" y="1132" class="small" data-i18n="map.svg_reading_logic_line_2">这类图适合作为后续 YAML / JSON 的 register_profile 视图。</text>
+</svg>
+
+<div class="legend">
+  <div><span class="dot" style="background:#2f6fed"></span><b data-i18n="map.legend.fc03_title">0x03 保持寄存器</b><br/><span data-i18n="map.legend.fc03_body">多用于配置、状态、日志、协议参数等结构化读取。</span></div>
+  <div><span class="dot" style="background:#15a076"></span><b data-i18n="map.legend.fc04_title">0x04 输入寄存器</b><br/><span data-i18n="map.legend.fc04_body">多用于实时输入数据、快速帧、只读遥测数据。</span></div>
+  <div><span class="dot" style="background:#ff9f1a"></span><b data-i18n="map.legend.overlap_title">地址重叠</b><br/><span data-i18n="map.legend.overlap_body">相同地址不一定同义，必须结合功能码和 Profile 解析。</span></div>
+  <div><span class="dot" style="background:#8aa0b8"></span><b data-i18n="map.legend.ssot_title">AI/SSOT 建议</b><br/><span data-i18n="map.legend.ssot_body">后续不要只维护 PDF，应维护 register profile 主数据。</span></div>
+</div>
+
+<div class="note">
+  <b data-i18n="map.note_title">关键解释：</b><span data-i18n="map.note_body">这不是简单的连续内存表，而是“功能码 + 地址段”的逻辑地址空间。尤其是 VPP 的 31000~31999 同时出现在 0x03/0x04 体系中，事件日志 32768~42866 与 SunSpec 40000~42000 存在范围重叠。因此 AI 解析、云端适配层、采集器协议栈都不应只按地址判断字段含义，而应使用 DTC、功能码、地址、协议版本和 Profile 做联合索引。</span>
+</div>
+  </div>
+
+  <div class="section-card" id="dtc-visual">
+    <div class="section-head">
+      <div>
+        <h2 data-i18n="map.dtc_title">DTC 机型类型可视化</h2>
+        <div class="sub" data-i18n="map.dtc_subtitle">按机型类型聚合 DTC，当前选择的类型在下方显示清单。</div>
+        <div class="source-meta" id="dtcSourceMeta">
+          <span class="source-chip" data-i18n="source.loading">正在读取 DTC 来源版本...</span>
+        </div>
+      </div>
+    </div>
+    <div class="dtc-grid" id="dtcTypeGrid"></div>
+    <div class="dtc-panel" id="dtcPanel">
+      <div class="dtc-panel-head">
+        <div class="dtc-panel-title" id="dtcPanelTitle" data-i18n="map.dtc_loading">正在读取 DTC...</div>
+        <div class="dtc-panel-meta" id="dtcPanelMeta"></div>
+      </div>
+      <div class="dtc-code-grid" id="dtcCodeGrid">
+        <div class="empty-state" data-i18n="map.dtc_data_loading">正在读取 DTC 数据...</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="protocol_locale_ui.js"></script>
+<script src="dtc_ssot_ui.js"></script>
+<script>
+const EMBEDDED_PROTOCOL_SSOT = null;
+const EMBEDDED_PROTOCOL_LOCALES = null;
+const DTC_UI = window.DtcSsotUi;
+const esc = DTC_UI.esc;
+let LOCALE = null;
+let dtcModels = [];
+let dtcCodes = [];
+let dtcGroups = [];
+let protocolSsot = null;
+let activeDtcType = "Hybrid_Inverter";
+
+async function loadProtocolLocales(){
+  if(EMBEDDED_PROTOCOL_LOCALES) return EMBEDDED_PROTOCOL_LOCALES;
+  const entries = await Promise.all(["zh-CN", "en-US"].map(async locale => {
+    const response = await fetch(`data/locales/${locale}.json`, {cache:"no-store"});
+    if(!response.ok) throw new Error(`Locale ${locale}: HTTP ${response.status}`);
+    return [locale, await response.json()];
+  }));
+  return Object.fromEntries(entries);
+}
+
+async function loadProtocolSsot(){
+  if(EMBEDDED_PROTOCOL_SSOT) return EMBEDDED_PROTOCOL_SSOT;
+  const response = await fetch("data/protocol_ssot.json", {cache:"no-store"});
+  if(!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+function applyVisualMapLocale(){
+  LOCALE.applyStatic(document);
+  LOCALE.setTitle("map.page_title");
+  document.querySelectorAll("[data-module-key]").forEach(element => {
+    const module = LOCALE.t(element.dataset.moduleKey, {}, element.textContent);
+    if(element.dataset.modulePart){
+      element.textContent = LOCALE.t(`map.module.part_${element.dataset.modulePart}`, {module}, element.textContent);
+      return;
+    }
+    element.textContent = module;
+  });
+}
+
+function renderDtcSource(ssot){
+  const metadata = ssot.source?.document_metadata || {};
+  const documentName = metadata["文档名称"] || "机型 DTC 及固件命名规范";
+  const version = String(metadata["版本"] || "").split("/")[0].trim();
+  const effectiveDate = metadata["生效日期"] || "-";
+  const sourceLabel = [documentName, version].filter(Boolean).join(" ");
+  const separator = LOCALE.t("common.label_separator");
+  document.getElementById("dtcSourceMeta").innerHTML = `
+    <span class="source-chip">${esc(LOCALE.t("source.document"))}${esc(separator)}${esc(sourceLabel)}</span>
+    <span class="source-chip">${esc(LOCALE.t("source.effective_date"))}${esc(separator)}${esc(effectiveDate)}</span>
+  `;
+}
+
+function dtcTypeFromHash(){
+  const hashMatch = location.hash.match(/^#dtc-(.+)$/);
+  if(hashMatch && dtcGroups.some(group => group.id === hashMatch[1])) return hashMatch[1];
+  return "";
+}
+
+function codesForGroup(group){
+  return DTC_UI.codesForGroup(dtcCodes, group);
+}
+
+function renderDtcTypeCards(){
+  const grid = document.getElementById("dtcTypeGrid");
+  grid.innerHTML = dtcGroups.map(group => {
+    const codes = codesForGroup(group);
+    const modelCount = codes.reduce((sum, code) => sum + (code.model_record_count || code.models?.length || 0), 0);
+    const categories = DTC_UI.localizedGroupCategories(group).join(" / ");
+    return `
+      <button class="dtc-type ${group.id === activeDtcType ? "active" : ""}" type="button" data-dtc-type="${esc(group.id)}">
+        <div class="type-name">${esc(DTC_UI.localizedGroupName(group))}</div>
+        <div class="count">${codes.length}</div>
+        <div class="cats">${esc(categories)}<br/>${esc(LOCALE.t("map.dtc_model_record_count", {count: modelCount}))}</div>
+      </button>
+    `;
+  }).join("");
+}
+
+function renderDtcCodes(groupId){
+  const group = dtcGroups.find(item => item.id === groupId) || dtcGroups[0];
+  activeDtcType = group.id;
+  const codes = codesForGroup(group);
+  const modelCount = codes.reduce((sum, code) => sum + (code.model_record_count || code.models?.length || 0), 0);
+  document.getElementById("dtcPanelTitle").textContent = DTC_UI.localizedGroupName(group);
+  document.getElementById("dtcPanelMeta").textContent = LOCALE.t("map.dtc_panel_meta", {
+    dtcCount: codes.length,
+    modelCount
+  });
+  document.getElementById("dtcCodeGrid").innerHTML = codes
+    .map(code => DTC_UI.renderCard(code, {ssot: protocolSsot, tagName: "button"}))
+    .join("") || `<div class="empty-state">${esc(LOCALE.t("map.dtc_empty"))}</div>`;
+  renderDtcTypeCards();
+  history.replaceState(null, "", `#dtc-${group.id}`);
+}
+
+function bindDtcCards(){
+  document.getElementById("dtcTypeGrid").addEventListener("click", event => {
+    const button = event.target.closest("[data-dtc-type]");
+    if(!button) return;
+    renderDtcCodes(button.dataset.dtcType);
+    document.getElementById("dtcPanel").scrollIntoView({behavior:"smooth", block:"start"});
+  });
+}
+
+async function initDtcVisual(){
+  try{
+    applyVisualMapLocale();
+    const ssot = await loadProtocolSsot();
+    protocolSsot = ssot;
+    renderDtcSource(ssot);
+    dtcModels = ssot.device_model_dtcs || [];
+    dtcCodes = DTC_UI.dtcCodes(ssot);
+    dtcGroups = DTC_UI.dtcTypeGroups(ssot);
+    activeDtcType = dtcTypeFromHash() || activeDtcType;
+    renderDtcTypeCards();
+    bindDtcCards();
+    renderDtcCodes(activeDtcType);
+    window.addEventListener("hashchange", () => {
+      const nextType = dtcTypeFromHash();
+      if(nextType && nextType !== activeDtcType) renderDtcCodes(nextType);
+    });
+  }catch(error){
+    document.getElementById("dtcPanelTitle").textContent = LOCALE.t("map.dtc_load_failed");
+    document.getElementById("dtcPanelMeta").textContent = error.message;
+    document.getElementById("dtcSourceMeta").innerHTML = `<span class="source-chip">${esc(LOCALE.t("source.load_failed"))}</span>`;
+    document.getElementById("dtcCodeGrid").innerHTML = `<div class="empty-state">${esc(LOCALE.t("map.dtc_data_load_failed"))}</div>`;
+  }
+}
+
+async function boot(){
+  const locales = await loadProtocolLocales();
+  LOCALE = window.ProtocolLocaleUi.init({locales});
+  DTC_UI.setLocaleApi(LOCALE);
+  DTC_UI.installStyles();
+  applyVisualMapLocale();
+  LOCALE.renderSwitch("#languageSwitch");
+  LOCALE.onChange(() => {
+    LOCALE.renderSwitch("#languageSwitch");
+    applyVisualMapLocale();
+    if(protocolSsot){
+      renderDtcSource(protocolSsot);
+      renderDtcCodes(activeDtcType);
+    }
+  });
+  initDtcVisual();
+}
+
+boot().catch(error => {
+  document.getElementById("dtcPanelTitle").textContent = "Locale init failed";
+  document.getElementById("dtcPanelMeta").textContent = error.message;
+});
+</script>
+</body>
+</html>

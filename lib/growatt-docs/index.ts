@@ -32,12 +32,16 @@ export const GROWATT_APPENDIX_TERMINOLOGY_SLUG = "appendix-terminology";
 export const GROWATT_SEMANTIC_MODEL_SLUG = "semantic-model";
 export const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG =
   "appendix-d-openapi-support-scope";
+export const GROWATT_PROTOCOL_MAPPING_SLUG = "protocol-mapping";
+export const GROWATT_PROTOCOL_MAPPING_HREF =
+  "/growatt-openapi/protocol-mapping/register_map_visual.html";
 
 export type GrowattDocLocale = "en" | "zh-CN";
 
 export interface GrowattSpecialPageNavMeta {
   slug: string;
   labelByLocale: Record<GrowattDocLocale, string>;
+  href?: string;
   placement?: "beforeDocs" | "afterDocs";
   requiresDocumentNavigation?: boolean;
 }
@@ -87,6 +91,11 @@ const RELEASE_NOTES_LABELS: Record<GrowattDocLocale, string> = {
 const APPENDIX_A_LABELS: Record<GrowattDocLocale, string> = {
   en: "Appendix A Growatt Codes",
   "zh-CN": "附录 A Growatt Codes",
+};
+
+const PROTOCOL_MAPPING_LABELS: Record<GrowattDocLocale, string> = {
+  en: "Protocol SSOT",
+  "zh-CN": "协议 SSOT",
 };
 
 const APPENDIX_B_LABELS: Record<GrowattDocLocale, string> = {
@@ -149,6 +158,16 @@ export function getGrowattSpecialPages(): GrowattSpecialPageNavMeta[] {
         "zh-CN": RELEASE_NOTES_LABELS["zh-CN"],
       },
       placement: "beforeDocs",
+    },
+    {
+      slug: GROWATT_PROTOCOL_MAPPING_SLUG,
+      href: GROWATT_PROTOCOL_MAPPING_HREF,
+      labelByLocale: {
+        en: PROTOCOL_MAPPING_LABELS.en,
+        "zh-CN": PROTOCOL_MAPPING_LABELS["zh-CN"],
+      },
+      placement: "afterDocs",
+      requiresDocumentNavigation: true,
     },
     {
       slug: GROWATT_CODES_SLUG,

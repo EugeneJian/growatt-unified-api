@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>详细寄存器表</title>
+<style>
+  :root{
+    --bg:#f6f8fb; --surface:#fff; --ink:#172033; --muted:#657086;
+    --line:#dbe3ed; --blue:#2563eb; --blue-soft:#e8f0ff;
+    --green:#0f8f68; --green-soft:#e5f6ef; --amber:#b76b00; --amber-soft:#fff4df;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;line-height:1.55}
+  a{color:var(--blue);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code,.mono{font-family:Menlo,Consolas,monospace}
+  .wrap{max-width:1220px;margin:0 auto;padding:22px}
+  .top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}
+  .back{font-size:14px;font-weight:700}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 28px rgba(31,45,70,.08)}
+  .head{padding:18px 20px;border-bottom:1px solid var(--line)}
+  .head.fc03{background:linear-gradient(90deg,var(--blue-soft),#fff)}
+  .head.fc04{background:linear-gradient(90deg,var(--green-soft),#fff)}
+  h1{margin:0;font-size:24px;letter-spacing:0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:8px;color:var(--muted);font-size:13px}
+  .tag{display:inline-flex;align-items:center;min-height:22px;border-radius:999px;padding:2px 9px;color:#fff;font-size:12px;font-weight:800}
+  .tag.fc03{background:var(--blue)}
+  .tag.fc04{background:var(--green)}
+  .body{padding:16px 20px 20px}
+  .section-title{margin:16px 0 8px;font-size:15px}
+  .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th:last-child,td:last-child{border-right:0}
+  tr:last-child td{border-bottom:0}
+  th{background:#f4f7fb;color:#344057;font-weight:800;white-space:nowrap}
+  td.empty{text-align:center;color:var(--muted);padding:18px}
+  .models{display:block;overflow:visible}
+  .chip{border:1px solid var(--line);border-radius:999px;background:#f4f7fb;padding:3px 9px;font-size:12px;color:var(--ink)}
+  .chip.direct{background:var(--green-soft);border-color:#99d7c1;color:#095b41}
+  .chip.inferred{background:var(--amber-soft);border-color:#efc077;color:#7b4a00}
+  .authority{display:grid;gap:12px;width:100%;max-width:none}
+  .authority-lead{margin:0;color:var(--ink);font-weight:700}
+  .authority-text{margin:0;color:var(--ink)}
+  .read-steps,.authority-rules,.field-rules{margin:0;padding-left:20px;color:var(--muted)}
+  .read-steps li,.authority-rules li,.field-rules li{margin:3px 0}
+  .source-list{display:flex;flex-wrap:wrap;gap:7px}
+  .source-chip{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:#f4f7fb;padding:3px 9px;font-size:12px;color:#344057}
+  .state{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;color:var(--muted)}
+  @media(max-width:720px){.wrap{padding:14px}.top{align-items:flex-start;flex-direction:column}.head,.body{padding-left:14px;padding-right:14px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top">
+    <a class="back" href="register_map_visual.html" data-i18n="common.back_to_map">← 返回寄存器地址图</a>
+    <div id="languageSwitch"></div>
+  </div>
+  <section id="app" class="state" data-i18n="detail.loading">正在读取寄存器详情...</section>
+</main>
+<script src="protocol_locale_ui.js"></script>
+<script src="dtc_ssot_ui.js"></script>
+<script>
+const DATA_URL = "data/protocol_ssot.json";
+const EMBEDDED_PROTOCOL_SSOT = null;
+const EMBEDDED_PROTOCOL_LOCALES = null;
+const DTC_UI = window.DtcSsotUi;
+const LABEL_KEYS = {
+  address: "table.address",
+  field_name: "table.field_name",
+  data_type: "table.data_type",
+  unit: "table.unit",
+  scale: "table.scale",
+  access: "table.access",
+  applicable_dtc_or_model: "table.applicable_dtc_or_model",
+  protocol_version: "table.protocol_version",
+  notes: "table.notes"
+};
+const esc = DTC_UI.esc;
+const ranges = list => (list || []).map(item => `${item.start}~${item.end}`).join(" / ");
+let LOCALE = null;
+let currentSsot = null;
+let currentProfile = null;
+const selectedProfileId = () => {
+  const fromHash = decodeURIComponent(location.hash.replace(/^#/, ""));
+  if(fromHash) return fromHash;
+  return new URLSearchParams(location.search).get("profile") || "";
+};
+
+async function loadProtocolLocales(){
+  if(EMBEDDED_PROTOCOL_LOCALES) return EMBEDDED_PROTOCOL_LOCALES;
+  const entries = await Promise.all(["zh-CN", "en-US"].map(async locale => {
+    const response = await fetch(`data/locales/${locale}.json`, {cache:"no-store"});
+    if(!response.ok) throw new Error(`Locale ${locale}: HTTP ${response.status}`);
+    return [locale, await response.json()];
+  }));
+  return Object.fromEntries(entries);
+}
+
+async function loadProtocolSsot(){
+  if(EMBEDDED_PROTOCOL_SSOT) return EMBEDDED_PROTOCOL_SSOT;
+  const response = await fetch(DATA_URL, {cache:"no-store"});
+  if(!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+}
+
+function moduleName(profile){
+  return LOCALE.t(profile.module_key || "", {}, profile.module_cn);
+}
+
+function renderTable(profile, ssot){
+  const schema = profile.detail_schema?.length ? profile.detail_schema : ssot.register_detail_schema;
+  const head = schema.map(key => `<th>${esc(LOCALE.t(LABEL_KEYS[key] || key, {}, key))}</th>`).join("");
+  const rows = profile.registers?.length
+    ? profile.registers.map(register => `<tr>${schema.map(key => `<td>${esc(register[key] ?? "")}</td>`).join("")}</tr>`).join("")
+    : profile.address_ranges.map(range => {
+      const placeholder = {
+        address: `${range.start}~${range.end}`,
+        field_name: LOCALE.t("detail.placeholder_field_name", {module: moduleName(profile)}),
+        data_type: LOCALE.t("detail.placeholder_data_type"),
+        unit: "-",
+        scale: "-",
+        access: `${profile.function_code} ${profile.register_type === "holding_register" ? "Holding" : "Input"}`,
+        applicable_dtc_or_model: LOCALE.t("detail.placeholder_applicable"),
+        protocol_version: ssot.source?.document_metadata?.["版本"] || "-",
+        notes: LOCALE.t("detail.placeholder_notes")
+      };
+      return `<tr>${schema.map(key => `<td>${esc(placeholder[key] ?? "")}</td>`).join("")}</tr>`;
+    }).join("");
+  return `<div class="table-wrap"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function renderModels(profile, ssot){
+  if(profile.applicability){
+    return renderApplicability(profile, ssot);
+  }
+
+  const linksByDtc = new Map();
+  ssot.derived.register_profile_dtc_links
+    .filter(link => link.register_profile_id === profile.id)
+    .forEach(link => {
+      const existing = linksByDtc.get(link.dtc);
+      if(!existing || existing.confidence !== "direct"){
+        linksByDtc.set(link.dtc, link);
+      }
+    });
+  const links = [...linksByDtc.values()].sort((a, b) => a.dtc - b.dtc);
+  if(!links.length) return `<span class="chip">${esc(LOCALE.t("detail.no_applicable_dtc"))}</span>`;
+  return DTC_UI.renderGroupedCodes(ssot, links.map(link => link.dtc));
+}
+
+function renderSourceLabel(source){
+  const page = source.page ? `P${source.page}` : "";
+  const pieces = [source.document, page, source.section].filter(Boolean);
+  return pieces.join(" · ");
+}
+
+function renderApplicability(profile, ssot){
+  const applicability = profile.applicability;
+  const isVpp = profile.module_key === "module.vpp_protocol_params";
+  const vppRecordByDtc = new Map((applicability.supported_dtc_records || []).map(record => [String(record.dtc), record]));
+  const supportedValues = [
+    ...(applicability.supported_dtc_records || []).map(record => record.dtc),
+    ...(applicability.supported_dtc_groups || []).flatMap(group => group.dtc_values || [])
+  ];
+  const supportedDtcValues = [...new Set(supportedValues.map(value => String(value)).filter(Boolean))];
+  const sourceSteps = applicability.decision_steps_cn?.length
+    ? applicability.decision_steps_cn
+    : (applicability.rules_cn || []);
+  const steps = (isVpp ? [
+      LOCALE.t("applicability.vpp.rule_1"),
+      LOCALE.t("applicability.vpp.rule_2"),
+      LOCALE.t("applicability.vpp.rule_3"),
+    ] : sourceSteps)
+    .map(step => `<li>${esc(step)}</li>`)
+    .join("");
+  const groups = DTC_UI.renderGroupedCodes(ssot, supportedDtcValues, {fallbackByDtc: vppRecordByDtc});
+  const sources = (applicability.sources || [])
+    .map(source => `<span class="source-chip" title="${esc(source.evidence || "")}">${esc(renderSourceLabel(source))}</span>`)
+    .join("");
+  const fieldRules = (profile.registers || [])
+    .filter(register => register.applicable_dtc_ranges?.length)
+    .map(register => `<li><span class="mono">${esc(register.address)}</span> ${esc(register.field_name)}：${esc(register.applicable_dtc_or_model)}</li>`)
+    .join("");
+  const fieldRuleBlock = fieldRules
+    ? `<ul class="field-rules">${fieldRules}</ul>`
+    : "";
+
+  return `
+    <div class="authority">
+      <p class="authority-lead">${esc(isVpp ? LOCALE.t("applicability.vpp.lead") : (applicability.plain_conclusion_cn || applicability.summary_cn || ""))}</p>
+      <p class="authority-text">${esc(isVpp ? LOCALE.t("applicability.vpp.summary") : (applicability.summary_cn || ""))}</p>
+      ${steps ? `<ol class="read-steps">${steps}</ol>` : ""}
+      <p class="authority-text">${esc(isVpp ? LOCALE.t("applicability.vpp.notice") : (applicability.notices_cn || ""))}</p>
+      ${groups}
+      ${fieldRuleBlock}
+      ${sources ? `<div class="source-list">${sources}</div>` : ""}
+    </div>
+  `;
+}
+
+function render(profile, ssot){
+  const fcClass = profile.function_code === "0x03" ? "fc03" : "fc04";
+  const displayModule = moduleName(profile);
+  const separator = LOCALE.t("common.label_separator");
+  document.title = `${profile.function_code} ${displayModule} · ${LOCALE.t("detail.page_title")}`;
+  document.getElementById("app").className = "card";
+  document.getElementById("app").innerHTML = `
+    <header class="head ${fcClass}">
+      <h1><span class="tag ${fcClass}">${esc(profile.function_code)}</span> ${esc(displayModule)}</h1>
+      <div class="meta">
+        <span class="mono">${esc(LOCALE.t("detail.address_ranges"))}${esc(separator)}${esc(ranges(profile.address_ranges))}</span>
+        <span>${esc(LOCALE.t("detail.register_count"))}${esc(separator)}${esc(profile.register_count ?? "-")}</span>
+        <span>${esc(LOCALE.t("detail.profile"))}${esc(separator)}<span class="mono">${esc(profile.id)}</span></span>
+      </div>
+    </header>
+    <div class="body">
+      <h2 class="section-title">${esc(LOCALE.t("detail.models_title"))}</h2>
+      <div class="models">${renderModels(profile, ssot)}</div>
+      <h2 class="section-title">${esc(LOCALE.t("detail.register_table_title"))}</h2>
+      ${renderTable(profile, ssot)}
+    </div>
+  `;
+}
+
+async function init(){
+  try{
+    const ssot = currentSsot || await loadProtocolSsot();
+    currentSsot = ssot;
+    const profileId = selectedProfileId();
+    const profile = ssot.register_profiles.find(item => item.id === profileId);
+    if(!profile){
+      currentProfile = null;
+      document.getElementById("app").innerHTML = LOCALE.t("detail.missing_profile", {profileId: `<code>${esc(profileId || "-")}</code>`});
+      return;
+    }
+    currentProfile = profile;
+    render(profile, ssot);
+  }catch(error){
+    document.getElementById("app").innerHTML = esc(LOCALE.t("detail.load_error", {message: error.message}));
+  }
+}
+
+async function boot(){
+  const locales = await loadProtocolLocales();
+  LOCALE = window.ProtocolLocaleUi.init({locales});
+  DTC_UI.setLocaleApi(LOCALE);
+  DTC_UI.installStyles();
+  LOCALE.setTitle("detail.page_title");
+  LOCALE.renderSwitch("#languageSwitch");
+  LOCALE.onChange(() => {
+    LOCALE.renderSwitch("#languageSwitch");
+    if(currentProfile && currentSsot) render(currentProfile, currentSsot);
+  });
+  window.addEventListener("hashchange", init);
+  window.addEventListener("popstate", init);
+  init();
+}
+
+boot().catch(error => {
+  document.getElementById("app").innerHTML = `Locale init failed: ${esc(error.message)}`;
+});
+</script>
+</body>
+</html>

@@ -14,14 +14,16 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npm run protocol:validate-locales && npm run protocol:export && npm run protocol:validate-locales -- --check-output",
+    "protocol:export": "node scripts/export-protocol-mapping.mjs",
+    "protocol:validate-locales": "node scripts/validate-protocol-locales.mjs",
     "start": "npx serve out -l 3000",
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "docs:lint:growatt": "node scripts/lint-growatt-docs.mjs",
-    "docs:test:growatt": "jest --runInBand __tests__/growatt-link-rewriter.test.ts __tests__/growatt-docs.test.ts __tests__/growatt-codes-basic-auth.test.ts",
+    "docs:test:growatt": "jest --runInBand __tests__/growatt-link-rewriter.test.ts __tests__/growatt-docs.test.ts __tests__/growatt-codes-basic-auth.test.ts __tests__/protocol-mapping-cloudflare-access.test.ts",
     "docs:check": "npm run docs:lint:growatt && npm run docs:test:growatt",
     "showdoc:sync:growatt-archetecture": "node scripts/sync-showdoc-project.mjs --project-dir Growatt-Archetecture",
     "showdoc:sync:growatt-archetecture:dry-run": "node scripts/sync-showdoc-project.mjs --project-dir Growatt-Archetecture --dry-run"

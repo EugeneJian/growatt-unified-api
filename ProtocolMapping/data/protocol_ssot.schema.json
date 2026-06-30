@@ -1,0 +1,497 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "protocol_ssot.schema.json",
+  "title": "Growatt Protocol Mapping JSON SSOT",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "source",
+    "identity_key",
+    "register_profiles",
+    "dtc_type_groups",
+    "dtc_codes",
+    "device_model_dtcs",
+    "derived"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "document_metadata": {
+          "type": "object"
+        },
+        "tables_extracted": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": true
+    },
+    "identity_key": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "register_detail_schema": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "register_profiles": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/register_profile"
+      }
+    },
+    "dtc_ranges": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "dtc_type_groups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dtc_type_group"
+      }
+    },
+    "dtc_codes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dtc_code"
+      }
+    },
+    "device_model_dtcs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/device_model_dtc"
+      }
+    },
+    "derived": {
+      "type": "object",
+      "properties": {
+        "register_profile_overlaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/profile_overlap"
+          }
+        },
+        "register_profile_dtc_links": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/profile_dtc_link"
+          }
+        },
+        "stats": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "address_range": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "integer"
+        },
+        "end": {
+          "type": "integer"
+        },
+        "raw": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "register_profile": {
+      "type": "object",
+      "required": [
+        "id",
+        "module_cn",
+        "module_key",
+        "function_code",
+        "register_type",
+        "address_ranges",
+        "registers"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "module_cn": {
+          "type": "string"
+        },
+        "module_key": {
+          "type": "string"
+        },
+        "function_code": {
+          "enum": [
+            "0x03",
+            "0x04"
+          ]
+        },
+        "register_type": {
+          "enum": [
+            "holding_register",
+            "input_register"
+          ]
+        },
+        "register_count": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "register_count_raw": {
+          "type": "string"
+        },
+        "register_count_parts": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "address_ranges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/address_range"
+          }
+        },
+        "address_ranges_raw": {
+          "type": "string"
+        },
+        "semantic_scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "detail_schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "registers": {
+          "type": "array"
+        },
+        "source_ref": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "device_model_dtc": {
+      "type": "object",
+      "required": [
+        "id",
+        "dtc",
+        "device_type",
+        "product_category_cn",
+        "product_category_key",
+        "alias",
+        "model_full_name",
+        "lifecycle_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dtc": {
+          "type": "integer"
+        },
+        "device_type": {
+          "enum": [
+            "inverter",
+            "battery",
+            "syn"
+          ]
+        },
+        "product_category_cn": {
+          "type": "string"
+        },
+        "product_category_key": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "model_full_name": {
+          "type": "string"
+        },
+        "lifecycle_status": {
+          "enum": [
+            "active",
+            "unused",
+            "undeveloped",
+            "deprecated"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "dtc_code": {
+      "type": "object",
+      "required": [
+        "id",
+        "dtc",
+        "code",
+        "device_type",
+        "product_categories_cn",
+        "product_category_keys",
+        "aliases",
+        "model_full_names",
+        "lifecycle_status",
+        "models"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dtc": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string"
+        },
+        "device_type": {
+          "type": "string"
+        },
+        "device_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "product_categories_cn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "product_categories_en": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "product_category_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "model_full_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "regions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lifecycle_statuses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "lifecycle_status": {
+          "enum": [
+            "active",
+            "unused",
+            "undeveloped",
+            "deprecated"
+          ]
+        },
+        "dtc_range_raw_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dtc_ranges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/address_range"
+          }
+        },
+        "holding_register_upload_fields_raw_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "holding_register_upload_field_ranges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/address_range"
+          }
+        },
+        "input_register_upload_fields_raw_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "input_register_upload_field_ranges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/address_range"
+          }
+        },
+        "firmware_examples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "model_record_count": {
+          "type": "integer"
+        },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "dtc_type_group": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "name_key",
+        "categories",
+        "category_keys"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "name_key": {
+          "type": "string"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "category_keys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "profile_overlap": {
+      "type": "object",
+      "required": [
+        "left_profile_id",
+        "right_profile_id",
+        "intersection_ranges",
+        "severity"
+      ],
+      "properties": {
+        "left_profile_id": {
+          "type": "string"
+        },
+        "right_profile_id": {
+          "type": "string"
+        },
+        "function_code_relation": {
+          "type": "string"
+        },
+        "intersection_ranges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/address_range"
+          }
+        },
+        "severity": {
+          "type": "string"
+        },
+        "message_cn": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "profile_dtc_link": {
+      "type": "object",
+      "required": [
+        "register_profile_id",
+        "device_model_id",
+        "dtc",
+        "confidence"
+      ],
+      "properties": {
+        "register_profile_id": {
+          "type": "string"
+        },
+        "device_model_id": {
+          "type": "string"
+        },
+        "dtc": {
+          "type": "integer"
+        },
+        "confidence": {
+          "enum": [
+            "direct",
+            "inferred"
+          ]
+        },
+        "reason_cn": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

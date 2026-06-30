@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>寄存器入口跳转</title>
+<script>
+  const target = location.hash ? `register_detail.html${location.hash}` : "register_map_visual.html";
+  location.replace(target);
+</script>
+</head>
+<body>
+<p><a id="fallback" href="register_map_visual.html">打开寄存器地址图</a></p>
+<script>
+  document.getElementById("fallback").href = target;
+</script>
+</body>
+</html>

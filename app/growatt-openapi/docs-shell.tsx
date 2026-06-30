@@ -107,6 +107,36 @@ function normalizeLocale(rawLocale: string | null | undefined): GrowattDocLocale
   return DEFAULT_LOCALE;
 }
 
+function SpecialPageNavLink({
+  page,
+  activeSlug,
+  locale,
+  withLocaleHref,
+}: {
+  page: GrowattSpecialPageNavMeta;
+  activeSlug: string | null;
+  locale: GrowattDocLocale;
+  withLocaleHref: (href: string) => string;
+}) {
+  const rawHref = page.href ?? `/growatt-openapi/${page.slug}`;
+  const href = page.href ? rawHref : withLocaleHref(rawHref);
+  const className = `growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim();
+
+  if (page.requiresDocumentNavigation || page.href) {
+    return (
+      <a className={className} href={href}>
+        {page.labelByLocale[locale]}
+      </a>
+    );
+  }
+
+  return (
+    <Link className={className} href={href}>
+      {page.labelByLocale[locale]}
+    </Link>
+  );
+}
+
 function DocsNav({
   docsByLocale,
   specialPages,
@@ -135,25 +165,15 @@ function DocsNav({
       >
         {localeText.overviewLabel}
       </Link>
-      {beforeDocsPages.map((page) =>
-        page.requiresDocumentNavigation ? (
-          <a
-            key={page.slug}
-            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
-            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
-          >
-            {page.labelByLocale[locale]}
-          </a>
-        ) : (
-          <Link
-            key={page.slug}
-            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
-            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
-          >
-            {page.labelByLocale[locale]}
-          </Link>
-        ),
-      )}
+      {beforeDocsPages.map((page) => (
+        <SpecialPageNavLink
+          key={page.slug}
+          page={page}
+          activeSlug={activeSlug}
+          locale={locale}
+          withLocaleHref={withLocaleHref}
+        />
+      ))}
       {docs.map((doc) => (
         <Link
           key={doc.slug}
@@ -164,25 +184,15 @@ function DocsNav({
         </Link>
       ))}
       {afterDocsPages.length > 0 && <div className="growatt-docs-nav-divider" aria-hidden="true" />}
-      {afterDocsPages.map((page) =>
-        page.requiresDocumentNavigation ? (
-          <a
-            key={page.slug}
-            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
-            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
-          >
-            {page.labelByLocale[locale]}
-          </a>
-        ) : (
-          <Link
-            key={page.slug}
-            className={`growatt-docs-nav-link ${activeSlug === page.slug ? "active" : ""}`.trim()}
-            href={withLocaleHref(`/growatt-openapi/${page.slug}`)}
-          >
-            {page.labelByLocale[locale]}
-          </Link>
-        ),
-      )}
+      {afterDocsPages.map((page) => (
+        <SpecialPageNavLink
+          key={page.slug}
+          page={page}
+          activeSlug={activeSlug}
+          locale={locale}
+          withLocaleHref={withLocaleHref}
+        />
+      ))}
     </nav>
   );
 }
