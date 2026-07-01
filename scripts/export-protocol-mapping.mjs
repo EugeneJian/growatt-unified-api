@@ -5,6 +5,9 @@ import { fileURLToPath } from "node:url";
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, "..");
 const sourceRoot = path.join(repoRoot, "ProtocolMapping");
+const uiRoot = path.join(sourceRoot, "ui");
+const ssotRoot = path.join(sourceRoot, "ssot");
+const localeRoot = path.join(uiRoot, "locales");
 const outputRoot = path.join(repoRoot, "out", "growatt-openapi", "protocol-mapping");
 
 const publishFiles = [
@@ -30,7 +33,7 @@ async function assertFileExists(filePath) {
 }
 
 async function copyPublishFile(relativePath) {
-  const sourcePath = path.join(sourceRoot, relativePath);
+  const sourcePath = path.join(uiRoot, relativePath);
   const outputPath = path.join(outputRoot, relativePath);
 
   await assertFileExists(sourcePath);
@@ -46,7 +49,7 @@ function toScriptJson(value) {
 }
 
 async function writeHtmlWithEmbeddedData(relativePath, ssot, locales) {
-  const sourcePath = path.join(sourceRoot, relativePath);
+  const sourcePath = path.join(uiRoot, relativePath);
   const outputPath = path.join(outputRoot, relativePath);
   const html = await readFile(sourcePath, "utf8");
 
@@ -69,14 +72,14 @@ await rm(outputRoot, { recursive: true, force: true });
 await mkdir(outputRoot, { recursive: true });
 
 const ssot = JSON.parse(
-  await readFile(path.join(sourceRoot, "data", "protocol_ssot.json"), "utf8"),
+  await readFile(path.join(ssotRoot, "protocol_ssot.json"), "utf8"),
 );
 const locales = {
   "zh-CN": JSON.parse(
-    await readFile(path.join(sourceRoot, "data", "locales", "zh-CN.json"), "utf8"),
+    await readFile(path.join(localeRoot, "zh-CN.json"), "utf8"),
   ),
   "en-US": JSON.parse(
-    await readFile(path.join(sourceRoot, "data", "locales", "en-US.json"), "utf8"),
+    await readFile(path.join(localeRoot, "en-US.json"), "utf8"),
   ),
 };
 

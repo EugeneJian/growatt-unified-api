@@ -283,7 +283,7 @@ let activeDtcType = "Hybrid_Inverter";
 async function loadProtocolLocales(){
   if(EMBEDDED_PROTOCOL_LOCALES) return EMBEDDED_PROTOCOL_LOCALES;
   const entries = await Promise.all(["zh-CN", "en-US"].map(async locale => {
-    const response = await fetch(`data/locales/${locale}.json`, {cache:"no-store"});
+    const response = await fetch(`locales/${locale}.json`, {cache:"no-store"});
     if(!response.ok) throw new Error(`Locale ${locale}: HTTP ${response.status}`);
     return [locale, await response.json()];
   }));
@@ -292,7 +292,7 @@ async function loadProtocolLocales(){
 
 async function loadProtocolSsot(){
   if(EMBEDDED_PROTOCOL_SSOT) return EMBEDDED_PROTOCOL_SSOT;
-  const response = await fetch("data/protocol_ssot.json", {cache:"no-store"});
+  const response = await fetch("../ssot/protocol_ssot.json", {cache:"no-store"});
   if(!response.ok) throw new Error(`HTTP ${response.status}`);
   return response.json();
 }

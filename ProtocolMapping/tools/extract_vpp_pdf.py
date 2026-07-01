@@ -21,11 +21,19 @@ from typing import Any
 import pdfplumber
 
 
-DEFAULT_PDF = Path("ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf")
-DEFAULT_JSON = Path("ProtocolMapping/data/vpp_protocol_v2_05.json")
-DEFAULT_MARKDOWN = Path("ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20260529_结构化Markdown.md")
-DEFAULT_SSOT = Path("ProtocolMapping/data/protocol_ssot.json")
-DEFAULT_TRANSLATION_OVERLAY = Path("ProtocolMapping/data/register_translations/en-US/vpp_v2_05.json")
+DEFAULT_PDF = Path(
+    "ProtocolMapping/sources/protocols/vpp/v2.05/raw/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf"
+)
+DEFAULT_JSON = Path(
+    "ProtocolMapping/sources/protocols/vpp/v2.05/extracted/vpp_protocol_v2_05.json"
+)
+DEFAULT_MARKDOWN = Path(
+    "ProtocolMapping/sources/protocols/vpp/v2.05/extracted/古瑞瓦特逆变器VPP通信协议V2.05_20260529_结构化Markdown.md"
+)
+DEFAULT_SSOT = Path("ProtocolMapping/ssot/protocol_ssot.json")
+DEFAULT_TRANSLATION_OVERLAY = Path(
+    "ProtocolMapping/sources/protocols/vpp/v2.05/overlays/register_translations/en-US/vpp_v2_05.json"
+)
 
 HAN_RE = re.compile(r"[\u3400-\u9fff]")
 

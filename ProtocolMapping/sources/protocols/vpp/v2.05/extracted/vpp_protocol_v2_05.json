@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "source": {
-    "path": "ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf",
+    "path": "ProtocolMapping/sources/protocols/vpp/v2.05/raw/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf",
     "document_name": "古瑞瓦特逆变器VPP通信协议",
     "protocol_version": "V2.05",
     "document_date": "2026-05-29",

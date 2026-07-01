@@ -18,8 +18,10 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_SOURCE = Path("ProtocolMapping/机型DTC及固件命名规范V06_结构化Markdown.md")
-DEFAULT_OUTPUT = Path("ProtocolMapping/data/protocol_ssot.json")
+DEFAULT_SOURCE = Path(
+    "ProtocolMapping/sources/device-model-dtc/v06/机型DTC及固件命名规范V06_结构化Markdown.md"
+)
+DEFAULT_OUTPUT = Path("ProtocolMapping/ssot/protocol_ssot.json")
 
 REGISTER_DETAIL_COLUMNS = [
     "address",

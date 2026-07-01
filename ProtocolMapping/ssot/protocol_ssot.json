@@ -3,7 +3,7 @@
   "schema_version": "1.0.0",
   "generated_at": "2026-06-30T20:21:14.568024+00:00",
   "source": {
-    "path": "ProtocolMapping/机型DTC及固件命名规范V06_结构化Markdown.md",
+    "path": "ProtocolMapping/sources/device-model-dtc/v06/机型DTC及固件命名规范V06_结构化Markdown.md",
     "sha256": "a590f62c36f80734df45a5121c160dfd8e775aa749ddd1b0b9de9feb532f3347",
     "document_metadata": {
       "文档名称": "机型 DTC 及固件命名规范",
@@ -3802,8 +3802,8 @@
         "supported_dtc_count": 32
       },
       "source_detail_ref": {
-        "path": "ProtocolMapping/data/vpp_protocol_v2_05.json",
-        "source_pdf": "ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf",
+        "path": "ProtocolMapping/sources/protocols/vpp/v2.05/extracted/vpp_protocol_v2_05.json",
+        "source_pdf": "ProtocolMapping/sources/protocols/vpp/v2.05/raw/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf",
         "protocol_version": "V2.05",
         "document_date": "2026-05-29"
       }
@@ -6749,8 +6749,8 @@
         "supported_dtc_count": 32
       },
       "source_detail_ref": {
-        "path": "ProtocolMapping/data/vpp_protocol_v2_05.json",
-        "source_pdf": "ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf",
+        "path": "ProtocolMapping/sources/protocols/vpp/v2.05/extracted/vpp_protocol_v2_05.json",
+        "source_pdf": "ProtocolMapping/sources/protocols/vpp/v2.05/raw/古瑞瓦特逆变器VPP通信协议V2.05_20260529（临时版本）.pdf",
         "protocol_version": "V2.05",
         "document_date": "2026-05-29"
       }

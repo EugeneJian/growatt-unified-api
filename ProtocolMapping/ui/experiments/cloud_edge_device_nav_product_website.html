@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cloud Edge Device Navigation</title>
+  <style>
+    :root {
+      --bg: #050b16;
+      --bg-soft: #08172a;
+      --card: rgba(255, 255, 255, 0.065);
+      --card-strong: rgba(255, 255, 255, 0.095);
+      --line: rgba(110, 196, 255, 0.26);
+      --line-strong: rgba(107, 239, 255, 0.62);
+      --text: #edf7ff;
+      --muted: #94aeca;
+      --cyan: #6befff;
+      --blue: #78a7ff;
+      --green: #72ffd2;
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    body {
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(70, 135, 255, 0.30), transparent 30%),
+        radial-gradient(circle at 88% 22%, rgba(79, 238, 255, 0.18), transparent 24%),
+        radial-gradient(circle at 50% 95%, rgba(104, 255, 211, 0.10), transparent 26%),
+        linear-gradient(180deg, #061225 0%, #050b16 62%, #030812 100%);
+    }
+
+    a { color: inherit; }
+
+    .page {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      padding: 34px clamp(18px, 4vw, 64px) 48px;
+      overflow: hidden;
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at 50% 38%, black 0%, transparent 76%);
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      width: 520px;
+      height: 520px;
+      right: -180px;
+      top: -150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(107, 239, 255, 0.22), rgba(120, 167, 255, 0.06) 46%, transparent 70%);
+      filter: blur(2px);
+      pointer-events: none;
+    }
+
+    .nav {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background:
+        linear-gradient(135deg, rgba(107,239,255,0.95), rgba(120,167,255,0.95));
+      box-shadow: 0 0 28px rgba(107,239,255,0.28);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #cbe2ff;
+      font-size: 13px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.035);
+      backdrop-filter: blur(14px);
+      transition: border-color .22s ease, background .22s ease, transform .22s ease;
+    }
+
+    .nav-links a:hover {
+      border-color: rgba(107,239,255,0.35);
+      background: rgba(107,239,255,0.08);
+      transform: translateY(-1px);
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      margin: 58px auto 0;
+      display: grid;
+      grid-template-columns: minmax(280px, 0.92fr) minmax(420px, 1.08fr);
+      gap: clamp(28px, 5vw, 72px);
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #bcecff;
+      border: 1px solid rgba(107,239,255,0.18);
+      background: rgba(107,239,255,0.055);
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 18px rgba(107,239,255,0.7);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 6vw, 82px);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      max-width: 760px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #ffffff, #9eeaff 40%, #98b8ff 72%, #ffffff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      margin: 24px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    .cta-row {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      padding: 13px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease;
+    }
+
+    .btn-primary {
+      color: #03111e;
+      background: linear-gradient(135deg, #6befff, #93b7ff);
+      box-shadow: 0 16px 36px rgba(84, 180, 255, 0.22);
+    }
+
+    .btn-secondary {
+      color: #d8ecff;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(12px);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 44px rgba(84, 180, 255, 0.18);
+    }
+
+    .visual {
+      position: relative;
+      min-height: 610px;
+      border-radius: 34px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.035)),
+        rgba(255,255,255,0.035);
+      backdrop-filter: blur(22px);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 28px 90px var(--shadow);
+      overflow: hidden;
+      padding: 32px;
+    }
+
+    .visual::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: radial-gradient(circle at 50% 50%, rgba(107,239,255,0.14), transparent 34%);
+      pointer-events: none;
+    }
+
+    .spine {
+      position: absolute;
+      left: 50%;
+      top: 92px;
+      bottom: 92px;
+      width: 2px;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, transparent, var(--line-strong), rgba(120,167,255,0.75), var(--line-strong), transparent);
+      box-shadow: 0 0 24px rgba(107,239,255,0.34);
+    }
+
+    .hub {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 138px;
+      height: 138px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background:
+        radial-gradient(circle, rgba(107,239,255,0.22), rgba(39, 79, 156, 0.32) 42%, rgba(5, 15, 32, 0.96) 70%);
+      border: 1px solid rgba(107,239,255,0.35);
+      box-shadow:
+        0 0 0 10px rgba(107,239,255,0.035),
+        0 0 0 22px rgba(120,167,255,0.035),
+        0 0 44px rgba(107,239,255,0.22);
+      z-index: 3;
+    }
+
+    .hub::before,
+    .hub::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(107,239,255,0.18);
+      pointer-events: none;
+    }
+
+    .hub::before { inset: 12px; }
+    .hub::after { inset: 24px; border-color: rgba(120,167,255,0.18); }
+
+    .hub strong {
+      display: block;
+      position: relative;
+      z-index: 2;
+      font-size: 19px;
+      line-height: 1.15;
+    }
+
+    .hub span {
+      position: relative;
+      z-index: 2;
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .layer-card {
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      min-height: 138px;
+      border: 1px solid rgba(255,255,255,0.095);
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.035));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.025), 0 18px 40px rgba(0,0,0,0.22);
+      display: grid;
+      grid-template-columns: 172px 1fr 168px;
+      align-items: center;
+      overflow: hidden;
+      transition: transform .24s ease, border-color .24s ease, background .24s ease;
+    }
+
+    .layer-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(107,239,255,0.32);
+      background: linear-gradient(135deg, rgba(107,239,255,0.105), rgba(255,255,255,0.04));
+    }
+
+    .layer-card:nth-of-type(1) { top: 36px; }
+    .layer-card:nth-of-type(2) { top: 236px; }
+    .layer-card:nth-of-type(3) { bottom: 36px; }
+
+    .layer-card::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 22px rgba(107,239,255,0.62);
+      z-index: 2;
+    }
+
+    .layer-head {
+      height: 100%;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-right: 1px solid rgba(255,255,255,0.075);
+    }
+
+    .layer-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      font-size: 22px;
+      background: rgba(107,239,255,0.08);
+      border: 1px solid rgba(107,239,255,0.18);
+    }
+
+    .layer-cn {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .layer-en {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+
+    .layer-mid {
+      padding: 22px 24px;
+    }
+
+    .layer-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      color: #d8eaff;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.045);
+    }
+
+    .protocol {
+      height: 100%;
+      border-left: 1px solid rgba(255,255,255,0.075);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+
+    .protocol a {
+      width: 100%;
+      min-height: 76px;
+      border: 1px solid rgba(107,239,255,0.18);
+      border-radius: 18px;
+      background: rgba(107,239,255,0.055);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.38;
+      color: #d9f6ff;
+      transition: border-color .22s ease, background .22s ease;
+    }
+
+    .protocol a:hover {
+      border-color: rgba(107,239,255,0.48);
+      background: rgba(107,239,255,0.12);
+    }
+
+    .foot {
+      position: relative;
+      z-index: 2;
+      max-width: 1280px;
+      margin: 34px auto 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .code-pill {
+      color: #dff5ff;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.045);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; margin-top: 42px; }
+      .visual { min-height: auto; padding: 18px; display: grid; gap: 14px; }
+      .spine, .hub { display: none; }
+      .layer-card { position: relative; left: auto; right: auto; top: auto !important; bottom: auto !important; grid-template-columns: 1fr; min-height: auto; }
+      .layer-card::after { display: none; }
+      .layer-head, .protocol { border: none; }
+      .layer-head { border-bottom: 1px solid rgba(255,255,255,0.075); }
+      .protocol { justify-content: flex-start; }
+      .foot { flex-direction: column; }
+    }
+
+    @media (max-width: 640px) {
+      .nav { flex-direction: column; align-items: flex-start; }
+      .nav-links { justify-content: flex-start; }
+      .page { padding: 24px 16px 36px; }
+      h1 { font-size: 42px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="orb"></div>
+
+    <nav class="nav">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>Navigation Central</div>
+      </div>
+      <div class="nav-links">
+        <a href="#cloud">Cloud</a>
+        <a href="#gateway">Gateway</a>
+        <a href="#device">Device</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="copy">
+        <div class="eyebrow"><span class="pulse-dot"></span> Cloud · Gateway · Device Architecture</div>
+        <h1><span class="gradient-text">统一入口，连接云边端能力。</span></h1>
+        <p class="subtitle">
+          一个极简、可集成的导航中枢，用三层结构承载云端 API、边缘网关与端侧设备能力，并为未来协议文档预留统一链接入口。
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#architecture">查看架构 →</a>
+          <a class="btn btn-secondary" href="#" data-link-key="protocol.cloudApi">API Protocol</a>
+        </div>
+      </div>
+
+      <div class="visual" id="architecture">
+        <div class="spine"></div>
+        <div class="hub"><div><strong>导航中枢</strong><span>Navigation</span></div></div>
+
+        <article class="layer-card" id="cloud">
+          <div class="layer-head">
+            <div class="layer-icon">☁</div>
+            <div>
+              <div class="layer-cn">云</div>
+              <div class="layer-en">Cloud</div>
+            </div>
+          </div>
+          <div class="layer-mid">
+            <div class="layer-title">Cloud API Service Layer</div>
+            <div class="chips">
+              <span class="chip">API Service</span>
+              <span class="chip">Auth</span>
+              <span class="chip">Telemetry</span>
+              <span class="chip">Control</span>
+              <span class="chip">Site / Fleet</span>
+            </div>
+          </div>
+          <div class="protocol">
+            <a href="#" data-link-key="protocol.cloudApi">Cloud API<br/>Protocol ↗</a>
+          </div>
+        </article>
+
+        <article class="layer-card" id="gateway">
+          <div class="layer-head">
+            <div class="layer-icon">◫</div>
+            <div>
+              <div class="layer-cn">边</div>
+              <div class="layer-en">Gateway</div>
+            </div>
+          </div>
+          <div class="layer-mid">
+            <div class="layer-title">Gateway Runtime Layer</div>
+            <div class="chips">
+              <span class="chip">Gateway</span>
+              <span class="chip">Protocol Adapter</span>
+              <span class="chip">Cache</span>
+              <span class="chip">Fallback</span>
+            </div>
+          </div>
+          <div class="protocol">
+            <a href="#" data-link-key="protocol.gatewaySystem">Gateway System<br/>Protocol ↗</a>
+          </div>
+        </article>
+
+        <article class="layer-card" id="device">
+          <div class="layer-head">
+            <div class="layer-icon">▣</div>
+            <div>
+              <div class="layer-cn">端</div>
+              <div class="layer-en">Device</div>
+            </div>
+          </div>
+          <div class="layer-mid">
+            <div class="layer-title">Unified Device Layer</div>
+            <div class="chips">
+              <span class="chip">Inverter</span>
+              <span class="chip">Battery</span>
+              <span class="chip">PV</span>
+              <span class="chip">Meter</span>
+            </div>
+          </div>
+          <div class="protocol">
+            <a href="#" data-link-key="protocol.deviceUnified">Device Unified<br/>Protocol ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div>纯静态 HTML / CSS / JS，可直接嵌入现有项目。</div>
+      <div>替换 <span class="code-pill">LINK_REGISTRY</span> 即可接入真实链接。</div>
+    </footer>
+  </main>
+
+  <script>
+    const LINK_REGISTRY = {
+      "protocol.cloudApi": "#",
+      "protocol.gatewaySystem": "#",
+      "protocol.deviceUnified": "#"
+    };
+
+    document.querySelectorAll('[data-link-key]').forEach((node) => {
+      const key = node.getAttribute('data-link-key');
+      if (LINK_REGISTRY[key]) node.href = LINK_REGISTRY[key];
+    });
+  </script>
+</body>
+</html>

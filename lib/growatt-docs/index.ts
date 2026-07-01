@@ -34,7 +34,7 @@ export const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG =
   "appendix-d-openapi-support-scope";
 export const GROWATT_PROTOCOL_MAPPING_SLUG = "protocol-mapping";
 export const GROWATT_PROTOCOL_MAPPING_HREF =
-  "/growatt-openapi/protocol-mapping/register_map_visual.html";
+  "/growatt-openapi/protocol-mapping/index.html";
 
 export type GrowattDocLocale = "en" | "zh-CN";
 

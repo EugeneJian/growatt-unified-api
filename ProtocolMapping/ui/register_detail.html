@@ -62,7 +62,7 @@
 <script src="protocol_locale_ui.js"></script>
 <script src="dtc_ssot_ui.js"></script>
 <script>
-const DATA_URL = "data/protocol_ssot.json";
+const DATA_URL = "../ssot/protocol_ssot.json";
 const EMBEDDED_PROTOCOL_SSOT = null;
 const EMBEDDED_PROTOCOL_LOCALES = null;
 const DTC_UI = window.DtcSsotUi;
@@ -91,7 +91,7 @@ const selectedProfileId = () => {
 async function loadProtocolLocales(){
   if(EMBEDDED_PROTOCOL_LOCALES) return EMBEDDED_PROTOCOL_LOCALES;
   const entries = await Promise.all(["zh-CN", "en-US"].map(async locale => {
-    const response = await fetch(`data/locales/${locale}.json`, {cache:"no-store"});
+    const response = await fetch(`locales/${locale}.json`, {cache:"no-store"});
     if(!response.ok) throw new Error(`Locale ${locale}: HTTP ${response.status}`);
     return [locale, await response.json()];
   }));

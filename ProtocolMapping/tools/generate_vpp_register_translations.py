@@ -14,8 +14,12 @@ from pathlib import Path
 from typing import Any
 
 
-DEFAULT_VPP_JSON = Path("ProtocolMapping/data/vpp_protocol_v2_05.json")
-DEFAULT_OUTPUT = Path("ProtocolMapping/data/register_translations/en-US/vpp_v2_05.json")
+DEFAULT_VPP_JSON = Path(
+    "ProtocolMapping/sources/protocols/vpp/v2.05/extracted/vpp_protocol_v2_05.json"
+)
+DEFAULT_OUTPUT = Path(
+    "ProtocolMapping/sources/protocols/vpp/v2.05/overlays/register_translations/en-US/vpp_v2_05.json"
+)
 
 HAN_RE = re.compile(r"[\u3400-\u9fff]")
 

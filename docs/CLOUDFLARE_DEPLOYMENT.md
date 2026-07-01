@@ -12,7 +12,7 @@
    - Node.js version: `20`
 3. 首次部署完成后，访问：
    - `/growatt-openapi`
-   - `/growatt-openapi/protocol-mapping/register_map_visual.html`
+   - `/growatt-openapi/protocol-mapping/index.html`
 
 ## CLI 部署
 
@@ -25,7 +25,7 @@ npx wrangler pages deploy out --project-name <your-project-name>
 
 ## Protocol SSOT 发布与 Cloudflare Access
 
-`ProtocolMapping/` 是协议 SSOT 的源码目录。JSON SSOT 保留在工程中作为唯一主数据；线上只发布经过筛选的静态页面和无数据 UI helper，构建脚本会将页面运行所需数据内联到 HTML，不发布原始 `data/*.json` 文件。
+`ProtocolMapping/` 是协议 SSOT 的源码目录。`ProtocolMapping/ssot/protocol_ssot.json` 是唯一主数据；`ProtocolMapping/ui/` 是发布页面；`ProtocolMapping/sources/` 是 PDF、抽取稿和审阅覆盖层；`ProtocolMapping/tools/` 是生成脚本。线上只发布经过筛选的静态页面和无数据 UI helper，构建脚本会将页面运行所需数据内联到 HTML，不发布原始 SSOT JSON 或来源文件。
 
 - `/growatt-openapi/protocol-mapping/`
 
@@ -41,9 +41,10 @@ npm run protocol:export
 - `register_map_visual.html`
 - `register_detail.html`
 - `register_index.html`
+- `protocol_locale_ui.js`
 - `dtc_ssot_ui.js`
 
-不发布原始 PDF、抽取脚本、结构化 Markdown 审阅稿，也不发布 `data/protocol_ssot.json`、`data/protocol_ssot.schema.json`、`data/vpp_protocol_v2_05.json`。
+不发布原始 PDF、抽取脚本、结构化 Markdown 审阅稿，也不发布 `ssot/*.json` 或 `sources/**`。
 
 ### Access 策略
 
@@ -62,9 +63,10 @@ npm run protocol:export
 
 保护路径必须覆盖整个 Protocol Mapping 目录。特别确认以下地址未登录时会进入 Access OTP 登录页：
 
+- `/growatt-openapi/protocol-mapping/index.html`
 - `/growatt-openapi/protocol-mapping/register_map_visual.html`
 
-原始 JSON SSOT 不作为线上公开资源发布。若直接访问 `/growatt-openapi/protocol-mapping/data/protocol_ssot.json`，未登录时可能先被 Access 拦截；通过 Access 后也应是 `404`，而不是返回 JSON 内容。
+原始 JSON SSOT 不作为线上公开资源发布。若直接访问 `/growatt-openapi/protocol-mapping/ssot/protocol_ssot.json`，未登录时可能先被 Access 拦截；通过 Access 后也应是 `404`，而不是返回 JSON 内容。
 
 Cloudflare Access 只能按域名与 path 授权，不能按 `#fc03...` 这类浏览器 hash 授权。
 
