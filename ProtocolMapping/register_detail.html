@@ -109,11 +109,19 @@ function moduleName(profile){
   return LOCALE.t(profile.module_key || "", {}, profile.module_cn);
 }
 
+function registerDisplayValue(register, key){
+  if(LOCALE.locale() === "en-US"){
+    if(key === "field_name") return register.field_name_en || register.field_name || "";
+    if(key === "notes") return register.notes_en || register.notes || "";
+  }
+  return register[key] ?? "";
+}
+
 function renderTable(profile, ssot){
   const schema = profile.detail_schema?.length ? profile.detail_schema : ssot.register_detail_schema;
   const head = schema.map(key => `<th>${esc(LOCALE.t(LABEL_KEYS[key] || key, {}, key))}</th>`).join("");
   const rows = profile.registers?.length
-    ? profile.registers.map(register => `<tr>${schema.map(key => `<td>${esc(register[key] ?? "")}</td>`).join("")}</tr>`).join("")
+    ? profile.registers.map(register => `<tr>${schema.map(key => `<td>${esc(registerDisplayValue(register, key))}</td>`).join("")}</tr>`).join("")
     : profile.address_ranges.map(range => {
       const placeholder = {
         address: `${range.start}~${range.end}`,
@@ -181,7 +189,7 @@ function renderApplicability(profile, ssot){
     .join("");
   const fieldRules = (profile.registers || [])
     .filter(register => register.applicable_dtc_ranges?.length)
-    .map(register => `<li><span class="mono">${esc(register.address)}</span> ${esc(register.field_name)}：${esc(register.applicable_dtc_or_model)}</li>`)
+    .map(register => `<li><span class="mono">${esc(register.address)}</span> ${esc(registerDisplayValue(register, "field_name"))}：${esc(register.applicable_dtc_or_model)}</li>`)
     .join("");
   const fieldRuleBlock = fieldRules
     ? `<ul class="field-rules">${fieldRules}</ul>`

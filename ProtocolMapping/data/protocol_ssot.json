@@ -368,7 +368,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Device model (DTC)",
+          "notes_en": "See Table 3-1"
         },
         {
           "address": "30001",
@@ -389,7 +391,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "SN",
+          "notes_en": "-"
         },
         {
           "address": "30016",
@@ -410,7 +414,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Rated power (Pn)",
+          "notes_en": "-"
         },
         {
           "address": "30018",
@@ -431,7 +437,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Maximum active power (Pmax)",
+          "notes_en": "-"
         },
         {
           "address": "30020",
@@ -452,7 +460,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Maximum reactive power (Qmax fed into grid)",
+          "notes_en": "-"
         },
         {
           "address": "30022",
@@ -473,7 +483,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Maximum reactive power (Qmax absorbed from grid)",
+          "notes_en": "-"
         },
         {
           "address": "30024",
@@ -494,7 +506,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Maximum apparent power (Smax)",
+          "notes_en": "-"
         },
         {
           "address": "30026",
@@ -515,7 +529,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "BDC rated charge/discharge power",
+          "notes_en": "-"
         },
         {
           "address": "30028",
@@ -536,7 +552,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "PV input maximum power",
+          "notes_en": "-"
         },
         {
           "address": "30030",
@@ -557,7 +575,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Battery type",
+          "notes_en": "0: lead-acid battery\n1: lithium battery"
         },
         {
           "address": "30031",
@@ -578,7 +598,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "Inverter version information"
         },
         {
           "address": "30060",
@@ -599,7 +621,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Control chip software code",
+          "notes_en": "Example for MOD-XH:\nDN"
         },
         {
           "address": "30061",
@@ -620,7 +644,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Control chip software code",
+          "notes_en": "Example for MOD-XH:\nAA"
         },
         {
           "address": "30062",
@@ -641,7 +667,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Control chip version 1",
+          "notes_en": "Example for MOD-XH:\n09"
         },
         {
           "address": "30063",
@@ -662,7 +690,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Control chip version 2",
+          "notes_en": "Example for MOD-XH:\n51"
         },
         {
           "address": "30064",
@@ -683,7 +713,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Control chip version 3",
+          "notes_en": "Example for MOD-XH:\n01"
         },
         {
           "address": "30065",
@@ -704,7 +736,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Monitoring chip software code",
+          "notes_en": "Example for MOD-XH:\nZB"
         },
         {
           "address": "30066",
@@ -725,7 +759,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Monitoring chip software code",
+          "notes_en": "Example for MOD-XH:\nDB"
         },
         {
           "address": "30067",
@@ -746,7 +782,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             7
-          ]
+          ],
+          "field_name_en": "Monitoring chip version",
+          "notes_en": "Example for MOD-XH:\n12\nstorage battery version information"
         },
         {
           "address": "30068",
@@ -767,7 +805,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip 1 software code",
+          "notes_en": "Example for APX5.0: WA"
         },
         {
           "address": "30069",
@@ -788,7 +828,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip 1 software code",
+          "notes_en": "Example for APX5.0: AA"
         },
         {
           "address": "30070",
@@ -809,7 +851,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip 1 version",
+          "notes_en": "Example for APX5.0: 09"
         },
         {
           "address": "30071",
@@ -830,7 +874,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip 2 software code",
+          "notes_en": "Example for APX5.0: QA"
         },
         {
           "address": "30072",
@@ -851,7 +897,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip 2 software code",
+          "notes_en": "Example for APX5.0: BA"
         },
         {
           "address": "30073",
@@ -872,7 +920,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip 2 version",
+          "notes_en": "Example for APX5.0: 09"
         },
         {
           "address": "30074",
@@ -893,7 +943,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Monitoring chip 1 software version name",
+          "notes_en": "Example for APX5.0: QB"
         },
         {
           "address": "30075",
@@ -914,7 +966,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Monitoring chip 1 software version name",
+          "notes_en": "Example for APX5.0: AA"
         },
         {
           "address": "30076",
@@ -935,7 +989,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Monitoring chip 1 chip version",
+          "notes_en": "Example for APX5.0: 09"
         },
         {
           "address": "30077",
@@ -956,7 +1012,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Monitoring chip 2 software code",
+          "notes_en": "Example for APX5.0: ZE"
         },
         {
           "address": "30078",
@@ -977,7 +1035,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Monitoring chip 2 software code",
+          "notes_en": "Example for APX5.0: BA"
         },
         {
           "address": "30079",
@@ -998,7 +1058,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Monitoring chip 2 version",
+          "notes_en": "Example for APX5.0: 09\nmeter version information"
         },
         {
           "address": "30080",
@@ -1019,7 +1081,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip software code",
+          "notes_en": "First two characters, for example: ZO"
         },
         {
           "address": "30081",
@@ -1040,7 +1104,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip software code",
+          "notes_en": "Last two characters, for example: AA"
         },
         {
           "address": "30082",
@@ -1061,7 +1127,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control chip version",
+          "notes_en": "Example: 02"
         },
         {
           "address": "30083",
@@ -1082,7 +1150,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "Reserved\nVPP protocol version information"
         },
         {
           "address": "30084",
@@ -1103,7 +1173,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "Reserved"
         },
         {
           "address": "30099",
@@ -1124,7 +1196,9 @@
           "section": "VPP 协议参数 - 0x03 Holding Register",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "VPP protocol version",
+          "notes_en": "200 means V2.00, 201 means V2.01. Versions 200 and later support the safety-parameter protocol."
         },
         {
           "address": "30100",
@@ -1145,7 +1219,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             8
-          ]
+          ],
+          "field_name_en": "Control permission",
+          "notes_en": "0: Disabled\n1: EnabledDefault: 0\nThis must be enabled to control the inverter through this protocol"
         },
         {
           "address": "30101",
@@ -1167,7 +1243,9 @@
           "source_pages": [
             8,
             9
-          ]
+          ],
+          "field_name_en": "Power on/off command",
+          "notes_en": "0: Power off\n1: Power on\n9: Bypass modeDefault: 1\nNot stored"
         },
         {
           "address": "30102",
@@ -1188,7 +1266,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Country/region code",
+          "notes_en": "See Appendix Table 3-5"
         },
         {
           "address": "30103",
@@ -1209,7 +1289,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30104",
@@ -1230,7 +1312,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "System time",
+          "notes_en": "See Appendix Table 3-6"
         },
         {
           "address": "30110",
@@ -1251,7 +1335,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30112",
@@ -1272,7 +1358,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Communication address",
+          "notes_en": "[1, 255]\nDefault: 1"
         },
         {
           "address": "30113",
@@ -1293,7 +1381,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Communication baud rate",
+          "notes_en": "0: 9600 bps\n1: 38400 bps\nDefault: 0"
         },
         {
           "address": "30114",
@@ -1314,7 +1404,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30115",
@@ -1335,7 +1427,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "SYN enable",
+          "notes_en": "Off-grid box enable\n0: Disabled\n1: EnabledDefault: 0"
         },
         {
           "address": "30116",
@@ -1356,7 +1450,9 @@
           "section": "系统命令控制信息：30100~30149",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30150",
@@ -1377,7 +1473,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30151",
@@ -1398,7 +1496,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Active power percentage derating",
+          "notes_en": "Power limit percentage: [0, 100]\nDefault: 100"
         },
         {
           "address": "30152",
@@ -1419,7 +1519,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30154",
@@ -1440,7 +1542,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Active power percentage",
+          "notes_en": "Power limit percentage: [0, 100]\nDefault: 100\nThis register and active power percentage derating (30151) use the smaller value as the actual active power limit.\nNot stored"
         },
         {
           "address": "30155",
@@ -1461,7 +1565,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "EPS off-grid enable",
+          "notes_en": "0: Disabled\n1: EnabledDefault: 0"
         },
         {
           "address": "30156",
@@ -1482,7 +1588,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "EPS off-grid frequency",
+          "notes_en": "0: 50Hz\n1: 60Hz\nDefault: 0"
         },
         {
           "address": "30157",
@@ -1503,7 +1611,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "EPS off-grid voltage (3)",
+          "notes_en": "Default: 0\nFor each model range, see note (3)"
         },
         {
           "address": "30158",
@@ -1524,7 +1634,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30160",
@@ -1545,7 +1657,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             9
-          ]
+          ],
+          "field_name_en": "Reactive power percentage",
+          "notes_en": "[0, 70]\nDefault: 0"
         },
         {
           "address": "30161",
@@ -1566,7 +1680,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Reactive power mode",
+          "notes_en": "0: PF=1\n1: PF value setting\n4: Capacitive reactive power percentage (-)\n5: Inductive reactive power percentage (+)\nDefault: 0\nSetting logic: see Appendix 3.6"
         },
         {
           "address": "30162",
@@ -1587,7 +1703,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Power factor",
+          "notes_en": "[0, 2000] U [18000, 20000]\nDefault: 20000\nActual power factor PF = (register value - 10000) * 0.0001"
         },
         {
           "address": "30163",
@@ -1608,7 +1726,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30164",
@@ -1629,7 +1749,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "Reserved for reactive power curve"
         },
         {
           "address": "30200",
@@ -1650,7 +1772,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Export limit enable",
+          "notes_en": "0: Export limit disabled\n1: Enable meter 1 export limit\n2: Reserved\n3: Enable external CT export limit\n4: Enable internal CT export limit\nDefault: 0\n3-4 are used only by some models. For specific distinction, see note (7).\nLogic: see Appendix 3.3.2"
         },
         {
           "address": "30201",
@@ -1671,7 +1795,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Export limit power percentage",
+          "notes_en": "[-100, 100]\nDefault: 0\nPositive value: reverse power control\nNegative value: forward power control"
         },
         {
           "address": "30202",
@@ -1692,7 +1818,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Fail-safe power percentage",
+          "notes_en": "[0, 100]\nDefault: 0\n30202-30203 are shared by export-limit failure and communication failure"
         },
         {
           "address": "30203",
@@ -1713,7 +1841,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             10
-          ]
+          ],
+          "field_name_en": "Fail-safe time",
+          "notes_en": "[1, 300]\nDefault: 30"
         },
         {
           "address": "30204",
@@ -1735,7 +1865,9 @@
           "source_pages": [
             10,
             11
-          ]
+          ],
+          "field_name_en": "Communication-loss function enable",
+          "notes_en": "0: Disabled\n1: 485 communication-loss enable\n2: USB communication-loss enable\n3: Enable failure when either 485 or USB communication is lost\n4: Enable failure only when both 485 and USB communication are lost\nDefault: 0\nControl logic: see Appendix 3.3.2"
         },
         {
           "address": "30205",
@@ -1756,7 +1888,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             11
-          ]
+          ],
+          "field_name_en": "Excess export enable",
+          "notes_en": "0: Disabled\n1: EnabledDefault: 0\nFor safety range, see note (8)"
         },
         {
           "address": "30206",
@@ -1777,7 +1911,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             11
-          ]
+          ],
+          "field_name_en": "Export-limit feed-in power change rate",
+          "notes_en": "[0, 20000]\nDefault: 27\nFor safety range, see note (8)"
         },
         {
           "address": "30207",
@@ -1798,7 +1934,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             11
-          ]
+          ],
+          "field_name_en": "Single-phase export limit control enable",
+          "notes_en": "0: Disabled\n1: EnabledDefault: 0"
         },
         {
           "address": "30208",
@@ -1819,7 +1957,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             11
-          ]
+          ],
+          "field_name_en": "Export limit protection mode (2)",
+          "notes_en": "0: Default mode\n1: Software/hardware joint control mode\n2: Software control mode\n3: Hardware control mode\nDefault: 0\nOnly for residential on-grid PV-storage models and residential on-grid PV models.\nFor safety range, see note (8)"
         },
         {
           "address": "30209",
@@ -1840,7 +1980,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             11
-          ]
+          ],
+          "field_name_en": "Grid/off-grid auto-switch enable",
+          "notes_en": "0: Automatic\n1: ManualDefault: 0"
         },
         {
           "address": "30210",
@@ -1862,7 +2004,9 @@
           "source_pages": [
             11,
             12
-          ]
+          ],
+          "field_name_en": "Grid/off-grid setting",
+          "notes_en": "Modify grid/off-grid and generator mode in manual mode\n0: On-grid\n1: Off-grid\n2: Generator\nDefault: 0\nCan be set only when 30209 is 1"
         },
         {
           "address": "30211",
@@ -1883,7 +2027,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Phase R active power",
+          "notes_en": "[0, rated power / 3]\nDefault: rated power / 3"
         },
         {
           "address": "30212",
@@ -1904,7 +2050,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Phase S active power",
+          "notes_en": "[0, rated power / 3]\nDefault: rated power / 3"
         },
         {
           "address": "30213",
@@ -1925,7 +2073,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Phase T active power",
+          "notes_en": "[0, rated power / 3]\nDefault: rated power / 3"
         },
         {
           "address": "30214",
@@ -1946,7 +2096,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Active power single-phase control enable",
+          "notes_en": "0: Combined-phase control\n1: Single-phase controlDefault: 0"
         },
         {
           "address": "30215",
@@ -1967,7 +2119,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Maximum grid charging power limit",
+          "notes_en": "[0, 65535]\nValid when AC charge enable is on\nDefault: unlimited (65535)\nNo limit when exceeding rated power"
         },
         {
           "address": "30216",
@@ -1988,7 +2142,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Maximum grid charging power limit II",
+          "notes_en": "[0, 65535]\nValid when AC charge enable is on; controlled by the smaller value together with 30215\nDefault: unlimited (65535)\nNo limit when exceeding rated power\nNot stored"
         },
         {
           "address": "30217",
@@ -2009,7 +2165,9 @@
           "section": "交流侧控制设置信息：30150~30249",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30250",
@@ -2030,7 +2188,9 @@
           "section": "油机控制模块：30250~30299",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Generator rated power",
+          "notes_en": "[0, 10000]\nDefault: inverter rated power"
         },
         {
           "address": "30251",
@@ -2051,7 +2211,9 @@
           "section": "油机控制模块：30250~30299",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Generator charging power",
+          "notes_en": "[0, 10000]\nDefault: inverter rated power"
         },
         {
           "address": "30252",
@@ -2072,7 +2234,9 @@
           "section": "油机控制模块：30250~30299",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Generator enable",
+          "notes_en": "0: GeneratorDisabled\n1: GeneratorEnabledDefault: 0"
         },
         {
           "address": "30253",
@@ -2093,7 +2257,9 @@
           "section": "油机控制模块：30250~30299",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Generator start SOC in off-grid mode",
+          "notes_en": "[0, 100]\nDefault: 20"
         },
         {
           "address": "30254",
@@ -2114,7 +2280,9 @@
           "section": "油机控制模块：30250~30299",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Generator stop SOC in off-grid mode",
+          "notes_en": "[0, 100]\nDefault: 50"
         },
         {
           "address": "30255",
@@ -2135,7 +2303,9 @@
           "section": "油机控制模块：30250~30299",
           "source_pages": [
             12
-          ]
+          ],
+          "field_name_en": "Generator warm-up duration setting",
+          "notes_en": "[0, 3600]\nDefault: 60"
         },
         {
           "address": "30256",
@@ -2156,7 +2326,9 @@
           "section": "油机控制模块：30250~30299",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30300",
@@ -2177,7 +2349,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Battery cluster index",
+          "notes_en": "[0, 3]\nSet this register to x. Then the read/write information in [30400, 30406], [30474, 30475], and [30496, 30499] belongs to battery cluster x.\nDefault: 0, meaning the current battery information applies to all battery clusters"
         },
         {
           "address": "30301",
@@ -2198,7 +2372,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Demand management enable",
+          "notes_en": "0: Demand managementDisabled\n1: Demand managementEnabledDefault: 0"
         },
         {
           "address": "30302",
@@ -2219,7 +2395,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Demand management reverse power limit",
+          "notes_en": "[0, 65535]\nDefault: unlimited (65535); no limit when exceeding rated power"
         },
         {
           "address": "30303",
@@ -2240,7 +2418,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Demand management forward power limit",
+          "notes_en": "[0, 65535]\nDefault: unlimited (65535); no limit when exceeding rated power"
         },
         {
           "address": "30304",
@@ -2261,7 +2441,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Peak shaving backup SOC",
+          "notes_en": "[0, 100]\nDefault: 50"
         },
         {
           "address": "30305",
@@ -2282,7 +2464,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Peak shaving enable",
+          "notes_en": "0: Disabled\n1: EnabledDefault: 0"
         },
         {
           "address": "30306",
@@ -2303,7 +2487,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30380~30399",
@@ -2324,7 +2510,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             13
-          ]
+          ],
+          "field_name_en": "Time-period priority",
+          "notes_en": "Battery charge/discharge priority mode for time periods 1~20\n0: Load priority\n1/2: Determine battery/grid priority according to the sign of the time-period value\n3: Pure PV storage\n4: Idle charging mode\n5: Reserved\n6: Idle mode\n7: Reserved\nDefault: 1"
         },
         {
           "address": "30400",
@@ -2346,7 +2534,9 @@
           "source_pages": [
             13,
             14
-          ]
+          ],
+          "field_name_en": "Battery system maximum charging power (reserved)",
+          "notes_en": "-"
         },
         {
           "address": "30402",
@@ -2367,7 +2557,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Battery system maximum discharging power (reserved)",
+          "notes_en": "-"
         },
         {
           "address": "30404",
@@ -2388,7 +2580,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Charge cut-off SOC",
+          "notes_en": "[10, 100]\nDefault: 100"
         },
         {
           "address": "30405",
@@ -2409,7 +2603,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "On-grid discharge cut-off SOC",
+          "notes_en": "[10, 100]\nDefault: 10"
         },
         {
           "address": "30406",
@@ -2430,7 +2626,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Load-priority discharge cut-off SOC (1)",
+          "notes_en": "[10, 100]\nDefault: 10\nOnly for residential hybrid storage inverter series models"
         },
         {
           "address": "30407",
@@ -2451,7 +2649,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Remote power control enable",
+          "notes_en": "0: Disabled\n1: EnabledDefault: 0\nNot stored\n30407~30474Logic: see Appendix 3.5"
         },
         {
           "address": "30408",
@@ -2472,7 +2672,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Remote power-control charging duration",
+          "notes_en": "0: No time limit\n1~1440 min: Control power duration according to the set time\nDefault: 0\nNot stored"
         },
         {
           "address": "30409",
@@ -2493,7 +2695,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Remote charge/discharge power",
+          "notes_en": "[-100, 100]\nDefault: 0\npositive value: chargingnegative value: dischargingNot stored"
         },
         {
           "address": "30410",
@@ -2514,7 +2718,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "AC charge enable",
+          "notes_en": "0: Disabled\n1: Enable AC charging; PV charging is used first, then AC charging\n2: Enable AC charging; AC charging only\nDefault is 1 for commercial storage inverters; default is 0 for other models"
         },
         {
           "address": "30411",
@@ -2535,7 +2741,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Time-of-use charge/discharge (20 periods)",
+          "notes_en": "30412~30471 are time-period settings, and their default values are all 0\nSee Appendix Table 3-2"
         },
         {
           "address": "30472",
@@ -2556,7 +2764,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             14
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30474",
@@ -2578,7 +2788,9 @@
           "source_pages": [
             14,
             15
-          ]
+          ],
+          "field_name_en": "Actual charge/discharge power control value",
+          "notes_en": "[-100, 100]\npositive value: chargingnegative value: discharging"
         },
         {
           "address": "30475",
@@ -2599,7 +2811,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             15
-          ]
+          ],
+          "field_name_en": "Off-grid discharge cut-off SOC",
+          "notes_en": "[10, 100]\nDefault: 10"
         },
         {
           "address": "30476",
@@ -2620,7 +2834,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             15
-          ]
+          ],
+          "field_name_en": "Default time-of-use charge/discharge mode",
+          "notes_en": "Used to set the mode outside configured time periods in time-of-use charge/discharge mode\n0: Load priority\n1: Battery priority\n2: Grid priority\nDefault: 0"
         },
         {
           "address": "30477",
@@ -2641,7 +2857,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             15
-          ]
+          ],
+          "field_name_en": "Time-period clearing enable (4)",
+          "notes_en": "[0, 1]\nDefault: 0\nAfter enabled, when the number of time periods (30411) is set later, the original time-period information (30380~30399, 30412~30471) will be automatically cleared and saved"
         },
         {
           "address": "30478",
@@ -2662,7 +2880,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             15
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "30495",
@@ -2683,7 +2903,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             15
-          ]
+          ],
+          "field_name_en": "Battery wake-up function",
+          "notes_en": "Set to 1 to send one wake-up command to the battery"
         },
         {
           "address": "30496",
@@ -2704,7 +2926,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             15
-          ]
+          ],
+          "field_name_en": "Battery charge cut-off voltage",
+          "notes_en": "For lead-acid batteries\n[0, 15000]\nDistinguished by voltage level\nDefault:\nVoltage level 127V: 6500;\n227V: 10000;\nDefault for other voltage levels: 8000\nOnly for commercial storage inverters"
         },
         {
           "address": "30497",
@@ -2726,7 +2950,9 @@
           "source_pages": [
             15,
             16
-          ]
+          ],
+          "field_name_en": "Battery discharge cut-off voltage",
+          "notes_en": "For lead-acid batteries\n[0, 15000]\nDistinguished by voltage level\nDefault:\nVoltage level 127V: 3800;\nVoltage level 227V: 7500;\nDefault for other voltage levels: 6500\nOnly for commercial storage inverters"
         },
         {
           "address": "30498",
@@ -2747,7 +2973,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             16
-          ]
+          ],
+          "field_name_en": "Battery maximum charging current",
+          "notes_en": "For lead-acid batteries\n[0, 2000]\nOnly for commercial storage invertersDefaultsee note (5)"
         },
         {
           "address": "30499",
@@ -2768,7 +2996,9 @@
           "section": "电池功率控制设置信息：30300~30499（4）",
           "source_pages": [
             16
-          ]
+          ],
+          "field_name_en": "Battery maximum discharging current",
+          "notes_en": "For lead-acid batteries\n[0, 2000]\nOnly for commercial storage invertersDefaultsee note (6)"
         },
         {
           "address": "30500",
@@ -2789,7 +3019,9 @@
           "section": "安规参数信息：30500~30999",
           "source_pages": [
             16
-          ]
+          ],
+          "field_name_en": "See Growatt Inverter VPP Communication Protocol - Safety Parameters",
+          "notes_en": "-"
         },
         {
           "address": "32000",
@@ -2810,7 +3042,9 @@
           "section": "储能系统信息：32000~32099",
           "source_pages": [
             16
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "Model EPS off-grid voltage\n0: 230V\n1: 208V\n2: 240V\n3: 220V\n4: 127V\n5: 277V\n6: 254V"
         }
       ],
       "source_ref": {
@@ -3625,7 +3859,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Inverter operating status",
+          "notes_en": "0: Standby\n1: Self-check\n2: Reserved\n3: Fault\n4: Upgrade\n5: PV online & battery offline & on-grid\n6: PV offline (or online) & battery online & on-grid\n7: PV online & battery online & off-grid\n8: PV offline & battery online & off-grid\n9: Bypass operation"
         },
         {
           "address": "31001",
@@ -3646,7 +3882,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Battery operating status",
+          "notes_en": "0: Battery standby\n1: Battery disconnected\n2: Battery charging operation\n3: Battery discharging operation\n4: Fault\n5: Upgrade"
         },
         {
           "address": "31002",
@@ -3667,7 +3905,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Work priority",
+          "notes_en": "0: Load priority\n1: Battery priority\n2: Grid priority"
         },
         {
           "address": "31003",
@@ -3688,7 +3928,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31005",
@@ -3709,7 +3951,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Fault main code",
+          "notes_en": "See Appendix Table 3-3"
         },
         {
           "address": "31006",
@@ -3730,7 +3974,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Fault sub-code",
+          "notes_en": "See Appendix Table 3-3"
         },
         {
           "address": "31007",
@@ -3751,7 +3997,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Protection main code",
+          "notes_en": "See Appendix Table 3-4"
         },
         {
           "address": "31008",
@@ -3772,7 +4020,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Protection sub-code",
+          "notes_en": "See Appendix Table 3-4"
         },
         {
           "address": "31009",
@@ -3793,7 +4043,9 @@
           "section": "工作状态信息：31000~31009",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31010",
@@ -3814,7 +4066,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "PV1 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31011",
@@ -3835,7 +4089,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "PV1 current",
+          "notes_en": "-"
         },
         {
           "address": "31012",
@@ -3856,7 +4112,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "PV2 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31013",
@@ -3877,7 +4135,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "PV2 current",
+          "notes_en": "-"
         },
         {
           "address": "31014",
@@ -3898,7 +4158,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "PV3 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31015",
@@ -3919,7 +4181,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             18
-          ]
+          ],
+          "field_name_en": "PV3 current",
+          "notes_en": "-"
         },
         {
           "address": "31016",
@@ -3940,7 +4204,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV4 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31017",
@@ -3961,7 +4227,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV4 current",
+          "notes_en": "-"
         },
         {
           "address": "31018",
@@ -3982,7 +4250,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV5 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31019",
@@ -4003,7 +4273,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV5 current",
+          "notes_en": "-"
         },
         {
           "address": "31020",
@@ -4024,7 +4296,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV6 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31021",
@@ -4045,7 +4319,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV6 current",
+          "notes_en": "-"
         },
         {
           "address": "31022",
@@ -4066,7 +4342,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV7 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31023",
@@ -4087,7 +4365,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV7 current",
+          "notes_en": "-"
         },
         {
           "address": "31024",
@@ -4108,7 +4388,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV8 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31025",
@@ -4129,7 +4411,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV8 current",
+          "notes_en": "-"
         },
         {
           "address": "31026",
@@ -4150,7 +4434,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV9 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31027",
@@ -4171,7 +4457,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV9 current",
+          "notes_en": "-"
         },
         {
           "address": "31028",
@@ -4192,7 +4480,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV10 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31029",
@@ -4213,7 +4503,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV10 current",
+          "notes_en": "-"
         },
         {
           "address": "31030",
@@ -4234,7 +4526,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV11 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31031",
@@ -4255,7 +4549,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV11 current",
+          "notes_en": "-"
         },
         {
           "address": "31032",
@@ -4276,7 +4572,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV12 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31033",
@@ -4297,7 +4595,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV12 current",
+          "notes_en": "-"
         },
         {
           "address": "31034",
@@ -4318,7 +4618,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV13 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31035",
@@ -4339,7 +4641,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV13 current",
+          "notes_en": "-"
         },
         {
           "address": "31036",
@@ -4360,7 +4664,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV14 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31037",
@@ -4381,7 +4687,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV14 current",
+          "notes_en": "-"
         },
         {
           "address": "31038",
@@ -4402,7 +4710,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV15 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31039",
@@ -4423,7 +4733,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV15 current",
+          "notes_en": "-"
         },
         {
           "address": "31040",
@@ -4444,7 +4756,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV16 voltage",
+          "notes_en": "-"
         },
         {
           "address": "31041",
@@ -4465,7 +4779,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV16 current",
+          "notes_en": "-"
         },
         {
           "address": "31042",
@@ -4486,7 +4802,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31058",
@@ -4507,7 +4825,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "PV input power",
+          "notes_en": "-"
         },
         {
           "address": "31060",
@@ -4528,7 +4848,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Total PV generation energy",
+          "notes_en": "-"
         },
         {
           "address": "31062",
@@ -4549,7 +4871,9 @@
           "section": "PV参数：31010~31099",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31100",
@@ -4570,7 +4894,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Active power",
+          "notes_en": "Positive value: feed power to the grid\nNegative value: draw power from the grid"
         },
         {
           "address": "31102",
@@ -4591,7 +4917,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Reactive power",
+          "notes_en": "Positive value: capacitive\nNegative value: inductive"
         },
         {
           "address": "31104",
@@ -4612,7 +4940,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31105",
@@ -4633,7 +4963,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Grid frequency",
+          "notes_en": "-"
         },
         {
           "address": "31106",
@@ -4654,7 +4986,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Grid voltage / grid line AB voltage",
+          "notes_en": "When the output mode is L/N, voltage and current use grid voltage and grid current respectively"
         },
         {
           "address": "31107",
@@ -4675,7 +5009,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             19
-          ]
+          ],
+          "field_name_en": "Grid line BC voltage",
+          "notes_en": "-"
         },
         {
           "address": "31108",
@@ -4696,7 +5032,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Grid line CA voltage",
+          "notes_en": "-"
         },
         {
           "address": "31109",
@@ -4717,7 +5055,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Grid current / grid phase A current",
+          "notes_en": "-"
         },
         {
           "address": "31110",
@@ -4738,7 +5078,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Grid phase B current",
+          "notes_en": "-"
         },
         {
           "address": "31111",
@@ -4759,7 +5101,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Grid phase C current",
+          "notes_en": "-"
         },
         {
           "address": "31112",
@@ -4780,7 +5124,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Meter power",
+          "notes_en": "Positive: draw power from the grid\nNegative: feed power to the grid"
         },
         {
           "address": "31114",
@@ -4801,7 +5147,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Inverter temperature",
+          "notes_en": "[-400, 1250]"
         },
         {
           "address": "31115",
@@ -4822,7 +5170,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31116",
@@ -4843,7 +5193,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31117",
@@ -4864,7 +5216,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31118",
@@ -4885,7 +5239,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Daily energy to user",
+          "notes_en": "-"
         },
         {
           "address": "31120",
@@ -4906,7 +5262,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Total energy to user",
+          "notes_en": "-"
         },
         {
           "address": "31122",
@@ -4927,7 +5285,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Daily energy to grid",
+          "notes_en": "-"
         },
         {
           "address": "31124",
@@ -4948,7 +5308,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Total energy to grid",
+          "notes_en": "-"
         },
         {
           "address": "31126",
@@ -4969,7 +5331,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Third-party inverter output active power",
+          "notes_en": "-"
         },
         {
           "address": "31128",
@@ -4990,7 +5354,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "GEN port active power",
+          "notes_en": "GEN port can connect to a third-party inverter, smart load, or generator"
         },
         {
           "address": "31130",
@@ -5011,7 +5377,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "EPS off-grid active power",
+          "notes_en": "-"
         },
         {
           "address": "31132",
@@ -5045,7 +5413,9 @@
               "raw": "21308~21309"
             }
           ],
-          "applicability_source": "VPP register note"
+          "applicability_source": "VPP register note",
+          "field_name_en": "Independent smart load active power",
+          "notes_en": "Only for models whose DTC is 21304~21305 or 21308~21309"
         },
         {
           "address": "31134",
@@ -5066,7 +5436,9 @@
           "section": "交流侧信息：31100~31199",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31200",
@@ -5087,7 +5459,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Charge/discharge power",
+          "notes_en": "Positive value: charging\nNegative value: discharging"
         },
         {
           "address": "31202",
@@ -5108,7 +5482,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Battery daily charged energy",
+          "notes_en": "-"
         },
         {
           "address": "31204",
@@ -5129,7 +5505,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Battery accumulated charged energy",
+          "notes_en": "-"
         },
         {
           "address": "31206",
@@ -5150,7 +5528,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Battery daily discharged energy",
+          "notes_en": "-"
         },
         {
           "address": "31208",
@@ -5171,7 +5551,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Battery accumulated discharged energy",
+          "notes_en": "-"
         },
         {
           "address": "31210",
@@ -5192,7 +5574,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Battery maximum allowed charging power",
+          "notes_en": "-"
         },
         {
           "address": "31212",
@@ -5213,7 +5597,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Battery maximum allowed discharging power",
+          "notes_en": "-"
         },
         {
           "address": "31214",
@@ -5234,7 +5620,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             20
-          ]
+          ],
+          "field_name_en": "Battery voltage",
+          "notes_en": "-"
         },
         {
           "address": "31215",
@@ -5256,7 +5644,9 @@
           "source_pages": [
             20,
             21
-          ]
+          ],
+          "field_name_en": "Battery current",
+          "notes_en": "Positive: charging\nNegative: discharging"
         },
         {
           "address": "31217",
@@ -5277,7 +5667,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "SOC",
+          "notes_en": "[0, 100]"
         },
         {
           "address": "31218",
@@ -5298,7 +5690,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "SOH",
+          "notes_en": "[0, 100]"
         },
         {
           "address": "31219",
@@ -5319,7 +5713,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Battery full charge capacity (FCC)",
+          "notes_en": "-"
         },
         {
           "address": "31221",
@@ -5340,7 +5736,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "Reserved for battery remaining capacity (RM)"
         },
         {
           "address": "31223",
@@ -5361,7 +5759,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Battery ambient temperature",
+          "notes_en": "[-400, 1250]"
         },
         {
           "address": "31224",
@@ -5382,7 +5782,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "Reserved for battery maximum temperature"
         },
         {
           "address": "31225",
@@ -5403,7 +5805,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Total number of clusters",
+          "notes_en": "-"
         },
         {
           "address": "31226",
@@ -5424,7 +5828,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Number of modules in one cluster",
+          "notes_en": "-"
         },
         {
           "address": "31227",
@@ -5445,7 +5851,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Module rated voltage",
+          "notes_en": "-"
         },
         {
           "address": "31228",
@@ -5466,7 +5874,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Module rated capacity",
+          "notes_en": "-"
         },
         {
           "address": "31229",
@@ -5487,7 +5897,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Battery operating status",
+          "notes_en": "0: Battery standby\n1: Battery disconnected\n2: Battery charging operation\n3: Battery discharging operation\n4: Fault\n5: Upgrade"
         },
         {
           "address": "31230",
@@ -5508,7 +5920,9 @@
           "section": "第一簇电池信息：（包括BDC和BMS）：31200~31299",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "Reserved",
+          "notes_en": "-"
         },
         {
           "address": "31300~31399",
@@ -5529,7 +5943,9 @@
           "section": "第二簇电池信息：（包括BDC和BMS）：31300~31399",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "31300~31399 content references 31200~31299",
+          "notes_en": "Refer to the previous battery cluster information definition"
         },
         {
           "address": "31400~31499",
@@ -5550,7 +5966,9 @@
           "section": "第三簇电池信息：（包括BDC和BMS）：31400~31499",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "31400~31499 content references 31200~31299",
+          "notes_en": "Refer to the previous battery cluster information definition"
         },
         {
           "address": "31500~31599",
@@ -5571,7 +5989,9 @@
           "section": "第四簇电池信息：（包括BDC和BMS）：31500~31599",
           "source_pages": [
             21
-          ]
+          ],
+          "field_name_en": "31500~31599 content references 31200~31299",
+          "notes_en": "Refer to the previous battery cluster information definition"
         }
       ],
       "source_ref": {

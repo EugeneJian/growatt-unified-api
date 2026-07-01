@@ -10,6 +10,7 @@ const ssotPath = path.join(protocolRoot, "data", "protocol_ssot.json");
 const outputRoot = path.join(repoRoot, "out", "growatt-openapi", "protocol-mapping");
 const supportedLocales = ["zh-CN", "en-US"];
 const checkOutput = process.argv.includes("--check-output");
+const hanPattern = /[\u3400-\u9fff]/u;
 
 const requiredUiKeys = [
   "locale.name",
@@ -191,6 +192,26 @@ function validateLocaleKeys(locales, requiredKeys) {
   if (missing.length) fail("locale dictionary is missing required keys", missing);
 }
 
+function validateRegisterTranslations(ssot) {
+  const errors = [];
+  for (const profile of ssot.register_profiles || []) {
+    for (const register of profile.registers || []) {
+      const label = `${profile.id} ${register.address || "unknown address"}`;
+      for (const key of ["field_name_en", "notes_en"]) {
+        const value = register[key];
+        if (typeof value !== "string" || value.trim() === "") {
+          errors.push(`${label}: missing ${key}`);
+          continue;
+        }
+        if (hanPattern.test(value)) {
+          errors.push(`${label}: ${key} contains Chinese characters`);
+        }
+      }
+    }
+  }
+  if (errors.length) fail("register English translations are incomplete", errors);
+}
+
 async function walkFiles(root) {
   const items = await readdir(root, { withFileTypes: true });
   const files = [];
@@ -225,6 +246,7 @@ const ssot = await readJson(ssotPath);
 const requiredKeys = new Set(requiredUiKeys);
 addRequiredFromSsot(requiredKeys, ssot);
 validateLocaleKeys(locales, requiredKeys);
+validateRegisterTranslations(ssot);
 
 if (checkOutput) {
   await validateOutputDoesNotPublishRawJson();

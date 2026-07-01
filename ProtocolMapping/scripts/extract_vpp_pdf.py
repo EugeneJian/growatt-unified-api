@@ -25,6 +25,9 @@ DEFAULT_PDF = Path("ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20
 DEFAULT_JSON = Path("ProtocolMapping/data/vpp_protocol_v2_05.json")
 DEFAULT_MARKDOWN = Path("ProtocolMapping/古瑞瓦特逆变器VPP通信协议V2.05_20260529_结构化Markdown.md")
 DEFAULT_SSOT = Path("ProtocolMapping/data/protocol_ssot.json")
+DEFAULT_TRANSLATION_OVERLAY = Path("ProtocolMapping/data/register_translations/en-US/vpp_v2_05.json")
+
+HAN_RE = re.compile(r"[\u3400-\u9fff]")
 
 PROTOCOL_VERSION = "V2.05"
 PROTOCOL_DATE = "2026-05-29"
@@ -480,6 +483,77 @@ def build_payload(
     }
 
 
+def has_han(value: str) -> bool:
+    return bool(HAN_RE.search(value or ""))
+
+
+def apply_register_translations(payload: dict[str, Any], overlay_path: Path) -> None:
+    if not overlay_path.exists():
+        raise SystemExit(f"Missing VPP register translation overlay: {overlay_path}")
+
+    overlay = json.loads(overlay_path.read_text(encoding="utf-8"))
+    if overlay.get("locale") != "en-US":
+        raise SystemExit(f"Unsupported register translation overlay locale: {overlay.get('locale')}")
+
+    records = overlay.get("records", [])
+    translations: dict[tuple[str, str], dict[str, Any]] = {}
+    errors: list[str] = []
+    for record in records:
+        key = (str(record.get("profile_id", "")), str(record.get("address", "")))
+        if key in translations:
+            errors.append(f"Duplicate translation record: {key[0]} {key[1]}")
+        translations[key] = record
+
+    expected_keys: set[tuple[str, str]] = set()
+    for profile in payload.get("register_profiles", []):
+        profile_id = profile["id"]
+        for row in profile.get("registers", []):
+            address = str(row.get("address", ""))
+            key = (profile_id, address)
+            expected_keys.add(key)
+            record = translations.get(key)
+            if not record:
+                errors.append(f"Missing translation: {profile_id} {address}")
+                continue
+
+            if record.get("field_name_source") != row.get("field_name"):
+                errors.append(
+                    "Stale field_name translation source: "
+                    f"{profile_id} {address} overlay={record.get('field_name_source')!r} "
+                    f"current={row.get('field_name')!r}"
+                )
+            if record.get("notes_source") != row.get("notes"):
+                errors.append(
+                    "Stale notes translation source: "
+                    f"{profile_id} {address} overlay={record.get('notes_source')!r} "
+                    f"current={row.get('notes')!r}"
+                )
+
+            field_name_en = str(record.get("field_name_en", "")).strip()
+            notes_en = str(record.get("notes_en", "")).strip()
+            if not field_name_en:
+                errors.append(f"Empty field_name_en: {profile_id} {address}")
+            if not notes_en:
+                errors.append(f"Empty notes_en: {profile_id} {address}")
+            if has_han(field_name_en):
+                errors.append(f"field_name_en contains Chinese: {profile_id} {address} {field_name_en!r}")
+            if has_han(notes_en):
+                errors.append(f"notes_en contains Chinese: {profile_id} {address} {notes_en!r}")
+
+            row["field_name_en"] = field_name_en
+            row["notes_en"] = notes_en
+
+    extra_keys = sorted(set(translations) - expected_keys)
+    for profile_id, address in extra_keys:
+        errors.append(f"Stale extra translation record: {profile_id} {address}")
+
+    if errors:
+        message = "VPP register translation overlay validation failed:\n" + "\n".join(f"- {error}" for error in errors[:80])
+        if len(errors) > 80:
+            message += f"\n- ... {len(errors) - 80} more"
+        raise SystemExit(message)
+
+
 def md_escape(value: Any) -> str:
     text = "" if value is None else str(value)
     text = text.replace("|", "\\|")
@@ -590,12 +664,14 @@ def update_protocol_ssot(payload: dict[str, Any], ssot_path: Path) -> None:
 
 REGISTER_COMPARE_FIELDS = [
     "field_name",
+    "field_name_en",
     "data_type",
     "unit",
     "scale",
     "access",
     "applicable_dtc_or_model",
     "notes",
+    "notes_en",
     "quantity",
     "address_start",
     "address_end",
@@ -788,6 +864,7 @@ def main() -> None:
     parser.add_argument("--json", type=Path, default=DEFAULT_JSON)
     parser.add_argument("--markdown", type=Path, default=DEFAULT_MARKDOWN)
     parser.add_argument("--ssot", type=Path, default=DEFAULT_SSOT)
+    parser.add_argument("--translation-overlay", type=Path, default=DEFAULT_TRANSLATION_OVERLAY)
     parser.add_argument(
         "--validate-against-ssot",
         action="store_true",
@@ -809,6 +886,7 @@ def main() -> None:
     extracted = extract_registers(args.pdf)
     vpp_dtc_records = extract_vpp_dtc_table(args.pdf)
     payload = build_payload(args.pdf, extracted, vpp_dtc_records)
+    apply_register_translations(payload, args.translation_overlay)
 
     if args.validate_against_ssot:
         report = compare_payload_to_ssot(payload, args.ssot)

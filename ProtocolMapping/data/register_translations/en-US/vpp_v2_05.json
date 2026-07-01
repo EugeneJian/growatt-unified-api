@@ -1,0 +1,1691 @@
+{
+  "schema_version": "1.0.0",
+  "locale": "en-US",
+  "source": {
+    "document": "古瑞瓦特逆变器 VPP 通信协议 V2.05",
+    "protocol_version": "V2.05",
+    "document_date": "2026-05-29"
+  },
+  "records": [
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30000",
+      "field_name_source": "设备机型（DTC）",
+      "notes_source": "见表3-1",
+      "field_name_en": "Device model (DTC)",
+      "notes_en": "See Table 3-1"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30001",
+      "field_name_source": "SN",
+      "notes_source": "-",
+      "field_name_en": "SN",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30016",
+      "field_name_source": "额定功率(Pn)",
+      "notes_source": "-",
+      "field_name_en": "Rated power (Pn)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30018",
+      "field_name_source": "最大有功功率(Pmax)",
+      "notes_source": "-",
+      "field_name_en": "Maximum active power (Pmax)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30020",
+      "field_name_source": "最大无功功率（Qmax馈入电网）",
+      "notes_source": "-",
+      "field_name_en": "Maximum reactive power (Qmax fed into grid)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30022",
+      "field_name_source": "最大无功功率（Qmax吸收电网）",
+      "notes_source": "-",
+      "field_name_en": "Maximum reactive power (Qmax absorbed from grid)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30024",
+      "field_name_source": "最大视在功率(Smax)",
+      "notes_source": "-",
+      "field_name_en": "Maximum apparent power (Smax)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30026",
+      "field_name_source": "BDC额定充放功率",
+      "notes_source": "-",
+      "field_name_en": "BDC rated charge/discharge power",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30028",
+      "field_name_source": "PV 输入最大功率",
+      "notes_source": "-",
+      "field_name_en": "PV input maximum power",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30030",
+      "field_name_source": "电池类型",
+      "notes_source": "0：铅酸电池\n1：锂电池",
+      "field_name_en": "Battery type",
+      "notes_en": "0: lead-acid battery\n1: lithium battery"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30031",
+      "field_name_source": "预留",
+      "notes_source": "逆变器版本信息",
+      "field_name_en": "Reserved",
+      "notes_en": "Inverter version information"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30060",
+      "field_name_source": "控制芯片软件代号",
+      "notes_source": "以MOD-XH为例：\nDN",
+      "field_name_en": "Control chip software code",
+      "notes_en": "Example for MOD-XH:\nDN"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30061",
+      "field_name_source": "控制芯片软件代号",
+      "notes_source": "以MOD-XH为例：\nAA",
+      "field_name_en": "Control chip software code",
+      "notes_en": "Example for MOD-XH:\nAA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30062",
+      "field_name_source": "控制芯片版本号1",
+      "notes_source": "以MOD-XH为例：\n09",
+      "field_name_en": "Control chip version 1",
+      "notes_en": "Example for MOD-XH:\n09"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30063",
+      "field_name_source": "控制芯片版本号2",
+      "notes_source": "以MOD-XH为例：\n51",
+      "field_name_en": "Control chip version 2",
+      "notes_en": "Example for MOD-XH:\n51"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30064",
+      "field_name_source": "控制芯片版本号3",
+      "notes_source": "以MOD-XH为例：\n01",
+      "field_name_en": "Control chip version 3",
+      "notes_en": "Example for MOD-XH:\n01"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30065",
+      "field_name_source": "监控芯片软件代号",
+      "notes_source": "以MOD-XH为例：\nZB",
+      "field_name_en": "Monitoring chip software code",
+      "notes_en": "Example for MOD-XH:\nZB"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30066",
+      "field_name_source": "监控芯片软件代号",
+      "notes_source": "以MOD-XH为例：\nDB",
+      "field_name_en": "Monitoring chip software code",
+      "notes_en": "Example for MOD-XH:\nDB"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30067",
+      "field_name_source": "监控芯片版本号",
+      "notes_source": "以MOD-XH为例：\n12\n储能电池版本信息",
+      "field_name_en": "Monitoring chip version",
+      "notes_en": "Example for MOD-XH:\n12\nstorage battery version information"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30068",
+      "field_name_source": "控制芯片1软件代号",
+      "notes_source": "以APX5.0为例：WA",
+      "field_name_en": "Control chip 1 software code",
+      "notes_en": "Example for APX5.0: WA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30069",
+      "field_name_source": "控制芯片1软件代号",
+      "notes_source": "以APX5.0为例：AA",
+      "field_name_en": "Control chip 1 software code",
+      "notes_en": "Example for APX5.0: AA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30070",
+      "field_name_source": "控制芯片1版本号",
+      "notes_source": "以APX5.0为例：09",
+      "field_name_en": "Control chip 1 version",
+      "notes_en": "Example for APX5.0: 09"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30071",
+      "field_name_source": "控制芯片2软件代号",
+      "notes_source": "以APX5.0为例：QA",
+      "field_name_en": "Control chip 2 software code",
+      "notes_en": "Example for APX5.0: QA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30072",
+      "field_name_source": "控制芯片2软件代号",
+      "notes_source": "以APX5.0为例：BA",
+      "field_name_en": "Control chip 2 software code",
+      "notes_en": "Example for APX5.0: BA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30073",
+      "field_name_source": "控制芯片2版本号",
+      "notes_source": "以APX5.0为例：09",
+      "field_name_en": "Control chip 2 version",
+      "notes_en": "Example for APX5.0: 09"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30074",
+      "field_name_source": "监控芯片1软件版本名称",
+      "notes_source": "以APX5.0为例：QB",
+      "field_name_en": "Monitoring chip 1 software version name",
+      "notes_en": "Example for APX5.0: QB"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30075",
+      "field_name_source": "监控芯片1软件版本名称",
+      "notes_source": "以APX5.0为例：AA",
+      "field_name_en": "Monitoring chip 1 software version name",
+      "notes_en": "Example for APX5.0: AA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30076",
+      "field_name_source": "监控芯片1芯片版本号",
+      "notes_source": "以APX5.0为例：09",
+      "field_name_en": "Monitoring chip 1 chip version",
+      "notes_en": "Example for APX5.0: 09"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30077",
+      "field_name_source": "监控芯片2软件代号",
+      "notes_source": "以APX5.0为例：ZE",
+      "field_name_en": "Monitoring chip 2 software code",
+      "notes_en": "Example for APX5.0: ZE"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30078",
+      "field_name_source": "监控芯片2软件代号",
+      "notes_source": "以APX5.0为例：BA",
+      "field_name_en": "Monitoring chip 2 software code",
+      "notes_en": "Example for APX5.0: BA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30079",
+      "field_name_source": "监控芯片2版本号",
+      "notes_source": "以APX5.0为例：09\n电表版本信息",
+      "field_name_en": "Monitoring chip 2 version",
+      "notes_en": "Example for APX5.0: 09\nmeter version information"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30080",
+      "field_name_source": "控制芯片软件代号",
+      "notes_source": "前两位，例：ZO",
+      "field_name_en": "Control chip software code",
+      "notes_en": "First two characters, for example: ZO"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30081",
+      "field_name_source": "控制芯片软件代号",
+      "notes_source": "后两位，例：AA",
+      "field_name_en": "Control chip software code",
+      "notes_en": "Last two characters, for example: AA"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30082",
+      "field_name_source": "控制芯片版本号",
+      "notes_source": "例：02",
+      "field_name_en": "Control chip version",
+      "notes_en": "Example: 02"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30083",
+      "field_name_source": "保留",
+      "notes_source": "保留\nVPP协议版本信息",
+      "field_name_en": "Reserved",
+      "notes_en": "Reserved\nVPP protocol version information"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30084",
+      "field_name_source": "保留",
+      "notes_source": "保留",
+      "field_name_en": "Reserved",
+      "notes_en": "Reserved"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30099",
+      "field_name_source": "VPP协议版本号",
+      "notes_source": "200表示V2.00，201\n表示V2.01，200及\n以后的版本支持安\n规参数协议",
+      "field_name_en": "VPP protocol version",
+      "notes_en": "200 means V2.00, 201 means V2.01. Versions 200 and later support the safety-parameter protocol."
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30100",
+      "field_name_source": "控制权限",
+      "notes_source": "0：不使能\n1：使能\n默认值：0\n采用此协议控制逆\n变器需要使能",
+      "field_name_en": "Control permission",
+      "notes_en": "0: Disabled\n1: EnabledDefault: 0\nThis must be enabled to control the inverter through this protocol"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30101",
+      "field_name_source": "开关机命令",
+      "notes_source": "0：关机\n1：开机\n9：旁路模式\n默认值：1\n不存储",
+      "field_name_en": "Power on/off command",
+      "notes_en": "0: Power off\n1: Power on\n9: Bypass modeDefault: 1\nNot stored"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30102",
+      "field_name_source": "国家/区域编号",
+      "notes_source": "见附录表3-5",
+      "field_name_en": "Country/region code",
+      "notes_en": "See Appendix Table 3-5"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30103",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30104",
+      "field_name_source": "系统时间",
+      "notes_source": "见附录表3-6",
+      "field_name_en": "System time",
+      "notes_en": "See Appendix Table 3-6"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30110",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30112",
+      "field_name_source": "通信地址",
+      "notes_source": "[1，255]\n默认值：1",
+      "field_name_en": "Communication address",
+      "notes_en": "[1, 255]\nDefault: 1"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30113",
+      "field_name_source": "通信波特率",
+      "notes_source": "0：9600 bps\n1：38400 bps\n默认值：0",
+      "field_name_en": "Communication baud rate",
+      "notes_en": "0: 9600 bps\n1: 38400 bps\nDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30114",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30115",
+      "field_name_source": "SYN使能",
+      "notes_source": "离网盒子使能\n0：不使能\n1：使能\n默认值：0",
+      "field_name_en": "SYN enable",
+      "notes_en": "Off-grid box enable\n0: Disabled\n1: EnabledDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30116",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30150",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30151",
+      "field_name_source": "有功功率百分比降额",
+      "notes_source": "限功率百分比：[0，\n100]\n默认值：100",
+      "field_name_en": "Active power percentage derating",
+      "notes_en": "Power limit percentage: [0, 100]\nDefault: 100"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30152",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30154",
+      "field_name_source": "有功功率百分比",
+      "notes_source": "限功率百分比：[0，\n100]\n默认值：100\n该寄存器和有功功\n率百分比降额\n(30151)取较小者作\n为实际有功限制值\n不存储",
+      "field_name_en": "Active power percentage",
+      "notes_en": "Power limit percentage: [0, 100]\nDefault: 100\nThis register and active power percentage derating (30151) use the smaller value as the actual active power limit.\nNot stored"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30155",
+      "field_name_source": "EPS离网使能",
+      "notes_source": "0：不使能\n1：使能\n默认值：0",
+      "field_name_en": "EPS off-grid enable",
+      "notes_en": "0: Disabled\n1: EnabledDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30156",
+      "field_name_source": "EPS离网频率",
+      "notes_source": "0：50Hz\n1：60Hz\n默认值：0",
+      "field_name_en": "EPS off-grid frequency",
+      "notes_en": "0: 50Hz\n1: 60Hz\nDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30157",
+      "field_name_source": "EPS离网电压(3)",
+      "notes_source": "默认值：0\n各机型范围见备注\n（3）",
+      "field_name_en": "EPS off-grid voltage (3)",
+      "notes_en": "Default: 0\nFor each model range, see note (3)"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30158",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30160",
+      "field_name_source": "无功功率百分比",
+      "notes_source": "[0，70]\n默认值：0",
+      "field_name_en": "Reactive power percentage",
+      "notes_en": "[0, 70]\nDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30161",
+      "field_name_source": "无功功率模式",
+      "notes_source": "0： PF=1\n1： PF 值设置\n4： 容性无功功率百\n分比（-）\n5： 感性无功功率百\n分比（+）\n默认值：0\n设置逻辑见附录3.6",
+      "field_name_en": "Reactive power mode",
+      "notes_en": "0: PF=1\n1: PF value setting\n4: Capacitive reactive power percentage (-)\n5: Inductive reactive power percentage (+)\nDefault: 0\nSetting logic: see Appendix 3.6"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30162",
+      "field_name_source": "功率因数",
+      "notes_source": "[0，2000]∪[18000，\n20000]\n默认值：20000\n实际功率因数PF=\n（寄存器值 -\n10000）*0.0001",
+      "field_name_en": "Power factor",
+      "notes_en": "[0, 2000] U [18000, 20000]\nDefault: 20000\nActual power factor PF = (register value - 10000) * 0.0001"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30163",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30164",
+      "field_name_source": "预留",
+      "notes_source": "预留为无功曲线",
+      "field_name_en": "Reserved",
+      "notes_en": "Reserved for reactive power curve"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30200",
+      "field_name_source": "防逆流使能",
+      "notes_source": "0：不使能防逆流\n1: 使能电表1防逆\n流\n2：预留\n3: 使能(外部)CT防\n逆流\n4: 使能(内部)CT防\n逆流\n默认值：0\n3-4仅部分机型使\n用，具体区分见备注\n（7）\n逻辑见附录3.3.2",
+      "field_name_en": "Export limit enable",
+      "notes_en": "0: Export limit disabled\n1: Enable meter 1 export limit\n2: Reserved\n3: Enable external CT export limit\n4: Enable internal CT export limit\nDefault: 0\n3-4 are used only by some models. For specific distinction, see note (7).\nLogic: see Appendix 3.3.2"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30201",
+      "field_name_source": "防逆流功率百分比",
+      "notes_source": "[-100，100]\n默认值：0\n正值：逆流控制\n负值：顺流控制",
+      "field_name_en": "Export limit power percentage",
+      "notes_en": "[-100, 100]\nDefault: 0\nPositive value: reverse power control\nNegative value: forward power control"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30202",
+      "field_name_source": "失效功率百分比",
+      "notes_source": "[0，100]\n默认值：0\n30202-30203防逆流\n失效和通信失效共\n用",
+      "field_name_en": "Fail-safe power percentage",
+      "notes_en": "[0, 100]\nDefault: 0\n30202-30203 are shared by export-limit failure and communication failure"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30203",
+      "field_name_source": "失效时间",
+      "notes_source": "[1，300]\n默认值：30",
+      "field_name_en": "Fail-safe time",
+      "notes_en": "[1, 300]\nDefault: 30"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30204",
+      "field_name_source": "通信失效功能使能",
+      "notes_source": "0：不使能\n1：485通信失效使\n能\n2：USB通讯失效使\n能\n3：485和USB任一\n通讯失效就失效的\n使能\n4：485和USB都通\n讯失效才失效的使\n能\n默认值：0\n控制逻辑见附录\n3.3.2",
+      "field_name_en": "Communication-loss function enable",
+      "notes_en": "0: Disabled\n1: 485 communication-loss enable\n2: USB communication-loss enable\n3: Enable failure when either 485 or USB communication is lost\n4: Enable failure only when both 485 and USB communication are lost\nDefault: 0\nControl logic: see Appendix 3.3.2"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30205",
+      "field_name_source": "超逆流使能",
+      "notes_source": "0：不使能\n1：使能\n默认值：0\n使用安规范围见备\n注（8）",
+      "field_name_en": "Excess export enable",
+      "notes_en": "0: Disabled\n1: EnabledDefault: 0\nFor safety range, see note (8)"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30206",
+      "field_name_source": "防逆流馈电功率变化速率",
+      "notes_source": "[0，20000]\n默认值：27\n使用安规范围见备\n注（8）",
+      "field_name_en": "Export-limit feed-in power change rate",
+      "notes_en": "[0, 20000]\nDefault: 27\nFor safety range, see note (8)"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30207",
+      "field_name_source": "单相防逆流控制使能",
+      "notes_source": "0：不使能\n1：使能\n默认值：0",
+      "field_name_en": "Single-phase export limit control enable",
+      "notes_en": "0: Disabled\n1: EnabledDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30208",
+      "field_name_source": "防逆流保护模式（2）",
+      "notes_source": "0：默认模式\n1：软硬件联合控制\n模式\n2：软件控制模式\n3：硬件控制模式\n默认值：0\n仅户用并网光储机、\n户用并网光伏机使\n用\n使用安规范围见备\n注（8）",
+      "field_name_en": "Export limit protection mode (2)",
+      "notes_en": "0: Default mode\n1: Software/hardware joint control mode\n2: Software control mode\n3: Hardware control mode\nDefault: 0\nOnly for residential on-grid PV-storage models and residential on-grid PV models.\nFor safety range, see note (8)"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30209",
+      "field_name_source": "并离网自动切换使能",
+      "notes_source": "0：自动\n1：手动\n默认值：0",
+      "field_name_en": "Grid/off-grid auto-switch enable",
+      "notes_en": "0: Automatic\n1: ManualDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30210",
+      "field_name_source": "并离网设置",
+      "notes_source": "手动模式下修改并\n离网及油机模式\n0：并网\n1：离网\n2：油机\n默认值：0\n30209为1时才能设\n置",
+      "field_name_en": "Grid/off-grid setting",
+      "notes_en": "Modify grid/off-grid and generator mode in manual mode\n0: On-grid\n1: Off-grid\n2: Generator\nDefault: 0\nCan be set only when 30209 is 1"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30211",
+      "field_name_source": "R相有功功率",
+      "notes_source": "[0，额定功率/3]\n默认值：额定功率/3",
+      "field_name_en": "Phase R active power",
+      "notes_en": "[0, rated power / 3]\nDefault: rated power / 3"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30212",
+      "field_name_source": "S相有功功率",
+      "notes_source": "[0，额定功率/3]\n默认值：额定功率/3",
+      "field_name_en": "Phase S active power",
+      "notes_en": "[0, rated power / 3]\nDefault: rated power / 3"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30213",
+      "field_name_source": "T相有功功率",
+      "notes_source": "[0，额定功率/3]\n默认值：额定功率/3",
+      "field_name_en": "Phase T active power",
+      "notes_en": "[0, rated power / 3]\nDefault: rated power / 3"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30214",
+      "field_name_source": "有功单相控制使能",
+      "notes_source": "0：合相控制\n1：单相控制\n默认值：0",
+      "field_name_en": "Active power single-phase control enable",
+      "notes_en": "0: Combined-phase control\n1: Single-phase controlDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30215",
+      "field_name_source": "市电充电最大功率限值",
+      "notes_source": "[0，65535]\nAC充电使能开启时\n有效\n默认不限制（65535）\n超出额定功率时不\n限制",
+      "field_name_en": "Maximum grid charging power limit",
+      "notes_en": "[0, 65535]\nValid when AC charge enable is on\nDefault: unlimited (65535)\nNo limit when exceeding rated power"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30216",
+      "field_name_source": "市电充电最大功率限值Ⅱ",
+      "notes_source": "[0，65535]\nAC充电使能开启时\n有效，和30215取较\n小控制\n默认不限制（65535）\n超出额定功率时不\n限制\n不存储",
+      "field_name_en": "Maximum grid charging power limit II",
+      "notes_en": "[0, 65535]\nValid when AC charge enable is on; controlled by the smaller value together with 30215\nDefault: unlimited (65535)\nNo limit when exceeding rated power\nNot stored"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30217",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30250",
+      "field_name_source": "油机额定功率",
+      "notes_source": "[0，10000]\n默认值：逆变器额定\n功率",
+      "field_name_en": "Generator rated power",
+      "notes_en": "[0, 10000]\nDefault: inverter rated power"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30251",
+      "field_name_source": "油机充电功率",
+      "notes_source": "[0，10000]\n默认值：逆变器额定\n功率",
+      "field_name_en": "Generator charging power",
+      "notes_en": "[0, 10000]\nDefault: inverter rated power"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30252",
+      "field_name_source": "油机使能",
+      "notes_source": "0：油机不使能\n1：油机使能\n默认值：0",
+      "field_name_en": "Generator enable",
+      "notes_en": "0: GeneratorDisabled\n1: GeneratorEnabledDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30253",
+      "field_name_source": "离网下油机启动 SOC",
+      "notes_source": "[0，100]\n默认值：20",
+      "field_name_en": "Generator start SOC in off-grid mode",
+      "notes_en": "[0, 100]\nDefault: 20"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30254",
+      "field_name_source": "离网下油机停止 SOC",
+      "notes_source": "[0，100]\n默认值：50",
+      "field_name_en": "Generator stop SOC in off-grid mode",
+      "notes_en": "[0, 100]\nDefault: 50"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30255",
+      "field_name_source": "油机热机时长设置",
+      "notes_source": "[0，3600]\n默认值：60",
+      "field_name_en": "Generator warm-up duration setting",
+      "notes_en": "[0, 3600]\nDefault: 60"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30256",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30300",
+      "field_name_source": "电池簇索引",
+      "notes_source": "[0，3]\n设置该寄存器为x，\n则读写的[30400，\n30406]、[30474，\n30475]及[30496，\n30499]信息属于第x\n簇电池\n默认值：0，表示当\n前电池信息适用于\n所有电池簇",
+      "field_name_en": "Battery cluster index",
+      "notes_en": "[0, 3]\nSet this register to x. Then the read/write information in [30400, 30406], [30474, 30475], and [30496, 30499] belongs to battery cluster x.\nDefault: 0, meaning the current battery information applies to all battery clusters"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30301",
+      "field_name_source": "需量管理使能",
+      "notes_source": "0：需量管理不使能\n1：需量管理使能\n默认值：0",
+      "field_name_en": "Demand management enable",
+      "notes_en": "0: Demand managementDisabled\n1: Demand managementEnabledDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30302",
+      "field_name_source": "需量管理逆流功率限值",
+      "notes_source": "[0，65535]\n默认值：不限制\n（65535），超出额\n定功率时不限制",
+      "field_name_en": "Demand management reverse power limit",
+      "notes_en": "[0, 65535]\nDefault: unlimited (65535); no limit when exceeding rated power"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30303",
+      "field_name_source": "需量管理顺流功率限值",
+      "notes_source": "[0，65535]\n默认值：不限制\n(65535)，超出额定\n功率时不限制",
+      "field_name_en": "Demand management forward power limit",
+      "notes_en": "[0, 65535]\nDefault: unlimited (65535); no limit when exceeding rated power"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30304",
+      "field_name_source": "Peak shaving备电 SOC",
+      "notes_source": "[0，100]\n默认值：50",
+      "field_name_en": "Peak shaving backup SOC",
+      "notes_en": "[0, 100]\nDefault: 50"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30305",
+      "field_name_source": "Peak shaving 使能",
+      "notes_source": "0：不使能\n1：使能\n默认值：0",
+      "field_name_en": "Peak shaving enable",
+      "notes_en": "0: Disabled\n1: EnabledDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30306",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30380~30399",
+      "field_name_source": "时间段优先级",
+      "notes_source": "第1~20段时间段的\n电池充放电优先级\n模式\n0：负载优先\n1/2：根据时间段正\n负值判断电池/电网\n优先\n3：纯光伏储能\n4：闲置充电模式\n5：预留\n6：闲置模式\n7：预留\n默认值：1",
+      "field_name_en": "Time-period priority",
+      "notes_en": "Battery charge/discharge priority mode for time periods 1~20\n0: Load priority\n1/2: Determine battery/grid priority according to the sign of the time-period value\n3: Pure PV storage\n4: Idle charging mode\n5: Reserved\n6: Idle mode\n7: Reserved\nDefault: 1"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30400",
+      "field_name_source": "电池系统最大充电功率（预留）",
+      "notes_source": "-",
+      "field_name_en": "Battery system maximum charging power (reserved)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30402",
+      "field_name_source": "电池系统最大放电功率（预留）",
+      "notes_source": "-",
+      "field_name_en": "Battery system maximum discharging power (reserved)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30404",
+      "field_name_source": "充电截止SOC",
+      "notes_source": "[10，100]\n默认值：100",
+      "field_name_en": "Charge cut-off SOC",
+      "notes_en": "[10, 100]\nDefault: 100"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30405",
+      "field_name_source": "并网放电截止SOC",
+      "notes_source": "[10，100]\n默认值：10",
+      "field_name_en": "On-grid discharge cut-off SOC",
+      "notes_en": "[10, 100]\nDefault: 10"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30406",
+      "field_name_source": "负载优先放电截止 SOC（1）",
+      "notes_source": "[10，100]\n默认值：10\n仅户用储能一体机\n系列机型使用",
+      "field_name_en": "Load-priority discharge cut-off SOC (1)",
+      "notes_en": "[10, 100]\nDefault: 10\nOnly for residential hybrid storage inverter series models"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30407",
+      "field_name_source": "远程功率控制使能",
+      "notes_source": "0：不使能\n1：使能\n默认值：0\n不存储\n30407~30474逻辑\n见附录3.5",
+      "field_name_en": "Remote power control enable",
+      "notes_en": "0: Disabled\n1: EnabledDefault: 0\nNot stored\n30407~30474Logic: see Appendix 3.5"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30408",
+      "field_name_source": "远程功率控制充电时长",
+      "notes_source": "0：不限时间\n1~1440min：按照设\n定时间控制功率时\n长\n默认值：0\n不存储",
+      "field_name_en": "Remote power-control charging duration",
+      "notes_en": "0: No time limit\n1~1440 min: Control power duration according to the set time\nDefault: 0\nNot stored"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30409",
+      "field_name_source": "远程充放电功率",
+      "notes_source": "[-100，100]\n默认值：0\n正值：充电\n负值：放电\n不存储",
+      "field_name_en": "Remote charge/discharge power",
+      "notes_en": "[-100, 100]\nDefault: 0\npositive value: chargingnegative value: dischargingNot stored"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30410",
+      "field_name_source": "AC充电使能",
+      "notes_source": "0：不使能\n1：使能AC充电，\n优先采用PV充电，\n其次采用AC充电\n2：使能AC充电，\n仅AC充电\n商用储能逆变器默\n认值为1，其他机型\n默认值为0",
+      "field_name_en": "AC charge enable",
+      "notes_en": "0: Disabled\n1: Enable AC charging; PV charging is used first, then AC charging\n2: Enable AC charging; AC charging only\nDefault is 1 for commercial storage inverters; default is 0 for other models"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30411",
+      "field_name_source": "分时段充放电（20 段）",
+      "notes_source": "30412~30471为时\n间段设置，默认值均\n为0\n见附表3-2",
+      "field_name_en": "Time-of-use charge/discharge (20 periods)",
+      "notes_en": "30412~30471 are time-period settings, and their default values are all 0\nSee Appendix Table 3-2"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30472",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30474",
+      "field_name_source": "充放电功率实际控制值",
+      "notes_source": "[-100，100]\n正值：充电\n负值：放电",
+      "field_name_en": "Actual charge/discharge power control value",
+      "notes_en": "[-100, 100]\npositive value: chargingnegative value: discharging"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30475",
+      "field_name_source": "离网放电截止SOC",
+      "notes_source": "[10，100]\n默认值：10",
+      "field_name_en": "Off-grid discharge cut-off SOC",
+      "notes_en": "[10, 100]\nDefault: 10"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30476",
+      "field_name_source": "分时段充放电默认模式",
+      "notes_source": "用于分时段充放电\n模式下，时间段以外\n的模式设置\n0：负载优先\n1：电池优先\n2：电网优先\n默认值：0",
+      "field_name_en": "Default time-of-use charge/discharge mode",
+      "notes_en": "Used to set the mode outside configured time periods in time-of-use charge/discharge mode\n0: Load priority\n1: Battery priority\n2: Grid priority\nDefault: 0"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30477",
+      "field_name_source": "设置时间段清零使能（4）",
+      "notes_source": "[0，1]\n默认值：0\n使能后在后续设置\n时间段数（30411）\n时，会将原有时间段\n信息（30380~30399、\n30412-30471）全部\n自动清零并保存",
+      "field_name_en": "Time-period clearing enable (4)",
+      "notes_en": "[0, 1]\nDefault: 0\nAfter enabled, when the number of time periods (30411) is set later, the original time-period information (30380~30399, 30412~30471) will be automatically cleared and saved"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30478",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30495",
+      "field_name_source": "电池唤醒功能",
+      "notes_source": "设1给电池下发一\n次唤醒指令",
+      "field_name_en": "Battery wake-up function",
+      "notes_en": "Set to 1 to send one wake-up command to the battery"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30496",
+      "field_name_source": "电池充电截止电压",
+      "notes_source": "铅酸电池使用\n[0，15000]\n按照电压等级区分\n默认值：\n电压等级127V：\n6500；\n227V：10000；\n其余电压等级默认\n值：8000\n仅商用储能逆变器\n使用",
+      "field_name_en": "Battery charge cut-off voltage",
+      "notes_en": "For lead-acid batteries\n[0, 15000]\nDistinguished by voltage level\nDefault:\nVoltage level 127V: 6500;\n227V: 10000;\nDefault for other voltage levels: 8000\nOnly for commercial storage inverters"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30497",
+      "field_name_source": "电池放电截止电压",
+      "notes_source": "铅酸电池使用\n[0，15000]\n按照电压等级区分\n默认值：\n电压等级127V：\n3800；\n电压等级227V：\n7500；\n其余电压等级默认\n值：6500\n仅商用储能逆变器\n使用",
+      "field_name_en": "Battery discharge cut-off voltage",
+      "notes_en": "For lead-acid batteries\n[0, 15000]\nDistinguished by voltage level\nDefault:\nVoltage level 127V: 3800;\nVoltage level 227V: 7500;\nDefault for other voltage levels: 6500\nOnly for commercial storage inverters"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30498",
+      "field_name_source": "电池最大充电电流",
+      "notes_source": "铅酸电池使用\n[0，2000]\n仅商用储能逆变器\n使用\n默认值见备注（5）",
+      "field_name_en": "Battery maximum charging current",
+      "notes_en": "For lead-acid batteries\n[0, 2000]\nOnly for commercial storage invertersDefaultsee note (5)"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30499",
+      "field_name_source": "电池最大放电电流",
+      "notes_source": "铅酸电池使用\n[0，2000]\n仅商用储能逆变器\n使用\n默认值见备注（6）",
+      "field_name_en": "Battery maximum discharging current",
+      "notes_en": "For lead-acid batteries\n[0, 2000]\nOnly for commercial storage invertersDefaultsee note (6)"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "30500",
+      "field_name_source": "详见《古瑞瓦特逆变器VPP通信协议之安规参数》",
+      "notes_source": "-",
+      "field_name_en": "See Growatt Inverter VPP Communication Protocol - Safety Parameters",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc03_vpp_protocol_params_30000_32099",
+      "address": "32000",
+      "field_name_source": "预留",
+      "notes_source": "机型 EPS离网电压\n0：230V\n1：208V\n2：240V\n3：220V\n4：127V\n5：277V\n6：254V",
+      "field_name_en": "Reserved",
+      "notes_en": "Model EPS off-grid voltage\n0: 230V\n1: 208V\n2: 240V\n3: 220V\n4: 127V\n5: 277V\n6: 254V"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31000",
+      "field_name_source": "逆变器工作状态",
+      "notes_source": "0：待机\n1：自检\n2：预留\n3：故障\n4：升级\n5：PV在线&电池\n离线&并网\n6：PV离线（或在\n线）&电池在线&\n并网\n7：PV在线&电池\n在线&离网\n8：PV离线&电池\n在线&离网\n9：旁路运行",
+      "field_name_en": "Inverter operating status",
+      "notes_en": "0: Standby\n1: Self-check\n2: Reserved\n3: Fault\n4: Upgrade\n5: PV online & battery offline & on-grid\n6: PV offline (or online) & battery online & on-grid\n7: PV online & battery online & off-grid\n8: PV offline & battery online & off-grid\n9: Bypass operation"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31001",
+      "field_name_source": "电池工作状态",
+      "notes_source": "0：电池待机\n1：电池断开\n2：电池充电运行\n3：电池放电运行\n4：故障\n5：升级",
+      "field_name_en": "Battery operating status",
+      "notes_en": "0: Battery standby\n1: Battery disconnected\n2: Battery charging operation\n3: Battery discharging operation\n4: Fault\n5: Upgrade"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31002",
+      "field_name_source": "工作优先级",
+      "notes_source": "0：负载优先\n1：电池优先\n2：电网优先",
+      "field_name_en": "Work priority",
+      "notes_en": "0: Load priority\n1: Battery priority\n2: Grid priority"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31003",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31005",
+      "field_name_source": "故障主码",
+      "notes_source": "见附表3-3",
+      "field_name_en": "Fault main code",
+      "notes_en": "See Appendix Table 3-3"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31006",
+      "field_name_source": "故障子码",
+      "notes_source": "见附表3-3",
+      "field_name_en": "Fault sub-code",
+      "notes_en": "See Appendix Table 3-3"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31007",
+      "field_name_source": "保护主码",
+      "notes_source": "见附表3-4",
+      "field_name_en": "Protection main code",
+      "notes_en": "See Appendix Table 3-4"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31008",
+      "field_name_source": "保护子码",
+      "notes_source": "见附表3-4",
+      "field_name_en": "Protection sub-code",
+      "notes_en": "See Appendix Table 3-4"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31009",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31010",
+      "field_name_source": "PV1电压",
+      "notes_source": "-",
+      "field_name_en": "PV1 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31011",
+      "field_name_source": "PV1电流",
+      "notes_source": "-",
+      "field_name_en": "PV1 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31012",
+      "field_name_source": "PV2电压",
+      "notes_source": "-",
+      "field_name_en": "PV2 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31013",
+      "field_name_source": "PV2电流",
+      "notes_source": "-",
+      "field_name_en": "PV2 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31014",
+      "field_name_source": "PV3电压",
+      "notes_source": "-",
+      "field_name_en": "PV3 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31015",
+      "field_name_source": "PV3电流",
+      "notes_source": "-",
+      "field_name_en": "PV3 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31016",
+      "field_name_source": "PV4电压",
+      "notes_source": "-",
+      "field_name_en": "PV4 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31017",
+      "field_name_source": "PV4电流",
+      "notes_source": "-",
+      "field_name_en": "PV4 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31018",
+      "field_name_source": "PV5电压",
+      "notes_source": "-",
+      "field_name_en": "PV5 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31019",
+      "field_name_source": "PV5电流",
+      "notes_source": "-",
+      "field_name_en": "PV5 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31020",
+      "field_name_source": "PV6电压",
+      "notes_source": "-",
+      "field_name_en": "PV6 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31021",
+      "field_name_source": "PV6电流",
+      "notes_source": "-",
+      "field_name_en": "PV6 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31022",
+      "field_name_source": "PV7电压",
+      "notes_source": "-",
+      "field_name_en": "PV7 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31023",
+      "field_name_source": "PV7电流",
+      "notes_source": "-",
+      "field_name_en": "PV7 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31024",
+      "field_name_source": "PV8电压",
+      "notes_source": "-",
+      "field_name_en": "PV8 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31025",
+      "field_name_source": "PV8电流",
+      "notes_source": "-",
+      "field_name_en": "PV8 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31026",
+      "field_name_source": "PV9电压",
+      "notes_source": "-",
+      "field_name_en": "PV9 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31027",
+      "field_name_source": "PV9电流",
+      "notes_source": "-",
+      "field_name_en": "PV9 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31028",
+      "field_name_source": "PV10电压",
+      "notes_source": "-",
+      "field_name_en": "PV10 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31029",
+      "field_name_source": "PV10电流",
+      "notes_source": "-",
+      "field_name_en": "PV10 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31030",
+      "field_name_source": "PV11电压",
+      "notes_source": "-",
+      "field_name_en": "PV11 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31031",
+      "field_name_source": "PV11电流",
+      "notes_source": "-",
+      "field_name_en": "PV11 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31032",
+      "field_name_source": "PV12电压",
+      "notes_source": "-",
+      "field_name_en": "PV12 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31033",
+      "field_name_source": "PV12电流",
+      "notes_source": "-",
+      "field_name_en": "PV12 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31034",
+      "field_name_source": "PV13电压",
+      "notes_source": "-",
+      "field_name_en": "PV13 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31035",
+      "field_name_source": "PV13电流",
+      "notes_source": "-",
+      "field_name_en": "PV13 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31036",
+      "field_name_source": "PV14电压",
+      "notes_source": "-",
+      "field_name_en": "PV14 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31037",
+      "field_name_source": "PV14电流",
+      "notes_source": "-",
+      "field_name_en": "PV14 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31038",
+      "field_name_source": "PV15电压",
+      "notes_source": "-",
+      "field_name_en": "PV15 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31039",
+      "field_name_source": "PV15电流",
+      "notes_source": "-",
+      "field_name_en": "PV15 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31040",
+      "field_name_source": "PV16电压",
+      "notes_source": "-",
+      "field_name_en": "PV16 voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31041",
+      "field_name_source": "PV16电流",
+      "notes_source": "-",
+      "field_name_en": "PV16 current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31042",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31058",
+      "field_name_source": "PV输入功率",
+      "notes_source": "-",
+      "field_name_en": "PV input power",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31060",
+      "field_name_source": "PV总发电能量",
+      "notes_source": "-",
+      "field_name_en": "Total PV generation energy",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31062",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31100",
+      "field_name_source": "有功功率",
+      "notes_source": "正值：向电网馈电\n负值：从电网取电",
+      "field_name_en": "Active power",
+      "notes_en": "Positive value: feed power to the grid\nNegative value: draw power from the grid"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31102",
+      "field_name_source": "无功功率",
+      "notes_source": "正值：容性\n负值：感性",
+      "field_name_en": "Reactive power",
+      "notes_en": "Positive value: capacitive\nNegative value: inductive"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31104",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31105",
+      "field_name_source": "电网频率",
+      "notes_source": "-",
+      "field_name_en": "Grid frequency",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31106",
+      "field_name_source": "电网电压/电网AB 线电压",
+      "notes_source": "当输出方式为\nL/N， 电压电流分\n别取电网电压和\n电网电流",
+      "field_name_en": "Grid voltage / grid line AB voltage",
+      "notes_en": "When the output mode is L/N, voltage and current use grid voltage and grid current respectively"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31107",
+      "field_name_source": "电网BC线电压",
+      "notes_source": "-",
+      "field_name_en": "Grid line BC voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31108",
+      "field_name_source": "电网CA线电压",
+      "notes_source": "-",
+      "field_name_en": "Grid line CA voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31109",
+      "field_name_source": "电网电流/电网A 相电流",
+      "notes_source": "-",
+      "field_name_en": "Grid current / grid phase A current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31110",
+      "field_name_source": "电网B相电流",
+      "notes_source": "-",
+      "field_name_en": "Grid phase B current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31111",
+      "field_name_source": "电网C相电流",
+      "notes_source": "-",
+      "field_name_en": "Grid phase C current",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31112",
+      "field_name_source": "电表功率",
+      "notes_source": "正：从电网取电\n负：向电网馈电",
+      "field_name_en": "Meter power",
+      "notes_en": "Positive: draw power from the grid\nNegative: feed power to the grid"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31114",
+      "field_name_source": "逆变器温度",
+      "notes_source": "[-400，1250]",
+      "field_name_en": "Inverter temperature",
+      "notes_en": "[-400, 1250]"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31115",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31116",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31117",
+      "field_name_source": "预留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31118",
+      "field_name_source": "当天到用户的能量",
+      "notes_source": "-",
+      "field_name_en": "Daily energy to user",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31120",
+      "field_name_source": "到用户的总能量",
+      "notes_source": "-",
+      "field_name_en": "Total energy to user",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31122",
+      "field_name_source": "当天到电网的能量",
+      "notes_source": "-",
+      "field_name_en": "Daily energy to grid",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31124",
+      "field_name_source": "到电网的总能量",
+      "notes_source": "-",
+      "field_name_en": "Total energy to grid",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31126",
+      "field_name_source": "第三方逆变器输出有功功率",
+      "notes_source": "-",
+      "field_name_en": "Third-party inverter output active power",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31128",
+      "field_name_source": "GEN口有功功率",
+      "notes_source": "GEN口可接入第\n三方逆变器、智能\n负载或油机",
+      "field_name_en": "GEN port active power",
+      "notes_en": "GEN port can connect to a third-party inverter, smart load, or generator"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31130",
+      "field_name_source": "EPS离网有功功率",
+      "notes_source": "-",
+      "field_name_en": "EPS off-grid active power",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31132",
+      "field_name_source": "独立智能负载有功功率",
+      "notes_source": "仅DTC为\n21304~21305、\n21308~21309的机\n型使用",
+      "field_name_en": "Independent smart load active power",
+      "notes_en": "Only for models whose DTC is 21304~21305 or 21308~21309"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31134",
+      "field_name_source": "保留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31200",
+      "field_name_source": "充放电功率",
+      "notes_source": "正值：充电\n负值：放电",
+      "field_name_en": "Charge/discharge power",
+      "notes_en": "Positive value: charging\nNegative value: discharging"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31202",
+      "field_name_source": "电池日充电电量",
+      "notes_source": "-",
+      "field_name_en": "Battery daily charged energy",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31204",
+      "field_name_source": "电池累计充电量",
+      "notes_source": "-",
+      "field_name_en": "Battery accumulated charged energy",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31206",
+      "field_name_source": "电池日放电电量",
+      "notes_source": "-",
+      "field_name_en": "Battery daily discharged energy",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31208",
+      "field_name_source": "电池累计放电量",
+      "notes_source": "-",
+      "field_name_en": "Battery accumulated discharged energy",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31210",
+      "field_name_source": "电池允许最大充电功率",
+      "notes_source": "-",
+      "field_name_en": "Battery maximum allowed charging power",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31212",
+      "field_name_source": "电池允许最大放电功率",
+      "notes_source": "-",
+      "field_name_en": "Battery maximum allowed discharging power",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31214",
+      "field_name_source": "电池电压",
+      "notes_source": "-",
+      "field_name_en": "Battery voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31215",
+      "field_name_source": "电池电流",
+      "notes_source": "正：充电\n负：放电",
+      "field_name_en": "Battery current",
+      "notes_en": "Positive: charging\nNegative: discharging"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31217",
+      "field_name_source": "SOC",
+      "notes_source": "[0，100]",
+      "field_name_en": "SOC",
+      "notes_en": "[0, 100]"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31218",
+      "field_name_source": "SOH",
+      "notes_source": "[0，100]",
+      "field_name_en": "SOH",
+      "notes_en": "[0, 100]"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31219",
+      "field_name_source": "电池充满容量（FCC）",
+      "notes_source": "-",
+      "field_name_en": "Battery full charge capacity (FCC)",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31221",
+      "field_name_source": "预留",
+      "notes_source": "预留为电池剩余\n容量（RM）",
+      "field_name_en": "Reserved",
+      "notes_en": "Reserved for battery remaining capacity (RM)"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31223",
+      "field_name_source": "电池环境温度",
+      "notes_source": "[-400，1250]",
+      "field_name_en": "Battery ambient temperature",
+      "notes_en": "[-400, 1250]"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31224",
+      "field_name_source": "预留",
+      "notes_source": "预留为电池最高\n温度",
+      "field_name_en": "Reserved",
+      "notes_en": "Reserved for battery maximum temperature"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31225",
+      "field_name_source": "簇总数量",
+      "notes_source": "-",
+      "field_name_en": "Total number of clusters",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31226",
+      "field_name_source": "单簇下模块数量",
+      "notes_source": "-",
+      "field_name_en": "Number of modules in one cluster",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31227",
+      "field_name_source": "模组额定电压",
+      "notes_source": "-",
+      "field_name_en": "Module rated voltage",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31228",
+      "field_name_source": "模组额定容量",
+      "notes_source": "-",
+      "field_name_en": "Module rated capacity",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31229",
+      "field_name_source": "电池工作状态",
+      "notes_source": "0：电池待机\n1：电池断开\n2：电池充电运行\n3：电池放电运行\n4：故障\n5：升级",
+      "field_name_en": "Battery operating status",
+      "notes_en": "0: Battery standby\n1: Battery disconnected\n2: Battery charging operation\n3: Battery discharging operation\n4: Fault\n5: Upgrade"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31230",
+      "field_name_source": "保留",
+      "notes_source": "-",
+      "field_name_en": "Reserved",
+      "notes_en": "-"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31300~31399",
+      "field_name_source": "31300~31399内容参考31200~31299",
+      "notes_source": "参考前一簇电池信息定义",
+      "field_name_en": "31300~31399 content references 31200~31299",
+      "notes_en": "Refer to the previous battery cluster information definition"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31400~31499",
+      "field_name_source": "31400~31499内容参考31200~31299",
+      "notes_source": "参考前一簇电池信息定义",
+      "field_name_en": "31400~31499 content references 31200~31299",
+      "notes_en": "Refer to the previous battery cluster information definition"
+    },
+    {
+      "profile_id": "fc04_vpp_protocol_params_31000_31999",
+      "address": "31500~31599",
+      "field_name_source": "31500~31599内容参考31200~31299",
+      "notes_source": "参考前一簇电池信息定义",
+      "field_name_en": "31500~31599 content references 31200~31299",
+      "notes_en": "Refer to the previous battery cluster information definition"
+    }
+  ]
+}

@@ -196,10 +196,65 @@
           }
         },
         "registers": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/register_detail_row"
+          }
         },
         "source_ref": {
           "type": "object"
+        }
+      },
+      "additionalProperties": true
+    },
+    "register_detail_row": {
+      "type": "object",
+      "required": [
+        "address",
+        "field_name",
+        "field_name_en",
+        "data_type",
+        "unit",
+        "scale",
+        "access",
+        "applicable_dtc_or_model",
+        "protocol_version",
+        "notes",
+        "notes_en"
+      ],
+      "properties": {
+        "address": {
+          "type": "string"
+        },
+        "field_name": {
+          "type": "string"
+        },
+        "field_name_en": {
+          "type": "string"
+        },
+        "data_type": {
+          "type": "string"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "scale": {
+          "type": "string"
+        },
+        "access": {
+          "type": "string"
+        },
+        "applicable_dtc_or_model": {
+          "type": "string"
+        },
+        "protocol_version": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "notes_en": {
+          "type": "string"
         }
       },
       "additionalProperties": true
