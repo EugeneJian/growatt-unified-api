@@ -18,7 +18,7 @@
   "map.hero_title": "Common Register Address Range Visual Map",
   "map.hero_subtitle": "Split by Modbus function code into two address lanes: 0x03 Holding Register and 0x04 Input Register.",
   "map.svg_title": "Common Register Fields · Address Map",
-  "map.svg_subtitle": "A shared address-space view for device DTC, firmware, and protocol parsing: semantics are determined by function code plus address range.",
+  "map.svg_subtitle": "Shared view for device DTC, firmware, and protocol parsing.",
   "map.svg_address_range": "Address range",
   "map.svg_holding_lane": "0x03 Holding Register",
   "map.svg_input_lane": "0x04 Input Register",

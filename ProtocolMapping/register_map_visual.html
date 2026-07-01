@@ -60,6 +60,7 @@
     <style>
       .title{font:700 30px 'PingFang SC','Microsoft YaHei',Arial;fill:#172033}
       .small{font:400 18px 'PingFang SC','Microsoft YaHei',Arial;fill:#657086}
+      .legendText{font:400 16px 'PingFang SC','Microsoft YaHei',Arial;fill:#657086}
       .laneTitle{font:700 22px 'PingFang SC','Microsoft YaHei',Arial;fill:#172033}
       .addr{font:700 16px 'Menlo','Consolas',monospace;fill:#526071}
       .label{font:700 18px 'PingFang SC','Microsoft YaHei',Arial;fill:white}
@@ -79,9 +80,15 @@
   <text x="54" y="88" class="small" data-i18n="map.svg_subtitle">设备层 DTC / 固件 / 协议解析的公共地址空间视图：用功能码 + 地址范围共同确定语义。</text>
 
   <!-- Legend inside SVG -->
-  <rect x="1020" y="34" width="28" height="18" rx="5" fill="url(#g03)"/><text x="1058" y="50" class="small" data-i18n="map.legend.fc03_title">0x03 保持寄存器</text>
-  <rect x="1020" y="66" width="28" height="18" rx="5" fill="url(#g04)"/><text x="1058" y="82" class="small" data-i18n="map.legend.fc04_title">0x04 输入寄存器</text>
-  <rect x="1230" y="50" width="28" height="18" rx="5" fill="url(#warn)"/><text x="1268" y="66" class="small" data-i18n="map.svg_overlap_notice">重叠/注意</text>
+  <g transform="translate(1110 22)">
+    <rect x="0" y="0" width="316" height="96" rx="13" fill="#fff" stroke="#e2e8f0"/>
+    <rect x="18" y="18" width="28" height="18" rx="5" fill="url(#g03)"/>
+    <text x="58" y="33" class="legendText" data-i18n="map.legend.fc03_title">0x03 保持寄存器</text>
+    <rect x="18" y="48" width="28" height="18" rx="5" fill="url(#g04)"/>
+    <text x="58" y="63" class="legendText" data-i18n="map.legend.fc04_title">0x04 输入寄存器</text>
+    <rect x="18" y="76" width="28" height="18" rx="5" fill="url(#warn)"/>
+    <text x="58" y="91" class="legendText" data-i18n="map.svg_overlap_notice">重叠/注意</text>
+  </g>
 
   <!-- columns -->
   <rect x="50" y="125" width="1398" height="920" rx="22" fill="#f8fafc" stroke="#e2e8f0"/>
