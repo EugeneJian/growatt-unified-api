@@ -6,6 +6,7 @@
 
   "common.loading": "正在读取...",
   "common.back_to_map": "← 返回寄存器地址图",
+  "common.back_to_navigation": "← 返回导航",
   "common.label_separator": "：",
   "common.error_static_server": "请通过本地静态服务访问本页。",
 

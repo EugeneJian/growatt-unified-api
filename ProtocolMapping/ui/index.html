@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Growatt · 云边端导航</title>
+  <title>Growatt · Cloud Edge Device Navigation</title>
   <style>
     :root {
       --bg: #050b16;
@@ -27,11 +27,10 @@
     }
 
     body {
-      overflow-x: hidden;
+      overflow: hidden;
       background:
-        radial-gradient(circle at 14% 6%, rgba(70, 135, 255, 0.28), transparent 30%),
-        radial-gradient(circle at 88% 18%, rgba(79, 238, 255, 0.16), transparent 24%),
-        radial-gradient(circle at 50% 100%, rgba(104, 255, 211, 0.08), transparent 26%),
+        radial-gradient(circle at 84% 16%, rgba(79, 238, 255, 0.14), transparent 24%),
+        radial-gradient(circle at 22% 78%, rgba(104, 255, 211, 0.08), transparent 22%),
         linear-gradient(180deg, #061225 0%, #050b16 62%, #030812 100%);
     }
 
@@ -40,9 +39,11 @@
     .page {
       position: relative;
       width: 100%;
-      min-height: 100vh;
-      padding: 30px clamp(18px, 4vw, 64px) 40px;
+      height: 100vh;
+      padding: clamp(14px, 2.4vh, 24px) clamp(18px, 4vw, 56px);
       overflow: hidden;
+      display: grid;
+      place-items: center;
     }
 
     .page::before {
@@ -53,7 +54,7 @@
         linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
       background-size: 42px 42px;
-      mask-image: radial-gradient(circle at 50% 36%, black 0%, transparent 78%);
+      mask-image: radial-gradient(circle at 50% 48%, black 0%, transparent 78%);
       pointer-events: none;
     }
 
@@ -69,88 +70,14 @@
       pointer-events: none;
     }
 
-    .topbar {
-      position: relative;
-      z-index: 2;
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-    }
-
-    .brand { display: inline-flex; align-items: center; gap: 12px; }
-
-    .brand-mark {
-      width: 32px;
-      height: 32px;
-      border-radius: 11px;
-      background: linear-gradient(135deg, rgba(107,239,255,0.95), rgba(120,167,255,0.95));
-      box-shadow: 0 0 26px rgba(107,239,255,0.30);
-    }
-
-    .brand-text { line-height: 1.1; }
-    .brand-text strong { display: block; font-size: 15px; letter-spacing: 0.02em; }
-    .brand-text span { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
-
-    .hero {
-      position: relative;
-      z-index: 2;
-      max-width: 760px;
-      margin: 64px auto 0;
-      text-align: center;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: #bcecff;
-      border: 1px solid rgba(107,239,255,0.18);
-      background: rgba(107,239,255,0.055);
-      border-radius: 999px;
-      padding: 7px 13px;
-      font-size: 12.5px;
-    }
-
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 18px rgba(107,239,255,0.7);
-    }
-
-    h1 {
-      margin: 22px 0 0;
-      font-size: clamp(46px, 7vw, 92px);
-      line-height: 1;
-      letter-spacing: 0.04em;
-      font-weight: 800;
-    }
-
-    .gradient-text {
-      background: linear-gradient(90deg, #ffffff, #9eeaff 42%, #98b8ff 74%, #ffffff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    .subtitle {
-      margin: 22px auto 0;
-      max-width: 560px;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.7;
-    }
-
     .visual {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 920px;
-      margin: 52px auto 0;
-      min-height: 612px;
-      border-radius: 32px;
+      max-width: 1040px;
+      height: min(620px, calc(100vh - clamp(28px, 4.8vh, 48px)));
+      min-height: 360px;
+      border-radius: 24px;
       border: 1px solid rgba(255,255,255,0.10);
       background:
         linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.035)),
@@ -158,7 +85,10 @@
       backdrop-filter: blur(22px);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 28px 90px var(--shadow);
       overflow: hidden;
-      padding: 32px;
+      padding: clamp(16px, 2vw, 24px);
+      display: grid;
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: clamp(14px, 2vh, 20px);
     }
 
     .visual::before {
@@ -173,8 +103,8 @@
     .spine {
       position: absolute;
       left: 50%;
-      top: 96px;
-      bottom: 96px;
+      top: 64px;
+      bottom: 64px;
       width: 2px;
       transform: translateX(-50%);
       background: linear-gradient(180deg, transparent, var(--line-strong), rgba(120,167,255,0.75), var(--line-strong), transparent);
@@ -183,12 +113,10 @@
     }
 
     .layer-card {
-      position: absolute;
-      left: 32px;
-      right: 32px;
-      min-height: 138px;
+      position: relative;
+      min-height: 0;
       border: 1px solid rgba(255,255,255,0.095);
-      border-radius: 24px;
+      border-radius: 18px;
       background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.035));
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.025), 0 18px 40px rgba(0,0,0,0.22);
       display: grid;
@@ -204,10 +132,6 @@
       border-color: rgba(107,239,255,0.32);
       background: linear-gradient(135deg, rgba(107,239,255,0.105), rgba(255,255,255,0.04));
     }
-
-    .layer-card:nth-of-type(1) { top: 36px; }
-    .layer-card:nth-of-type(2) { top: 236px; }
-    .layer-card:nth-of-type(3) { bottom: 36px; }
 
     .layer-card::after {
       content: "";
@@ -225,7 +149,7 @@
 
     .layer-head {
       height: 100%;
-      padding: 22px 24px;
+      padding: 18px 22px;
       display: flex;
       align-items: center;
       gap: 14px;
@@ -233,9 +157,9 @@
     }
 
     .layer-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
       display: grid;
       place-items: center;
       color: var(--cyan);
@@ -245,13 +169,12 @@
 
     .layer-icon svg { width: 24px; height: 24px; display: block; }
 
-    .layer-cn { font-size: 27px; font-weight: 800; line-height: 1; }
-    .layer-en { margin-top: 6px; color: var(--muted); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; }
+    .layer-cn { font-size: 25px; font-weight: 800; line-height: 1; }
 
-    .layer-mid { padding: 20px 24px; }
+    .layer-mid { padding: 16px 22px; }
 
-    .layer-title { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
-    .layer-desc { color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+    .layer-title { font-size: 15px; font-weight: 700; margin-bottom: 0; }
+    .layer-title + .chips { margin-top: 10px; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 
@@ -275,9 +198,9 @@
 
     .protocol a {
       width: 100%;
-      min-height: 76px;
+      min-height: 66px;
       border: 1px solid rgba(107,239,255,0.18);
-      border-radius: 18px;
+      border-radius: 14px;
       background: rgba(107,239,255,0.055);
       text-decoration: none;
       display: flex;
@@ -299,9 +222,9 @@
 
     .reserved {
       width: 100%;
-      min-height: 76px;
+      min-height: 66px;
       border: 1px dashed rgba(148,174,202,0.30);
-      border-radius: 18px;
+      border-radius: 14px;
       background: rgba(255,255,255,0.02);
       display: flex;
       flex-direction: column;
@@ -323,53 +246,62 @@
       color: #6f8aa6;
     }
 
-    .foot {
-      position: relative;
-      z-index: 2;
-      max-width: 1100px;
-      margin: 40px auto 0;
-      text-align: center;
-      color: rgba(148,174,202,0.55);
+    .locale-switch {
+      position: absolute;
+      top: clamp(12px, 2vh, 20px);
+      right: clamp(14px, 3vw, 42px);
+      z-index: 4;
+      display: inline-flex;
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      backdrop-filter: blur(14px);
+    }
+
+    .locale-switch button {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
       font-size: 12px;
-      letter-spacing: .04em;
+      font-weight: 800;
+      line-height: 1;
+      padding: 7px 10px;
+    }
+
+    .locale-switch button.active {
+      background: rgba(107,239,255,0.16);
+      color: #eafaff;
     }
 
     @media (max-width: 860px) {
-      .visual { min-height: auto; padding: 18px; display: grid; gap: 14px; }
+      body { overflow: auto; }
+      .page { height: auto; min-height: 100vh; }
+      .visual { height: auto; min-height: auto; padding: 18px; display: grid; gap: 14px; }
       .spine { display: none; }
-      .layer-card { position: relative; left: auto; right: auto; top: auto !important; bottom: auto !important; grid-template-columns: 1fr; min-height: auto; }
+      .layer-card { grid-template-columns: 1fr; min-height: auto; }
       .layer-card::after { display: none; }
       .layer-head, .protocol { border: none; }
       .layer-head { border-bottom: 1px solid rgba(255,255,255,0.075); }
       .protocol { justify-content: flex-start; }
-      .hero { margin-top: 44px; }
     }
 
     @media (max-width: 560px) {
       .page { padding: 22px 16px 32px; }
-      h1 { font-size: 44px; }
     }
   </style>
 </head>
 <body>
   <main class="page">
     <div class="orb"></div>
-
-    <nav class="topbar">
-      <div class="brand">
-        <div class="brand-mark"></div>
-        <div class="brand-text">
-          <strong>Growatt</strong>
-          <span>Unified API</span>
-        </div>
-      </div>
-    </nav>
-
-    <header class="hero">
-      <div class="eyebrow"><span class="pulse-dot"></span> Cloud · Edge · Device</div>
-      <h1><span class="gradient-text">云 · 边 · 端</span></h1>
-      <p class="subtitle">一个入口，贯穿 Growatt 云·边·端三层能力——从开放接口到设备寄存器。</p>
-    </header>
+    <div class="locale-switch" aria-label="Language">
+      <button type="button" data-locale="en" class="active">EN</button>
+      <button type="button" data-locale="zh">中文</button>
+    </div>
 
     <section class="visual" id="architecture">
       <div class="spine"></div>
@@ -382,16 +314,14 @@
             </svg>
           </div>
           <div>
-            <div class="layer-cn">云</div>
-            <div class="layer-en">Cloud</div>
+            <div class="layer-cn" data-i18n="cloud.label">Cloud</div>
           </div>
         </div>
         <div class="layer-mid">
-          <div class="layer-title">Open API Service</div>
-          <div class="layer-desc">对外开放的集成接口</div>
+          <div class="layer-title" data-i18n="cloud.title">Unified Semantic OPEN API</div>
         </div>
         <div class="protocol">
-          <a href="#" data-link-key="cloud.openApi">OPEN API ↗</a>
+          <a href="#" data-link-key="cloud.openApi" data-i18n="cloud.link">OPEN API ↗</a>
         </div>
       </article>
 
@@ -399,24 +329,29 @@
         <div class="layer-head">
           <div class="layer-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3 3 7.5 12 12l9-4.5L12 3Z" />
-              <path d="M3 12.5 12 17l9-4.5" />
-              <path d="M3 17.5 12 22l9-4.5" />
+              <rect x="7" y="9" width="10" height="7" rx="1.8" />
+              <circle cx="4.5" cy="6" r="1.8" />
+              <circle cx="19.5" cy="6" r="1.8" />
+              <circle cx="12" cy="19.5" r="1.8" />
+              <path d="M6 7.2 8.5 9.4M18 7.2l-2.5 2.2M12 16v1.7" />
             </svg>
           </div>
           <div>
-            <div class="layer-cn">边</div>
-            <div class="layer-en">Edge</div>
+            <div class="layer-cn" data-i18n="edge.label">Edge</div>
           </div>
         </div>
         <div class="layer-mid">
-          <div class="layer-title">Edge Gateway</div>
-          <div class="layer-desc">边缘运行时</div>
+          <div class="layer-title" data-i18n="edge.title">Unified System RTU Protocol</div>
+          <div class="chips">
+            <span class="chip" data-i18n="edge.groHomeManger">GroHomeManger</span>
+            <span class="chip" data-i18n="edge.shineMaster">ShineMaster</span>
+            <span class="chip" data-i18n="edge.datalogger">Datalogger</span>
+          </div>
         </div>
         <div class="protocol">
           <div class="reserved">
-            <b>Unified RTU Protocol</b>
-            <i>Reserved</i>
+            <b data-i18n="edge.reservedTitle">Unified System RTU Protocol</b>
+            <i data-i18n="common.reserved">Reserved</i>
           </div>
         </div>
       </article>
@@ -425,43 +360,113 @@
         <div class="layer-head">
           <div class="layer-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="7" y="7" width="10" height="10" rx="1.6" />
-              <path d="M10 7V4M14 7V4M10 20v-3M14 20v-3M7 10H4M7 14H4M20 10h-3M20 14h-3" />
+              <rect x="3" y="7" width="16" height="10" rx="2" />
+              <path d="M21 11v2M7 11h4M14 11v2M15 12h-2" />
             </svg>
           </div>
           <div>
-            <div class="layer-cn">端</div>
-            <div class="layer-en">Device</div>
+            <div class="layer-cn" data-i18n="device.label">Device</div>
           </div>
         </div>
         <div class="layer-mid">
-          <div class="layer-title">Unified Device RTU</div>
+          <div class="layer-title" data-i18n="device.title">Unified Device RTU</div>
           <div class="chips">
-            <span class="chip">逆变器</span>
-            <span class="chip">电池</span>
-            <span class="chip">电表</span>
+            <span class="chip" data-i18n="device.inverter">Inverter</span>
+            <span class="chip" data-i18n="device.battery">Battery</span>
+            <span class="chip" data-i18n="device.meter">Meter</span>
           </div>
         </div>
         <div class="protocol">
-          <a href="#" data-link-key="device.unifiedRtu">Unified Device RTU ↗</a>
+          <a href="#" data-link-key="device.unifiedRtu" data-i18n="device.link">Unified Device RTU ↗</a>
         </div>
       </article>
     </section>
-
-    <footer class="foot">Growatt · Unified Cloud-Edge-Device Architecture</footer>
   </main>
 
   <script>
-    // Edit targets here. Edge (Unified RTU Protocol) is reserved — no link.
     const LINK_REGISTRY = {
       "cloud.openApi": "/growatt-openapi",
       "device.unifiedRtu": "register_map_visual.html"
     };
 
+    const I18N = {
+      en: {
+        pageTitle: "Growatt · Cloud Edge Device Navigation",
+        "cloud.label": "Cloud",
+        "cloud.title": "Unified Semantic OPEN API",
+        "cloud.link": "OPEN API ↗",
+        "edge.label": "Edge",
+        "edge.title": "Unified System RTU Protocol",
+        "edge.groHomeManger": "GroHomeManger",
+        "edge.shineMaster": "ShineMaster",
+        "edge.datalogger": "Datalogger",
+        "edge.reservedTitle": "Unified System RTU Protocol",
+        "device.label": "Device",
+        "device.title": "Unified Device RTU",
+        "device.inverter": "Inverter",
+        "device.battery": "Battery",
+        "device.meter": "Meter",
+        "device.link": "Unified Device RTU ↗",
+        "common.reserved": "Reserved"
+      },
+      zh: {
+        pageTitle: "Growatt · 云边端导航",
+        "cloud.label": "云",
+        "cloud.title": "统一语义 OPEN API",
+        "cloud.link": "OPEN API ↗",
+        "edge.label": "边",
+        "edge.title": "统一系统 RTU 协议",
+        "edge.groHomeManger": "GroHomeManger",
+        "edge.shineMaster": "ShineMaster",
+        "edge.datalogger": "Datalogger",
+        "edge.reservedTitle": "统一系统 RTU 协议",
+        "device.label": "端",
+        "device.title": "统一设备 RTU",
+        "device.inverter": "逆变器",
+        "device.battery": "电池",
+        "device.meter": "电表",
+        "device.link": "统一设备 RTU ↗",
+        "common.reserved": "预留"
+      }
+    };
+
+    function localeFromStorage() {
+      try {
+        return localStorage.getItem("cloud-edge-device-locale") || "en";
+      } catch {
+        return "en";
+      }
+    }
+
+    function setLocale(locale) {
+      const nextLocale = I18N[locale] ? locale : "en";
+      const dictionary = I18N[nextLocale];
+      document.documentElement.lang = nextLocale === "zh" ? "zh-CN" : "en";
+      document.title = dictionary.pageTitle;
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const key = node.getAttribute("data-i18n");
+        if (dictionary[key]) node.textContent = dictionary[key];
+      });
+      document.querySelectorAll("[data-locale]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.locale === nextLocale);
+      });
+      try {
+        localStorage.setItem("cloud-edge-device-locale", nextLocale);
+      } catch {
+        // Ignore storage failures in embedded or privacy-restricted browsers.
+      }
+    }
+
     document.querySelectorAll('[data-link-key]').forEach((node) => {
       const key = node.getAttribute('data-link-key');
       if (LINK_REGISTRY[key]) node.href = LINK_REGISTRY[key];
     });
+
+    document.querySelectorAll("[data-locale]").forEach((button) => {
+      button.addEventListener("click", () => setLocale(button.dataset.locale));
+    });
+
+    setLocale(localeFromStorage());
   </script>
 </body>
 </html>

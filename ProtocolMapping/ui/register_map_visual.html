@@ -7,7 +7,10 @@
 <style>
   body{margin:0;background:#f6f8fb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',Arial,sans-serif;color:#172033;}
   .wrap{max-width:1280px;margin:24px auto;padding:20px;}
-  .topbar{display:flex;justify-content:flex-end;align-items:center;margin-bottom:12px;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;}
+  .nav-link{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:#344057;border:1px solid #dbe3ed;border-radius:999px;background:#fff;padding:6px 12px;font-size:13px;font-weight:800;line-height:1.2;box-shadow:0 4px 12px rgba(20,35,60,.06);}
+  .nav-link:hover{background:#f4f7fb;color:#172033;}
+  .nav-link:focus{outline:2px solid rgba(37,99,235,.35);outline-offset:2px;}
   .card{background:white;border-radius:18px;box-shadow:0 8px 28px rgba(20,35,60,.10);padding:24px;}
   h1{font-size:28px;margin:0 0 6px 0;}
   .sub{color:#657086;font-size:14px;margin-bottom:18px;}
@@ -43,6 +46,7 @@
 <body>
 <div class="wrap">
   <div class="topbar">
+    <a class="nav-link" href="index.html" data-i18n="common.back_to_navigation">← 返回导航</a>
     <div id="languageSwitch"></div>
   </div>
   <div class="card">

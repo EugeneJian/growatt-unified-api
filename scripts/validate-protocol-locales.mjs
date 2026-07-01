@@ -19,6 +19,7 @@ const requiredUiKeys = [
   "locale.en-US",
   "common.loading",
   "common.back_to_map",
+  "common.back_to_navigation",
   "common.label_separator",
   "common.error_static_server",
   "source.document",

@@ -6,6 +6,7 @@
 
   "common.loading": "Loading...",
   "common.back_to_map": "← Back to Register Map",
+  "common.back_to_navigation": "← Back to Navigation",
   "common.label_separator": ": ",
   "common.error_static_server": "Please open this page through a local static server.",
 
