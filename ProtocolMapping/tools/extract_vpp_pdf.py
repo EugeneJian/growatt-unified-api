@@ -37,6 +37,11 @@ DEFAULT_TRANSLATION_OVERLAY = Path(
 
 HAN_RE = re.compile(r"[\u3400-\u9fff]")
 
+CANONICAL_UNITS = {
+    "VAR": "VAR",
+    "KW": "kW",
+}
+
 PROTOCOL_VERSION = "V2.05"
 PROTOCOL_DATE = "2026-05-29"
 
@@ -298,8 +303,14 @@ def parse_unit_scale(raw_unit: str) -> tuple[str, str]:
         return unit or "-", "-"
     match = re.match(r"^\*?([0-9]+(?:\.[0-9]+)?)(.+)$", unit)
     if match:
-        return match.group(2), match.group(1)
-    return unit, "-"
+        return normalize_unit(match.group(2)), match.group(1)
+    return normalize_unit(unit), "-"
+
+
+def normalize_unit(raw_unit: str) -> str:
+    unit = clean_inline(raw_unit)
+    compact = re.sub(r"\s+", "", unit).upper()
+    return CANONICAL_UNITS.get(compact, unit)
 
 
 def is_sequence(value: str) -> bool:
@@ -643,6 +654,8 @@ def write_markdown(payload: dict[str, Any], output: Path) -> None:
             )
         lines.append("")
 
+    while lines and lines[-1] == "":
+        lines.pop()
     output.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 

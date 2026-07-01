@@ -70,12 +70,33 @@
       pointer-events: none;
     }
 
-    .visual {
+    .home-shell {
       position: relative;
       z-index: 2;
       width: 100%;
       max-width: 1040px;
-      height: min(620px, calc(100vh - clamp(28px, 4.8vh, 48px)));
+      height: min(700px, calc(100vh - clamp(28px, 4.8vh, 48px)));
+      min-height: 430px;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      gap: clamp(14px, 2vh, 20px);
+    }
+
+    .home-title {
+      margin: 0;
+      text-align: center;
+      color: #f2fbff;
+      font-size: clamp(26px, 3.1vw, 40px);
+      line-height: 1.08;
+      font-weight: 800;
+      text-shadow: 0 0 28px rgba(107,239,255,0.22);
+    }
+
+    .visual {
+      position: relative;
+      width: 100%;
+      max-width: none;
+      height: 100%;
       min-height: 360px;
       border-radius: 24px;
       border: 1px solid rgba(255,255,255,0.10);
@@ -281,6 +302,8 @@
     @media (max-width: 860px) {
       body { overflow: auto; }
       .page { height: auto; min-height: 100vh; }
+      .home-shell { height: auto; min-height: auto; }
+      .home-title { font-size: 28px; }
       .visual { height: auto; min-height: auto; padding: 18px; display: grid; gap: 14px; }
       .spine { display: none; }
       .layer-card { grid-template-columns: 1fr; min-height: auto; }
@@ -292,6 +315,7 @@
 
     @media (max-width: 560px) {
       .page { padding: 22px 16px 32px; }
+      .home-title { font-size: 24px; }
     }
   </style>
 </head>
@@ -303,84 +327,88 @@
       <button type="button" data-locale="zh">中文</button>
     </div>
 
-    <section class="visual" id="architecture">
-      <div class="spine"></div>
+    <div class="home-shell">
+      <h1 class="home-title" data-i18n="home.title">Growatt Cloud-Edge-Device Unified Protocol</h1>
 
-      <article class="layer-card" id="cloud">
-        <div class="layer-head">
-          <div class="layer-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.5 18.5h-11A4.5 4.5 0 0 1 5.9 9.6 6 6 0 0 1 17.7 8.2a4 4 0 0 1-.2 10.3Z" />
-            </svg>
-          </div>
-          <div>
-            <div class="layer-cn" data-i18n="cloud.label">Cloud</div>
-          </div>
-        </div>
-        <div class="layer-mid">
-          <div class="layer-title" data-i18n="cloud.title">Unified Semantic OPEN API</div>
-        </div>
-        <div class="protocol">
-          <a href="#" data-link-key="cloud.openApi" data-i18n="cloud.link">OPEN API ↗</a>
-        </div>
-      </article>
+      <section class="visual" id="architecture">
+        <div class="spine"></div>
 
-      <article class="layer-card" id="edge">
-        <div class="layer-head">
-          <div class="layer-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="7" y="9" width="10" height="7" rx="1.8" />
-              <circle cx="4.5" cy="6" r="1.8" />
-              <circle cx="19.5" cy="6" r="1.8" />
-              <circle cx="12" cy="19.5" r="1.8" />
-              <path d="M6 7.2 8.5 9.4M18 7.2l-2.5 2.2M12 16v1.7" />
-            </svg>
+        <article class="layer-card" id="cloud">
+          <div class="layer-head">
+            <div class="layer-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 18.5h-11A4.5 4.5 0 0 1 5.9 9.6 6 6 0 0 1 17.7 8.2a4 4 0 0 1-.2 10.3Z" />
+              </svg>
+            </div>
+            <div>
+              <div class="layer-cn" data-i18n="cloud.label">Cloud</div>
+            </div>
           </div>
-          <div>
-            <div class="layer-cn" data-i18n="edge.label">Edge</div>
+          <div class="layer-mid">
+            <div class="layer-title" data-i18n="cloud.title">Unified Semantic OPEN API</div>
           </div>
-        </div>
-        <div class="layer-mid">
-          <div class="layer-title" data-i18n="edge.title">Unified System RTU Protocol</div>
-          <div class="chips">
-            <span class="chip" data-i18n="edge.groHomeManger">GroHomeManger</span>
-            <span class="chip" data-i18n="edge.shineMaster">ShineMaster</span>
-            <span class="chip" data-i18n="edge.datalogger">Datalogger</span>
+          <div class="protocol">
+            <a href="#" data-link-key="cloud.openApi" data-i18n="cloud.link">OPEN API ↗</a>
           </div>
-        </div>
-        <div class="protocol">
-          <div class="reserved">
-            <b data-i18n="edge.reservedTitle">Unified System RTU Protocol</b>
-            <i data-i18n="common.reserved">Reserved</i>
-          </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="layer-card" id="device">
-        <div class="layer-head">
-          <div class="layer-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="7" width="16" height="10" rx="2" />
-              <path d="M21 11v2M7 11h4M14 11v2M15 12h-2" />
-            </svg>
+        <article class="layer-card" id="edge">
+          <div class="layer-head">
+            <div class="layer-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="7" y="9" width="10" height="7" rx="1.8" />
+                <circle cx="4.5" cy="6" r="1.8" />
+                <circle cx="19.5" cy="6" r="1.8" />
+                <circle cx="12" cy="19.5" r="1.8" />
+                <path d="M6 7.2 8.5 9.4M18 7.2l-2.5 2.2M12 16v1.7" />
+              </svg>
+            </div>
+            <div>
+              <div class="layer-cn" data-i18n="edge.label">Edge</div>
+            </div>
           </div>
-          <div>
-            <div class="layer-cn" data-i18n="device.label">Device</div>
+          <div class="layer-mid">
+            <div class="layer-title" data-i18n="edge.title">Unified System RTU Protocol</div>
+            <div class="chips">
+              <span class="chip" data-i18n="edge.groHomeManger">GroHomeManger</span>
+              <span class="chip" data-i18n="edge.shineMaster">ShineMaster</span>
+              <span class="chip" data-i18n="edge.datalogger">Datalogger</span>
+            </div>
           </div>
-        </div>
-        <div class="layer-mid">
-          <div class="layer-title" data-i18n="device.title">Unified Device RTU</div>
-          <div class="chips">
-            <span class="chip" data-i18n="device.inverter">Inverter</span>
-            <span class="chip" data-i18n="device.battery">Battery</span>
-            <span class="chip" data-i18n="device.meter">Meter</span>
+          <div class="protocol">
+            <div class="reserved">
+              <b data-i18n="edge.reservedTitle">Unified System RTU Protocol</b>
+              <i data-i18n="common.reserved">Reserved</i>
+            </div>
           </div>
-        </div>
-        <div class="protocol">
-          <a href="#" data-link-key="device.unifiedRtu" data-i18n="device.link">Unified Device RTU ↗</a>
-        </div>
-      </article>
-    </section>
+        </article>
+
+        <article class="layer-card" id="device">
+          <div class="layer-head">
+            <div class="layer-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="7" width="16" height="10" rx="2" />
+                <path d="M21 11v2M7 11h4M14 11v2M15 12h-2" />
+              </svg>
+            </div>
+            <div>
+              <div class="layer-cn" data-i18n="device.label">Device</div>
+            </div>
+          </div>
+          <div class="layer-mid">
+            <div class="layer-title" data-i18n="device.title">Unified Device RTU</div>
+            <div class="chips">
+              <span class="chip" data-i18n="device.inverter">Inverter</span>
+              <span class="chip" data-i18n="device.battery">Battery</span>
+              <span class="chip" data-i18n="device.meter">Meter</span>
+            </div>
+          </div>
+          <div class="protocol">
+            <a href="#" data-link-key="device.unifiedRtu" data-i18n="device.link">Unified Device RTU ↗</a>
+          </div>
+        </article>
+      </section>
+    </div>
   </main>
 
   <script>
@@ -392,6 +420,7 @@
     const I18N = {
       en: {
         pageTitle: "Growatt · Cloud Edge Device Navigation",
+        "home.title": "Growatt Cloud-Edge-Device Unified Protocol",
         "cloud.label": "Cloud",
         "cloud.title": "Unified Semantic OPEN API",
         "cloud.link": "OPEN API ↗",
@@ -411,6 +440,7 @@
       },
       zh: {
         pageTitle: "Growatt · 云边端导航",
+        "home.title": "Growatt 云边端 统一协议",
         "cloud.label": "云",
         "cloud.title": "统一语义 OPEN API",
         "cloud.link": "OPEN API ↗",
