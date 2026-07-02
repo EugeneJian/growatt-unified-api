@@ -78,8 +78,8 @@
       height: min(700px, calc(100vh - clamp(28px, 4.8vh, 48px)));
       min-height: 430px;
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr);
-      gap: clamp(14px, 2vh, 20px);
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: clamp(10px, 1.7vh, 18px);
     }
 
     .home-title {
@@ -90,6 +90,44 @@
       line-height: 1.08;
       font-weight: 800;
       text-shadow: 0 0 28px rgba(107,239,255,0.22);
+    }
+
+    .documentation-tabs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 36px;
+    }
+
+    .documentation-tab {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(107,239,255,0.20);
+      background: rgba(107,239,255,0.065);
+      color: #d9f6ff;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 800;
+      line-height: 1.2;
+      transition: border-color .22s ease, background .22s ease, transform .22s ease;
+    }
+
+    .documentation-tab:hover {
+      border-color: rgba(107,239,255,0.46);
+      background: rgba(107,239,255,0.13);
+      transform: translateY(-1px);
+    }
+
+    .documentation-tab svg {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 auto;
     }
 
     .visual {
@@ -304,6 +342,7 @@
       .page { height: auto; min-height: 100vh; }
       .home-shell { height: auto; min-height: auto; }
       .home-title { font-size: 28px; }
+      .documentation-tabs { justify-content: flex-start; }
       .visual { height: auto; min-height: auto; padding: 18px; display: grid; gap: 14px; }
       .spine { display: none; }
       .layer-card { grid-template-columns: 1fr; min-height: auto; }
@@ -329,6 +368,15 @@
 
     <div class="home-shell">
       <h1 class="home-title" data-i18n="home.title">Growatt Cloud-Edge-Device Unified Protocol</h1>
+      <nav class="documentation-tabs" aria-label="Documentation">
+        <a class="documentation-tab" href="#" data-link-key="docs.index">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H7a3 3 0 0 0-3 3V5.5Z" />
+            <path d="M8 7h8M8 11h8M8 15h5" />
+          </svg>
+          <span data-i18n="docs.index">Documentation</span>
+        </a>
+      </nav>
 
       <section class="visual" id="architecture">
         <div class="spine"></div>
@@ -413,7 +461,8 @@
 
   <script>
     const LINK_REGISTRY = {
-      "cloud.openApi": "/growatt-openapi",
+      "cloud.openApi": "https://vpp.myshine.online/growatt-openapi",
+      "docs.index": "documentation.html",
       "device.unifiedRtu": "register_map_visual.html"
     };
 
@@ -421,6 +470,7 @@
       en: {
         pageTitle: "Growatt · Cloud Edge Device Navigation",
         "home.title": "Growatt Cloud-Edge-Device Unified Protocol",
+        "docs.index": "Documentation",
         "cloud.label": "Cloud",
         "cloud.title": "Unified Semantic OPEN API",
         "cloud.link": "OPEN API ↗",
@@ -441,6 +491,7 @@
       zh: {
         pageTitle: "Growatt · 云边端导航",
         "home.title": "Growatt 云边端 统一协议",
+        "docs.index": "Documentation",
         "cloud.label": "云",
         "cloud.title": "统一语义 OPEN API",
         "cloud.link": "OPEN API ↗",

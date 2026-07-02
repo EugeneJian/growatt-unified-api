@@ -2,7 +2,8 @@
   "version": 1,
   "include": [
     "/growatt-openapi/growatt-codes*",
-    "/growatt-openapi/protocol-mapping*"
+    "/growatt-openapi/protocol-mapping*",
+    "/protocol-mapping*"
   ],
   "exclude": []
 }

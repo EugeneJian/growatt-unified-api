@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Growatt · Documentation</title>
+  <style>
+    :root {
+      --bg: #050b16;
+      --text: #edf7ff;
+      --muted: #94aeca;
+      --cyan: #6befff;
+      --shadow: rgba(0, 0, 0, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    body {
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 82% 18%, rgba(79, 238, 255, 0.14), transparent 24%),
+        radial-gradient(circle at 18% 76%, rgba(104, 255, 211, 0.08), transparent 22%),
+        linear-gradient(180deg, #061225 0%, #050b16 62%, #030812 100%);
+    }
+
+    a { color: inherit; }
+
+    .page {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      padding: clamp(18px, 3vh, 34px) clamp(18px, 4vw, 56px);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at 50% 48%, black 0%, transparent 78%);
+      pointer-events: none;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1040px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .back-link,
+    .locale-switch {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.045);
+      backdrop-filter: blur(14px);
+    }
+
+    .back-link {
+      gap: 7px;
+      min-height: 34px;
+      padding: 8px 13px;
+      color: #d9f6ff;
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 800;
+      transition: border-color .22s ease, background .22s ease, transform .22s ease;
+    }
+
+    .back-link:hover {
+      border-color: rgba(107,239,255,0.42);
+      background: rgba(107,239,255,0.12);
+      transform: translateY(-1px);
+    }
+
+    .back-link svg { width: 15px; height: 15px; }
+
+    .locale-switch {
+      gap: 3px;
+      padding: 3px;
+    }
+
+    .locale-switch button {
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      padding: 7px 10px;
+    }
+
+    .locale-switch button.active {
+      background: rgba(107,239,255,0.16);
+      color: #eafaff;
+    }
+
+    .title-block {
+      text-align: center;
+      display: grid;
+      gap: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      color: #f2fbff;
+      font-size: clamp(30px, 4vw, 52px);
+      line-height: 1.04;
+      font-weight: 800;
+      text-shadow: 0 0 28px rgba(107,239,255,0.22);
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(12px, 2vw, 18px);
+    }
+
+    .doc-card {
+      min-height: 210px;
+      border: 1px solid rgba(255,255,255,0.095);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.035));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.025), 0 18px 40px rgba(0,0,0,0.22);
+      padding: 22px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 14px;
+      text-decoration: none;
+      overflow: hidden;
+      transition: transform .24s ease, border-color .24s ease, background .24s ease;
+    }
+
+    a.doc-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(107,239,255,0.34);
+      background: linear-gradient(135deg, rgba(107,239,255,0.105), rgba(255,255,255,0.04));
+    }
+
+    .doc-card.reserved {
+      color: var(--muted);
+      border-style: dashed;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.015);
+    }
+
+    .doc-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .doc-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--cyan);
+      background: rgba(107,239,255,0.08);
+      border: 1px solid rgba(107,239,255,0.18);
+    }
+
+    .doc-icon svg { width: 23px; height: 23px; }
+
+    .doc-state {
+      color: #8fb2cf;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .doc-title {
+      margin: 0;
+      color: #eff8ff;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .doc-copy {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .doc-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #d9f6ff;
+      font-size: 12.5px;
+      font-weight: 800;
+    }
+
+    .doc-action svg { width: 15px; height: 15px; }
+
+    @media (max-width: 860px) {
+      body { overflow: auto; }
+      .page { height: auto; min-height: 100vh; place-items: start center; }
+      .doc-grid { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; }
+    }
+
+    @media (max-width: 560px) {
+      .page { padding: 22px 16px 32px; }
+      .topbar { flex-direction: column; }
+      .title-block { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="shell">
+      <div class="topbar">
+        <a class="back-link" href="index.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18 9 12l6-6" />
+          </svg>
+          <span data-i18n="back">Back to Navigation</span>
+        </a>
+        <div class="locale-switch" aria-label="Language">
+          <button type="button" data-locale="en" class="active">EN</button>
+          <button type="button" data-locale="zh">中文</button>
+        </div>
+      </div>
+
+      <div class="title-block">
+        <h1 data-i18n="page.title">Documentation</h1>
+        <p class="subtitle" data-i18n="page.subtitle">Architecture, release notes, and protocol guidance for the cloud-edge-device stack.</p>
+      </div>
+
+      <div class="doc-grid">
+        <a class="doc-card" href="#" data-link-key="architecture">
+          <div class="doc-head">
+            <div class="doc-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6h16M4 12h16M4 18h16" />
+                <path d="M8 6v12M16 6v12" />
+              </svg>
+            </div>
+            <span class="doc-state" data-i18n="state.available">Available</span>
+          </div>
+          <div>
+            <h2 class="doc-title" data-i18n="architecture.title">Architecture</h2>
+            <p class="doc-copy" data-i18n="architecture.copy">VPP integration architecture supporting Growatt cloud, edge, and device protocol decisions.</p>
+          </div>
+          <span class="doc-action">
+            <span data-i18n="open">Open</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 17 17 7M9 7h8v8" />
+            </svg>
+          </span>
+        </a>
+
+        <article class="doc-card reserved">
+          <div class="doc-head">
+            <div class="doc-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 4h10l4 4v12H5z" />
+                <path d="M15 4v5h5M8 13h8M8 17h5" />
+              </svg>
+            </div>
+            <span class="doc-state" data-i18n="state.reserved">Reserved</span>
+          </div>
+          <div>
+            <h2 class="doc-title">SRN</h2>
+            <p class="doc-copy" data-i18n="srn.copy">Structured release notes and protocol change records.</p>
+          </div>
+          <span class="doc-action" data-i18n="reserved">Reserved</span>
+        </article>
+
+        <article class="doc-card reserved">
+          <div class="doc-head">
+            <div class="doc-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 6h16v12H4z" />
+                <path d="M8 10h8M8 14h5" />
+              </svg>
+            </div>
+            <span class="doc-state" data-i18n="state.reserved">Reserved</span>
+          </div>
+          <div>
+            <h2 class="doc-title">Bulletin</h2>
+            <p class="doc-copy" data-i18n="bulletin.copy">Partner-facing protocol notices and operational guidance.</p>
+          </div>
+          <span class="doc-action" data-i18n="reserved">Reserved</span>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const ARCHITECTURE_DOC_FILE = "docs/Growatt_VPP_Integration_Architecture_ReportOUT_v1_2.html";
+
+    function protocolRootFile(fileName) {
+      return window.location.pathname.includes("/ProtocolMapping/ui/") ? `../${fileName}` : fileName;
+    }
+
+    const I18N = {
+      en: {
+        pageTitle: "Growatt · Documentation",
+        back: "Back to Navigation",
+        "page.title": "Documentation",
+        "page.subtitle": "Architecture, release notes, and protocol guidance for the cloud-edge-device stack.",
+        "architecture.title": "Architecture",
+        "architecture.copy": "VPP integration architecture supporting Growatt cloud, edge, and device protocol decisions.",
+        "srn.copy": "Structured release notes and protocol change records.",
+        "bulletin.copy": "Partner-facing protocol notices and operational guidance.",
+        "state.available": "Available",
+        "state.reserved": "Reserved",
+        open: "Open",
+        reserved: "Reserved"
+      },
+      zh: {
+        pageTitle: "Growatt · Documentation",
+        back: "返回导航",
+        "page.title": "Documentation",
+        "page.subtitle": "云边端协议架构、SRN、Bulletin 等指导文件入口。",
+        "architecture.title": "Architecture",
+        "architecture.copy": "支撑 Growatt 云、边、端协议决策的 VPP 集成架构文档。",
+        "srn.copy": "结构化发布说明和协议变更记录。",
+        "bulletin.copy": "面向伙伴的协议公告和运营指导。",
+        "state.available": "Available",
+        "state.reserved": "Reserved",
+        open: "打开",
+        reserved: "预留"
+      }
+    };
+
+    function localeFromStorage() {
+      try {
+        return localStorage.getItem("cloud-edge-device-locale") || "en";
+      } catch {
+        return "en";
+      }
+    }
+
+    function setLocale(locale) {
+      const nextLocale = I18N[locale] ? locale : "en";
+      const dictionary = I18N[nextLocale];
+      document.documentElement.lang = nextLocale === "zh" ? "zh-CN" : "en";
+      document.title = dictionary.pageTitle;
+      document.querySelectorAll("[data-i18n]").forEach((node) => {
+        const key = node.getAttribute("data-i18n");
+        if (dictionary[key]) node.textContent = dictionary[key];
+      });
+      document.querySelectorAll("[data-locale]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.locale === nextLocale);
+      });
+      try {
+        localStorage.setItem("cloud-edge-device-locale", nextLocale);
+      } catch {
+        // Local storage can be disabled in embedded or privacy-restricted browsers.
+      }
+    }
+
+    document.querySelector('[data-link-key="architecture"]').href = protocolRootFile(ARCHITECTURE_DOC_FILE);
+
+    document.querySelectorAll("[data-locale]").forEach((button) => {
+      button.addEventListener("click", () => setLocale(button.dataset.locale));
+    });
+
+    setLocale(localeFromStorage());
+  </script>
+</body>
+</html>

@@ -20,7 +20,7 @@ function isUnprotectedBypassEnabled(value: string | undefined): boolean {
 
 function forbiddenResponse(): Response {
   return new Response(
-    "Protocol SSOT requires Cloudflare Access. Configure an Access application for /growatt-openapi/protocol-mapping*.",
+    "Growatt Protocol Mapping requires Cloudflare Access. Configure the growatt-protocol-mapping Access application for /protocol-mapping* and /growatt-openapi/protocol-mapping*.",
     {
       status: 403,
       headers: {

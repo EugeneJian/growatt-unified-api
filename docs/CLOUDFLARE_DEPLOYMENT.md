@@ -12,6 +12,7 @@
    - Node.js version: `20`
 3. 首次部署完成后，访问：
    - `/growatt-openapi`
+   - `/protocol-mapping/index.html`
    - `/growatt-openapi/protocol-mapping/index.html`
 
 ## CLI 部署
@@ -23,11 +24,14 @@ npx wrangler pages deploy out --project-name <your-project-name>
 
 `wrangler.toml` 已默认指定 `pages_build_output_dir = "out"`。
 
-## Protocol SSOT 发布与 Cloudflare Access
+## Growatt Protocol Mapping 发布与 Cloudflare Access
 
 `ProtocolMapping/` 是协议 SSOT 的源码目录。`ProtocolMapping/ssot/protocol_ssot.json` 是唯一主数据；`ProtocolMapping/ui/` 是发布页面；`ProtocolMapping/sources/` 是 PDF、抽取稿和审阅覆盖层；`ProtocolMapping/tools/` 是生成脚本。线上只发布经过筛选的静态页面和无数据 UI helper，构建脚本会将页面运行所需数据内联到 HTML，不发布原始 SSOT JSON 或来源文件。
 
-- `/growatt-openapi/protocol-mapping/`
+- Canonical VPP path: `/protocol-mapping/`
+- Compatibility path: `/growatt-openapi/protocol-mapping/`
+- Custom VPP domain: `https://vpp.myshine.online/protocol-mapping/`
+- OPENAPI contract: `https://vpp.myshine.online/growatt-openapi`
 
 `npm run build` 会在 `next build` 后自动执行：
 
@@ -51,26 +55,36 @@ npm run protocol:export
 在 Cloudflare Zero Trust Dashboard 中配置：
 
 1. 启用登录方式：`One-time PIN`
-2. 新建 `Self-hosted` Access Application：
-   - Name: `Growatt Protocol SSOT`
-   - Domain: 当前 Open API 文档生产域名
-   - Path: `/growatt-openapi/protocol-mapping*`
-3. 新建 Allow policy：
+2. 新建或更新 `Self-hosted` Access Application：
+   - Name: `Growatt Protocol Mapping (growatt-protocol-mapping)`
+   - Public hostname target 1: `vpp.myshine.online` + `/protocol-mapping*`
+   - Public hostname target 2: `vpp.myshine.online` + `/growatt-openapi/protocol-mapping*`
+   - Public hostname target 3: `growatt-openapi-docs.pages.dev` + `/growatt-openapi/protocol-mapping*`
+3. 新建或更新 Allow policy：
    - Policy name: `Protocol SSOT Readers`
    - Include: `Emails ending in @growatt.com`
    - Include: 外部评审邮箱白名单，初始可为空
    - Session duration: `12 hours`
 
+`growatt-openapi` 只表示 Cloud API contract，必须保持公开。Growatt Protocol Mapping 的正式入口使用 `/protocol-mapping/`；`/growatt-openapi/protocol-mapping/` 仅作为兼容入口保留并受同等 Access 保护。
+
 保护路径必须覆盖整个 Protocol Mapping 目录。特别确认以下地址未登录时会进入 Access OTP 登录页：
 
-- `/growatt-openapi/protocol-mapping/index.html`
-- `/growatt-openapi/protocol-mapping/register_map_visual.html`
+- `https://vpp.myshine.online/protocol-mapping/index.html`
+- `https://vpp.myshine.online/protocol-mapping/register_map_visual.html`
+- `https://vpp.myshine.online/protocol-mapping/documentation.html`
+- `https://vpp.myshine.online/growatt-openapi/protocol-mapping/index.html`
 
-原始 JSON SSOT 不作为线上公开资源发布。若直接访问 `/growatt-openapi/protocol-mapping/ssot/protocol_ssot.json`，未登录时可能先被 Access 拦截；通过 Access 后也应是 `404`，而不是返回 JSON 内容。
+同时确认 OPENAPI contract 仍然公开访问：
+
+- `https://vpp.myshine.online/growatt-openapi`
+- `https://growatt-openapi-docs.pages.dev/growatt-openapi`
+
+原始 JSON SSOT 不作为线上公开资源发布。若直接访问 `/protocol-mapping/ssot/protocol_ssot.json` 或 `/growatt-openapi/protocol-mapping/ssot/protocol_ssot.json`，未登录时可能先被 Access 拦截；通过 Access 后也应是 `404`，而不是返回 JSON 内容。
 
 Cloudflare Access 只能按域名与 path 授权，不能按 `#fc03...` 这类浏览器 hash 授权。
 
-仓库同时包含一个 Pages Function fail-closed 防线：`/growatt-openapi/protocol-mapping*` 请求必须带有 Cloudflare Access 注入的 `Cf-Access-Jwt-Assertion` header 才会放行。它不替代 Access policy，只防止生产域名漏配 Access 时直接暴露协议页面。只有受控环境需要绕过时，才设置 `PROTOCOL_MAPPING_ALLOW_UNPROTECTED=true`。
+仓库同时包含一个 Pages Function fail-closed 防线：`/protocol-mapping*` 和 `/growatt-openapi/protocol-mapping*` 请求必须带有 Cloudflare Access 注入的 `Cf-Access-Jwt-Assertion` header 才会放行。它不替代 Access policy，只防止生产域名漏配 Access 时直接暴露协议页面。只有受控环境需要绕过时，才设置 `PROTOCOL_MAPPING_ALLOW_UNPROTECTED=true`。
 
 ## Growatt Codes 单页 Basic Auth
 

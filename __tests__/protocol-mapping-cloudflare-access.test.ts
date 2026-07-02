@@ -6,6 +6,7 @@ import {
 function createContext(options?: {
   accessJwt?: string | null;
   allowUnprotected?: string;
+  url?: string;
 }) {
   let nextCallCount = 0;
   const headers = new Headers();
@@ -17,7 +18,7 @@ function createContext(options?: {
     PROTOCOL_MAPPING_ALLOW_UNPROTECTED?: string;
   }> = {
     request: new Request(
-      "https://example.com/growatt-openapi/protocol-mapping/register_map_visual.html",
+      options?.url ?? "https://example.com/protocol-mapping/register_map_visual.html",
       { headers },
     ),
     env: {
@@ -58,6 +59,18 @@ describe("protocol mapping Cloudflare Access guard", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("Cache-Control")).toBe("private, no-store");
     expect(await response.text()).toBe("ok");
+    expect(getNextCallCount()).toBe(1);
+  });
+
+  it("uses the same guard for the legacy OpenAPI subpath compatibility entry", async () => {
+    const { context, getNextCallCount } = createContext({
+      accessJwt: "access.jwt",
+      url: "https://example.com/growatt-openapi/protocol-mapping/register_map_visual.html",
+    });
+
+    const response = await requireProtocolMappingCloudflareAccess(context);
+
+    expect(response.status).toBe(200);
     expect(getNextCallCount()).toBe(1);
   });
 
