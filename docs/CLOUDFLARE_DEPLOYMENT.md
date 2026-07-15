@@ -64,7 +64,8 @@ npm run protocol:export
    - Policy name: `Protocol SSOT Readers`
    - Include: `Emails ending in @growatt.com`
    - Include: 外部评审邮箱白名单，初始可为空
-   - Session duration: `12 hours`
+   - Session duration: `30 days`
+     - 若后续安全策略要求更短，可降为 `7 days`；不要低于 `7 days`，避免评审人员频繁重复 OTP 登录。
 
 `growatt-openapi` 只表示 Cloud API contract，必须保持公开。Growatt Protocol Mapping 的正式入口使用 `/protocol-mapping/`；`/growatt-openapi/protocol-mapping/` 仅作为兼容入口保留并受同等 Access 保护。
 
@@ -86,27 +87,31 @@ Cloudflare Access 只能按域名与 path 授权，不能按 `#fc03...` 这类�
 
 仓库同时包含一个 Pages Function fail-closed 防线：`/protocol-mapping*` 和 `/growatt-openapi/protocol-mapping*` 请求必须带有 Cloudflare Access 注入的 `Cf-Access-Jwt-Assertion` header 才会放行。它不替代 Access policy，只防止生产域名漏配 Access 时直接暴露协议页面。只有受控环境需要绕过时，才设置 `PROTOCOL_MAPPING_ALLOW_UNPROTECTED=true`。
 
-## Growatt Codes 单页 Basic Auth
+## ShineTools 能量管理设置产品文档与 Cloudflare Access
 
-仓库已包含 Cloudflare Pages Functions 与 `public/_routes.json`，仅对以下路径启用边缘鉴权：
+ShineTools 能量管理设置 Product Handbook 与来源证据使用独立内部入口，不并入公开 Open API contract：
 
-- `/growatt-openapi/growatt-codes`
-- `/growatt-openapi/growatt-codes/*`
+- Canonical path: `/shinetools/`
+- Custom domain: `https://vpp.myshine.online/shinetools/`
+- Pages domain: `https://growatt-openapi-docs.pages.dev/shinetools/`
+- Access Application: `ShineTools Settings Docs (shinetools-settings-docs)`
 
-在 Cloudflare Pages 项目设置中添加以下环境变量即可启用：
+在 Cloudflare Zero Trust 中为两个 hostname 的 `/shinetools*` 建立独立 `Self-hosted` Access Application。建议策略名为 `ShineTools Settings Readers`，内部读者使用 `@growatt.com` 邮箱域，外部评审使用带负责人和到期时间的 Access Group；默认会话时长为 `7 days`。
 
-1. `GROWATT_CODES_BASIC_AUTH_PASSWORD`
+`public/_routes.json` 和 `functions/shinetools*` 提供第二层 fail-closed 防线。缺少 `Cf-Access-Jwt-Assertion` 时返回 `403`；已认证响应统一设置 `Cache-Control: private, no-store` 和 `X-Robots-Tag: noindex, nofollow, noarchive`。生产环境禁止设置 `SHINETOOLS_ALLOW_UNPROTECTED=true`。
 
-建议配置方式：
+完整发布清单、权限治理和验证矩阵见：
 
-1. 密码建议使用 Cloudflare 加密 secret，并保持变量名为 `GROWATT_CODES_BASIC_AUTH_PASSWORD`
+- [`docs/shinetools-settings/03-deployment-and-access.md`](./shinetools-settings/03-deployment-and-access.md)
 
-行为说明：
+## 访问模型
 
-1. 未携带正确凭证时返回 `401 Unauthorized`
-2. 若未配置上述变量，受保护页面返回 `503`
-3. 其他文档页不经过该 Basic Auth 逻辑
-4. 浏览器的 Basic Auth 弹窗通常仍会显示用户名字段，但服务端只校验密码，用户名会被忽略
+部署只保留两种访问级别：
+
+1. `public`：`/growatt-openapi*` 下的 OpenAPI contract、Quick Guide 和 Growatt Codes；其中 Protocol Mapping 兼容路径除外
+2. `Zero Trust`：`/protocol-mapping*`、`/growatt-openapi/protocol-mapping*` 和 `/shinetools*`，由 Cloudflare Access 与对应的 Pages Function fail-closed 防线保护
+
+`/growatt-openapi/growatt-codes*` 是公开路径，不应加入 `public/_routes.json`，也不需要密码、共享 secret 或 HTTP Basic Auth。若 Cloudflare Pages 项目仍保存 `GROWATT_CODES_BASIC_AUTH_PASSWORD`，可在发布新版本后删除该遗留变量。
 
 ## GitHub Actions 自动部署（可选）
 

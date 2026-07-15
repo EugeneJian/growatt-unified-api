@@ -1,0 +1,116 @@
+[
+  {
+    "name": "DTC Code",
+    "type": "text"
+  },
+  {
+    "name": "DTC数字",
+    "type": "number",
+    "style": {
+      "type": "plain",
+      "precision": 0,
+      "thousands_separator": false
+    }
+  },
+  {
+    "name": "设备类型",
+    "type": "text"
+  },
+  {
+    "name": "DTC类型组",
+    "type": "text"
+  },
+  {
+    "name": "产品类别",
+    "type": "text"
+  },
+  {
+    "name": "产品类别Key",
+    "type": "text"
+  },
+  {
+    "name": "机型别名",
+    "type": "text"
+  },
+  {
+    "name": "机型全称",
+    "type": "text"
+  },
+  {
+    "name": "区域",
+    "type": "text"
+  },
+  {
+    "name": "生命周期",
+    "type": "text"
+  },
+  {
+    "name": "归属组织",
+    "type": "text"
+  },
+  {
+    "name": "DTC范围",
+    "type": "text"
+  },
+  {
+    "name": "Holding上传字段",
+    "type": "text"
+  },
+  {
+    "name": "Input上传字段",
+    "type": "text"
+  },
+  {
+    "name": "固件示例",
+    "type": "text"
+  },
+  {
+    "name": "关联寄存器Profile",
+    "type": "text"
+  },
+  {
+    "name": "关联模块",
+    "type": "text"
+  },
+  {
+    "name": "关联功能码",
+    "type": "text"
+  },
+  {
+    "name": "关联地址段",
+    "type": "text"
+  },
+  {
+    "name": "关联置信度",
+    "type": "text"
+  },
+  {
+    "name": "关联原因",
+    "type": "text"
+  },
+  {
+    "name": "机型记录数",
+    "type": "number",
+    "style": {
+      "type": "plain",
+      "precision": 0,
+      "thousands_separator": false
+    }
+  },
+  {
+    "name": "来源章节",
+    "type": "text"
+  },
+  {
+    "name": "来源行号",
+    "type": "text"
+  },
+  {
+    "name": "SSOT生成时间",
+    "type": "text"
+  },
+  {
+    "name": "SSOT来源SHA256",
+    "type": "text"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "base_name": "Growatt DTC协议表_2026-07-07",
+  "table_name": "DTC协议表",
+  "row_count": 91,
+  "field_count": 26,
+  "source_ssot": "ProtocolMapping/ssot/protocol_ssot.json",
+  "ssot_generated_at": "2026-06-30T20:21:14.568024+00:00",
+  "source_sha256": "a590f62c36f80734df45a5121c160dfd8e775aa749ddd1b0b9de9feb532f3347",
+  "dtc_type_group_count": 7,
+  "device_model_dtc_count": 92,
+  "register_profile_count": 12,
+  "register_profile_dtc_link_count": 83,
+  "lark_base": {
+    "base_token": "KIdQbszrMa0h32saEi5cgtVmnee",
+    "url": "https://q02gj5lyidv.feishu.cn/base/KIdQbszrMa0h32saEi5cgtVmnee",
+    "table_id": "tblhkVl7eyoxRJea",
+    "table_name": "DTC协议表",
+    "record_count_verified": 91,
+    "verified_at": "2026-07-07"
+  },
+  "outputs": {
+    "csv": "ProtocolMapping/exports/dtc_protocol_table_2026-07-07.csv",
+    "markdown": "ProtocolMapping/exports/dtc_protocol_table_2026-07-07.md",
+    "fields_json": "ProtocolMapping/exports/dtc_protocol_table_fields_2026-07-07.json",
+    "records_json": "ProtocolMapping/exports/dtc_protocol_table_records_2026-07-07.json"
+  }
+}

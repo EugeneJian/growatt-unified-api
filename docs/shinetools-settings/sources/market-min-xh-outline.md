@@ -1,0 +1,589 @@
+﻿# Shinetools MIN-XH 设置项
+
+- 新版（重点）
+  - 直连设置（shinetools)平台
+    - Network Configuration and General Setting / 讨论是否简化为 General Setting
+      - Network Configuration
+      - Active Power
+        - Active Power %
+        - Memory Enable / 开关按钮
+      - Off-Grid Paramater Setting 改成Off-Grid Setting
+        - SYN Box Enable / 开关按钮 / XH有，HU没有
+        - Off-Grid Enable / 开关按钮
+        - Off-Grid Frequncy
+          - 50Hz
+          - 60Hz
+        - Off-grid Voltage
+          - 230V
+          - 208V
+          - 240V
+          - 220V
+      - Work Mode(改成 Retrofit/Parallel )
+        - Default mode
+        - System Retrofit
+        - Multiple machines in parallel
+      - COM Address
+        - 1- 254
+      - Reset / 研发确认有没有用 / 选项用于二次确认，后面建议只保留recover，加一个二次确认的弹窗“请确认是否恢复出厂设置”
+        - Doesn't recover
+        - recover
+      - Dry Contact Control
+        - Dry contact enable / 开关按钮
+        - Status of Dry Contact
+        - Dry Contact Mode
+          - Power(Inverter/Surplus)
+          - Time
+          - Time Power
+        - Power(Inverter/Surplus)
+          - ON
+            - Feed in/production power
+            - Start-up delay time
+          - OFF
+            - Feed in/production power
+            - Min.Duration
+      - Inverter Time
+      - Language
+      - Inverter Power OFF/ON / 开关按钮
+    - Quick Setting(New) / 在下一页顶部加说明
+      - Work Status
+      - Country&Regulation
+      - EMS
+        - Work Mode
+          - TOU Mode
+            - Mode Settings
+              - Time Period1
+              - Add Time Period
+          - Backup Mode
+            - Mode Settings
+          - Peak Shaving Mode
+            - Mode Settings
+        - Export Limitation Setting
+          - Export Limitation enable
+            - Enable meter 1
+            - Disable
+          - Export Limitation Power Ratio
+          - Phase level
+        - Battery Setting
+          - Max.Charge Power
+          - Charging Stop SOC
+          - Max.Discharge Power
+          - Discharge Stop SOC
+          - Battery Charging From Grid / 开关按钮
+          - Max.Charge Power From Grid
+          - Charge Stop SOC from Grid
+        - Off-Grid Enable / 开关按钮 / XH建议离网盒使能和离网使能一起放进来 离网设置（离网盒使能、离网使能），与一键建站里面稍微不同，那边只保留离网使能；HU只有离网使能
+        - AC-Couple / 开关按钮
+      - Generator and Smart Load（XH/HU不显示）
+      - Meter/CT setting(SPM/WIT/XH/HU,SPE 不显示)
+      - Parallel Setting / 开关按钮 / XH/HU 机型都不展示
+        - Multiple machines in parallel
+        - COM Address
+          - 1- 254
+      - Auto test (only for Italy) / 根据意大利机型和功率选择显示（<=11kW）
+    - EMS
+      - Work Mode
+        - TOU Mode
+          - Mode Settings
+            - Time Period1
+            - Add Time Period
+        - Backup Mode
+          - Mode Settings
+        - Peak Shaving Mode
+          - Mode Settings
+      - Export Limitation Setting
+        - Export Limitation enable
+          - Enable meter 1
+          - Disable
+        - Export Limitation Power Ratio
+        - Default Power % after Export Limitation Failure
+        - Export Limitation Failure Time
+        - Phase level
+      - Power Sensor
+        - Disable
+        - Electric Meter
+        - CT
+      - Battery Setting
+        - Max.Charge Power
+        - Charging Stop SOC
+        - Max.Discharge Power
+        - Discharge Stop SOC
+        - Battery Charging From Grid / 开关按钮
+        - Max.Charge Power From Grid
+        - Charge Stop SOC from Grid
+      - AC-Couple / 开关按钮
+      - Off-grid / 开关按钮 Enable / 建议删除，通用设置里面已经有完整的离网设置了
+    - Grid Parameter Setting
+      - Country Regulation
+      - PF Setting
+        - Set PF as 1 / 开关按钮
+        - Inductive Reactive Power%
+          - Inductive Reactive Power %
+          - Memory Enable / 开关按钮
+        - Capactive Reactive Power%
+          - Capactive Reactive Power %
+          - Memory Enable / 开关按钮
+        - Inductive PF/Capacitive PF
+          - Inductive PF/Capacitive PF
+          - Memory Enable / 开关按钮
+        - PF Curve In/Out Vac
+          - PF Curve In Vac
+          - PF Curve Out Vac
+        - Custom PF curve
+          - PF Curve Setting 1
+            - PF Limit 1
+            - 1 Load Percentage for PF Limits
+          - PF Curve Setting 2
+            - PF Limit 2
+            - 2 Load Percentage for PF Limits
+          - PF Curve Setting 3
+            - PF Limit 3
+            - 3 Load Percentage for PF Limits
+          - PF Curve Setting 4
+            - PF Limit 4
+            - 4 Load Percentage for PF Limits
+      - 安规参数(新) / 最新版 VPP 协议机型
+      - AC Voltage Protection 删除
+        - AC1 Voltage limit(Low)
+        - AC1 Voltage limit(High)
+        - AC2 Voltage limit(Low)
+        - AC2 Voltage limit(High)
+        - AC3 Voltage limit(Low)
+        - AC3 Voltage limit(High)
+        - ACVoltage Limit Time1(Low)
+        - ACVoltage Limit Time1(High)
+        - ACVoltage Limit Time2(Low)
+        - ACVoltage Limit Time2(High)
+        - ACVoltage Limit Time3(Low)
+        - ACVoltage Limit Time3(High)
+      - AC Frequency Protection 删除
+        - AC1 Frequency limit(Low)
+        - AC1 Frequency limit(High)
+        - AC2 Frequency limit(Low)
+        - AC2 Frequency limit(High)
+        - AC3 Frequency limit(Low)
+        - AC3 Frequency limit(High)
+        - ACFrequency Limit Time1(Low)
+        - ACFrequency Limit Time1(High)
+        - ACFrequency Limit Time2(Low)
+        - ACFrequency Limit Time2(High)
+        - ACFrequency Limit Time3(Low)
+        - ACFrequency Limit Time3(High)
+      - Synchronization Range 删除
+        - Vpv start
+        - Connection Time
+        - Reconnection Time
+        - Grid Voltage Range(Low)
+        - Grid Voltage Range(High)
+        - Grid Frequency Range(Low)
+        - Grid Frequency Range(High)
+      - Normal Gradient / 确认是否重复 / 和安规中Load Drop Rate重复，删除
+        - Loading Gradient
+        - Restart Gradient
+      - Frequency/Watt / 确认是否重复 / 和安规中Overfrequency Derating重复，删除
+        - Derating Point for Over Frequency
+        - Slope of FRT
+        - Delay time of derating
+      - Voltage/Var 删除 / 和安规Q（U）Mode重复，确认一下哪种表述更好
+        - Q(v)Cut-in High Voltage
+        - Q(v)Cut-out High Voltage
+        - Q(v)Cut-in Low Voltage
+        - Q(v)Cut-out Low Voltage
+        - Q(v)Cut-In P(%)
+        - Q(v)Cut Out P(%)
+        - Max Q Value of Q(v)Curve
+        - Q(v)Reactive Power Delay
+      - Safety Parameters / 需要研发对其相同设置项，只保留一个
+        - System Information
+        - Grid Connection Restriction / 漏了Vpv start (中文描述把PV和AC电压都叫并网电压，需修改描述)
+        - Load Drop Rate
+        - 10 Minutes Protection
+        - First-stage Voltage&Frequency
+        - Second-stage Voltage&Frequency
+        - Third-stage Voltage&Frequency
+        - P(U)Function / 研发确认细节 / 确认OK，不改动
+        - Voltage Ride Through
+        - Overfrequency Derating
+        - Underfrequency Increasing
+        - ROCOF
+        - DCI
+        - Other
+        - Active Power Control
+        - Reactive power mode
+        - Q(U)Mode
+      - Wide Operating Voltage Range
+        - 0
+        - 1
+        - 2
+      - Enale N Linec / 开关按钮
+      - RRCR Enable / 开关按钮 / 确认是否是 DRMS 和 RRCR 选择 / DRMS是澳洲安规显示，RRCR是欧洲安规，本质上是一样的，建议和安规绑定显示DRMS或RRCR
+      - PU Enable 删除
+      - Voltage Detection between N to PE
+      - P(U)Enable / 重复，删除
+        - P(U)Enable / 开关按钮
+        - Voltage 1
+        - Voltage 2
+        - Percentage of Voltage2to Power
+      - Inverter Protection 删除 / 需要研发对其相同设置项，只保留一个
+        - Q(v)Enable / 开关按钮 / 重复，删除
+          - Q(v)Enable
+          - Q(v)Cut-in High Voltage
+          - Q(v)Cut-out High Voltage
+          - Q(v)Cut-in Low Voltage
+          - Q(v)Cut-out Low Voltage
+          - Q(v)Cut-in Low Voltage Power Percentage
+          - Q(v)Cut-out High Voltage Power Percentage
+          - Q(v)Reactive Power Delay
+    - Generator and smart load / XH/HU不显示
+    - Installation Diagnosis
+    - Device Information / XH漏了离网盒参数，HU不需要离网盒参数
+      - PV Voltage/Current
+      - String Volt/Current / XH/HU没有组串参数删除
+      - AC Volt/Current/Power/Freq
+      - 离网盒参数 / 原本就有
+      - Off-grid Parameter
+      - Battery Parameter
+      - Internal Parameter
+      - About Inverter
+      - Version Upgrade
+    - Advanced Setting
+      - AFCI
+        - Enable AFCI / 开关按钮
+        - AFCI Self-Test / 开关按钮
+        - AFCI Reset / 开关按钮
+        - AFCI Threshold1
+        - AFCI Threshold2
+        - AFCI Threshold3
+        - Max Accumulated Counts for Over FFT Value
+        - AFCI Curve Scan
+      - PV Input Mode
+        - Independent MPPT Mode
+        - DC Source Mode
+        - Parallel MPPT Mode
+      - Smart Diagnosis
+        - Smart I-V Curve Sc / I-V Scan for each MPPTan
+        - Abnormal Waveform Record / Quickly locate problem remotely via waveform record.
+        - Real-time Waveform Record / Mointoring inverter voltage and current quality,etc.
+        - One-Click Diagnosis / Including l-V curve,AC waveform record,THDV and grid cable impedance.
+      - Anti-islanding Protection / 开关按钮
+      - Basic Parameters / 研发确认是否删除
+        - Baud Rate Selection / 确认是否删除 / 设备升级后如果485口没有恢复波特率就需要用这个进行修改，可以通过寄存器设置直接修改，XH认为此处可删除
+          - 9600bps
+          - 38400bps
+          - 115200bps
+        - Clear History
+        - Model Setting
+        - PV Voltage 删除
+        - Modbus Version / 确认是否删除 / 可以删除
+      - Register Setting
+        - Command Type: / Please input
+        - Register Address: / Please input
+        - Length/Data: / Please input
+  - Quick Site Setup
+    - Work Status
+    - Country&Regulation
+    - EMS
+      - Work Mode
+        - TOU Mode
+          - Mode Settings
+            - Time Period1
+            - Add Time Period
+        - Backup Mode
+          - Mode Settings
+        - Peak Shaving Mode
+          - Mode Settings
+      - Export Limitation Setting
+        - Export Limitation enable
+          - Enable meter 1
+          - Disable
+        - Export Limitation Power Ratio
+        - Phase level
+      - Battery Setting
+        - Max.Charge Power
+        - Charging Stop SOC
+        - Max.Discharge Power
+        - Discharge Stop SOC
+        - Battery Charging From Grid / 开关按钮
+        - Max.Charge Power From Grid
+        - Charge Stop SOC from Grid
+      - Off-Grid Enable / 开关按钮
+      - AC-Couple / 开关按钮
+    - Generator and Smart Load（XH/HU不显示）
+    - Meter/CT setting(SPM/WIT/XH/HU,SPE 不显示)
+    - Parallel Setting / 开关按钮 / XH/HU 机型都不展示
+      - Multiple machines in parallel
+      - COM Address
+        - 1- 254
+    - Auto test (only for Italy) / 根据意大利机型和功率选择显示（<=11kW）
+- 其他画板内容（参考）
+  - MOD - XH
+  - 直连模式
+  - quick Setting
+    - 一键建站quick Setting
+    - Country Regulation
+    - Work Status
+    - Export Limitation Setting
+      - Export Limitation enable
+        - Disable
+        - Enable meter 1
+      - Export Limitation Power Ratio
+      - Default Power % after Export Limitation Failure
+      - Export Limitation Failure Time
+      - Phase level
+    - EMS
+      - Work Mode
+        - TOU Mode
+          - Mode Settings
+            - Time Period1
+            - Add Time Period
+        - Backup Mode
+          - Mode Settings
+        - Peak Shaving Mode
+          - Mode Settings
+      - Battery Setting
+        - Max.Charge Power
+        - Charging Stop SOC
+        - Max.Discharge Power
+        - Discharge Stop SOC
+        - Battery Charging From Grid / 开关按钮
+        - Max.Charge Power From Grid
+        - Charge Stop SOC from Grid
+    - Off-Grid Enable / 开关按钮
+    - AC-Couple / 开关按钮
+  - 直连模式
+    - Quick Setting
+      - Country Regulation
+      - Inverter Time
+      - Language
+      - COM Address
+        - 1- 254
+      - Power Sensor
+        - Disable
+        - Electric Meter
+        - CT
+      - AFCI
+        - Enable AFCI / 开关按钮
+        - AFCI Self-Test / 开关按钮
+        - AFCI Reset / 开关按钮
+        - AFCI Threshold1
+        - AFCI Threshold2
+        - AFCI Threshold3
+        - Max Accumulated Counts for Over FFT Value
+        - AFCI Curve Scan
+      - Export Limitation Setting
+        - Export Limitation enable
+          - Disable
+          - Enable meter 1
+        - Export Limitation Power Ratio
+        - Default Power % after Export Limitation Failure
+        - Export Limitation Failure Time
+        - Phase level
+      - Dry Contact Mode
+    - System Setting
+      - Inverter Power OFF/ON / 开关按钮
+      - Active Power
+        - Active Power %
+        - Memory Enable / 开关按钮
+      - PV Input Mode
+        - Independent MPPT Mode
+        - DC Source Mode
+        - Parallel MPPT Mode
+      - Dry Contact Control
+        - Dry contact enable / 开关按钮
+        - Status of Dry Contact
+        - Dry Contact Mode
+          - Power(Inverter/Surplus)
+          - Time
+          - Time Power
+        - Power(Inverter/Surplus)
+          - ON
+            - Feed in/production powe
+            - Start-up delay time
+          - OFF
+            - Feed in/production power
+            - Min.Duration
+      - Voltage Detection between N to PE
+      - Wide Operating Voltage Range
+        - 0
+        - 1
+        - 2
+      - SYN Box Enable / 开关按钮
+      - Off-grid / 开关按钮 Enable
+      - AC-Couple / 开关按钮
+      - Off-Grid Frequncy
+        - 50Hz
+        - 60Hz
+      - Off-grid Voltage
+        - 230V
+        - 208V
+        - 240V
+        - 220V
+      - Work Mode
+        - Default mode
+        - System Retrofit
+        - Multiple machines in parallel
+      - Enale N Linec / 开关按钮
+      - RRCR Enable / 开关按钮
+      - PU Enable
+      - Inverter Protection
+        - Anti-islanding Protection / 开关按钮
+        - P(U)Enable
+          - P(U)Enable / 开关按钮
+          - Voltage 1
+          - Voltage 2
+          - Percentage of Voltage2to Power
+        - Q(v)Enable / 开关按钮
+          - Q(v)Enable
+          - Q(v)Cut-in High Voltage
+          - Q(v)Cut-out High Voltage
+          - Q(v)Cut-in Low Voltage
+          - Q(v)Cut-out Low Voltage
+          - Q(v)Cut-in Low Voltage Power Percentage
+          - Q(v)Cut-out High Voltage Power Percentage
+          - Q(v)Reactive Power Delay
+    - Basic Parameters
+      - Baud Rate Selection
+        - 9600bps
+        - 38400bps
+        - 115200bps
+      - Clear History
+      - Reset
+        - Doesn't recover
+        - recover
+      - PV Voltage
+      - Modbus Version
+      - Model Setting
+    - Grid Code
+      - PF Setting
+        - Set PF as 1 / 开关按钮
+        - Inductive Reactive Power%
+          - Inductive Reactive Power %
+          - Memory Enable / 开关按钮
+        - Capactive Reactive Power%
+          - Capactive Reactive Power %
+          - Memory Enable / 开关按钮
+        - Inductive PF/Capacitive PF
+          - Inductive PF/Capacitive PF
+          - Memory Enable / 开关按钮
+        - PF Curve In/Out Vac
+          - PF Curve In Vac
+          - PF Curve Out Vac
+        - Custom PF curve
+          - PF Curve Setting 1
+            - PF Limit 1
+            - 1 Load Percentage for PF Limits
+          - PF Curve Setting 2
+            - PF Limit 2
+            - 2 Load Percentage for PF Limits
+          - PF Curve Setting 3
+            - PF Limit 3
+            - 3 Load Percentage for PF Limits
+          - PF Curve Setting 4
+            - PF Limit 4
+            - 4 Load Percentage for PF Limits
+      - AC Voltage Protection
+        - AC1 Voltage limit(Low)
+        - AC1 Voltage limit(High)
+        - AC2 Voltage limit(Low)
+        - AC2 Voltage limit(High)
+        - AC3 Voltage limit(Low)
+        - AC3 Voltage limit(High)
+        - ACVoltage Limit Time1(Low)
+        - ACVoltage Limit Time1(High)
+        - ACVoltage Limit Time2(Low)
+        - ACVoltage Limit Time2(High)
+        - ACVoltage Limit Time3(Low)
+        - ACVoltage Limit Time3(High)
+      - AC Frequency Protection
+        - AC1 Frequency limit(Low)
+        - AC1 Frequency limit(High)
+        - AC2 Frequency limit(Low)
+        - AC2 Frequency limit(High)
+        - AC3 Frequency limit(Low)
+        - AC3 Frequency limit(High)
+        - ACFrequency Limit Time1(Low)
+        - ACFrequency Limit Time1(High)
+        - ACFrequency Limit Time2(Low)
+        - ACFrequency Limit Time2(High)
+        - ACFrequency Limit Time3(Low)
+        - ACFrequency Limit Time3(High)
+      - Synchronization Range
+        - Vpv start
+        - Connection Time
+        - Reconnection Time
+        - Grid Voltage Range(Low)
+        - Grid Voltage Range(High)
+        - Grid Frequency Range(Low)
+        - Grid Frequency Range(High)
+      - Normal Gradient
+        - Loading Gradient
+        - Restart Gradient
+      - Frequency/Watt
+        - Derating Point for Over Frequency
+        - Slope of FRT
+        - Delay time of derating
+      - Voltage/Var
+        - Q(v)Cut-in High Voltage
+        - Q(v)Cut-out High Voltage
+        - Q(v)Cut-in Low Voltage
+        - Q(v)Cut-out Low Voltage
+        - Q(v)Cut-In P(%)
+        - Q(v)Cut Out P(%)
+        - Max Q Value of Q(v)Curve
+        - Q(v)Reactive Power Delay
+    - EMS
+      - Work Mode
+        - TOU Mode
+          - Mode Settings
+            - Time Period1
+            - Add Time Period
+        - Backup Mode
+          - Mode Settings
+        - Peak Shaving Mode
+          - Mode Settings
+      - Battery Setting
+        - Max.Charge Power
+        - Charging Stop SOC
+        - Max.Discharge Power
+        - Discharge Stop SOC
+        - Battery Charging From Grid / 开关按钮
+        - Max.Charge Power From Grid
+        - Charge Stop SOC from Grid
+    - Installation Diagnosis
+    - Advanced Set
+      - Command Type: / Please input
+      - Register Address: / Please input
+      - Length/Data: / Please input
+    - Safety Parameters
+      - System Information
+      - Grid Connection Restriction
+      - Load Drop Rate
+      - 10 Minutes Protection
+      - First-stage Voltage&Frequency
+      - Second-stage Voltage&Frequency
+      - Third-stage Voltage&Frequency
+      - P(U)Function
+      - Voltage Ride Through
+      - Overfrequency Derating
+      - Underfrequency Increasing
+      - ROCOF
+      - DCI
+      - Other
+      - Export Limitation function
+      - Active Power Control
+      - Reactive power mode
+      - Q(U)Mode
+    - Auto test (only for Italy)
+    - Device Information
+      - PV Voltage/Current
+      - String Volt/Current
+      - AC Volt/Current/Power/Freq
+      - Off-grid Parameter
+      - Battery Parameter
+      - Internal Parameter
+      - About Inverter
+      - Version Upgrade
+    - Smart Diagnosis
+      - Smart I-V Curve Sc / I-V Scan for each MPPTan
+      - Abnormal Waveform Record / Quickly locate problem remotely via waveform record.
+      - Real-time Waveform Record / Mointoring inverter voltage and current quality,etc.
+      - One-Click Diagnosis / Including l-V curve,AC waveform record,THDV and grid cable impedance.
