@@ -15,7 +15,7 @@
 1. `/`：项目首页（文档入口）
 2. `/growatt-openapi`：文档总览
 3. `/growatt-openapi/quick-guide`：Professional Integration Quick Guide
-4. `/growatt-openapi/growatt-codes`：Growatt Codes appendix（可选 Cloudflare 边缘 Basic Auth）
+4. `/growatt-openapi/growatt-codes`：Growatt Codes appendix（公开访问）
 5. `/growatt-openapi/{docSlug}`：API 详情页（静态生成）
 
 ## 本地开发
@@ -55,23 +55,14 @@ npm run build
 npx wrangler pages deploy out --project-name <your-project-name>
 ```
 
-## Growatt Codes 单页密码保护
+## 访问模型
 
-仓库已为 `/growatt-openapi/growatt-codes` 和其子路径准备好 Cloudflare Pages Function Basic Auth。
+文档入口只使用两种访问级别：
 
-在 Cloudflare Pages 项目中配置以下环境变量后即可生效：
+1. `public`：OpenAPI contract、Quick Guide 和 Growatt Codes 等公开文档
+2. `Zero Trust`：Protocol Mapping、ShineTools 等内部资料，由 Cloudflare Access 保护
 
-1. `GROWATT_CODES_BASIC_AUTH_PASSWORD`
-
-建议：
-
-1. `GROWATT_CODES_BASIC_AUTH_PASSWORD` 建议作为加密 secret 保存
-
-说明：
-
-1. 该保护只在 Cloudflare 边缘层生效，不影响其他文档页
-2. `npm run dev` 仍然是本地 Next.js 开发模式，不会模拟 Pages Function 鉴权
-3. 由于使用的是 HTTP Basic Auth，浏览器弹窗里通常仍会显示用户名输入框，但服务端只校验密码，用户名会被忽略
+不再使用共享密码或 HTTP Basic Auth。
 
 ## 文档维护约束
 
@@ -81,3 +72,8 @@ npx wrangler pages deploy out --project-name <your-project-name>
 4. `Growatt API/Growatt Unified API.md` 仅作为参考，不作为主编辑源
 5. 新文档命名必须符合 `NN_descriptive_name.md`（适用于 `OPENAPI` 与 `OPENAPI.zh-CN`）
 6. 更新 API 文档时同步维护 `Growatt API/OPENAPI/README.md` 与 `Growatt API/OPENAPI.zh-CN/README.md` 的版本和目录
+
+## 专题分析文档
+
+- [ShineTools 能量管理设置 Product Handbook](./docs/shinetools-settings/README.md)
+- 部署入口：`/shinetools/`（由 Cloudflare Zero Trust 保护）

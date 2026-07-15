@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface CopyMarkdownButtonProps {
   markdown: string;
+  className?: string;
   labels: {
     idle: string;
     copied: string;
@@ -31,7 +32,11 @@ function fallbackCopyText(text: string): boolean {
   }
 }
 
-export function CopyMarkdownButton({ markdown, labels }: CopyMarkdownButtonProps) {
+export function CopyMarkdownButton({
+  markdown,
+  className = "growatt-docs-copy-button",
+  labels,
+}: CopyMarkdownButtonProps) {
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const resetTimerRef = useRef<number | null>(null);
 
@@ -79,7 +84,7 @@ export function CopyMarkdownButton({ markdown, labels }: CopyMarkdownButtonProps
   return (
     <button
       type="button"
-      className={`growatt-docs-copy-button ${copyState !== "idle" ? `is-${copyState}` : ""}`.trim()}
+      className={`${className} ${copyState !== "idle" ? `is-${copyState}` : ""}`.trim()}
       onClick={() => void handleCopy()}
       aria-live="polite"
       title={labels.title}
