@@ -152,8 +152,8 @@ sequenceDiagram
 | `latitude` | string | Site latitude in decimal degrees | `"22.500753663248"` |
 | `longitude` | string | Site longitude in decimal degrees | `"113.89838917200"` |
 | `timezone` | string | Site UTC offset in hours | `"8.0"` |
-| `dischargeCutOffSOC` | int | Grid-connected discharge cut-off SOC in percent, read via RTU passthrough. On SPH/SPA the value always reflects the grid-priority cut-off SOC regardless of the configured priority | `20` |
-| `backupCutOffSOC` | int | Off-grid (backup) discharge cut-off SOC in percent, read via RTU passthrough | `10` |
+| `dischargeCutOffSOC` | int | Grid-connected discharge cut-off SOC in percent. On SPA/SPH the value always reflects the grid-priority cut-off SOC regardless of the configured priority | `20` |
+| `backupCutOffSOC` | int | Off-grid (backup) discharge cut-off SOC in percent | `10` |
 | `batteryList` | array | Battery list | `[{...}]` |
 | `batteryList[].batterySn` | string | Battery serial number in the battery list | `"BATTERY_SN_1"` |
 | `batteryList[].batteryModel` | string | Battery model in the battery list | `"ARK 5.12-25.6XH-A1"` |
