@@ -101,6 +101,12 @@ sequenceDiagram
         "batteryCapacity": 5000,
         "batteryNominalPower": 2500,
         "authFlag": true,
+        "siteName": "SITE_NAME_1",
+        "latitude": "22.500753663248",
+        "longitude": "113.89838917200",
+        "timezone": "8.0",
+        "dischargeCutOffSOC": 20,
+        "backupCutOffSOC": 10,
         "batteryList": [
             {
                 "batterySn": "BATTERY_SN_1",
@@ -142,6 +148,12 @@ sequenceDiagram
 | `batteryCapacity` | int | Battery rated capacity in Wh | `5000` |
 | `batteryNominalPower` | int | Battery rated power in W | `2500` |
 | `authFlag` | boolean | Whether the device is already authorized | `true` |
+| `siteName` | string | Name of the site (plant) the device belongs to | `"SITE_NAME_1"` |
+| `latitude` | string | Site latitude in decimal degrees | `"22.500753663248"` |
+| `longitude` | string | Site longitude in decimal degrees | `"113.89838917200"` |
+| `timezone` | string | Site UTC offset in hours | `"8.0"` |
+| `dischargeCutOffSOC` | int | Grid-connected discharge cut-off SOC in percent, read via RTU passthrough. On SPH/SPA the value always reflects the grid-priority cut-off SOC regardless of the configured priority | `20` |
+| `backupCutOffSOC` | int | Off-grid (backup) discharge cut-off SOC in percent, read via RTU passthrough | `10` |
 | `batteryList` | array | Battery list | `[{...}]` |
 | `batteryList[].batterySn` | string | Battery serial number in the battery list | `"BATTERY_SN_1"` |
 | `batteryList[].batteryModel` | string | Battery model in the battery list | `"ARK 5.12-25.6XH-A1"` |

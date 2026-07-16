@@ -90,6 +90,8 @@ sequenceDiagram
         "fac": 50.03,
         "backupPower": 0.20,
         "batPower": 0.00,
+        "maxChargePower": 2344,
+        "maxDischargePower": 2344,
         "soc": 67,
         "pac": 41.30,
         "etoUserToday": 3.10,
@@ -129,6 +131,7 @@ sequenceDiagram
         "faultSubCode": 0,
         "batteryStatus": 0,
         "ppv": 14.30,
+        "epvToday": 0.00,
         "epvTotal": 0.00,
         "smartLoadPower": 0.00,
         "status": 6
@@ -160,11 +163,14 @@ sequenceDiagram
 | `data.pexPower` | double | 第三方电表 / Solar Inverter 的外部发电功率，单位 W；应按非负的外部发电量值解释，不表示并网取电/馈电方向 | `14.30` |
 | `data.genPower` | double | 离网模式下的发电机功率，单位 W；有发电机源时按非负功率量值解释，它不是 AC-Couple 外部发电边界信号 | `0.00` |
 | `data.ppv` | double | 设备本地 PV 功率，单位 W；在 Hybrid 拓扑中为核心 PV 信号，在 AC-Couple 拓扑中如与 `pexPower` 同时上报则作为辅助遥测 | `14.30` |
+| `data.epvToday` | double | PV 今日发电量，单位 kWh；-XH、SPH 机型支持 | `0.00` |
 | `data.epvTotal` | double | PV 总发电能量，单位 kWh | `0.00` |
 | `data.payLoadPower` | double | 总负载功率（计算值），单位 W | `14.50` |
 | `data.smartLoadPower` | double | 设备具备独立 smart load 通道时上报的负载功率，单位 W | `0.00` |
 | `data.batteryStatus` | int | 电池总体状态 | `0` |
 | `data.batPower` | double | 电池总充/放电功率（正值充电，负值放电，0 为空闲），单位 W | `0.00` |
+| `data.maxChargePower` | int | 电池最大充电功率，单位 W，通过 RTU 透传读取；MIN/MOD/MID-XH 系列支持，SPH/SPA 因 RTU 无对应字段暂不支持 | `2344` |
+| `data.maxDischargePower` | int | 电池最大放电功率，单位 W，通过 RTU 透传读取；MIN/MOD/MID-XH 系列支持，SPH/SPA 因 RTU 无对应字段暂不支持 | `2344` |
 | `data.soc` | int | 系统级电池荷电状态（SOC），表示整个 ESS 电池系统的总 SOC（百分比） | `67` |
 | `data.priority` | int | 工作优先级 | `0` |
 | `data.status` | int | 设备运行状态码 | `6` |

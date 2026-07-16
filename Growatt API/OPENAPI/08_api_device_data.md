@@ -90,6 +90,8 @@ sequenceDiagram
         "fac": 50.03,
         "backupPower": 0.20,
         "batPower": 0.00,
+        "maxChargePower": 2344,
+        "maxDischargePower": 2344,
         "soc": 67,
         "pac": 41.30,
         "etoUserToday": 3.10,
@@ -129,6 +131,7 @@ sequenceDiagram
         "faultSubCode": 0,
         "batteryStatus": 0,
         "ppv": 14.30,
+        "epvToday": 0.00,
         "epvTotal": 0.00,
         "smartLoadPower": 0.00,
         "status": 6
@@ -160,11 +163,14 @@ sequenceDiagram
 | `data.pexPower` | double | External generation power in W for third-party meter / Solar Inverter sources. Treat as a non-negative external-generation magnitude, not a grid import/export sign field | `14.30` |
 | `data.genPower` | double | Generator power in W for off-grid runtime when a generator source is present. Treat as a non-negative generator magnitude, not an AC-couple external-generation boundary signal | `0.00` |
 | `data.ppv` | double | Device-local PV power in W. Core for Hybrid; auxiliary when reported alongside `pexPower` in AC-couple topologies | `14.30` |
+| `data.epvToday` | double | PV generation today in kWh. Reported for -XH and SPH models | `0.00` |
 | `data.epvTotal` | double | Total PV generation in kWh | `0.00` |
 | `data.payLoadPower` | double | Total load power (calculated) in W | `14.50` |
 | `data.smartLoadPower` | double | Smart-load power when the device reports a dedicated smart-load channel, unit: W | `0.00` |
 | `data.batteryStatus` | int | Overall battery status | `0` |
 | `data.batPower` | double | Battery power. Positive = charging, negative = discharging, `0` = idle, unit: W | `0.00` |
+| `data.maxChargePower` | int | Maximum battery charge power in W, read via RTU passthrough. Reported for MIN/MOD/MID-XH series; not available on SPH/SPA (no RTU source field) | `2344` |
+| `data.maxDischargePower` | int | Maximum battery discharge power in W, read via RTU passthrough. Reported for MIN/MOD/MID-XH series; not available on SPH/SPA (no RTU source field) | `2344` |
 | `data.soc` | int | System-level battery state of charge (SOC) in percent; represents the overall ESS battery system SOC | `67` |
 | `data.priority` | int | Operating priority | `0` |
 | `data.status` | int | Runtime status code | `6` |
