@@ -101,6 +101,12 @@ sequenceDiagram
         "batteryCapacity": 5000,
         "batteryNominalPower": 2500,
         "authFlag": true,
+        "siteName": "SITE_NAME_1",
+        "latitude": "22.500753663248",
+        "longitude": "113.89838917200",
+        "timezone": "8.0",
+        "dischargeCutOffSOC": 20,
+        "backupCutOffSOC": 10,
         "batteryList": [
             {
                 "batterySn": "BATTERY_SN_1",
@@ -142,6 +148,12 @@ sequenceDiagram
 | `batteryCapacity` | int | 电池额定容量，单位 Wh | `5000` |
 | `batteryNominalPower` | int | 电池额定功率，单位 W | `2500` |
 | `authFlag` | boolean | 是否已授权 | `true` |
+| `siteName` | string | 设备所属站点（电站）名称 | `"SITE_NAME_1"` |
+| `latitude` | string | 站点纬度（十进制度） | `"22.500753663248"` |
+| `longitude` | string | 站点经度（十进制度） | `"113.89838917200"` |
+| `timezone` | string | 站点时区（UTC 偏移小时数） | `"8.0"` |
+| `dischargeCutOffSOC` | int | 并网放电截止 SOC（百分比）；SPA/SPH 机型无论设置电网/负载优先，均只能读取电网优先放电截止 SOC | `20` |
+| `backupCutOffSOC` | int | 离网（备用）放电截止 SOC（百分比） | `10` |
 | `batteryList` | array | 电池列表 | `[{...}]` |
 | `batteryList[].batterySn` | string | 电池列表中的电池序列号 | `"BATTERY_SN_1"` |
 | `batteryList[].batteryModel` | string | 电池列表中的电池型号 | `"ARK 5.12-25.6XH-A1"` |

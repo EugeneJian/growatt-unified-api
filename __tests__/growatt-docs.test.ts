@@ -106,6 +106,9 @@ const EXPECTED_RUNTIME_TELEMETRY_FIELDS = [
 
 const EXPECTED_ENDPOINT_TELEMETRY_FIELDS = [
   "data.backupPower",
+  "data.epvToday",
+  "data.maxChargePower",
+  "data.maxDischargePower",
   ...EXPECTED_RUNTIME_TELEMETRY_FIELDS,
 ] as const;
 
