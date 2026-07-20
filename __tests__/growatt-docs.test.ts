@@ -286,12 +286,12 @@ describe("growatt docs source-of-truth loader", () => {
     const releaseNotes = await getGrowattReleaseNotesPage("en");
 
     expect(releaseNotes.slug).toBe(GROWATT_RELEASE_NOTES_SLUG);
-    expect(releaseNotes.fileName).toBe("customer-api-doc-change-note-2026-04-24.en.md");
+    expect(releaseNotes.fileName).toBe("customer-api-doc-change-note-2026-07-17.en.md");
     expect(releaseNotes.title).toBe("Growatt Open API Documentation Change Notice (Customer-Facing)");
     expect(releaseNotes.html).toContain("<article>");
     expect(releaseNotes.markdown).toContain("## 2. Key Changes");
-    expect(releaseNotes.markdown).toContain("`export_limit`");
-    expect(releaseNotes.markdown).toContain("`readDeviceDispatch`");
+    expect(releaseNotes.markdown).toContain("`maxChargePower`");
+    expect(releaseNotes.markdown).toContain("`getDeviceInfo`");
   });
 
   it("loads localized Chinese overview and doc titles without mojibake", async () => {
@@ -325,10 +325,10 @@ describe("growatt docs source-of-truth loader", () => {
     const releaseNotes = await getGrowattReleaseNotesPage("zh-CN");
 
     expect(releaseNotes.slug).toBe(GROWATT_RELEASE_NOTES_SLUG);
-    expect(releaseNotes.fileName).toBe("customer-api-doc-change-note-2026-04-24.md");
+    expect(releaseNotes.fileName).toBe("customer-api-doc-change-note-2026-07-17.md");
     expect(releaseNotes.title).toBe("Growatt Open API 文档变更说明（面向客户）");
-    expect(releaseNotes.markdown).toContain("`export_limit`");
-    expect(releaseNotes.markdown).toContain("`readDeviceDispatch`");
+    expect(releaseNotes.markdown).toContain("`maxChargePower`");
+    expect(releaseNotes.markdown).toContain("`getDeviceInfo`");
   });
 
   it("publishes appendix A/B/C links in both overview locales and appendix D in the English overview", async () => {
@@ -556,7 +556,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(loaderSource).not.toContain("growatt-ess-semantic-model-preliminary-review.md");
     expect(loaderSource).toContain('const GROWATT_DOCS_ROOT_DIR = path.join(process.cwd(), "docs");');
     expect(loaderSource).toContain(
-      'const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-04-24.en.md";',
+      'const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-07-17.en.md";',
     );
     expect(semanticPageSource).toContain("公开语义模型与调度校验标准。");
     expect(semanticPageSource).not.toContain("鍏紑");
