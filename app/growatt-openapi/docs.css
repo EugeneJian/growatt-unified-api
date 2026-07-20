@@ -324,7 +324,7 @@
   border-spacing: 0;
   margin: 20px 0 24px;
   border-radius: 12px;
-  overflow: hidden;
+  overflow-y: hidden;
   border: 1px solid var(--docs-border);
 }
 
