@@ -64,6 +64,11 @@
       "path": "05-conclusion-and-next-steps.md",
       "title": "总结与后续方向",
       "catalog": ""
+    },
+    {
+      "path": "06-grohomemanager-x-system-spec.md",
+      "title": "GroHomeManager-X 系统 SPEC（用—云—边—端）",
+      "catalog": ""
     }
   ]
 }

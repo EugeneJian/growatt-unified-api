@@ -26,6 +26,7 @@
 
 1. [推荐的统一架构口径](04-unified-architecture-statement.md)
 2. [总结与后续方向](05-conclusion-and-next-steps.md)
+3. [GroHomeManager-X 系统 SPEC（用—云—边—端）](06-grohomemanager-x-system-spec.md)
 
 ## 建议起点
 
@@ -33,3 +34,4 @@
 - 若重点关注平台总体定位，再继续阅读“执行摘要与核心结论”和“平台总体架构”。
 - 若重点关注接入与集成，建议优先阅读“API / 第三方接入视图”“云边通信视图”和“协议与设备接入视图”。
 - 若重点关注数据语义与对象关系，建议优先阅读“设备建模视图”和“推荐的统一架构口径”。
+- 若重点关注 GroHomeManager-X 的 MVP/Pro 边界、用户 APP、调试 APP、HEMS、协议与设备兼容，请阅读“GroHomeManager-X 系统 SPEC（用—云—边—端）”。
