@@ -37,23 +37,35 @@ Initial product baseline for this appendix is seeded from the current Australian
 
 ### 3.1 Inverters / PCE
 
-| Product Category | Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes | Evidence Source | Effective Date |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| Residential Hybrid Storage Inverters | SPH/SPA TL | SPH 3000-6000TL BL; SPH 3000-6000 TL BL-UP; SPH 6000 TL US; SPA 1000-3000TL BL; SPA 3000TL BL-UP | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields | Lark DTC Model Database | 2026-07-20 |
-| Residential Hybrid Storage Inverters | SPH TL-HU | SPH 3000-6000TL HU; SPH 3000-6000TL HUB | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields | Lark DTC Model Database | 2026-07-20 |
-| Residential Hybrid Storage Inverters | SPH/SPA TL3-UP | SPH 4000-10000TL3 BH; SPH 4000-10000TL3 BH-UP; SPA 4000-10000TL3 BH; SPA 4000-10000TL3 BH-UP | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields | Lark DTC Model Database | 2026-07-20 |
-| Residential Hybrid Storage Inverters | SPA TL-AU | SPA 3000-6000TL AU; SPA 3000-6000TL AUB | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields | Lark DTC Model Database | 2026-07-20 |
-| Residential Hybrid Storage Inverters | SPH-HU | SPH 8-10KTL-HU-US; SPH 8-10KTL-HU-US(B); SPH 8-10KTL-HU; SPH 12-18KTL-HU-US | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields | Lark DTC Model Database | 2026-07-20 |
-| Residential Hybrid Storage Inverters | SPM-HU | SPM 8-10KTL-HU(AU); SPM 6-10KTL-HU(EU); SPM 8-10KTL-HU(UK); SPM 3000-6000TL-HU; SPM 3000-6000TL-HU(BR); SPM 3000-6000TL-HU2; SPM 8-10KTL-HU2; SPM 3000-6000TL-HU(IT); SPM 2500-6000TL-HU(EU); SPM 8-10KTL-HU(CL) | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Residential Battery-Ready Inverters | MIN-XH | MIN 2500-6000TL-XH2; MIN 2500-6000TL-XH/XE/XA | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Residential Battery-Ready Inverters | MIN-XH US | MIN 3000-11400TL-XH US; MIN 3000-11400TL-XH2 US | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Residential Battery-Ready Inverters | MIN-XH JP | MIN 6000TL-XH-JP | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Residential Battery-Ready Inverters | MOD-XH/MID-XH | MOD 3-10KTL3-XH/BP; MID 11-30KTL3-XH; MID 8-15KTL3-XHL/JP | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Residential Battery-Ready Inverters | MOD/MID-HU | MOD 3-15KTL3-HU; MID 33-50KTL3-HU | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Residential Battery-Ready Inverters | WIT 25K HU/XHU | WIT 4-15K-HU; WIT 17-25K-HU; WIT 4-25K-XHU | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Commercial Storage Inverters | WIS/WIT 100K | WIS 100K-AM; WIT 50-100K-H/HE/HU/A/AE/AU; WIT 50-100K-H/HE/HU/A/AE/AU-US; WIT 28-55K-H/HE/HU/A/AE/AU-US L2 | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Commercial Storage Inverters | WIT XHU | WIT 29.9-50K-XHU | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
-| Commercial Storage Inverters | WIS 125K | WIS 125K-AM | Confirmed | Supported | Supported | Supported | Supported | Supported | None | Lark DTC Model Database | 2026-07-20 |
+#### 3.1.1 Residential Hybrid Storage Inverters
+
+| Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| SPH/SPA TL | SPH 3000-6000TL BL; SPH 3000-6000 TL BL-UP; SPH 6000 TL US; SPA 1000-3000TL BL; SPA 3000TL BL-UP | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields |
+| SPH TL-HU | SPH 3000-6000TL HU; SPH 3000-6000TL HUB | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields |
+| SPH/SPA TL3-UP | SPH 4000-10000TL3 BH; SPH 4000-10000TL3 BH-UP; SPA 4000-10000TL3 BH; SPA 4000-10000TL3 BH-UP | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields |
+| SPA TL-AU | SPA 3000-6000TL AU; SPA 3000-6000TL AUB | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields |
+| SPH-HU | SPH 8-10KTL-HU-US; SPH 8-10KTL-HU-US(B); SPH 8-10KTL-HU; SPH 12-18KTL-HU-US | Confirmed | Supported | Supported | Supported | Supported | Supported | SPA/SPH series do not currently support reading discharge cutoff SOC and backup cutoff SOC fields |
+| SPM-HU | SPM 8-10KTL-HU(AU); SPM 6-10KTL-HU(EU); SPM 8-10KTL-HU(UK); SPM 3000-6000TL-HU; SPM 3000-6000TL-HU(BR); SPM 3000-6000TL-HU2; SPM 8-10KTL-HU2; SPM 3000-6000TL-HU(IT); SPM 2500-6000TL-HU(EU); SPM 8-10KTL-HU(CL) | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+
+#### 3.1.2 Residential Battery-Ready Inverters
+
+| Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| MIN-XH | MIN 2500-6000TL-XH2; MIN 2500-6000TL-XH/XE/XA | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+| MIN-XH US | MIN 3000-11400TL-XH US; MIN 3000-11400TL-XH2 US | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+| MIN-XH JP | MIN 6000TL-XH-JP | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+| MOD-XH/MID-XH | MOD 3-10KTL3-XH/BP; MID 11-30KTL3-XH; MID 8-15KTL3-XHL/JP | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+| MOD/MID-HU | MOD 3-15KTL3-HU; MID 33-50KTL3-HU | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+| WIT 25K HU/XHU | WIT 4-15K-HU; WIT 17-25K-HU; WIT 4-25K-XHU | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+
+#### 3.1.3 Commercial Storage Inverters
+
+| Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| WIS/WIT 100K | WIS 100K-AM; WIT 50-100K-H/HE/HU/A/AE/AU; WIT 50-100K-H/HE/HU/A/AE/AU-US; WIT 28-55K-H/HE/HU/A/AE/AU-US L2 | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+| WIT XHU | WIT 29.9-50K-XHU | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
+| WIS 125K | WIS 125K-AM | Confirmed | Supported | Supported | Supported | Supported | Supported | None |
 
 ### 3.2 Batteries
 
