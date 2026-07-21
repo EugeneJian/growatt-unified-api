@@ -37,69 +37,35 @@
 
 ### 3.1 逆变器 / PCE
 
-| 产品大类 | 系列 | 型号 | 拓扑 / 设备类型 | OpenAPI 支持状态 | OAuth2 接入 | 设备信息 / 数据 | 下发调度 | 回读校验 | 数据推送 | 限制条件 / 备注 | 证据来源 | 生效日期 |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 10KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 11KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 12KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 13KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 15KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 17KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 20KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 25KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MID 10-30KTL3-XH | MID 30KTL3-XH (AS4777-2 2020) | Supplementary Supply Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN 7000-10000TL-X2 | MIN 10000TL-X2 (AS4777-2 2020) | Grid Connect PV Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN 7000-10000TL-X2 | MIN 7000TL-X2 (AS4777-2 2020) | Grid Connect PV Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN 7000-10000TL-X2 | MIN 8000TL-X2 (AS4777-2 2020) | Grid Connect PV Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN 7000-10000TL-X2 | MIN 9000TL-X2 (AS4777-2 2020) | Grid Connect PV Inverter | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN TL-XH2 | MIN 2500TL-XH2 (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN TL-XH2 | MIN 3000TL-XH2 (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN TL-XH2 | MIN 3600TL-XH2 (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN TL-XH2 | MIN 4200TL-XH2 (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN TL-XH2 | MIN 4600TL-XH2 (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN TL-XH2 | MIN 5000TL-XH2 (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MIN TL-XH2 | MIN 6000TL-XH2 (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 10KTL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 3000TL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 4000TL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 5000TL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 6000TL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 7000TL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 8000TL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD | MOD 9000TL3-XH (AS4777-2 2020) | Grid Connect Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 10KTL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 3000TL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 4000TL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 5000TL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 6000TL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 7000TL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 8000TL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | MOD-XA | MOD 9000TL3-XA (AS4777-2 2020) | Grid Connect Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AU | SPA 3600TL-AU (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AU | SPA 4000TL-AU (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AU | SPA 4600TL-AU (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AU | SPA 5000TL-AU (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AU | SPA 6000TL-AU (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AUB | SPA 3600TL-AUB (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AUB | SPA 4000TL-AUB (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AUB | SPA 4600TL-AUB (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AUB | SPA 5000TL-AUB (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPA 3000-6000 TL-AUB | SPA 6000TL-AUB (AS4777-2 2020) | Multiple Mode Inverter - Battery Only | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPF | SPF 3000T HVM-G2 (AS4777-2 2020) | Stand - Alone PV Inverter With Grid Input | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPF | SPF 6000 ES PLUS (AS4777-2 2020) | Stand - Alone PV Inverter With Grid Input | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPF | SPF 6000T HVM-G2 (AS4777-2 2020) | Stand - Alone PV Inverter With Grid Input | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HU | SPH 3600TL-HU (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HU | SPH 4000TL-HU (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HU | SPH 4600TL-HU (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HU | SPH 5000TL-HU (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HU | SPH 6000TL-HU (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HUB | SPH 3600TL-HUB (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HUB | SPH 4000TL-HUB (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HUB | SPH 4600TL-HUB (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HUB | SPH 5000TL-HUB (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPH 3000-6000 TL-HUB | SPH 6000TL-HUB (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPM | SPM 10000TL-HU (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
-| 逆变器 / PCE | SPM | SPM 8000TL-HU (AS4777-2 2020) | Multiple Mode Inverter - PV and Battery | Pending Confirmation | TBD | TBD | TBD | TBD | TBD | CEC AU 基线，OpenAPI 待确认。 | CEC approved inverters list | TBD |
+#### 3.1.1 户用并离网储能一体机
+
+| 系列 | 型号 | OpenAPI 支持状态 | OAuth2 接入 | 设备信息 / 数据 | 下发调度 | 回读校验 | 数据推送 | 限制条件 / 备注 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| SPH/SPA TL | SPH 3000-6000TL BL; SPH 3000-6000 TL BL-UP; SPH 6000 TL US; SPA 1000-3000TL BL; SPA 3000TL BL-UP | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | SPA/SPH 系列暂不支持并网截止 SOC、离网截止 SOC 字段读取 |
+| SPH TL-HU | SPH 3000-6000TL HU; SPH 3000-6000TL HUB | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | SPA/SPH 系列暂不支持并网截止 SOC、离网截止 SOC 字段读取 |
+| SPH/SPA TL3-UP | SPH 4000-10000TL3 BH; SPH 4000-10000TL3 BH-UP; SPA 4000-10000TL3 BH; SPA 4000-10000TL3 BH-UP | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | SPA/SPH 系列暂不支持并网截止 SOC、离网截止 SOC 字段读取 |
+| SPA TL-AU | SPA 3000-6000TL AU; SPA 3000-6000TL AUB | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | SPA/SPH 系列暂不支持并网截止 SOC、离网截止 SOC 字段读取 |
+| SPH-HU | SPH 8-10KTL-HU-US; SPH 8-10KTL-HU-US(B); SPH 8-10KTL-HU; SPH 12-18KTL-HU-US | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | SPA/SPH 系列暂不支持并网截止 SOC、离网截止 SOC 字段读取 |
+| SPM-HU | SPM 8-10KTL-HU(AU); SPM 6-10KTL-HU(EU); SPM 8-10KTL-HU(UK); SPM 3000-6000TL-HU; SPM 3000-6000TL-HU(BR); SPM 3000-6000TL-HU2; SPM 8-10KTL-HU2; SPM 3000-6000TL-HU(IT); SPM 2500-6000TL-HU(EU); SPM 8-10KTL-HU(CL) | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+
+#### 3.1.2 户用预备储能逆变器
+
+| 系列 | 型号 | OpenAPI 支持状态 | OAuth2 接入 | 设备信息 / 数据 | 下发调度 | 回读校验 | 数据推送 | 限制条件 / 备注 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| MIN-XH | MIN 2500-6000TL-XH2; MIN 2500-6000TL-XH/XE/XA | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+| MIN-XH US | MIN 3000-11400TL-XH US; MIN 3000-11400TL-XH2 US | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+| MIN-XH JP | MIN 6000TL-XH-JP | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+| MOD-XH/MID-XH | MOD 3-10KTL3-XH/BP; MID 11-30KTL3-XH; MID 8-15KTL3-XHL/JP | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+| MOD/MID-HU | MOD 3-15KTL3-HU; MID 33-50KTL3-HU | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+| WIT 25K HU/XHU | WIT 4-15K-HU; WIT 17-25K-HU; WIT 4-25K-XHU | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+
+#### 3.1.3 商用储能逆变器
+
+| 系列 | 型号 | OpenAPI 支持状态 | OAuth2 接入 | 设备信息 / 数据 | 下发调度 | 回读校验 | 数据推送 | 限制条件 / 备注 |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| WIS/WIT 100K | WIS 100K-AM; WIT 50-100K-H/HE/HU/A/AE/AU; WIT 50-100K-H/HE/HU/A/AE/AU-US; WIT 28-55K-H/HE/HU/A/AE/AU-US L2 | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+| WIT XHU | WIT 29.9-50K-XHU | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
+| WIS 125K | WIS 125K-AM | Confirmed | 支持 | 支持 | 支持 | 支持 | 支持 | 无 |
 
 ### 3.2 电池
 
@@ -190,4 +156,5 @@
 
 | 日期 | 变更说明 |
 | :--- | :--- |
+| `2026-07-20` | 更新第 3.1 节"逆变器/PCE"，基于飞书 DTC 机型库数据，记录 31 个系列的完整 OpenAPI 支持状态 |
 | `2026-04-24` | 依据当前 CEC Growatt 逆变器 / PCE 与电池清单预填附件 D，所有 OpenAPI 能力字段暂为待确认 |
