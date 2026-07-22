@@ -2,126 +2,101 @@
 
 ## 简要描述
 
-- 使用 `POST /oauth2/token` 获取访问 Growatt Open API 所需的 `access_token`。
-- 公开文档支持 `authorization_code` 与 `client_credentials` 两种 `grant_type`。
-- token 请求与返回字段按 `grant_type` 区分：`authorization_code` 返回可刷新的 token 集，2026-04-23 AU `client_credentials` 实测仅返回 access token 相关字段。
+通过本接口获取调用 Growatt Open API 受保护接口所需的 `access_token`。支持 `authorization_code` 与 `client_credentials` 两种授权模式。
 
-## 请求 URL
+## 请求
 
-- `/oauth2/token`
-
-## 请求方式
-
-- `POST`
-- `Content-Type: application/x-www-form-urlencoded`
+- URL：`/oauth2/token`
+- 方法：`POST`
+- 内容类型：`application/x-www-form-urlencoded`
 
 ## Token 交换时序
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Client as Client
-    participant OAuth as OAuthServer
-    participant App as IntegrationService
+    participant Backend as 客户后端
+    participant OAuth as GrowattOAuthAPI
+    participant Store as 安全Token存储
 
-    Client->>App: 构造 token 请求
-    App->>OAuth: POST /oauth2/token
-    OAuth-->>App: 返回按 grant_type 区分的 token 响应
-    App-->>Client: 保存实际返回字段
-    Client->>App: 使用 bearer token 调用后续接口
+    Backend->>OAuth: POST /oauth2/token
+    OAuth-->>Backend: 返回 token 响应
+    Backend->>Store: 保存返回的 token 字段与有效期
+    Backend->>OAuth: 使用 bearer token 调用受保护接口
 ```
 
-## 请求参数说明
+## 请求参数
 
-| 参数名 | 是否必传 | 说明 |
+| 参数 | 是否必填 | 说明 |
 | :--- | :--- | :--- |
 | `grant_type` | 是 | `authorization_code` 或 `client_credentials` |
-| `code` | 授权码模式必传 | 由授权服务器颁发的临时授权码 |
-| `client_id` | 是 | 第三方在平台申请的 `client_id` |
-| `client_secret` | 是 | 第三方在平台申请的 `client_secret` |
-| `redirect_uri` | 授权码模式必填；客户端凭证模式可选 / 兼容接受 | 授权成功后跳转的回调 URL；2026-04-23 AU 实测中 `client_credentials` 携带或不携带该字段均可接受 |
+| `code` | 仅授权码模式 | 向已登记回调地址签发的临时授权码 |
+| `client_id` | 是 | 向您的平台签发的客户端 ID |
+| `client_secret` | 是 | 向您的平台签发的客户端密钥 |
+| `redirect_uri` | 是 | 已登记的回调 URL，必须与客户端配置一致 |
 
 ## 请求示例
 
-### `authorization_code` 模式
+### `authorization_code`
 
-```json
-{
-    "grant_type": "authorization_code",
-    "code": "<masked_authorization_code>",
-    "client_id": "<example_client_id>",
-    "client_secret": "<masked_client_secret>",
-    "redirect_uri": "https://third-party.example.com/oauth/callback"
-}
+```bash
+curl --request POST '<api-base-url>/oauth2/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=authorization_code' \
+  --data-urlencode 'code=<masked_authorization_code>' \
+  --data-urlencode 'client_id=<example_client_id>' \
+  --data-urlencode 'client_secret=<masked_client_secret>' \
+  --data-urlencode 'redirect_uri=https://third-party.example.com/oauth/callback'
 ```
 
-### `client_credentials` 模式
+### `client_credentials`
 
-```json
-{
-    "grant_type": "client_credentials",
-    "client_id": "<example_client_id>",
-    "client_secret": "<masked_client_secret>"
-}
+```bash
+curl --request POST '<api-base-url>/oauth2/token' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=client_credentials' \
+  --data-urlencode 'client_id=<example_client_id>' \
+  --data-urlencode 'client_secret=<masked_client_secret>' \
+  --data-urlencode 'redirect_uri=https://third-party.example.com/oauth/callback'
 ```
 
-### `client_credentials` 模式兼容携带 `redirect_uri`
+## 返回参数
 
-```json
-{
-    "grant_type": "client_credentials",
-    "client_id": "<example_client_id>",
-    "client_secret": "<masked_client_secret>",
-    "redirect_uri": "https://third-party.example.com/oauth/callback"
-}
-```
+| 参数 | 出现条件 | 说明 |
+| :--- | :--- | :--- |
+| `access_token` | 成功时固定返回 | 调用受保护资源的 Bearer token |
+| `refresh_token` | 所选模式签发时 | 用于刷新 `access_token` 的 token |
+| `refresh_expires_in` | 与 `refresh_token` 同时返回 | refresh token 有效期，单位秒 |
+| `token_type` | 成功时固定返回 | token 类型，值为 `Bearer` |
+| `expires_in` | 成功时固定返回 | access token 有效期，单位秒 |
 
-## `authorization_code` 模式返回参数说明
-
-| 参数名 | 说明 |
-| :--- | :--- |
-| `access_token` | 访问令牌，用于访问受保护资源 |
-| `refresh_token` | 刷新令牌，用于刷新 `access_token` |
-| `refresh_expires_in` | 刷新令牌有效期，单位：秒 |
-| `token_type` | 固定为 `Bearer` |
-| `expires_in` | 访问令牌有效期，单位：秒 |
-
-## `authorization_code` 模式返回示例
+## 授权码模式返回示例
 
 ```json
 {
     "access_token": "<masked_access_token>",
     "refresh_token": "<masked_refresh_token>",
-    "refresh_expires_in": 2585309,
+    "refresh_expires_in": 2592000,
     "token_type": "Bearer",
-    "expires_in": 604733
+    "expires_in": 7200
 }
 ```
 
-## `client_credentials` 模式返回参数说明
-
-| 参数名 | 说明 |
-| :--- | :--- |
-| `access_token` | 访问令牌，用于访问受保护资源 |
-| `token_type` | 固定为 `Bearer` |
-| `expires_in` | 访问令牌有效期，单位：秒 |
-
-## `client_credentials` 模式返回示例
+## 客户端凭证模式返回示例
 
 ```json
 {
     "access_token": "<masked_access_token>",
     "token_type": "Bearer",
-    "expires_in": 604800
+    "expires_in": 7200
 }
 ```
 
-## 实现说明
+## 客户端实现建议
 
-- 2026-04-23 AU 全量实测中，`authorization_code` 返回 `access_token`、`refresh_token`、`refresh_expires_in`、`token_type`、`expires_in`。
-- 同一轮 AU 实测中，`client_credentials` 无论是否携带兼容 `redirect_uri`，均仅返回 `access_token`、`token_type`、`expires_in`。
-- 2026-03-27 全球授权码实测中，`expires_in=604733`、`refresh_expires_in=2585309`。
-- 实现时应以实时响应返回的 TTL 为准，不应把示例数值写死到代码里。
+- 按以上示例将每个参数作为表单字段发送，不要发送 JSON 请求体。
+- 返回字段随授权模式变化，仅保存实际返回的字段。
+- 每次从响应读取 token 有效期；以上数值只用于说明字段格式。
+- 不得记录 `client_secret`、授权码、access token 或 refresh token。
 
 ## 相关文档
 

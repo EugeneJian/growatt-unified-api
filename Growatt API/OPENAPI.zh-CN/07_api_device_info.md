@@ -18,7 +18,6 @@
 ## 设备信息查询流程（概念）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["用户选择设备"] --> B["附加 bearer access token"]
     B --> C["调用 getDeviceInfo 接口"]
@@ -32,7 +31,6 @@ flowchart TD
 ## 设备信息查询流程（时序）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant User as EndUser
     participant Service as ServiceAPI
@@ -152,7 +150,7 @@ sequenceDiagram
 | `latitude` | string | 站点纬度（十进制度） | `"22.500753663248"` |
 | `longitude` | string | 站点经度（十进制度） | `"113.89838917200"` |
 | `timezone` | string | 站点时区（UTC 偏移小时数） | `"8.0"` |
-| `dischargeCutOffSOC` | int | 并网放电截止 SOC（百分比）；SPA/SPH 机型无论设置电网/负载优先，均只能读取电网优先放电截止 SOC | `20` |
+| `dischargeCutOffSOC` | int | 电池放电截止 SOC（百分比） | `20` |
 | `backupCutOffSOC` | int | 离网（备用）放电截止 SOC（百分比） | `10` |
 | `batteryList` | array | 电池列表 | `[{...}]` |
 | `batteryList[].batterySn` | string | 电池列表中的电池序列号 | `"BATTERY_SN_1"` |

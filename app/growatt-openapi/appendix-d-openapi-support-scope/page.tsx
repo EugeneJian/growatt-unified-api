@@ -8,8 +8,8 @@ import {
 } from "@/lib/growatt-docs";
 
 export const metadata: Metadata = {
-  title: "Appendix D OpenAPI Product Support Scope | Growatt Open API Docs",
-  description: "Public appendix entry for the model-level Growatt OpenAPI support scope.",
+  title: "Appendix D Supported Inverter Models | Growatt Open API Docs",
+  description: "Customer-facing Growatt OpenAPI support matrix for confirmed inverter and PCE models.",
 };
 
 export const dynamic = "force-static";
@@ -29,8 +29,8 @@ export default async function GrowattOpenApiAppendixDOpenApiSupportScopePage() {
       activeSlug={appendixEn.slug}
       headingByLocale={{ en: appendixEn.title, "zh-CN": appendixZh.title }}
       subheadingByLocale={{
-        en: "Model-level OpenAPI support scope appendix.",
-        "zh-CN": "\u578b\u53f7\u7ea7 OpenAPI \u652f\u6301\u8303\u56f4\u9644\u5f55\u3002",
+        en: "Check confirmed OpenAPI capabilities by inverter and PCE model.",
+        "zh-CN": "按逆变器与 PCE 型号查看已确认的 OpenAPI 能力。",
       }}
       contentMarkdownByLocale={{
         en: appendixEn.displayMarkdown,

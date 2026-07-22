@@ -1,18 +1,18 @@
 # ESS Terminology Glossary
 
-This page standardizes the bilingual ESS terminology used in the public Growatt Open API documentation. It does not rename vendor JSON keys, endpoint names, or enum values.
+This page standardizes the bilingual ESS terminology used in Growatt Open API documentation. It does not rename published JSON keys, endpoint names, or enum values.
 
 ## Usage Rules
 
 - Use the recommended English in public prose, field descriptions, FAQs, and guides.
-- Keep vendor keys unchanged, including `nominalPower`, `batteryNominalPower`, `payLoadPower`, and `export_limit`.
+- Keep API keys unchanged, including `nominalPower`, `batteryNominalPower`, `payLoadPower`, and `export_limit`.
 - On first mention, prefer full forms plus acronyms for `state of charge (SOC)` and `state of health (SOH)`.
 
 ## Public Glossary
 
 | Concept | Chinese Source Term | Recommended English | Field / `setType` | Usage Note |
 | :--- | :--- | :--- | :--- | :--- |
-| Power rating | 额定功率 | rated power | `nominalPower`, `batteryNominalPower` | Use `rated power` in prose; keep vendor keys unchanged. |
+| Power rating | 额定功率 | rated power | `nominalPower`, `batteryNominalPower` | Use `rated power` in prose; keep API keys unchanged. |
 | Capacity rating | 额定容量 | rated capacity | `batteryCapacity` | Use for battery energy capacity in Wh. |
 | Datalogger | 采集器 | datalogger | `datalogSn`, `datalogDeviceTypeName` | Do not replace with `collector`. |
 | Grid meter | 电网表 | grid meter | `meterPower`, `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal` | Site boundary asset against the utility grid; distinguish from the external generation boundary in AC-couple topologies. |
@@ -33,8 +33,8 @@ This page standardizes the bilingual ESS terminology used in the public Growatt 
 | Charged/discharged energy | 充放电电量 | charged energy today / total charged energy / discharged energy today / total discharged energy | `echargeToday`, `echargeTotal`, `edischargeToday`, `edischargeTotal` | Prefer explicit energy wording over generic charge/discharge quantity wording. |
 | PV power | PV 功率 | PV power | `ppv` | Use for device-local PV telemetry. In AC-couple topologies, it remains auxiliary and does not replace external-generation boundary semantics. |
 | Total PV generation | PV 累计发电量 | total PV generation | `epvTotal` | Keep units in the surrounding field description. |
-| Export limit | 防逆流 | Export Limit | `export_limit` | Preferred public term for API design and VPP contexts; keep the vendor key unchanged. |
-| Load power | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | Keep the vendor key spelling unchanged in field names. |
+| Export limit | 防逆流 | Export Limit | `export_limit` | Preferred customer-facing term for API design and VPP contexts; keep the API key unchanged. |
+| Load power | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | Keep the published key spelling unchanged in field names. |
 | Smart-load power | Smart Load 负载功率 | smart-load power | `smartLoadPower` | Use for the dedicated smart-load channel when it is present. |
 | Operating priority | 工作优先级 | operating priority | `priority` | Keep the value labels `load priority`, `battery priority`, and `grid priority`. |
 

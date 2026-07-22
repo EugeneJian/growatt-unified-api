@@ -9,7 +9,6 @@
 ## Webhook 处理时序
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Growatt as PushService
     participant Webhook as WebhookEndpoint
@@ -95,7 +94,7 @@ sequenceDiagram
 | `data.meterPower` | double | 电表功率（正值取电，负值馈电），单位 W | `0.00` |
 | `data.reactivePower` | double | 无功功率（正值：容性，负值：感性） | `174.90` |
 | `data.fac` | double | 电网频率，单位 Hz | `50.03` |
-| `data.backupPower` | double | 备用输出功率，单位 W；作为公开端点字段记录，但不纳入附录 C 的 VPP 核心语义遥测 | `0.20` |
+| `data.backupPower` | double | 备用输出功率，单位 W；设备上报时返回 | `0.20` |
 | `data.etoUserToday` | double | 今日取电电量，单位 kWh | `3.10` |
 | `data.etoUserTotal` | double | 总取电电量，单位 kWh | `44.80` |
 | `data.etoGridToday` | double | 今日馈电电量，单位 kWh | `1.50` |

@@ -20,7 +20,6 @@
 ## 遥测消费流程（概念）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["调度器触发轮询"] --> B["使用 deviceSn 构造请求"]
     B --> C["调用 getDeviceData 接口"]
@@ -35,7 +34,6 @@ flowchart TD
 ## 遥测消费流程（时序）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Poller as Poller
     participant API as OAuthAPI
@@ -67,10 +65,10 @@ sequenceDiagram
 
 ## 接口返回参数和说明
 
-| 参数名 | 厂商表格类型 | 说明 | 示例 |
+| 参数名 | 类型 | 说明 | 示例 |
 | :--- | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 | `0` |
-| `data` | string | 厂商表格原文写作 `string`，成功示例为对象 | `{...}` |
+| `data` | object | 设备遥测对象；成功时返回 | `{...}` |
 | `message` | string | 返回说明 | `"SUCCESSFUL_OPERATION"` |
 
 ## 请求示例
@@ -150,7 +148,7 @@ sequenceDiagram
 | `data.meterPower` | double | 电表功率（正值取电，负值馈电），单位 W | `0.00` |
 | `data.reactivePower` | double | 无功功率（正值：容性，负值：感性） | `174.90` |
 | `data.fac` | double | 电网频率，单位 Hz | `50.03` |
-| `data.backupPower` | double | 备用输出功率，单位 W；作为公开端点字段记录，但不纳入附录 C 的 VPP 核心语义遥测 | `0.20` |
+| `data.backupPower` | double | 备用输出功率，单位 W；设备上报时返回 | `0.20` |
 | `data.etoUserToday` | double | 今日取电电量，单位 kWh | `3.10` |
 | `data.etoUserTotal` | double | 总取电电量，单位 kWh | `44.80` |
 | `data.etoGridToday` | double | 今日馈电电量，单位 kWh | `1.50` |
@@ -221,10 +219,11 @@ sequenceDiagram
 - `1`: 电池优先
 - `2`: 电网优先
 
-## 实现说明
+## 客户端实现建议
 
-- 本节局部 HTTP 头部表写作 `token`，但全局参数章节明确要求 `Authorization: Bearer xxxxxxx`。本页采用全局章节的统一写法。
-- 返回表将顶层 `data` 标为 `string`，但成功示例明确给出对象结构。
+- 通过 `Authorization: Bearer <access_token>` 请求头传递 token。
+- 将机型不支持的字段视为可选字段，并允许响应后续增加新字段。
+- 使用 `utcTime` 作为测量时间；仅在向用户展示本地时间时应用站点时区。
 
 ## 相关文档
 

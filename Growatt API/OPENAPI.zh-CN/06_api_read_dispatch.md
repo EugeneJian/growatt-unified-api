@@ -54,7 +54,7 @@ sequenceDiagram
 
 ## 请求参数说明
 
-| 参数名 | 厂商表格类型 | 是否必选 | 说明 |
+| 参数名 | 类型 | 是否必选 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | 是 | 设备 SN |
 | `setType` | string | 是 | 设置的参数枚举，例如 `export_limit` |
@@ -72,10 +72,10 @@ sequenceDiagram
 
 ## 返回参数说明
 
-| 参数名 | 厂商表格类型 | 说明 |
+| 参数名 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，但公开成功返回会随 `setType` 返回数组、对象或数值 |
+| `data` | array \| object \| number \| null | 结果值；成功时的结构随 `setType` 变化 |
 | `message` | string | 返回说明 |
 
 ## 返回示例
@@ -154,12 +154,13 @@ sequenceDiagram
 }
 ```
 
-## 实现说明
+## 客户端实现建议
 
-- 参数表将 `requestId` 标为必填，但厂商请求示例漏写了它。本页按参数表保留为必填字段。
-- 返回表将 `data` 标为 `string`，但公开成功返回实际包含数组、对象和数值型。
+- 始终携带必填的 `requestId`，并为每个请求生成唯一值。
+- 根据 `setType` 解析 `data`；成功时可能为数组、对象或数值。
+- 轮询回读结果时遵守文档规定的按设备限流要求。
 
-## 正式公开的成功形态
+## 各 `setType` 的成功返回结构
 
 - 数组：`time_slot_charge_discharge`
 - 对象：`duration_and_power_charge_discharge`、`export_limit`

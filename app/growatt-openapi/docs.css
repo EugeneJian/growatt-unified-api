@@ -358,6 +358,70 @@
   background: #f8fafc;
 }
 
+/* Appendix D product-review tables */
+.growatt-docs-content table.growatt-product-review-table {
+  line-height: 1.45;
+}
+
+.growatt-docs-content table.growatt-product-review-table th:first-child,
+.growatt-docs-content table.growatt-product-review-table td:first-child {
+  min-width: 92px;
+  white-space: nowrap;
+}
+
+.growatt-docs-content table.growatt-product-review-table .growatt-product-model-cell {
+  min-width: 220px;
+}
+
+.growatt-docs-content table.growatt-product-review-table td.growatt-product-model-cell code {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 7px;
+  white-space: nowrap;
+}
+
+.growatt-docs-content table.growatt-product-review-table td.growatt-product-model-cell code:last-child {
+  margin-bottom: 0;
+}
+
+.growatt-docs-content table.growatt-product-review-table .growatt-product-capability-cell {
+  min-width: 72px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.growatt-docs-content table.growatt-product-review-table .growatt-product-status-cell {
+  min-width: 112px;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.growatt-docs-content table.growatt-product-review-table td.growatt-product-capability-supported,
+.growatt-docs-content table.growatt-product-review-table td.growatt-product-status-confirmed {
+  color: #15803d;
+  font-size: 1.125rem;
+  font-weight: 800;
+}
+
+.growatt-docs-content table.growatt-product-review-table .growatt-product-capability-limited-icon {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #d97706;
+  border-radius: 999px;
+  background: #fffbeb;
+  color: #b45309;
+  font-size: 0.875rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: help;
+}
+
 /* Code Blocks */
 .growatt-docs-content pre {
   overflow-x: auto;

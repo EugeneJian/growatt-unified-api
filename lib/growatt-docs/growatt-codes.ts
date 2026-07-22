@@ -118,13 +118,6 @@ function toAnchor(value: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function titleCaseToken(token: string): string {
-  return token
-    .split("_")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 function formatSeverityLabel(severity: GrowattFaultSeverity): string {
   return severity.charAt(0).toUpperCase() + severity.slice(1);
 }
@@ -135,22 +128,6 @@ function formatCode(record: GrowattFaultCodeRecord): string {
   }
 
   return `${record.code}`;
-}
-
-function formatBoolean(value: boolean): string {
-  return value ? "Yes" : "No";
-}
-
-function formatDispatchImpact(value: boolean): string {
-  return value ? "Impacts dispatch" : "No dispatch impact";
-}
-
-function formatRecommendedActions(actions: string[]): string {
-  if (actions.length === 0) {
-    return "N/A";
-  }
-
-  return actions.map(titleCaseToken).join(", ");
 }
 
 function escapeMarkdownCell(value: string): string {
@@ -299,8 +276,6 @@ function renderDetailsHtml(record: GrowattFaultCodeRecord): string {
       <ul>
         <li><strong>Code text:</strong> ${escapeHtml(record.code_text)}</li>
         <li><strong>Inverter state:</strong> ${escapeHtml(record.inverter_state ?? "N/A")}</li>
-        <li><strong>Visibility:</strong> ${escapeHtml(record.external_visibility)}</li>
-        <li><strong>Source:</strong> ${escapeHtml(`${record.source.sheet} row ${record.source.row}`)}</li>
       </ul>
     </div>
   `);
@@ -331,12 +306,9 @@ function renderRecordRowHtml(record: GrowattFaultCodeRecord): string {
           </div>
         </td>
         <td>${escapeHtml(record.fault_description)}</td>
-        <td>${escapeHtml(formatRecommendedActions(record.recommended_vpp_action))}</td>
-        <td>${escapeHtml(formatDispatchImpact(record.affects_dispatch_default))}</td>
-        <td>${escapeHtml(formatBoolean(record.auto_recover_default))}</td>
       </tr>
       <tr class="growatt-codes-detail-row">
-        <td colspan="5">
+        <td colspan="2">
           ${renderDetailsHtml(record)}
         </td>
       </tr>
@@ -352,9 +324,6 @@ function renderTableHtml(records: GrowattFaultCodeRecord[]): string {
           <tr>
             <th>Code</th>
             <th>Description</th>
-            <th>Default VPP Action</th>
-            <th>Dispatch Impact</th>
-            <th>Auto Recover</th>
           </tr>
         </thead>
         ${records.map((record) => renderRecordRowHtml(record)).join("")}
@@ -372,15 +341,10 @@ function renderGrowattCodesHtml(document: GrowattFaultCodeDocument): {
   const summarySection = `
     <section class="growatt-codes-summary">
       <p class="growatt-codes-intro">
-        External customer reference for Growatt enterprise fault, protect, and warning codes.
-        This appendix is generated directly from the SSOT and keeps the original workbook wording in English.
+        Customer reference for Growatt fault, protection, and warning codes.
+        Use the troubleshooting guidance for initial diagnosis and contact Growatt support when an issue persists.
       </p>
       ${renderSummaryCards(document.summary)}
-      <dl class="growatt-codes-meta">
-        <div><dt>Source workbook</dt><dd>${escapeHtml(document.source_workbook)}</dd></div>
-        <div><dt>Last generated from source</dt><dd>${escapeHtml(document.last_generated_from_source)}</dd></div>
-        <div><dt>Scope</dt><dd>${escapeHtml(document.scope)}</dd></div>
-      </dl>
     </section>
   `;
 
@@ -445,8 +409,8 @@ function renderGrowattCodesHtml(document: GrowattFaultCodeDocument): {
 
 function buildMarkdownTable(records: GrowattFaultCodeRecord[]): string {
   const header = [
-    "| Code | Description | Default VPP Action | Dispatch Impact | Auto Recover |",
-    "| :--- | :--- | :--- | :--- | :--- |",
+    "| Code | Description |",
+    "| :--- | :--- |",
   ];
 
   const rows = records.flatMap((record) => {
@@ -462,10 +426,12 @@ function buildMarkdownTable(records: GrowattFaultCodeRecord[]): string {
       detailLines.push(`Troubleshooting: ${record.troubleshooting_steps.join(" ")}`);
     }
 
-    detailLines.push(`Source: ${record.source.sheet} row ${record.source.row}`);
+    if (record.inverter_state) {
+      detailLines.push(`Inverter state: ${record.inverter_state}`);
+    }
 
     return [
-      `| ${escapeMarkdownCell(codeLabel)} | ${escapeMarkdownCell(record.fault_description)} | ${escapeMarkdownCell(formatRecommendedActions(record.recommended_vpp_action))} | ${escapeMarkdownCell(formatDispatchImpact(record.affects_dispatch_default))} | ${escapeMarkdownCell(formatBoolean(record.auto_recover_default))} |`,
+      `| ${escapeMarkdownCell(codeLabel)} | ${escapeMarkdownCell(record.fault_description)} |`,
       ...detailLines.map((line) => `> ${line}`),
     ];
   });
@@ -496,15 +462,13 @@ function renderGrowattCodesMarkdown(document: GrowattFaultCodeDocument, severity
   return [
     "# Growatt Codes",
     "",
-    "External customer reference for Growatt enterprise fault, protect, and warning codes.",
+    "Customer reference for Growatt fault, protection, and warning codes. Use the troubleshooting guidance for initial diagnosis and contact Growatt support when an issue persists.",
     "",
     `- Total records: ${document.summary.total_records}`,
     `- Errors: ${document.summary.by_severity.error ?? 0}`,
     `- Protects: ${document.summary.by_severity.protect ?? 0}`,
     `- Warnings: ${document.summary.by_severity.warning ?? 0}`,
     `- Reserved records: ${document.summary.reserved_records}`,
-    `- Source workbook: ${document.source_workbook}`,
-    `- Last generated from source: ${document.last_generated_from_source}`,
     "",
     "## Contents",
     "",

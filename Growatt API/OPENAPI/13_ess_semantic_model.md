@@ -1,21 +1,23 @@
 # Growatt ESS Semantic Model and Dispatch Specification
 
 **Version**: v1.1
-**Status**: Public Standard  
-**Scope**: Growatt Unified OpenAPI / EMS VPP-relevant runtime telemetry semantics and dispatch validation  
-**Audience**: Integrators, solution architects, validation teams, and implementation teams
+**Status**: Customer Integration Reference
+
+**Scope**: VPP-relevant Growatt Open API runtime telemetry semantics and dispatch interpretation
+
+**Audience**: API integrators, solution architects, and customer implementation teams
 
 ---
 
 # 1. Overview
 
-This specification defines the public runtime semantic model for VPP-relevant fields that binds:
+This appendix explains how customers can interpret VPP-relevant fields across:
 
 * **Topology (energy flow paths)**
 * **Telemetry (public runtime payload fields)**
 * **Semantic interpretation (SPx)**
 * **Dispatch commands**
-* **Validation criteria**
+* **Integration checks**
 
 The telemetry scope in this appendix focuses on the VPP-relevant subset of the currently published payloads in:
 
@@ -24,9 +26,9 @@ The telemetry scope in this appendix focuses on the VPP-relevant subset of the c
 
 Static capability metadata from `07_api_device_info.md` remains outside this runtime telemetry catalog.
 
-This revision presents four public topology references: `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`. The normative runtime semantic, telemetry, and dispatch-validation coverage in the later sections remains limited to `Hybrid` and `AC-Couple`.
+The appendix presents four topology references: `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`. Detailed runtime field and dispatch interpretation is provided for `Hybrid` and `AC-Couple`.
 
-Revision v1.1 adds top-level `soc` as the system-level SOC for the whole ESS battery system and keeps `batteryList[].soc` as the per-pack SOC signal.
+Top-level `soc` represents the system-level SOC for the whole ESS battery system; `batteryList[].soc` represents the SOC of an individual battery pack.
 
 ---
 
@@ -40,7 +42,7 @@ Revision v1.1 adds top-level `soc` as the system-level SOC for the whole ESS bat
 | Telemetry | VPP-relevant public runtime payload fields |
 | Semantic | Interpretation rules for core signals |
 | Dispatch | Control commands and limits |
-| Validation | Pass/Fail logic |
+| Integration checks | Customer-side confirmation of command, read-back, and telemetry meaning |
 
 ---
 
@@ -51,7 +53,7 @@ Revision v1.1 adds top-level `soc` as the system-level SOC for the whole ESS bat
 
 ---
 
-# 3. Visual Standard (Mermaid SSOT)
+# 3. Topology Diagram Legend
 
 ```mermaid
 flowchart LR
@@ -78,7 +80,7 @@ classDef dispatch fill:#fff7e6,stroke:#d48806,stroke-width:2px,stroke-dasharray:
 
 # 4. Topology + Semantic + Dispatch Model
 
-This revision includes four public topology reference diagrams: `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`. Only `Hybrid` and `AC-Couple` are part of the normative runtime model in the later semantic, telemetry, and dispatch-validation sections.
+The following diagrams cover `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`. Detailed runtime field and dispatch interpretation is provided for `Hybrid` and `AC-Couple`; the other two diagrams are physical-topology references.
 
 ## 4.1 Hybrid Topology
 
@@ -206,7 +208,7 @@ flowchart LR
     class PV,Inverter,GridMeter,Load,Grid asset;
 ```
 
-`PV Only` is included here as a physical topology reference only. This revision does not add public runtime semantic mappings, SPx definitions, or dispatch mappings specific to this topology.
+`PV Only` is included as a physical-topology reference. This appendix does not define topology-specific runtime mappings or dispatch behavior for it.
 
 ## 4.4 Battery Only Topology
 
@@ -229,7 +231,7 @@ flowchart LR
     class Battery,Inverter,GridMeter,Load,Grid asset;
 ```
 
-`Battery Only` is included here as a physical topology reference only. This revision does not add public runtime semantic mappings, SPx definitions, or dispatch mappings specific to this topology.
+`Battery Only` is included as a physical-topology reference. This appendix does not define topology-specific runtime mappings or dispatch behavior for it.
 
 ---
 
@@ -281,7 +283,7 @@ flowchart LR
 | `payLoadPower` | `>= 0` |
 | `pexPower` | `>= 0` when reported; AC-Couple external generation power for third-party meter / Solar Inverter sources with no import/export sign semantics |
 
-`pexPower` is observational telemetry only in this appendix. It does not define a public dispatch target or export-direction sign rule.
+`pexPower` is read-only telemetry in this appendix. It does not define a dispatch target or an export-direction sign rule.
 
 `genPower` is generator power for off-grid runtime when reported. It is retained as auxiliary telemetry and is not mapped to a public boundary SPx or dispatch target in this appendix.
 
@@ -381,7 +383,7 @@ flowchart LR
     class Dispatch dispatch;
 ```
 
-`External Generation Boundary` applies only to `AC-Couple`. `Generator / Off-grid Source` is auxiliary runtime telemetry for generator-equipped off-grid modes and is not mapped to a public boundary SPx in this revision. `PV Source / Generation` remains a core semantic block in `Hybrid` and an optional auxiliary block in `AC-Couple` when `ppv` is reported.
+`External Generation Boundary` applies only to `AC-Couple`. `Generator / Off-grid Source` is auxiliary runtime telemetry for generator-equipped off-grid modes and is not mapped to a boundary SPx. `PV Source / Generation` is a core semantic block in `Hybrid` and an optional auxiliary block in `AC-Couple` when `ppv` is reported.
 
 ---
 
@@ -397,7 +399,7 @@ flowchart LR
 | Current | `batteryList[].ibat` | `A` |
 | Code / Enum | `status`, `priority`, `batteryStatus`, `batteryList[].status`, `faultCode`, `faultSubCode`, `protectCode`, `protectSubCode`, `dataType` | Code / enum |
 
-`reactivePower` keeps its vendor payload form and public sign note; this appendix does not redefine its unit beyond the currently published documentation.
+`reactivePower` keeps its published payload form and sign convention; this appendix does not assign a unit beyond the endpoint documentation.
 
 ---
 
@@ -515,14 +517,14 @@ flowchart LR
 
 ## 7.2 Mapping
 
-| Dispatch | Observed Runtime Fields | Control Fields |
+| Dispatch | Runtime Fields to Review | Control Fields |
 | -------- | ----------------------- | -------------- |
 | Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
 | Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
 | Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `export_limit` (dispatch setting; read back via read-dispatch) |
 | Control | `status`, `priority`, power blocks | `enable_control`, `active_power_derating_percentage`, `active_power_percentage` |
 
-`pexPower` is observational telemetry for AC-couple external-generation validation in this revision and does not map to a public dispatch/control field.
+`pexPower` is read-only AC-couple external-generation telemetry and does not map to a dispatch/control field.
 
 `genPower` remains auxiliary generator telemetry for off-grid runtime and also does not map to a public dispatch/control field.
 
@@ -556,151 +558,22 @@ flowchart LR
 * `payLoadPower` is the only public load semantic signal modeled in this appendix.
 * `ppv` remains the core PV-source semantic signal in `Hybrid`.
 * In `AC-Couple`, `pexPower` is the primary public external-generation boundary signal and `ppv` remains auxiliary when present.
-* `genPower` is documented as auxiliary generator telemetry for off-grid runtime and remains outside this revision's normative Hybrid / AC-Couple boundary coverage.
-* `PV Only` and `Battery Only` are now included as physical topology references only and are not part of this revision's normative runtime coverage.
+* `genPower` is auxiliary generator telemetry for off-grid runtime and is outside the Hybrid / AC-Couple boundary mapping.
+* `PV Only` and `Battery Only` are physical-topology references and do not add topology-specific runtime mappings in this appendix.
 
 ---
 
-# 9. Dispatch Validation Framework
+# 9. Customer Integration Guidance
 
-## 9.1 Validation Layers
-
-| Layer | Check |
-| ----- | ----- |
-| Command | accepted |
-| Telemetry | changed |
-| Semantic | correct sign / boundary |
-| Behavior | consistent over the observation window |
+- A successful dispatch response confirms that the API accepted the request; use `readDeviceDispatch` to confirm the effective setting when your workflow requires reconciliation.
+- Interpret `batPower` as positive for charging and negative for discharging.
+- Interpret `meterPower` as positive for grid import and negative for grid export.
+- For Export Limit workflows, read back the configured `export_limit` and use `meterPower` plus the grid energy counters to evaluate runtime grid flow.
+- Use top-level `soc` for the whole ESS battery system and `batteryList[].soc` for individual battery packs.
+- Respect the dispatch and telemetry rate limits documented on the endpoint pages. Do not create tighter pass/fail thresholds from the topology diagrams alone.
 
 ---
 
-# 10. Validation Rules
+# 10. Summary
 
-## 10.1 Charge
-
-**Expected**
-
-* `batPower` > 0
-* `soc` is non-decreasing over the observation window when reported
-* `batteryList[].soc` is non-decreasing per pack when pack details are reported
-
-**Pass**
-
-```text
-batPower remains positive and SOC does not trend downward
-```
-
----
-
-## 10.2 Discharge
-
-**Expected**
-
-* `batPower` < 0
-* `soc` is non-increasing over the observation window when reported
-* `batteryList[].soc` is non-increasing per pack when pack details are reported
-
----
-
-## 10.3 Export Limit
-
-**Expected**
-
-* configured `export_limit` setting is read from the dispatch/read-dispatch flow and matches the intended export limit
-* actual export behavior is observed from `meterPower`, where negative values indicate export
-* `meterPower` stays within the configured export boundary in the export direction
-* In export-limited mode, `meterPower` does not become more negative than the configured export limit at the meter boundary
-
----
-
-# 11. Acceptance Criteria
-
-## 11.1 General
-
-| Item | Requirement |
-| ---- | ----------- |
-| Ack | < 5s |
-| First response | <= 1 cycle |
-| Stable window | 2-5 cycles |
-
----
-
-## 11.2 Tolerance
-
-| Metric | Value |
-| ------ | ----- |
-| Power tolerance | +/-3% |
-| Stabilization | 30-120s |
-
----
-
-## 11.3 Result
-
-| Result | Condition |
-| ------ | --------- |
-| Pass | all required layers satisfied |
-| Fail | mismatch |
-| Pending | insufficient data |
-
----
-
-# 12. Failure Codes
-
-| Code | Meaning |
-| ---- | ------- |
-| V001 | No ack |
-| V002 | No telemetry |
-| V003 | Wrong sign |
-| V004 | Unstable |
-| V005 | Limit not enforced |
-| V006 | Insufficient window |
-| V007 | Conflicting conditions |
-
----
-
-# 13. Validation Flow
-
-```mermaid
-flowchart TD
-
-    A[Dispatch]
-    B[Ack]
-    C[Telemetry blocks]
-    D[SPx interpretation]
-    E[Validation]
-
-    A --> B --> C --> D --> E
-```
-
----
-
-# 14. Dispatch Validation Logic
-
-```mermaid
-flowchart TD
-
-    Start[Dispatch]
-    Telemetry[Telemetry window]
-    Check1{"batPower sign OK?"}
-    Check2{"meterPower boundary OK when export-limited?"}
-    Check3{"soc / batteryList[].soc trend OK?"}
-    Pass[PASS]
-    Fail[FAIL]
-
-    Start --> Telemetry
-    Telemetry --> Check1
-    Check1 -->|Yes| Check2
-    Check1 -->|No| Fail
-    Check2 -->|Yes| Check3
-    Check2 -->|No| Fail
-    Check3 -->|Yes| Pass
-    Check3 -->|No| Fail
-```
-
----
-
-# 15. Executive Summary
-
-This specification organizes public ESS topology references, runtime semantics, dispatch, and telemetry into one public model, with reference topology diagrams for `Hybrid`, `AC-Couple`, `PV Only`, and `Battery Only`.
-Normative runtime semantic, telemetry, and dispatch-validation coverage in this revision remains focused on `Hybrid` and `AC-Couple`, using `pexPower` as the AC-couple external-generation boundary signal while retaining `genPower` only as auxiliary off-grid generator telemetry. `PV Only` and `Battery Only` remain physical topology references only.
-System-level `soc` is the public overall ESS battery SOC signal, while `batteryList[].soc` remains the per-pack SOC detail.
+This appendix aligns ESS topology references, runtime field meanings, and dispatch settings for customer integrations. Detailed runtime mapping covers `Hybrid` and `AC-Couple`; `PV Only` and `Battery Only` are physical-topology references. `pexPower` represents the AC-couple external-generation boundary, while `genPower` is auxiliary off-grid generator telemetry.

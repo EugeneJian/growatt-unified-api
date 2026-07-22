@@ -1,18 +1,18 @@
 # 储能术语表
 
-本页统一 Growatt Open API 公开文档中使用的中英双语储能术语。它不会改动 vendor JSON key、接口名或枚举值。
+本页统一 Growatt Open API 文档中使用的中英双语储能术语，不改动已发布的 JSON 字段名、接口名或枚举值。
 
 ## 使用规则
 
 - 在公开正文、字段说明、FAQ 与指南中，优先使用表中的推荐英文。
-- `nominalPower`、`batteryNominalPower`、`payLoadPower`、`export_limit` 等 vendor key 保持不变。
+- `nominalPower`、`batteryNominalPower`、`payLoadPower`、`export_limit` 等 API 字段名保持不变。
 - `state of charge (SOC)` 与 `state of health (SOH)` 首次出现时，优先使用全称加缩写。
 
 ## 公开术语表
 
 | 概念 | 中文来源词 | 推荐英文 | 对应字段 / `setType` | 使用说明 |
 | :--- | :--- | :--- | :--- | :--- |
-| 额定功率 | 额定功率 | rated power | `nominalPower`, `batteryNominalPower` | 正文使用 `rated power`，但 vendor key 保持原名。 |
+| 额定功率 | 额定功率 | rated power | `nominalPower`, `batteryNominalPower` | 正文使用 `rated power`，API 字段名保持不变。 |
 | 额定容量 | 额定容量 | rated capacity | `batteryCapacity` | 用于表示电池额定能量容量，单位 Wh。 |
 | 采集器 | 采集器 | datalogger | `datalogSn`, `datalogDeviceTypeName` | 不建议替换成 `collector`。 |
 | 电网表 | 电网表 | grid meter | `meterPower`, `etoUserToday`, `etoUserTotal`, `etoGridToday`, `etoGridTotal` | 表示站点与公用电网之间的边界计量设备；在 AC-couple 拓扑中要与外部发电边界区分。 |
@@ -33,8 +33,8 @@
 | 充放电电量 | 充放电电量 | charged energy today / total charged energy / discharged energy today / total discharged energy | `echargeToday`, `echargeTotal`, `edischargeToday`, `edischargeTotal` | 优先使用明确的电量表达，而不是泛化的充放电量说法。 |
 | PV 功率 | PV 功率 | PV power | `ppv` | 用于设备本地 PV 遥测；在 AC-couple 拓扑中它仍是辅助信号，不替代外部发电边界语义。 |
 | PV 累计发电量 | PV 累计发电量 | total PV generation | `epvTotal` | 单位在字段说明上下文中保留。 |
-| 防逆流 | 防逆流 | Export Limit | `export_limit` | 对外公开术语与 API 设计语境优先使用 `Export Limit`，但 vendor key 保持不变。 |
-| 负载功率 | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | 字段名中的 vendor key 拼写保持不变。 |
+| 防逆流 | 防逆流 | Export Limit | `export_limit` | 客户文档与 API 设计语境优先使用 `Export Limit`，API 字段名保持不变。 |
+| 负载功率 | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | 字段名保持已发布的原拼写。 |
 | Smart Load 负载功率 | Smart Load 负载功率 | smart-load power | `smartLoadPower` | 用于设备上报独立 smart-load 通道功率的场景。 |
 | 工作优先级 | 工作优先级 | operating priority | `priority` | 值标签继续使用 `load priority`、`battery priority`、`grid priority`。 |
 

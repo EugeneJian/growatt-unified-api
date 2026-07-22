@@ -24,12 +24,11 @@ The main updates in this release are:
 | `latitude` | string | Site latitude in decimal degrees |
 | `longitude` | string | Site longitude in decimal degrees |
 | `timezone` | string | Site UTC offset in hours |
-| `dischargeCutOffSOC` | int | Grid-connected discharge cut-off SOC in percent |
+| `dischargeCutOffSOC` | int | Battery discharge cut-off SOC in percent |
 | `backupCutOffSOC` | int | Off-grid (backup) discharge cut-off SOC in percent |
 
 Notes:
 
-- On SPA/SPH models, `dischargeCutOffSOC` always reflects the grid-priority cut-off SOC regardless of the configured priority.
 
 ### 2.2 New `getDeviceData` and push payload fields
 
@@ -63,13 +62,13 @@ We recommend implementing against the latest documentation directly and includin
 - All changes are additive response fields. API paths, request parameters, and the meaning of existing fields are unchanged, so existing parsing logic is not affected.
 - If your platform applies strict JSON schema validation (rejecting unknown fields) to responses or push payloads, please allow or add the new fields to avoid validation failures.
 - Use `siteName`, `latitude`, `longitude`, and `timezone` when you need to report timestamps in local time or match user billing addresses.
-- Use `dischargeCutOffSOC` / `backupCutOffSOC` when mapping discharge-limit semantics (such as dischargeLimit).
+- `dischargeCutOffSOC` is the battery discharge cut-off SOC; `backupCutOffSOC` is the off-grid (backup) discharge cut-off SOC.
 
 ## 5. Recommended Customer Actions
 
 1. Update the field-mapping tables for `getDeviceInfo` / `getDeviceData` / push payloads to include the new fields.
 2. Check that payload validation logic tolerates the new fields.
-3. For SPA/SPH models, confirm your handling of missing `maxChargePower` / `maxDischargePower` values and the `dischargeCutOffSOC` reading behavior.
+3. For SPA/SPH models, confirm your handling of missing `maxChargePower` / `maxDischargePower` values.
 4. If you maintain an API gateway, SDK, or wrapper layer, update its external documentation accordingly.
 
 ## 6. Compatibility Notes

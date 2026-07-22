@@ -5,7 +5,6 @@
 ## 授权流程
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant User as EndUser
     participant Client as PlatformApp
@@ -50,10 +49,10 @@ sequenceDiagram
 
 ### 返回参数说明
 
-| 参数名 | 厂商表格类型 | 说明 |
+| 参数名 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，实际示例为设备数组 |
+| `data` | array | 可授权设备记录；成功时返回 |
 | `message` | string | 返回说明 |
 
 ### 返回示例
@@ -136,7 +135,7 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- |
 | `deviceSnList` | array | 是 | 非空，设备序列号对象列表 |
 | `deviceSnList[].deviceSn` | string | 是 | 设备序列号 |
-| `deviceSnList[].pinCode` | string | 客户端模式下必填；授权码模式下可选但可接受 | 设备 `PinCode`；部分环境或设备在授权码模式下也可能要求携带 |
+| `deviceSnList[].pinCode` | string | 客户端凭证模式下必填 | 设备 PIN Code |
 
 ### 请求示例
 
@@ -150,19 +149,6 @@ sequenceDiagram
         },
         {
             "deviceSn": "DEVICE_SN_2"
-        }
-    ]
-}
-```
-
-#### 授权码模式在需要时携带 `pinCode`
-
-```json
-{
-    "deviceSnList": [
-        {
-            "deviceSn": "DEVICE_SN_1",
-            "pinCode": "PIN001"
         }
     ]
 }
@@ -187,10 +173,10 @@ sequenceDiagram
 
 ### 返回参数说明
 
-| 参数名 | 厂商表格类型 | 说明 |
+| 参数名 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`；公开成功示例为 `null`，最新全球成功实测返回过 `1`，部分失败示例为数组 |
+| `data` | array \| number \| null | 结果明细。通过 `code` 判断成功；无权限的设备 SN 可能以数组形式返回 |
 | `message` | string | 返回说明 |
 
 ### 返回示例
@@ -199,14 +185,6 @@ sequenceDiagram
 {
     "code": 0,
     "data": null,
-    "message": "SUCCESSFUL_OPERATION"
-}
-```
-
-```json
-{
-    "code": 0,
-    "data": 1,
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
@@ -235,13 +213,12 @@ sequenceDiagram
 }
 ```
 
-### 近期实测观察
+### 响应处理
 
-- 最新全球授权码联调使用 `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` 直接成功，且本轮未要求 `pinCode`。
-- 该次成功响应返回了 `data: 1`。
-- 同一份报告明确区分了 `deviceSn=WCK6584462` 与 `datalogSn=ZGQ0E820UH`；设备级接口使用的是 `deviceSn`。
-- 2026-04-23 AU 全量实测中，授权码模式使用对象数组并携带 `pinCode` 绑定成功。
-- 同一轮 AU 实测确认 `client_credentials` 调用 `getDeviceList` 返回 `{"code":103,"message":"WRONG_GRANT_TYPE"}`。
+- `code=0` 表示绑定成功。
+- 不要将成功响应限定为单一 `data` 结构。
+- 权限失败时，可通过 `data` 中的设备 SN 定位未绑定的设备。
+- 设备级 API 使用 `deviceSn`，不要使用 `datalogSn`。
 
 ## 3 获取已授权的设备列表
 
@@ -267,10 +244,10 @@ sequenceDiagram
 
 ### 返回参数说明
 
-| 参数名 | 厂商表格类型 | 说明 |
+| 参数名 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，实际示例为设备数组 |
+| `data` | array | 已授权设备记录；成功时返回 |
 | `message` | string | 返回说明 |
 
 ### 返回示例
@@ -336,10 +313,10 @@ sequenceDiagram
 
 ### 返回参数说明
 
-| 参数名 | 厂商表格类型 | 说明 |
+| 参数名 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，成功示例为 `null` |
+| `data` | null | 成功时无额外返回数据 |
 | `message` | string | 返回说明 |
 
 ### 返回示例

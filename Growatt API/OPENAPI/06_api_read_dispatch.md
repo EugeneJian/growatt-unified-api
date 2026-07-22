@@ -54,7 +54,7 @@ sequenceDiagram
 
 ## Request Parameters
 
-| Parameter | Vendor-table Type | Required | Description |
+| Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | Yes | Device SN |
 | `setType` | string | Yes | Parameter enum, for example `export_limit` |
@@ -72,10 +72,10 @@ sequenceDiagram
 
 ## Response Parameters
 
-| Parameter | Vendor-table Type | Description |
+| Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`, but the public success payload depends on `setType` and may be an array, object, or scalar number |
+| `data` | array \| object \| number \| null | Result value; the successful shape depends on `setType` |
 | `message` | string | Response description |
 
 ## Response Examples
@@ -154,12 +154,13 @@ sequenceDiagram
 }
 ```
 
-## Implementation Note
+## Customer Implementation Guidance
 
-- The parameter table marks `requestId` as required, even though the vendor request sample omits it. This page follows the parameter table.
-- The response table labels `data` as `string`, while the public success payloads include array, object, and scalar-number shapes.
+- Always include the required `requestId` and generate a unique value for each request.
+- Parse `data` according to `setType`; it may be an array, object, or scalar number on success.
+- Apply the documented per-device rate limit when polling for a read-back result.
 
-## Documented Success Shapes
+## Success Shapes by `setType`
 
 - Array: `time_slot_charge_discharge`
 - Object: `duration_and_power_charge_discharge`, `export_limit`

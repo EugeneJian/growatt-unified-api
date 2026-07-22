@@ -1,96 +1,80 @@
 # Growatt Open API 文档
 
-本目录是面向站点发布的中文拆分文档，负责按端点组织说明、补足交叉引用，并将联调观察与主要 API 描述分开展示。
+本套文档用于帮助您完成应用认证、设备授权、设备信息与遥测查询、调度下发与回读，以及设备数据推送接收。
 
-## 集成路线图（概念）
+## 集成路线图
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["01 身份认证"] --> B["02 获取 access token"]
-    B --> C["03 refresh token 生命周期"]
-    C --> D["04 设备授权"]
-    D --> E["07 设备信息"]
-    D --> F["08 设备数据查询"]
-    D --> G["09 设备数据推送"]
-    F --> H["05 设备下发"]
-    H --> I["06 读取下发参数"]
-    G --> H
-    I --> J["10 全局参数"]
-    J --> K["11 常见问题与排查"]
+    A["选择 OAuth 授权模式"] --> B["获取 access token"]
+    B --> C["授权设备"]
+    C --> D["查询设备信息"]
+    C --> E["查询或接收设备数据"]
+    C --> F["下发设备设置"]
+    F --> G["回读设备设置"]
+    B --> H{"是否签发 refresh token"}
+    H -->|"是"| I["到期前刷新 token"]
+    H -->|"否"| J["需要时重新获取 access token"]
 ```
 
-## 集成路线图（请求顺序）
+## 典型请求顺序
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Platform as PlatformApp
-    participant OAuth as OAuthAPI
-    participant Device as DeviceAPI
-    participant Push as WebhookAPI
+    participant App as 客户应用
+    participant OAuth as GrowattOAuthAPI
+    participant Device as GrowattDeviceAPI
+    participant Push as 客户Webhook
 
-    Platform->>OAuth: POST /oauth2/token
-    OAuth-->>Platform: 返回 access token 或 token 对
-    Platform->>OAuth: 执行 bindDevice 流程
-    OAuth-->>Platform: 返回已授权设备集合
-    Platform->>Device: 查询设备信息与数据
-    Device-->>Platform: 返回遥测数据
-    Platform->>Device: 下发控制并回读
-    Device-->>Platform: 返回控制结果
-    Push-->>Platform: 推送 dfcData
-    Platform->>OAuth: 需要时调用 POST /oauth2/refresh
+    App->>OAuth: POST /oauth2/token
+    OAuth-->>App: 返回 token 响应
+    App->>OAuth: 授权或绑定设备
+    OAuth-->>App: 返回已授权设备
+    App->>Device: 查询设备信息或数据
+    Device-->>App: 返回设备报文
+    App->>Device: 下发并回读设置
+    Device-->>App: 返回操作结果
+    Device-->>Push: 推送 dfcData 报文
+    App->>OAuth: 有 refresh token 时调用 POST /oauth2/refresh
 ```
 
-## 文档结构
+## API 指南
 
-| 文件 | 说明 |
+| 指南 | 用途 |
 | :--- | :--- |
-| [01_authentication.md](./01_authentication.md) | 身份认证说明 |
-| [02_api_access_token.md](./02_api_access_token.md) | 获取 `access_token` |
-| [03_api_refresh.md](./03_api_refresh.md) | 刷新 `access_token` |
-| [04_api_device_auth.md](./04_api_device_auth.md) | 设备授权与解除授权 |
-| [05_api_device_dispatch.md](./05_api_device_dispatch.md) | 设备调度 |
-| [06_api_read_dispatch.md](./06_api_read_dispatch.md) | 读取设备调度参数 |
-| [07_api_device_info.md](./07_api_device_info.md) | 设备信息查询 |
-| [08_api_device_data.md](./08_api_device_data.md) | 设备数据查询 |
-| [09_api_device_push.md](./09_api_device_push.md) | 设备数据推送 |
-| [10_global_params.md](./10_global_params.md) | 全局参数说明 |
-| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | 常见问题与排查 FAQ |
+| [身份认证](./01_authentication.md) | 选择授权模式并了解 token 行为 |
+| [获取 access token](./02_api_access_token.md) | 申请 `access_token` |
+| [刷新 token](./03_api_refresh.md) | 更新即将到期的 token 对 |
+| [设备授权](./04_api_device_auth.md) | 查询、绑定、查看和解除授权设备 |
+| [设备调度](./05_api_device_dispatch.md) | 下发设备设置命令 |
+| [读取调度设置](./06_api_read_dispatch.md) | 回读设备设置值 |
+| [设备信息](./07_api_device_info.md) | 查询设备标识、能力与站点信息 |
+| [设备数据](./08_api_device_data.md) | 查询设备遥测数据 |
+| [设备数据推送](./09_api_device_push.md) | 接收 `dfcData` Webhook 报文 |
+| [全局参数](./10_global_params.md) | 查看基础地址、请求头、返回码和 `setType` |
+| [常见问题与排查](./11_api_troubleshooting.md) | 处理常见接入问题 |
 
-## 快速导航
+## 关键集成规则
 
+- 通过 `Authorization: Bearer <access_token>` 传递访问令牌。
+- `client_secret`、access token 和 refresh token 仅保存在可信后端，不得暴露在浏览器或移动端代码中。
+- token 请求应携带 `redirect_uri`，并与为客户端登记的回调地址保持一致。
+- 终端用户授权设备时使用 `authorization_code`；`getDeviceList` 仅支持该模式。
+- `client_credentials` 模式调用 `bindDevice` 时，必须携带 `deviceSnList[].pinCode`。
+- 调度下发和调度回读请求均应将 `requestId` 作为必填字段。
+- 每次都从响应读取 token 有效期，不要固化示例中的数值。
+- 通过 `code` 判断接口是否成功；`data` 的结构会随接口和 `setType` 变化。
+
+## 开始集成
+
+- [快速指南](/growatt-openapi/quick-guide)
 - [版本说明](/growatt-openapi/release-notes)
-- [身份认证说明](./01_authentication.md)
-- [获取 access_token 接口](./02_api_access_token.md)
-- [OAuth2-refresh 接口](./03_api_refresh.md)
-- [设备授权 API](./04_api_device_auth.md)
-- [设备调度 API](./05_api_device_dispatch.md)
-- [读取设备调度参数 API](./06_api_read_dispatch.md)
-- [设备信息查询 API](./07_api_device_info.md)
-- [设备数据查询 API](./08_api_device_data.md)
-- [设备数据推送 API](./09_api_device_push.md)
-- [全局参数说明](./10_global_params.md)
-- [常见问题与排查 FAQ](./11_api_troubleshooting.md)
-
-## 关键说明
-
-- `authorization_code` token 请求要求 `redirect_uri`，并返回可刷新的 token 集。
-- `client_credentials` token 请求可不携带 `redirect_uri`；2026-04-23 AU 实测返回 access-token-only 字段。
-- `POST /oauth2/getDeviceList` 仅在 `authorization_code` 模式下支持。
-- `POST /oauth2/bindDevice` 中，`deviceSnList[].pinCode` 在客户端模式下必填。
-- `POST /oauth2/readDeviceDispatch` 的参数表将 `requestId` 标为必填。
-- 测试环境域名包含 `https://opencloud-test-au.growatt.com`。
-
-## 入口指南
-
-如需阅读整合型说明，请参阅：
-
-- [版本说明](/growatt-openapi/release-notes)
-- [../Growatt Open API Professional Integration Guide.zh-CN.md](../Growatt Open API Professional Integration Guide.zh-CN.md)
+- [身份认证](./01_authentication.md)
+- [常见问题与排查](./11_api_troubleshooting.md)
 
 ## 附录
 
-- [附录A Growatt Codes](/growatt-openapi/growatt-codes)
-- [附录B 术语表](./12_ess_terminology.md)
-- [附录C 语义模型](./13_ess_semantic_model.md)
+- [附录 A Growatt Codes](/growatt-openapi/growatt-codes)
+- [附录 B 术语表](./12_ess_terminology.md)
+- [附录 C 语义模型](./13_ess_semantic_model.md)
+- [附录 D 产品兼容性](./14_appendix_d_openapi_support_scope.md)

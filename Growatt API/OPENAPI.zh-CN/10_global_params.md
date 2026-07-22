@@ -1,65 +1,60 @@
-# 全局参数说明
+# 全局参数
 
-## 域名
+## 正式环境基础地址
 
-### 正式环境
+请使用为您的接入区域分配的正式环境基础地址：
 
-- `https://opencloud.growatt.com`
-- `https://opencloud-au.growatt.com`
+- 全球：`https://opencloud.growatt.com`
+- 澳洲：`https://opencloud-au.growatt.com`
 
-### 测试环境
+授权、token 与设备 API 必须使用同一区域。如果无法确定账号所属区域，请在接入前向 Growatt 对接人员确认。
 
-- `https://opencloud-test.growatt.com`
-- `https://opencloud-test-au.growatt.com`
-
-## 环境与参数决策流程（概念）
+## 请求准备流程
 
 ```mermaid
 flowchart TD
-    A["开始调用 API"] --> B{"环境"}
-    B -->|"Production"| C["使用正式域名"]
-    B -->|"Test"| D["使用测试域名"]
-    C --> E["附加 bearer token"]
-    D --> E
-    E --> F{"权限结果"}
-    F -->|"TOKEN_IS_INVALID"| G["刷新 token"]
-    F -->|"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"| H["先执行设备绑定"]
-    F -->|"OK"| I["从参数表选择 setType"]
-    I --> J["调用下发或回读接口"]
+    A["选择已分配的正式区域"] --> B["拼接接口 URL"]
+    B --> C["携带 bearer access token"]
+    C --> D["发送接口规定的请求体"]
+    D --> E{"响应 code"}
+    E -->|"0"| F["处理接口数据"]
+    E -->|"TOKEN_IS_INVALID"| G["刷新或重新获取 token"]
+    E -->|"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"| H["确认设备授权"]
+    E -->|"其他"| I["按接口处理错误"]
 ```
 
-## 环境与权限处理（时序）
+## 权限处理时序
 
 ```mermaid
 sequenceDiagram
-    participant Client as IntegrationService
-    participant API as OAuthAPI
-    participant Auth as AuthLogic
+    participant Client as 客户后端
+    participant API as GrowattAPI
+    participant Auth as 客户认证服务
 
-    Client->>API: 在目标域名调用 API
-    API-->>Client: 返回权限状态码
-    alt Code TOKEN_IS_INVALID
-        Client->>Auth: 刷新后重试
-        Auth-->>Client: 返回新的 token
-    else Code DEVICE_SN_DOES_NOT_HAVE_PERMISSION
-        Client->>Auth: 执行 bind 流程
-        Auth-->>Client: 返回绑定结果
-    else 权限正常
-        Client-->>Client: 继续下发或回读
+    Client->>API: 携带 bearer token 调用 API
+    API-->>Client: 返回 code、data 与 message
+    alt TOKEN_IS_INVALID
+        Client->>Auth: 刷新或重新获取 token
+        Auth-->>Client: 返回有效 token
+    else DEVICE_SN_DOES_NOT_HAVE_PERMISSION
+        Client->>Auth: 确认设备绑定
+        Auth-->>Client: 返回授权结果
+    else code = 0
+        Client-->>Client: 处理接口响应
     end
 ```
 
-## HTTP 请求头说明
+## HTTP 请求头
 
-- 调用 API 时需要 `access_token`。
+受保护接口需要 access token。
 
-| 参数名 | 参数说明 | 参数值说明 |
+| 参数 | 是否必填 | 值 |
 | :--- | :--- | :--- |
-| `Authorization` | token 标识 | `Bearer xxxxxxx` |
+| `Authorization` | 是 | `Bearer <access_token>` |
 
-## 返回码说明
+## 响应结构
 
-### 返回格式示例
+### 格式示例
 
 ```json
 {
@@ -69,47 +64,49 @@ sequenceDiagram
 }
 ```
 
+`data` 可能不返回，也可能为 `null`、对象、数组或数值，具体取决于接口与结果。请以 `code` 作为主要成功标志。
+
 | 场景 | `code` | `data` | `message` |
 | :--- | :--- | :--- | :--- |
-| 操作成功 | `0` | 随接口而定：可能是对象、数组、数字、`null` 或空数组 | `"SUCCESSFUL_OPERATION"` |
+| 操作成功 | `0` | 取决于接口 | `"SUCCESSFUL_OPERATION"` 或接口规定的成功消息 |
 | 设备 SN 无权限 | `12` | `["DEVICE_SN_1"]` | `"DEVICE_SN_DOES_NOT_HAVE_PERMISSION"` |
-| Token 无效 | `2` | 未返回 | `"TOKEN_IS_INVALID"` |
+| Token 无效 | `2` | 不返回 | `"TOKEN_IS_INVALID"` |
 | 设备离线 | `5` | `null` | `"DEVICE_OFFLINE"` |
 | 读取设备参数失败 | `18` | `null` | `"READ_DEVICE_PARAM_FAIL"` |
-| 授权模式错误 | `103` | 未返回 | `"WRONG_GRANT_TYPE"` |
-| 参数设置响应超时 | `16` | `null` | `"PARAMETER_SETTING_RESPONSE_TIMEOUT"` |
-| 参数设置设备无响应 | `15` | `null` | `"PARAMETER_SETTING_DEVICE_NOT_RESPONDING"` |
-| 参数设置失败 | `6` | `null` | `"PARAMETER_SETTING_FAILED"` |
-| 请求过多 | `105` | `null` | `"TOO_MANY_REQUEST"` |
+| 授权模式错误 | `103` | 不返回 | `"WRONG_GRANT_TYPE"` |
+| 设置参数响应超时 | `16` | `null` | `"PARAMETER_SETTING_RESPONSE_TIMEOUT"` |
+| 设置参数时设备无响应 | `15` | `null` | `"PARAMETER_SETTING_DEVICE_NOT_RESPONDING"` |
+| 设置参数失败 | `6` | `null` | `"PARAMETER_SETTING_FAILED"` |
+| 请求过于频繁 | `105` | `null` | `"TOO_MANY_REQUEST"` |
 
-## 设备参数说明
+## 设备调度参数
 
-- 下表仅保留本页公开发布的 7 个 `setType`。
-
-| 参数名 | 参数说明 | 参数值说明 |
+| `setType` | 说明 | `value` 格式 |
 | :--- | :--- | :--- |
-| `time_slot_charge_discharge` | 分时段充放电。`percentage` 范围 `[-100,100]`；`percentage > 0` 充电，`percentage < 0` 放电；`startTime` / `endTime` 为 UTC 时间；最多可配置 16 段时间 | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
-| `duration_and_power_charge_discharge` | 充放电时长和功率百分比。`percentage` 范围 `[0,100]`；支持 `selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
-| `export_limit` | 防逆流设置。`exportLimitEnabled` 为启用开关；`percentage` 范围 `[-100,100]`；正值表示逆流控制，负值表示顺流控制 | `{ "exportLimitEnabled": 1, "percentage": 20 }` |
-| `enable_control` | 是否启用 VPP 控制 | `1` 表示启用，`0` 表示关闭 |
-| `active_power_derating_percentage` | 有功功率百分比降额 | 数值范围 `[0,100]`，例如 `50` |
-| `active_power_percentage` | 有功功率百分比 | 数值范围 `[0,100]`，例如 `60` |
-| `remote_charge_discharge_power` | 远程充放电功率 | 数值范围 `[-100,100]`；正值表示充电，负值表示放电 |
+| `time_slot_charge_discharge` | 分时段充放电。`percentage` 范围 `[-100,100]`，正值充电、负值放电；时间使用 UTC，最多可设置 16 个时段 | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
+| `duration_and_power_charge_discharge` | 按时长与功率百分比充放电。`percentage` 范围 `[0,100]`；支持 `selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
+| `export_limit` | Export Limit。`exportLimitEnabled` 用于启用设置；`percentage` 范围 `[-100,100]`，正值表示逆流限制，负值表示顺流控制 | `{ "exportLimitEnabled": 1, "percentage": 20 }` |
+| `enable_control` | 启用或关闭 VPP 控制 | `1` = 开启，`0` = 关闭 |
+| `active_power_derating_percentage` | 有功功率降额百分比 | `[0,100]` 范围的数值，例如 `50` |
+| `active_power_percentage` | 有功功率百分比 | `[0,100]` 范围的数值，例如 `60` |
+| `remote_charge_discharge_power` | 远程充放电功率 | `[-100,100]` 范围的数值，正值充电、负值放电 |
 
-## 按 `setType` 区分的回读示例
+## 各 `setType` 的回读结构
 
-| `setType` | 请求示例 | `readDeviceDispatch.data` 示例 | 返回形态 |
+以下每个请求都必须使用实际已授权的设备 SN，并生成新的唯一 32 位 `requestId`。
+
+| `setType` | 请求示例 | `readDeviceDispatch.data` 示例 | 结构 |
 | :--- | :--- | :--- | :--- |
-| `time_slot_charge_discharge` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "time_slot_charge_discharge" }` | `[{ "startTime": "16:00", "endTime": "18:00", "percentage": 80 }]` | 数组 |
-| `duration_and_power_charge_discharge` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "duration_and_power_charge_discharge" }` | `{ "remotePowerControlEnable": 1, "duration": 10, "percentage": 80, "acChargingEnabled": 1 }` | 对象 |
-| `export_limit` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "export_limit" }` | `{ "exportLimitEnabled": 1, "percentage": 20 }` | 对象 |
-| `enable_control` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "enable_control" }` | `1` | 数值 |
-| `active_power_derating_percentage` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "active_power_derating_percentage" }` | `50` | 数值 |
-| `active_power_percentage` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "active_power_percentage" }` | `60` | 数值 |
-| `remote_charge_discharge_power` | `{ "deviceSn": "TEST123456", "requestId": "12345678901234567890123456789012", "setType": "remote_charge_discharge_power" }` | `-30` | 数值 |
+| `time_slot_charge_discharge` | `{ "deviceSn": "DEVICE_SN_1", "requestId": "20260115093000123abcdef123456789", "setType": "time_slot_charge_discharge" }` | `[{ "startTime": "16:00", "endTime": "18:00", "percentage": 80 }]` | 数组 |
+| `duration_and_power_charge_discharge` | `{ "deviceSn": "DEVICE_SN_1", "requestId": "20260115093000123abcdef123456790", "setType": "duration_and_power_charge_discharge" }` | `{ "remotePowerControlEnable": 1, "duration": 10, "percentage": 80, "acChargingEnabled": 1 }` | 对象 |
+| `export_limit` | `{ "deviceSn": "DEVICE_SN_1", "requestId": "20260115093000123abcdef123456791", "setType": "export_limit" }` | `{ "exportLimitEnabled": 1, "percentage": 20 }` | 对象 |
+| `enable_control` | `{ "deviceSn": "DEVICE_SN_1", "requestId": "20260115093000123abcdef123456792", "setType": "enable_control" }` | `1` | 数值 |
+| `active_power_derating_percentage` | `{ "deviceSn": "DEVICE_SN_1", "requestId": "20260115093000123abcdef123456793", "setType": "active_power_derating_percentage" }` | `50` | 数值 |
+| `active_power_percentage` | `{ "deviceSn": "DEVICE_SN_1", "requestId": "20260115093000123abcdef123456794", "setType": "active_power_percentage" }` | `60` | 数值 |
+| `remote_charge_discharge_power` | `{ "deviceSn": "DEVICE_SN_1", "requestId": "20260115093000123abcdef123456795", "setType": "remote_charge_discharge_power" }` | `-30` | 数值 |
 
 ## 相关文档
 
 - [设备调度 API](./05_api_device_dispatch.md)
 - [读取设备调度参数 API](./06_api_read_dispatch.md)
-- [储能术语表](./12_ess_terminology.md)
+- [常见问题与排查](./11_api_troubleshooting.md)

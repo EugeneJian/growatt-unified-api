@@ -20,7 +20,6 @@
 ## Telemetry Consumption Flow (Concept)
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
     A["Scheduler triggers poll"] --> B["Build request with device sn"]
     B --> C["Call getDeviceData API"]
@@ -35,7 +34,6 @@ flowchart TD
 ## Telemetry Consumption Flow (Sequence)
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Poller as Poller
     participant API as OAuthAPI
@@ -67,10 +65,10 @@ sequenceDiagram
 
 ## Response Parameters
 
-| Parameter | Vendor-table Type | Description | Example |
+| Parameter | Type | Description | Example |
 | :--- | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure | `0` |
-| `data` | string | The vendor table says `string`, while the success sample is an object | `{...}` |
+| `data` | object | Device telemetry object; returned on success | `{...}` |
 | `message` | string | Response description | `"SUCCESSFUL_OPERATION"` |
 
 ## Request Example
@@ -150,7 +148,7 @@ sequenceDiagram
 | `data.meterPower` | double | Grid meter power. Positive means grid import and negative means grid export, unit: W | `0.00` |
 | `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) | `174.90` |
 | `data.fac` | double | Grid frequency in Hz | `50.03` |
-| `data.backupPower` | double | Backup output power in W when reported. Public endpoint field; not part of Appendix C VPP core semantic telemetry | `0.20` |
+| `data.backupPower` | double | Backup output power in W when reported | `0.20` |
 | `data.etoUserToday` | double | Grid import energy today in kWh | `3.10` |
 | `data.etoUserTotal` | double | Total grid import energy in kWh | `44.80` |
 | `data.etoGridToday` | double | Grid export energy today in kWh | `1.50` |
@@ -221,10 +219,11 @@ sequenceDiagram
 - `1`: Battery priority
 - `2`: Grid priority
 
-## Implementation Note
+## Customer Implementation Guidance
 
-- The local header table uses `token`, while the global section standardizes `Authorization: Bearer xxxxxxx`. This page follows the global section.
-- The response table labels the top-level `data` field as `string`, while the success sample is clearly an object.
+- Send the token in the `Authorization: Bearer <access_token>` header.
+- Treat fields that are unavailable for a device model as optional and keep parsers tolerant of additive fields.
+- Use `utcTime` as the measurement timestamp and apply the site timezone only when presenting local time.
 
 ## Related Documentation
 

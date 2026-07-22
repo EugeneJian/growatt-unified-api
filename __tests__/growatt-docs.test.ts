@@ -276,8 +276,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.html).toContain("<article>");
     expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
     expect(quickGuide.displayMarkdown).not.toContain("12_ess_terminology");
-    expect(quickGuide.markdown).toContain("## 5 Integration Observations");
+    expect(quickGuide.markdown).toContain("## 5 Reliability and Error Handling");
     expect(quickGuide.markdown).toContain("## 6 Integration Checklist");
+    expect(quickGuide.markdown).not.toContain("test/");
+    expect(quickGuide.markdown).not.toContain("/prod-api/");
     expect(quickGuide.markdown).not.toContain("Baseline source:");
     expect(quickGuide.markdown).not.toContain("vendor baseline");
   });
@@ -315,8 +317,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(quickGuide.title).toBe("Growatt Open API 专业集成指南");
     expect(quickGuide.displayMarkdown).toContain("/growatt-openapi/appendix-terminology");
     expect(quickGuide.displayMarkdown).not.toContain("12_ess_terminology");
-    expect(quickGuide.markdown).toContain("## 5 联调观察");
+    expect(quickGuide.markdown).toContain("## 5 稳定性与错误处理");
     expect(quickGuide.markdown).toContain("## 6 集成检查清单");
+    expect(quickGuide.markdown).not.toContain("test/");
+    expect(quickGuide.markdown).not.toContain("/prod-api/");
     expect(quickGuide.markdown).not.toContain("基线来源：");
     expect(quickGuide.markdown).not.toContain("厂商基线");
   });
@@ -392,8 +396,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(semanticEn.markdown).not.toContain("## Chinese");
     expect(semanticZh.markdown).toContain("# Growatt ESS 语义模型与调度规范");
     expect(semanticZh.markdown).not.toContain("## English");
-    expect(semanticEn.markdown).toContain("**Status**: Public Standard");
-    expect(semanticZh.markdown).toContain("本规范定义了面向 VPP 的公开运行时语义模型");
+    expect(semanticEn.markdown).toContain("**Status**: Customer Integration Reference");
+    expect(semanticZh.markdown).toContain("本附录帮助客户从以下层面理解与 VPP 相关的字段");
+    expect(semanticEn.markdown).not.toContain("V001");
+    expect(semanticZh.markdown).not.toContain("验收标准");
     expect(semanticEn.markdown).not.toContain("Amber / AGL / Origin / Evergen");
     expect(semanticEn.markdown).not.toContain("对外口径");
     expect(semanticZh.markdown).not.toContain("閺堫剝顫夐懠鍐ㄧ殺");
@@ -402,11 +408,52 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixDZh.slug).toBe(GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG);
     expect(appendixDEn.fileName).toBe("14_appendix_d_openapi_support_scope.md");
     expect(appendixDZh.fileName).toBe("14_appendix_d_openapi_support_scope.md");
-    expect(appendixDEn.title).toBe("Appendix D OpenAPI Product Support Scope");
-    expect(appendixDEn.markdown).toContain("CEC-listed Growatt inverter / PCE and battery product models");
-    expect(appendixDEn.markdown).toContain("Pending Confirmation");
+    expect(appendixDEn.title).toBe("Appendix D Supported Inverter Models");
+    expect(appendixDEn.markdown).toContain("**Status**: Customer Integration Reference");
+    expect(appendixDEn.markdown).toContain("## 3. Supported Inverter / PCE Models");
+    expect(appendixDEn.markdown).toContain("#### 3.1.1 Residential Hybrid Inverters");
+    expect(appendixDEn.markdown).not.toContain("Residential Hybrid Storage Inverters");
+    expect(appendixDEn.markdown).toContain("## 4. Customer Compatibility Check");
+    expect(appendixDEn.markdown).not.toContain("TBD");
+    expect(appendixDEn.markdown).not.toContain("Pending Confirmation");
+    expect(appendixDEn.markdown).not.toContain("Controlled Review Draft");
+    expect(appendixDEn.markdown.match(/^\| INV-\d{3} \|/gm)).toHaveLength(15);
+    expect(appendixDEn.markdown.match(/^\| BAT-\d{3} \|/gm)).toBeNull();
+    expect(appendixDEn.markdown).not.toContain("### 3.2 Batteries");
+    expect(appendixDEn.markdown).toContain("| Reference ID | Series | Models | OpenAPI Support Status |");
+    expect(appendixDEn.markdown).toContain(
+      "| INV-001 | SPH/SPA TL | `SPH 3000-6000TL BL` `SPH 3000-6000 TL BL-UP`",
+    );
+    expect(appendixDEn.markdown).toContain(
+      "| ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |",
+    );
+    expect(
+      appendixDEn.markdown.match(/\| ✓ \| ✓ \| ! \| ✓ \| ✓ \| ✓ \|/g),
+    ).toHaveLength(5);
+    expect(appendixDEn.markdown).not.toContain("APX 30.0P-S2 AU");
+    expect(appendixDEn.markdown).not.toContain("dischargeCutOffSOC");
     expect(appendixDEn.displayMarkdown).not.toContain("14_appendix_d_openapi_support_scope");
-    expect(appendixDZh.markdown).toContain("待确认");
+    expect(appendixDZh.title).toBe("附录 D 支持的逆变器型号");
+    expect(appendixDZh.markdown).toContain("**状态**: 客户集成参考");
+    expect(appendixDZh.markdown).toContain("## 3. 支持的逆变器 / PCE 型号");
+    expect(appendixDZh.markdown).toContain("#### 3.1.1 户用混合逆变器");
+    expect(appendixDZh.markdown).not.toContain("户用并离网储能一体机");
+    expect(appendixDZh.markdown).toContain("## 4. 客户兼容性检查");
+    expect(appendixDZh.markdown).not.toContain("TBD");
+    expect(appendixDZh.markdown).not.toContain("Pending Confirmation");
+    expect(appendixDZh.markdown).not.toContain("受控评审稿");
+    expect(appendixDZh.markdown.match(/^\| INV-\d{3} \|/gm)).toHaveLength(15);
+    expect(appendixDZh.markdown.match(/^\| BAT-\d{3} \|/gm)).toBeNull();
+    expect(appendixDZh.markdown).not.toContain("### 3.2 电池");
+    expect(appendixDZh.markdown).toContain("## 2. 图标说明");
+    expect(appendixDZh.markdown).toContain(
+      "| INV-001 | SPH/SPA TL | `SPH 3000-6000TL BL` `SPH 3000-6000 TL BL-UP`",
+    );
+    expect(
+      appendixDZh.markdown.match(/\| ✓ \| ✓ \| ! \| ✓ \| ✓ \| ✓ \|/g),
+    ).toHaveLength(5);
+    expect(appendixDZh.markdown).not.toContain("APX 30.0P-S2 AU");
+    expect(appendixDZh.markdown).not.toContain("dischargeCutOffSOC");
   });
 
   it("restores expected Mermaid diagrams across overview, endpoint docs, and quick guide", async () => {
@@ -458,7 +505,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(appendixZh.markdown).not.toContain("基线来源：");
   });
 
-  it("registers quick guide, release notes, protocol SSOT, and appendix A/B/C/D special pages in navigation order", () => {
+  it("registers quick guide, release notes, protocol mapping, and appendix A/B/C/D special pages in navigation order", () => {
     const specialPages = getGrowattSpecialPages();
 
     expect(specialPages.map((page) => page.slug)).toEqual([
@@ -495,8 +542,8 @@ describe("growatt docs source-of-truth loader", () => {
         slug: GROWATT_PROTOCOL_MAPPING_SLUG,
         href: GROWATT_PROTOCOL_MAPPING_HREF,
         labelByLocale: expect.objectContaining({
-          en: "Protocol SSOT",
-          "zh-CN": "协议 SSOT",
+          en: "Protocol Mapping",
+          "zh-CN": "协议映射",
         }),
         placement: "afterDocs",
       }),
@@ -535,8 +582,8 @@ describe("growatt docs source-of-truth loader", () => {
       expect.objectContaining({
         slug: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
         labelByLocale: expect.objectContaining({
-          en: "Appendix D OpenAPI Product Support Scope",
-          "zh-CN": "\u9644\u5f55 D OpenAPI \u4ea7\u54c1\u652f\u6301\u8303\u56f4",
+          en: "Appendix D Supported Inverter Models",
+          "zh-CN": "附录 D 支持的逆变器型号",
         }),
         placement: "afterDocs",
       }),
@@ -558,7 +605,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(loaderSource).toContain(
       'const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-07-17.en.md";',
     );
-    expect(semanticPageSource).toContain("公开语义模型与调度校验标准。");
+    expect(semanticPageSource).toContain("面向客户的 ESS 遥测语义与调度解释参考。");
     expect(semanticPageSource).not.toContain("鍏紑");
   });
 
@@ -572,11 +619,13 @@ describe("growatt docs source-of-truth loader", () => {
     expect(codes.summary.by_severity.error).toBe(94);
     expect(codes.summary.by_severity.protect).toBe(85);
     expect(codes.summary.by_severity.warning).toBe(1);
-    expect(codes.html).toContain("External customer reference");
+    expect(codes.html).toContain("Customer reference");
     expect(codes.html).toContain('id="error"');
     expect(codes.html).toContain('id="error-pv-side"');
     expect(codes.html).toContain("DC arc fault has been detected");
     expect(codes.html).not.toContain("LCD Display");
+    expect(codes.html).not.toContain("Source workbook");
+    expect(codes.html).not.toContain("Default VPP Action");
   });
 
   it("groups fault codes by severity and preserves category/code ordering", async () => {
@@ -605,28 +654,28 @@ describe("growatt docs source-of-truth loader", () => {
     const tokenZh = tokenDocZh!.markdown;
     const authCodeResponseEn =
       tokenEn
-        .split("## `authorization_code` Mode Response Example")[1]
-        ?.split("## `client_credentials` Mode Response Parameters")[0] ?? "";
+        .split("## Authorization-Code Response Example")[1]
+        ?.split("## Client-Credentials Response Example")[0] ?? "";
     const clientCredentialsResponseEn =
       tokenEn
-        .split("## `client_credentials` Mode Response Example")[1]
-        ?.split("## Implementation Note")[0] ?? "";
+        .split("## Client-Credentials Response Example")[1]
+        ?.split("## Customer Implementation Guidance")[0] ?? "";
 
     expect(tokenEn).toContain(
-      "| `redirect_uri` | Required in authorization-code mode; optional / compatibility-accepted in client-credentials mode |",
+      "| `redirect_uri` | Yes | Registered callback URL; it must match the client configuration |",
     );
-    expect(tokenEn).toContain("### `client_credentials` Mode With Compatibility `redirect_uri`");
-    expect(tokenEn).toContain("## `client_credentials` Mode Response Parameters");
+    expect(tokenEn).toContain("### `client_credentials`");
+    expect(tokenEn).toContain("## Response Parameters");
     expect(authCodeResponseEn).toContain('"refresh_token": "<masked_refresh_token>"');
-    expect(authCodeResponseEn).toContain('"refresh_expires_in": 2585309');
+    expect(authCodeResponseEn).toContain('"refresh_expires_in": 2592000');
     expect(clientCredentialsResponseEn).toContain('"access_token": "<masked_access_token>"');
-    expect(clientCredentialsResponseEn).toContain('"expires_in": 604800');
+    expect(clientCredentialsResponseEn).toContain('"expires_in": 7200');
     expect(clientCredentialsResponseEn).not.toContain("refresh_token");
     expect(clientCredentialsResponseEn).not.toContain("refresh_expires_in");
 
-    expect(tokenZh).toContain("`client_credentials` 模式兼容携带 `redirect_uri`");
-    expect(tokenZh).toContain("## `client_credentials` 模式返回参数说明");
-    expect(tokenZh).toContain("2026-04-23 AU");
+    expect(tokenZh).toContain("### `client_credentials`");
+    expect(tokenZh).toContain("## 返回参数");
+    expect(tokenZh).not.toContain("2026-04-23 AU");
   });
 
   it("marks readDeviceDispatch requestId as required in both locales", async () => {
@@ -649,12 +698,12 @@ describe("growatt docs source-of-truth loader", () => {
 
     expect(globalParamsEn).not.toBeNull();
     expect(globalParamsZh).not.toBeNull();
-    expect(globalParamsEn?.markdown).toContain("Response Format Example");
+    expect(globalParamsEn?.markdown).toContain("## Response Envelope");
     expect(globalParamsEn?.markdown).toContain("| Scenario | `code` | `data` | `message` |");
 
     for (const page of [globalParamsEn, globalParamsZh]) {
       expect(page).not.toBeNull();
-      expect(page?.markdown).toContain("opencloud-test-au.growatt.com");
+      expect(page?.markdown).not.toContain("opencloud-test");
       expect(page?.markdown).toContain("READ_DEVICE_PARAM_FAIL");
       expect(page?.markdown).toContain("time_slot_charge_discharge");
       expect(page?.markdown).toContain("duration_and_power_charge_discharge");
@@ -768,6 +817,8 @@ describe("growatt docs source-of-truth loader", () => {
     expect(infoDocEn?.markdown).toContain('| `deviceTypeName` | string | Device type name | `"min"` |');
     expect(infoDocEn?.markdown).toContain('| `existBattery` | boolean | Whether the device has a battery | `true` |');
     expect(infoDocEn?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | Battery rated power in W | `2500` |');
+    expect(infoDocEn?.markdown).toContain('| `dischargeCutOffSOC` | int | Battery discharge cut-off SOC in percent | `20` |');
+    expect(infoDocEn?.markdown).not.toContain("grid-priority cut-off SOC");
     expect(infoDocEn?.markdown).toContain('| `unifiedAPIver` | string \\| null | Unified API version when reported; `null` when unavailable | `null` |');
     expect(infoDocEn?.markdown).toContain('| `deviceVersion` | string \\| null | Device firmware version when reported; `null` when unavailable | `null` |');
     expect(infoDocEn?.markdown).toContain('| `datalogVersion` | string \\| null | Datalogger firmware version when reported; `null` when unavailable | `"7.6.1.9"` |');
@@ -779,9 +830,11 @@ describe("growatt docs source-of-truth loader", () => {
     expect(infoDocZh?.markdown).toContain('| `deviceTypeName` | string | 设备大类型名称 | `"min"` |');
     expect(infoDocZh?.markdown).toContain('| `existBattery` | boolean | 是否有电池 | `true` |');
     expect(infoDocZh?.markdown).toContain('| `batteryList[].batteryNominalPower` | int | 电池额定功率，单位 W | `2500` |');
+    expect(infoDocZh?.markdown).toContain('| `dischargeCutOffSOC` | int | 电池放电截止 SOC（百分比） | `20` |');
+    expect(infoDocZh?.markdown).not.toContain("电网优先放电截止 SOC");
   });
 
-  it("standardizes ESS terminology in the reviewed English docs without renaming vendor keys", async () => {
+  it("standardizes ESS terminology in the reviewed English docs without renaming API keys", async () => {
     const [authDoc, infoDoc, dataDoc, pushDoc, globalDoc, faqDoc] = await Promise.all([
       getGrowattDocBySlug("04_api_device_auth", "en"),
       getGrowattDocBySlug("07_api_device_info", "en"),
@@ -845,10 +898,10 @@ describe("growatt docs source-of-truth loader", () => {
     expect(dataDoc?.markdown).toContain("`data.pexPower`");
     expect(pushDoc?.markdown).toContain("`data.pexPower`");
     expect(dataDoc?.markdown).toContain(
-      "| `data.backupPower` | double | Backup output power in W when reported. Public endpoint field; not part of Appendix C VPP core semantic telemetry | `0.20` |",
+      "| `data.backupPower` | double | Backup output power in W when reported | `0.20` |",
     );
     expect(pushDoc?.markdown).toContain(
-      "| `data.backupPower` | double | Backup output power in W when reported. Public endpoint field; not part of Appendix C VPP core semantic telemetry | `0.20` |",
+      "| `data.backupPower` | double | Backup output power in W when reported | `0.20` |",
     );
 
     expect(globalDoc?.markdown).toContain("Export Limit.");
@@ -873,7 +926,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(dispatchDocEn?.markdown).toContain("| Scenario | `code` | `data` | `message` |");
     expect(dispatchDocEn?.markdown).toContain("| Response timeout | `16` | `null` | `PARAMETER_SETTING_RESPONSE_TIMEOUT` |");
     expect(dispatchDocEn?.markdown).toContain("| Too many requests | `105` | `null` | `TOO_MANY_REQUEST` |");
-    expect(dispatchDocEn?.markdown).toContain("## Public `setType` Surface");
+    expect(dispatchDocEn?.markdown).toContain("## Supported `setType` Values");
     expect(dispatchDocEn?.markdown).toContain("`export_limit`");
     expect(dispatchDocEn?.markdown).toContain("`remote_charge_discharge_power`");
 
@@ -896,7 +949,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(readDispatchZh).not.toBeNull();
 
     expect(readDispatchEn?.markdown).toContain("Parse data array / object / scalar");
-    expect(readDispatchEn?.markdown).toContain("## Documented Success Shapes");
+    expect(readDispatchEn?.markdown).toContain("## Success Shapes by `setType`");
     expect(readDispatchEn?.markdown).toContain('"exportLimitEnabled": 1');
     expect(readDispatchEn?.markdown).toContain('"data": 1');
     expect(readDispatchEn?.markdown).toContain(
@@ -904,7 +957,7 @@ describe("growatt docs source-of-truth loader", () => {
     );
 
     expect(readDispatchZh?.markdown).toContain("解析 data 数组 / 对象 / 数值");
-    expect(readDispatchZh?.markdown).toContain("## 正式公开的成功形态");
+    expect(readDispatchZh?.markdown).toContain("## 各 `setType` 的成功返回结构");
     expect(readDispatchZh?.markdown).toContain('"exportLimitEnabled": 1');
     expect(readDispatchZh?.markdown).toContain('"data": 1');
     expect(readDispatchZh?.markdown).toContain(
@@ -951,7 +1004,7 @@ describe("growatt docs source-of-truth loader", () => {
     expect(faqDocZh?.markdown).toContain("`code` `105`");
   });
 
-  it("documents formal 103 grant boundaries while keeping remaining observations explicit", async () => {
+  it("documents formal 103 grant boundaries without exposing internal observations", async () => {
     const [guideEn, guideZh, faqEn, faqZh, authEn, authZh] = await Promise.all([
       getGrowattQuickGuide("en"),
       getGrowattQuickGuide("zh-CN"),
@@ -961,29 +1014,19 @@ describe("growatt docs source-of-truth loader", () => {
       getGrowattDocBySlug("04_api_device_auth", "zh-CN"),
     ]);
 
-    expect(guideEn.markdown.indexOf("## 5 Integration Observations")).toBeGreaterThan(-1);
-    expect(guideZh.markdown.indexOf("## 5 联调观察")).toBeGreaterThan(-1);
-    expect(faqEn?.markdown.indexOf("## Integration Observations")).toBeGreaterThan(-1);
-    expect(guideEn.markdown).toContain("seven `setType` entries");
-    expect(guideEn.markdown).not.toContain("three `setType` entries");
-    expect(guideZh.markdown).toContain("7 个公开 `setType`");
-    expect(guideZh.markdown).not.toContain("3 个 `setType`");
-    expect(faqZh?.markdown.indexOf("## 联调观察")).toBeGreaterThan(-1);
+    expect(guideEn.markdown).toContain("## 5 Reliability and Error Handling");
+    expect(guideZh.markdown).toContain("## 5 稳定性与错误处理");
+    expect(faqEn?.markdown).toContain("## 1. Can `client_credentials` call `getDeviceList`?");
+    expect(faqZh?.markdown).toContain("## 1. `client_credentials` 能否调用 `getDeviceList`？");
+    expect(guideEn.markdown).not.toContain("Integration Observations");
+    expect(guideZh.markdown).not.toContain("联调观察");
+    expect(faqEn?.markdown).not.toContain("test/");
+    expect(faqZh?.markdown).not.toContain("test/");
 
-    expect(guideEn.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
-      guideEn.markdown.indexOf("## 5 Integration Observations"),
-    );
-    expect(guideZh.markdown.indexOf("WRONG_GRANT_TYPE")).toBeGreaterThan(
-      guideZh.markdown.indexOf("## 5 联调观察"),
-    );
+    expect(guideEn.markdown).toContain("WRONG_GRANT_TYPE");
+    expect(guideZh.markdown).toContain("WRONG_GRANT_TYPE");
     expect(faqEn?.markdown).toContain('`message="WRONG_GRANT_TYPE"`');
-    expect(faqEn?.markdown.indexOf("client_credentials` token responses") ?? -1).toBeGreaterThan(
-      faqEn?.markdown.indexOf("## Integration Observations") ?? -1,
-    );
     expect(faqZh?.markdown).toContain('`message="WRONG_GRANT_TYPE"`');
-    expect(faqZh?.markdown.indexOf("client_credentials` token 请求") ?? -1).toBeGreaterThan(
-      faqZh?.markdown.indexOf("## 联调观察") ?? -1,
-    );
     expect(authEn?.markdown).toContain('"code": 103');
     expect(authEn?.markdown).toContain('"message": "WRONG_GRANT_TYPE"');
     expect(authZh?.markdown).toContain('"code": 103');
