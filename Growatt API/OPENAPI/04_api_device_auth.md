@@ -5,7 +5,6 @@ This page documents `getDeviceList`, `bindDevice`, `getDeviceListAuthed`, and `u
 ## Authorization Sequence
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant User as EndUser
     participant Client as PlatformApp
@@ -50,10 +49,10 @@ sequenceDiagram
 
 ### Response Parameters
 
-| Parameter | Vendor-table Type | Description |
+| Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`, while the sample payload is an array of devices |
+| `data` | array | Candidate-device records; returned on success |
 | `message` | string | Response description |
 
 ### Response Example
@@ -136,7 +135,7 @@ sequenceDiagram
 | :--- | :--- | :--- | :--- |
 | `deviceSnList` | array | Yes | Non-empty list of device serial entries |
 | `deviceSnList[].deviceSn` | string | Yes | Device serial number |
-| `deviceSnList[].pinCode` | string | Required in client mode; optional but accepted in authorization-code mode | Device `PinCode`. Some environments or devices may require it even in authorization-code mode |
+| `deviceSnList[].pinCode` | string | Required in client-credentials mode | Device PIN code |
 
 ### Request Examples
 
@@ -150,19 +149,6 @@ sequenceDiagram
         },
         {
             "deviceSn": "DEVICE_SN_2"
-        }
-    ]
-}
-```
-
-#### Authorization-Code Mode With `pinCode` When Required
-
-```json
-{
-    "deviceSnList": [
-        {
-            "deviceSn": "DEVICE_SN_1",
-            "pinCode": "PIN001"
         }
     ]
 }
@@ -187,10 +173,10 @@ sequenceDiagram
 
 ### Response Parameters
 
-| Parameter | Vendor-table Type | Description |
+| Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`; published successful samples use `null`, the latest global success sample returned `1`, and partial failures use arrays |
+| `data` | array \| number \| null | Result detail. Use `code` to determine success; unauthorized device SNs may be returned as an array |
 | `message` | string | Response description |
 
 ### Response Examples
@@ -199,14 +185,6 @@ sequenceDiagram
 {
     "code": 0,
     "data": null,
-    "message": "SUCCESSFUL_OPERATION"
-}
-```
-
-```json
-{
-    "code": 0,
-    "data": 1,
     "message": "SUCCESSFUL_OPERATION"
 }
 ```
@@ -235,13 +213,12 @@ sequenceDiagram
 }
 ```
 
-### Recent Live Observations
+### Response Handling
 
-- The latest global authorization-code run used `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` and succeeded without `pinCode`.
-- The successful response in that run returned `data: 1`.
-- The same report distinguished `deviceSn=WCK6584462` from `datalogSn=ZGQ0E820UH`; device-level APIs used `deviceSn`.
-- The 2026-04-23 AU full run used authorization-code mode with object form plus `pinCode` and succeeded.
-- The same AU run confirmed that `client_credentials` calling `getDeviceList` returns `{"code":103,"message":"WRONG_GRANT_TYPE"}`.
+- Treat `code=0` as a successful bind operation.
+- Do not require a single fixed `data` shape for success responses.
+- For permission failures, use the device SN values in `data` to identify devices that were not bound.
+- Use `deviceSn`, not `datalogSn`, in device-level API requests.
 
 ## 3 Get Authorized Devices
 
@@ -266,10 +243,10 @@ sequenceDiagram
 
 ### Response Parameters
 
-| Parameter | Vendor-table Type | Description |
+| Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`, while the sample payload is an array of devices |
+| `data` | array | Authorized-device records; returned on success |
 | `message` | string | Response description |
 
 ### Response Example
@@ -335,10 +312,10 @@ sequenceDiagram
 
 ### Response Parameters
 
-| Parameter | Vendor-table Type | Description |
+| Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`, while the successful sample returns `null` |
+| `data` | null | No response payload on success |
 | `message` | string | Response description |
 
 ### Response Examples

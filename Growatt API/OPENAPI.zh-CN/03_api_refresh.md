@@ -2,88 +2,73 @@
 
 ## 简要描述
 
-- 使用 `refresh_token` 刷新 `access_token`。
-- 本接口仅适用于上一次 token 响应已经签发 `refresh_token` 的场景。
-- 2026-04-23 AU 全量实测中，`authorization_code` 签发了 refresh token，`client_credentials` 未签发 refresh token。
+使用之前签发的 `refresh_token` 更新 access token。如果 token 响应未包含 refresh token，请勿调用本接口。
 
-## 请求 URL
+## 请求
 
-- `/oauth2/refresh`
+- URL：`/oauth2/refresh`
+- 方法：`POST`
+- 内容类型：`application/x-www-form-urlencoded`
 
-## 请求方式
-
-- `POST`
-- `Content-Type: application/x-www-form-urlencoded`
-
-## 刷新生命周期（概念）
+## 刷新生命周期
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["使用 access token 调用 API"] --> B{"Token 是否有效"}
-    B -->|"是"| C["继续调用业务 API"]
-    B -->|"否"| D["调用 oauth2 refresh 接口"]
-    D --> E{"刷新是否成功"}
-    E -->|"是"| F["保存新的 access token 和 refresh token"]
-    F --> C
-    E -->|"否"| G["触发重新授权流程"]
+    A["调用受保护 API"] --> B{"access token 是否有效"}
+    B -->|"是"| C["继续调用 API"]
+    B -->|"否"| D{"是否有 refresh token"}
+    D -->|"是"| E["POST /oauth2/refresh"]
+    E --> F{"是否刷新成功"}
+    F -->|"是"| G["原子化替换已保存的 token 对"]
+    G --> C
+    F -->|"否"| H["重新执行适用的授权流程"]
+    D -->|"否"| H
 ```
-
-## 刷新生命周期（时序）
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Service as ServiceAPI
-    participant OAuth as OAuthServer
-    participant API as API
+    participant Backend as 客户后端
+    participant OAuth as GrowattOAuthAPI
+    participant Store as 安全Token存储
+    participant API as GrowattDeviceAPI
 
-    Service->>API: 携带 access token 调用 API
-    alt Token 有效
-        API-->>Service: 返回响应
-    else Token 无效
-        API-->>Service: 返回 token 无效
-        Service->>OAuth: POST /oauth2/refresh
-        alt 刷新成功
-            OAuth-->>Service: 返回新的 token 对
-            Service->>API: 重试 API 调用
-            API-->>Service: 返回响应
-        else 刷新失败
-            OAuth-->>Service: 返回刷新错误
-            Service-->>Service: 触发重新授权
-        end
-    end
+    Backend->>Store: 读取 refresh token
+    Backend->>OAuth: POST /oauth2/refresh
+    OAuth-->>Backend: 返回新 token 响应
+    Backend->>Store: 替换旧 token 数据
+    Backend->>API: 使用新 access token 调用
+    API-->>Backend: 返回 API 响应
 ```
 
-## 请求参数说明
+## 请求参数
 
-| 参数名 | 是否必传 | 说明 |
+| 参数 | 是否必填 | 说明 |
 | :--- | :--- | :--- |
 | `grant_type` | 是 | 必须为 `refresh_token` |
-| `refresh_token` | 是 | 旧的 `refresh_token`，用于换取新的访问令牌；通常来自 `authorization_code` token 响应 |
-| `client_id` | 是 | 第三方在平台申请的 `client_id` |
-| `client_secret` | 是 | 第三方在平台申请的 `client_secret` |
+| `refresh_token` | 是 | 上一次 token 响应返回的 refresh token |
+| `client_id` | 是 | 向您的平台签发的客户端 ID |
+| `client_secret` | 是 | 向您的平台签发的客户端密钥 |
 
 ## 请求示例
 
-```json
-{
-    "grant_type": "refresh_token",
-    "refresh_token": "<masked_refresh_token>",
-    "client_id": "<example_client_id>",
-    "client_secret": "<masked_client_secret>"
-}
+```bash
+curl --request POST '<api-base-url>/oauth2/refresh' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=<masked_refresh_token>' \
+  --data-urlencode 'client_id=<example_client_id>' \
+  --data-urlencode 'client_secret=<masked_client_secret>'
 ```
 
-## 返回参数说明
+## 返回参数
 
-| 参数名 | 说明 |
+| 参数 | 说明 |
 | :--- | :--- |
-| `access_token` | 新颁发的访问令牌 |
-| `refresh_token` | 新颁发的刷新令牌，旧令牌将失效 |
-| `refresh_expires_in` | 新刷新令牌有效期，单位：秒 |
-| `token_type` | 固定为 `Bearer` |
-| `expires_in` | 新访问令牌有效期，单位：秒 |
+| `access_token` | 新签发的 access token |
+| `refresh_token` | 新签发的 refresh token；应替换旧 refresh token |
+| `refresh_expires_in` | 新 refresh token 有效期，单位秒 |
+| `token_type` | token 类型，值为 `Bearer` |
+| `expires_in` | 新 access token 有效期，单位秒 |
 
 ## 返回示例
 
@@ -93,18 +78,17 @@ sequenceDiagram
     "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
-    "expires_in": 604800
+    "expires_in": 7200
 }
 ```
 
-## 实现说明
+## 客户端实现建议
 
-- 原始来源示例在 JSON 注释排版上有格式问题；本页仅将其改写成等价、可读的 JSON 示例，不改变字段约束。
-- 除非 token 响应明确返回了 `refresh_token`，否则不要对 `client_credentials` token 调用本接口。
-- 2026-04-23 AU 全量实测确认 `client_credentials` token 响应不包含 `refresh_token` 或 `refresh_expires_in`。
-- 2026-03-27 最新全球 `refresh` 实测返回 `expires_in=604800`、`refresh_expires_in=2592000`。
-- 在同一轮实测里，`refresh` 成功后旧 access token 会立即返回 `TOKEN_IS_INVALID`。
-- 实现时应在刷新成功后立刻替换旧 access token，并始终以实时响应值作为 TTL 依据。
+- 接口实际要求表单编码；示例仅为便于阅读而使用 JSON 展示。
+- 刷新成功后立即替换已保存的两个 token，不要继续使用旧 token。
+- 原子化更新 token 存储，避免并发请求用旧数据覆盖新 token 对。
+- 从响应读取两个有效期，并为时钟偏差和在途请求预留提前刷新时间。
+- 刷新失败时，重新执行与当前授权模式对应的授权流程。
 
 ## 相关文档
 

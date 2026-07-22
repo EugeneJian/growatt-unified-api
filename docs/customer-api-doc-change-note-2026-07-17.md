@@ -24,12 +24,11 @@
 | `latitude` | string | 站点纬度（十进制度） |
 | `longitude` | string | 站点经度（十进制度） |
 | `timezone` | string | 站点时区（UTC 偏移小时数） |
-| `dischargeCutOffSOC` | int | 并网放电截止 SOC（百分比） |
+| `dischargeCutOffSOC` | int | 电池放电截止 SOC（百分比） |
 | `backupCutOffSOC` | int | 离网（备用）放电截止 SOC（百分比） |
 
 说明：
 
-- SPA/SPH 机型无论设置电网/负载优先，`dischargeCutOffSOC` 均只能读取电网优先放电截止 SOC。
 
 ### 2.2 `getDeviceData` 与推送报文新增字段
 
@@ -63,13 +62,13 @@
 - 新增字段均为响应新增内容，接口路径、请求参数与既有字段含义均未变化，存量解析逻辑不受影响。
 - 如果您的平台对响应或推送报文做了严格 JSON schema 校验（禁止未知字段），请及时放开或补充上述新增字段，避免校验失败。
 - 如需按当地时区上报时间戳或匹配用户账单地址，可使用 `siteName`、`latitude`、`longitude`、`timezone` 字段。
-- 如需对接放电限制类语义（如 dischargeLimit），可使用 `dischargeCutOffSOC` / `backupCutOffSOC` 字段。
+- `dischargeCutOffSOC` 表示电池放电截止 SOC；`backupCutOffSOC` 表示离网（备用）放电截止 SOC。
 
 ## 5. 建议客户采取的动作
 
 1. 更新 `getDeviceInfo` / `getDeviceData` / 推送报文的字段映射表，纳入本次新增字段。
 2. 检查报文校验逻辑是否兼容新增字段。
-3. 针对 SPA/SPH 机型，确认 `maxChargePower` / `maxDischargePower` 缺失与 `dischargeCutOffSOC` 取值口径的兼容处理。
+3. 针对 SPA/SPH 机型，确认 `maxChargePower` / `maxDischargePower` 缺失时的兼容处理。
 4. 如贵司有 API 网关、SDK 或二次封装层，请同步更新对外说明文档。
 
 ## 6. 兼容性说明

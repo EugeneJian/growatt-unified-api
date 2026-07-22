@@ -29,8 +29,8 @@ export default async function GrowattOpenApiQuickGuidePage() {
       activeSlug={quickGuideEn.slug}
       headingByLocale={{ en: quickGuideEn.title, "zh-CN": quickGuideZh.title }}
       subheadingByLocale={{
-        en: `Source file: ${quickGuideEn.fileName}`,
-        "zh-CN": `源文件：${quickGuideZh.fileName}`,
+        en: "Plan authentication, device authorization, data access, and dispatch integration.",
+        "zh-CN": "规划认证、设备授权、数据访问与调度接入。",
       }}
       contentMarkdownByLocale={{
         en: quickGuideEn.displayMarkdown,

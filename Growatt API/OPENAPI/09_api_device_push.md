@@ -9,7 +9,6 @@
 ## Webhook Processing Sequence
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant Growatt as PushService
     participant Webhook as WebhookEndpoint
@@ -95,7 +94,7 @@ sequenceDiagram
 | `data.meterPower` | double | Grid meter power. Positive means grid import and negative means grid export, unit: W | `0.00` |
 | `data.reactivePower` | double | Reactive power (positive: capacitive, negative: inductive) | `174.90` |
 | `data.fac` | double | Grid frequency in Hz | `50.03` |
-| `data.backupPower` | double | Backup output power in W when reported. Public endpoint field; not part of Appendix C VPP core semantic telemetry | `0.20` |
+| `data.backupPower` | double | Backup output power in W when reported | `0.20` |
 | `data.etoUserToday` | double | Grid import energy today in kWh | `3.10` |
 | `data.etoUserTotal` | double | Total grid import energy in kWh | `44.80` |
 | `data.etoGridToday` | double | Grid export energy today in kWh | `1.50` |

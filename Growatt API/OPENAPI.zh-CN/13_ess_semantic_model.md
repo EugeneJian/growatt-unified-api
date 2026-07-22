@@ -1,21 +1,23 @@
 # Growatt ESS 语义模型与调度规范
 
 **版本**: v1.1
-**状态**: Public Standard  
-**范围**: Growatt Unified OpenAPI / EMS 中与 VPP 相关的运行时遥测语义与调度校验  
-**面向对象**: 集成方、方案架构师、校验团队与实施团队
+**状态**: 客户集成参考
+
+**范围**: Growatt Open API 中与 VPP 相关的运行时遥测语义与调度解释
+
+**面向对象**: API 集成方、方案架构师与客户实施团队
 
 ---
 
 # 1. 概述
 
-本规范定义了面向 VPP 的公开运行时语义模型，将以下几个层面绑定在一起：
+本附录帮助客户从以下层面理解与 VPP 相关的字段：
 
 * **拓扑（能量流路径）**
 * **遥测（公开运行时 payload 字段）**
 * **语义解释（SPx）**
 * **调度命令**
-* **校验标准**
+* **集成检查**
 
 本附录中的遥测范围聚焦于当前已发布 payload 中与 VPP 相关的子集，来源如下：
 
@@ -24,9 +26,9 @@
 
 `07_api_device_info.md` 中的静态能力元数据不属于本运行时遥测目录。
 
-本次修订展示 4 类公开拓扑参考图：`Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only`。后续“运行时语义 / 遥测 / 调度校验”章节的规范化覆盖仍仅限于 `Hybrid` 与 `AC-Couple`。
+本附录展示 `Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only` 四类拓扑参考图，并为 `Hybrid` 与 `AC-Couple` 提供详细的运行时字段与调度解释。
 
-v1.1 新增顶层 `soc` 作为整个 ESS 电池系统的系统级 SOC，并保留 `batteryList[].soc` 作为单个电池包的 SOC 信号。
+顶层 `soc` 表示整个 ESS 电池系统的系统级 SOC，`batteryList[].soc` 表示单个电池包的 SOC。
 
 ---
 
@@ -40,7 +42,7 @@ v1.1 新增顶层 `soc` 作为整个 ESS 电池系统的系统级 SOC，并保�
 | Telemetry | 与 VPP 相关的公开运行时 payload 字段 |
 | Semantic | 核心信号的解释规则 |
 | Dispatch | 控制命令与约束 |
-| Validation | Pass/Fail 判定逻辑 |
+| Integration checks | 客户侧对命令、回读与遥测含义的确认 |
 
 ---
 
@@ -51,7 +53,7 @@ v1.1 新增顶层 `soc` 作为整个 ESS 电池系统的系统级 SOC，并保�
 
 ---
 
-# 3. 可视化标准（Mermaid SSOT）
+# 3. 拓扑图例
 
 ```mermaid
 flowchart LR
@@ -78,7 +80,7 @@ classDef dispatch fill:#fff7e6,stroke:#d48806,stroke-width:2px,stroke-dasharray:
 
 # 4. 拓扑 + 语义 + 调度模型
 
-本章补充 4 类公开拓扑参考图：`Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only`。其中只有 `Hybrid` 与 `AC-Couple` 被纳入后续语义、遥测与调度校验章节的规范化运行时模型。
+以下图示覆盖 `Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only`。本附录为 `Hybrid` 与 `AC-Couple` 提供详细的运行时字段和调度解释；另外两类仅作为物理拓扑参考。
 
 ## 4.1 `Hybrid` 拓扑
 
@@ -206,7 +208,7 @@ flowchart LR
     class PV,Inverter,GridMeter,Load,Grid asset;
 ```
 
-`PV Only` 在此仅作为物理拓扑参考图展示。本次修订未为该拓扑新增公开运行时语义、SPx 定义或调度映射。
+`PV Only` 仅作为物理拓扑参考；本附录不定义该拓扑专用的运行时映射或调度行为。
 
 ## 4.4 `Battery Only` 拓扑
 
@@ -229,7 +231,7 @@ flowchart LR
     class Battery,Inverter,GridMeter,Load,Grid asset;
 ```
 
-`Battery Only` 在此仅作为物理拓扑参考图展示。本次修订未为该拓扑新增公开运行时语义、SPx 定义或调度映射。
+`Battery Only` 仅作为物理拓扑参考；本附录不定义该拓扑专用的运行时映射或调度行为。
 
 ---
 
@@ -281,7 +283,7 @@ flowchart LR
 | `payLoadPower` | `>= 0` |
 | `pexPower` | 上报时应满足 `>= 0`；表示第三方电表 / Solar Inverter 的外部发电功率，不带取电/送电方向语义 |
 
-本附录中的 `pexPower` 仅作为观测遥测使用，不定义公开调度目标，也不承担送电方向符号语义。
+本附录将 `pexPower` 作为只读遥测使用，不定义调度目标，也不承担送电方向符号语义。
 
 `genPower` 在上报时表示离网发电机功率。它仅保留为辅助运行时遥测，不映射为本附录中的公开边界 SPx 或调度目标。
 
@@ -381,7 +383,7 @@ flowchart LR
     class Dispatch dispatch;
 ```
 
-`External Generation Boundary` 仅适用于 `AC-Couple`。`Generator / Off-grid Source` 是面向带发电机离网模式的辅助运行时遥测，在本次修订中不映射到公开边界 SPx。`PV Source / Generation` 在 `Hybrid` 中仍是核心语义块，在 `AC-Couple` 中则是 `ppv` 上报时才启用的可选辅助块。
+`External Generation Boundary` 仅适用于 `AC-Couple`。`Generator / Off-grid Source` 是面向带发电机离网模式的辅助运行时遥测，不映射到边界 SPx。`PV Source / Generation` 在 `Hybrid` 中是核心语义块，在 `AC-Couple` 中则是 `ppv` 上报时才使用的可选辅助块。
 
 ---
 
@@ -397,7 +399,7 @@ flowchart LR
 | 电流 | `batteryList[].ibat` | `A` |
 | 代码 / 枚举 | `status`, `priority`, `batteryStatus`, `batteryList[].status`, `faultCode`, `faultSubCode`, `protectCode`, `protectSubCode`, `dataType` | Code / enum |
 
-`reactivePower` 继续保持 vendor payload 的现有形式与公开符号说明；本附录不重新定义其单位。
+`reactivePower` 保持已发布报文中的形式与符号约定；本附录不在接口文档之外另行指定单位。
 
 ---
 
@@ -515,14 +517,14 @@ flowchart LR
 
 ## 7.2 映射
 
-| 调度 | 观测运行时字段 | 控制字段 |
+| 调度 | 需要核对的运行时字段 | 控制字段 |
 | --- | --- | --- |
 | Charge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
 | Discharge | `batPower`, `soc`, `batteryList[].soc` | `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `remote_charge_discharge_power` |
 | Export Limit | `meterPower`, `etoGridToday`, `etoGridTotal` | `export_limit`（dispatch setting；通过 read-dispatch 回读） |
 | Control | `status`, `priority`, power blocks | `enable_control`, `active_power_derating_percentage`, `active_power_percentage` |
 
-在本次修订中，`pexPower` 仅用于 `AC-Couple` 外部发电边界校验观测，不映射到公开调度/控制字段。
+`pexPower` 是 `AC-Couple` 外部发电边界的只读遥测，不映射到调度/控制字段。
 
 `genPower` 仍保留为离网发电机运行的辅助遥测，也不映射到公开调度/控制字段。
 
@@ -556,151 +558,22 @@ flowchart LR
 * `payLoadPower` 是本附录中唯一建模的公开负载语义信号。
 * `ppv` 在 `Hybrid` 中仍是核心 PV 源语义信号。
 * 在 `AC-Couple` 中，`pexPower` 是首要的公开外部发电边界信号，而 `ppv` 在出现时仍然只是辅助信号。
-* `genPower` 被记录为离网发电机辅助遥测，仍不属于本次修订的规范化 Hybrid / AC-Couple 边界覆盖范围。
-* `PV Only` 与 `Battery Only` 已补充为物理拓扑参考图，但不属于本次修订的规范化运行时覆盖范围。
+* `genPower` 是离网发电机辅助遥测，不属于 Hybrid / AC-Couple 边界映射。
+* `PV Only` 与 `Battery Only` 是物理拓扑参考，不在本附录中新增拓扑专用运行时映射。
 
 ---
 
-# 9. 调度校验框架
+# 9. 客户集成建议
 
-## 9.1 校验层
-
-| 层 | 检查点 |
-| --- | --- |
-| Command | accepted |
-| Telemetry | changed |
-| Semantic | sign / boundary 正确 |
-| Behavior | 在观测窗口内保持一致 |
+- 调度成功响应表示 API 已接受请求；业务需要核对时，请通过 `readDeviceDispatch` 确认最终设置。
+- `batPower` 正值表示充电，负值表示放电。
+- `meterPower` 正值表示从电网取电，负值表示向电网送电。
+- Export Limit 场景应回读 `export_limit`，并结合 `meterPower` 与电网电量计数器判断运行时电网流向。
+- 顶层 `soc` 用于整个 ESS 电池系统，`batteryList[].soc` 用于单个电池包。
+- 遵守接口页面规定的调度与遥测频率限制，不要仅根据拓扑图自行推导更严格的通过/失败阈值。
 
 ---
 
-# 10. 校验规则
+# 10. 总结
 
-## 10.1 充电
-
-**期望**
-
-* `batPower` > 0
-* `soc` 在上报时应在观测窗口内单调不减
-* `batteryList[].soc` 在电池包明细上报时应按 pack 单调不减
-
-**Pass**
-
-```text
-batPower remains positive and SOC does not trend downward
-```
-
----
-
-## 10.2 放电
-
-**期望**
-
-* `batPower` < 0
-* `soc` 在上报时应在观测窗口内单调不增
-* `batteryList[].soc` 在电池包明细上报时应按 pack 单调不增
-
----
-
-## 10.3 Export Limit
-
-**期望**
-
-* 配置后的 `export_limit` 设置值可通过 dispatch / read-dispatch 链路读回，并与目标 Export Limit 一致
-* 实际送电行为通过 `meterPower` 观测，其中负值表示送电
-* `meterPower` 在送电方向上保持在已配置的导出边界以内
-* 在 Export Limit 生效时，`meterPower` 在电网表边界上不应比配置的导出限制更负
-
----
-
-# 11. 验收标准
-
-## 11.1 通用
-
-| 项目 | 要求 |
-| --- | --- |
-| Ack | < 5s |
-| First response | <= 1 cycle |
-| Stable window | 2-5 cycles |
-
----
-
-## 11.2 容差
-
-| 指标 | 值 |
-| --- | --- |
-| 功率容差 | +/-3% |
-| 稳定时间 | 30-120s |
-
----
-
-## 11.3 结果
-
-| 结果 | 条件 |
-| --- | --- |
-| Pass | 所有必需层均满足 |
-| Fail | 存在不匹配 |
-| Pending | 数据不足 |
-
----
-
-# 12. 失败码
-
-| 代码 | 含义 |
-| --- | --- |
-| V001 | No ack |
-| V002 | No telemetry |
-| V003 | Wrong sign |
-| V004 | Unstable |
-| V005 | Limit not enforced |
-| V006 | Insufficient window |
-| V007 | Conflicting conditions |
-
----
-
-# 13. 校验流程
-
-```mermaid
-flowchart TD
-
-    A["调度"]
-    B["Ack"]
-    C["遥测块"]
-    D["SPx 解释"]
-    E["校验"]
-
-    A --> B --> C --> D --> E
-```
-
----
-
-# 14. 调度校验逻辑
-
-```mermaid
-flowchart TD
-
-    Start["调度"]
-    Telemetry["遥测窗口"]
-    Check1{"batPower 符号是否正确?"}
-    Check2{"meterPower 在 Export Limit 下是否满足边界?"}
-    Check3{"soc / batteryList[].soc 趋势是否正确?"}
-    Pass["PASS"]
-    Fail["FAIL"]
-
-    Start --> Telemetry
-    Telemetry --> Check1
-    Check1 -->|Yes| Check2
-    Check1 -->|No| Fail
-    Check2 -->|Yes| Check3
-    Check2 -->|No| Fail
-    Check3 -->|Yes| Pass
-    Check3 -->|No| Fail
-```
-
----
-
-# 15. 执行摘要
-
-本规范将公开 ESS 拓扑参考、运行时语义、调度与遥测整理为一个统一模型，并补充了 `Hybrid`、`AC-Couple`、`PV Only` 与 `Battery Only` 4 类拓扑参考图。  
-本次修订的规范化运行时语义、遥测与调度校验覆盖仍聚焦于 `Hybrid` 与 `AC-Couple`，其中 `pexPower` 被定义为 AC-couple 的外部发电边界信号，而 `genPower` 仅保留为离网发电机辅助遥测。`PV Only` 与 `Battery Only` 仍仅作为物理拓扑参考展示。
-系统级 `soc` 是公开的整体 ESS 电池 SOC 信号，`batteryList[].soc` 仍表示单个电池包 SOC 明细。
+本附录从客户集成角度统一 ESS 拓扑参考、运行时字段含义与调度设置。详细运行时映射覆盖 `Hybrid` 与 `AC-Couple`；`PV Only` 与 `Battery Only` 作为物理拓扑参考。`pexPower` 表示 AC-Couple 外部发电边界，`genPower` 表示离网发电机辅助遥测。

@@ -1,78 +1,82 @@
 # Growatt Open API - Authentication Guide
 
-This page summarizes the supported authentication modes and capability boundaries for Growatt Open API. If later environment testing behaves differently, treat that behavior as an observation rather than as a replacement for the endpoint descriptions documented here.
+Growatt Open API supports OAuth 2.0 authorization-code and client-credentials integrations. Choose the grant type that matches how your customers authorize devices.
 
 ## Recommended Integration Flow
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["Start Integration"] --> B{"Choose OAuth Mode"}
-    B -->|"Authorization Code"| C["Open Growatt Login"]
-    B -->|"Client Credentials"| D["Call oauth2 token API"]
+    A["Start integration"] --> B{"Choose OAuth grant type"}
+    B -->|"Authorization Code"| C["Direct user to Growatt authorization"]
+    B -->|"Client Credentials"| D["Request a platform access token"]
     C --> E["Receive authorization code"]
-    E --> F["Exchange code for access token"]
-    D --> G["Get access token"]
-    F --> H["Call device authorization APIs"]
+    E --> F["Exchange code for token"]
+    D --> G["Receive access token"]
+    F --> H["Authorize selected devices"]
     G --> H
-    H --> I["Call business APIs"]
-    I --> J{"Token expired"}
-    J -->|"Yes"| K["Call oauth2 refresh API"]
+    H --> I["Call device APIs"]
+    I --> J{"Refresh token available and access token expiring?"}
+    J -->|"Yes"| K["Refresh token pair"]
     K --> I
-    J -->|"No"| L["Continue operations"]
+    J -->|"No"| L["Continue or obtain a new token when required"]
 ```
 
 ## Supported Grant Types
 
-| `grant_type` | Meaning | Capability boundary |
+| `grant_type` | Use case | Capability boundary |
 | :--- | :--- | :--- |
-| `authorization_code` | End-user authorization code exchanged for `access_token` | Supports `POST /oauth2/getDeviceList` |
-| `client_credentials` | Platform obtains `access_token` with `client_id` / `client_secret` | `POST /oauth2/bindDevice` requires `pinCode` in client mode |
+| `authorization_code` | A Growatt end user grants your application access to devices | Supports `POST /oauth2/getDeviceList` |
+| `client_credentials` | A platform backend authenticates with its issued `client_id` and `client_secret` | Device binding requires `pinCode` |
 
 ## Token Rules
 
-- Both grant types use `POST /oauth2/token` to obtain `access_token`.
-- In `authorization_code` mode, `redirect_uri` is required and the token response returns `access_token`, `refresh_token`, `refresh_expires_in`, `token_type`, and `expires_in`.
-- In `client_credentials` mode, `redirect_uri` is optional / compatibility-accepted. The 2026-04-23 AU full run accepted requests both with and without `redirect_uri` and returned only `access_token`, `token_type`, and `expires_in`.
-- `POST /oauth2/refresh` applies only when the previous token response issued a `refresh_token`; do not assume a `client_credentials` token can be refreshed unless its response explicitly includes `refresh_token`.
+- Both grant types use `POST /oauth2/token`.
+- Supply the exact `redirect_uri` registered for your client.
+- In authorization-code mode, include the authorization `code` returned to your callback.
+- A token response always includes the fields documented for that response. Store a `refresh_token` only when one is returned.
+- Call `POST /oauth2/refresh` only when the previous token response included a `refresh_token`.
+- Read `expires_in` and `refresh_expires_in` from every response; do not hard-code example values.
 
 ## Capability Matrix
 
 | Capability | `authorization_code` | `client_credentials` |
 | :--- | :--- | :--- |
 | Get access token | Supported | Supported |
-| Refresh access token | Supported when a `refresh_token` was issued | Not available in the 2026-04-23 AU `client_credentials` response because no `refresh_token` was issued |
-| Get candidate devices `getDeviceList` | Supported | Not supported |
-| Bind devices `bindDevice` | Supported | Supported, and `pinCode` is required in client mode |
-| Get authorized devices `getDeviceListAuthed` | Supported | Supported |
+| Refresh access token | Supported when a `refresh_token` is issued | Use only when the token response includes a `refresh_token` |
+| Get candidate devices with `getDeviceList` | Supported | Not supported |
+| Bind devices with `bindDevice` | Supported | Supported; `pinCode` is required |
+| Get authorized devices with `getDeviceListAuthed` | Supported | Supported |
 
-## OAuth2.0 Flow Overview
+## OAuth 2.0 Sequence
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
     participant User as EndUser
-    participant App as ClientApp
-    participant Server as BackendServer
+    participant App as ClientApplication
+    participant Backend as CustomerBackend
     participant Growatt as GrowattAPI
 
-    User->>App: Start operation
-    App->>Server: Need valid token
-    Server-->>App: Redirect to login
-    App->>Growatt: User login
-    Growatt-->>App: Verify credentials
-    App->>Server: Send authorization context
-    Server->>Growatt: Exchange code for token
-    Growatt-->>Server: Return token response
-    Server->>Growatt: Call API with access token
-    Growatt-->>Server: Return API result
-    Server-->>App: Return result
-    App-->>User: Show result
+    User->>App: Start authorization
+    App->>Growatt: Open Growatt authorization
+    Growatt-->>Backend: Redirect with authorization code
+    Backend->>Growatt: POST /oauth2/token
+    Growatt-->>Backend: Return token response
+    Backend->>Growatt: Call API with bearer token
+    Growatt-->>Backend: Return API response
+    Backend-->>App: Return application result
 
-    Note over Server,Growatt: Refresh token on expiry when a refresh token was issued
+    Note over Backend,Growatt: Refresh only when a refresh token was issued
 ```
 
-## Implementation Pointers
+## Security Requirements
 
-- For endpoint parameters and examples, continue with [Get access_token API](./02_api_access_token.md) and [Device Authorization API](./04_api_device_auth.md).
-- For environment-specific findings, use the explicitly labeled observation section in [Troubleshooting FAQ](./11_api_troubleshooting.md).
+- Keep `client_secret`, access tokens, and refresh tokens on a trusted backend.
+- Do not place credentials or tokens in URLs, client-side code, screenshots, or application logs.
+- Validate the OAuth `state` value and bind it to the initiating user session.
+- Allow only pre-registered HTTPS callback URLs in production.
+
+## Next Steps
+
+- [Get access_token API](./02_api_access_token.md)
+- [Device Authorization API](./04_api_device_auth.md)
+- [Troubleshooting FAQ](./11_api_troubleshooting.md)

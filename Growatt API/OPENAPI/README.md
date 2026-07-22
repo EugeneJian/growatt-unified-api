@@ -1,97 +1,80 @@
 # Growatt Open API Documentation
 
-This directory contains the English published split of the Growatt Open API documentation. It organizes endpoint pages, preserves cross-links, and keeps implementation observations separate from the main API descriptions.
+Use this documentation to authenticate your application, authorize devices, query device information and telemetry, send dispatch commands, read dispatch settings, and receive device-data push messages.
 
-## Integration Roadmap (Concept)
+## Integration Roadmap
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["01 Authentication"] --> B["02 Get access token"]
-    B --> C["03 Refresh token lifecycle"]
-    C --> D["04 Device Authorization"]
-    D --> E["07 Device Information"]
-    D --> F["08 Device Data Query"]
-    D --> G["09 Device Data Push"]
-    F --> H["05 Device Dispatch"]
-    H --> I["06 Read Dispatch Parameters"]
-    G --> H
-    I --> J["10 Global Parameters"]
-    J --> K["11 Troubleshooting FAQ"]
+    A["Choose an OAuth grant type"] --> B["Obtain an access token"]
+    B --> C["Authorize devices"]
+    C --> D["Query device information"]
+    C --> E["Query or receive device data"]
+    C --> F["Dispatch device settings"]
+    F --> G["Read back dispatch settings"]
+    B --> H{"Refresh token issued?"}
+    H -->|"Yes"| I["Refresh before expiry"]
+    H -->|"No"| J["Request a new access token when needed"]
 ```
 
-## Integration Roadmap (Request Sequence)
+## Typical Request Sequence
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Platform as PlatformApp
-    participant OAuth as OAuthAPI
-    participant Device as DeviceAPI
-    participant Push as WebhookAPI
+    participant App as ClientApplication
+    participant OAuth as GrowattOAuthAPI
+    participant Device as GrowattDeviceAPI
+    participant Push as CustomerWebhook
 
-    Platform->>OAuth: POST /oauth2/token
-    OAuth-->>Platform: Return access token or token pair
-    Platform->>OAuth: Run bindDevice flow
-    OAuth-->>Platform: Return authorized set
-    Platform->>Device: Query info and data
-    Device-->>Platform: Return telemetry
-    Platform->>Device: Dispatch and read back
-    Device-->>Platform: Return dispatch result
-    Push-->>Platform: Push dfcData
-    Platform->>OAuth: POST /oauth2/refresh if needed
+    App->>OAuth: POST /oauth2/token
+    OAuth-->>App: Return token response
+    App->>OAuth: Authorize or bind devices
+    OAuth-->>App: Return authorized devices
+    App->>Device: Query device information or data
+    Device-->>App: Return device payload
+    App->>Device: Dispatch and read back settings
+    Device-->>App: Return operation result
+    Device-->>Push: Push dfcData payload
+    App->>OAuth: POST /oauth2/refresh when a refresh token is available
 ```
 
-## Documentation Structure
+## API Guides
 
-| File | Description |
+| Guide | Purpose |
 | :--- | :--- |
-| [01_authentication.md](./01_authentication.md) | Authentication guide |
-| [02_api_access_token.md](./02_api_access_token.md) | Get `access_token` |
-| [03_api_refresh.md](./03_api_refresh.md) | Refresh `access_token` |
-| [04_api_device_auth.md](./04_api_device_auth.md) | Device authorization and unbind |
-| [05_api_device_dispatch.md](./05_api_device_dispatch.md) | Device dispatch |
-| [06_api_read_dispatch.md](./06_api_read_dispatch.md) | Read device dispatch parameters |
-| [07_api_device_info.md](./07_api_device_info.md) | Device information query |
-| [08_api_device_data.md](./08_api_device_data.md) | Device data query |
-| [09_api_device_push.md](./09_api_device_push.md) | Device data push |
-| [10_global_params.md](./10_global_params.md) | Global parameter description |
-| [11_api_troubleshooting.md](./11_api_troubleshooting.md) | Troubleshooting FAQ |
+| [Authentication](./01_authentication.md) | Choose a grant type and understand token behavior |
+| [Get an access token](./02_api_access_token.md) | Request an `access_token` |
+| [Refresh a token](./03_api_refresh.md) | Replace an expiring token pair |
+| [Device authorization](./04_api_device_auth.md) | List, bind, review, and unbind authorized devices |
+| [Device dispatch](./05_api_device_dispatch.md) | Send device-setting commands |
+| [Read dispatch settings](./06_api_read_dispatch.md) | Read back device-setting values |
+| [Device information](./07_api_device_info.md) | Query device identity, capability, and site metadata |
+| [Device data](./08_api_device_data.md) | Query device telemetry |
+| [Device data push](./09_api_device_push.md) | Receive `dfcData` webhook payloads |
+| [Global parameters](./10_global_params.md) | Use base URLs, headers, response codes, and `setType` values |
+| [Troubleshooting FAQ](./11_api_troubleshooting.md) | Resolve common integration issues |
 
-## Quick Navigation
+## Key Integration Rules
 
+- Send access tokens as `Authorization: Bearer <access_token>`.
+- Keep `client_secret`, access tokens, and refresh tokens on a trusted backend; never expose them in browser or mobile client code.
+- Supply `redirect_uri` in token requests and ensure it matches the callback registered for your client.
+- Use `authorization_code` when an end user authorizes devices. `getDeviceList` is available only with this grant type.
+- In `client_credentials` mode, include `deviceSnList[].pinCode` when calling `bindDevice`.
+- Treat `requestId` as required for both dispatch and dispatch read-back requests.
+- Read token lifetime values from each response instead of hard-coding the example values.
+- Determine API success from `code`; the shape of `data` varies by endpoint and `setType`.
+
+## Start Here
+
+- [Quick Guide](/growatt-openapi/quick-guide)
 - [Release Notes](/growatt-openapi/release-notes)
-- [Authentication Guide](./01_authentication.md)
-- [Get access_token API](./02_api_access_token.md)
-- [OAuth2-refresh API](./03_api_refresh.md)
-- [Device Authorization API](./04_api_device_auth.md)
-- [Device Dispatch API](./05_api_device_dispatch.md)
-- [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
-- [Device Information Query API](./07_api_device_info.md)
-- [Device Data Query API](./08_api_device_data.md)
-- [Device Data Push API](./09_api_device_push.md)
-- [Global Parameter Description](./10_global_params.md)
+- [Authentication](./01_authentication.md)
 - [Troubleshooting FAQ](./11_api_troubleshooting.md)
 
-## Key Notes
-
-- `authorization_code` token requests require `redirect_uri` and return a refreshable token set.
-- `client_credentials` token requests may omit `redirect_uri`; the 2026-04-23 AU run returned access-token-only fields.
-- `POST /oauth2/getDeviceList` is supported only in `authorization_code` mode.
-- In `POST /oauth2/bindDevice`, `deviceSnList[].pinCode` is required in client mode.
-- The parameter table for `POST /oauth2/readDeviceDispatch` marks `requestId` as required.
-- The test domains include `https://opencloud-test-au.growatt.com`.
-
-## Entry Guide
-
-For the consolidated integration guide, see:
-
-- [Release Notes](/growatt-openapi/release-notes)
-- [../Growatt Open API Professional Integration Guide.md](../Growatt Open API Professional Integration Guide.md)
-
-## Appendix
+## Appendices
 
 - [Appendix A Growatt Codes](/growatt-openapi/growatt-codes)
 - [Appendix B Glossary](./12_ess_terminology.md)
 - [Appendix C Semantic Model](./13_ess_semantic_model.md)
-- [Appendix D OpenAPI Product Support Scope](./14_appendix_d_openapi_support_scope.md)
+- [Appendix D Product Compatibility](./14_appendix_d_openapi_support_scope.md)

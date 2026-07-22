@@ -29,8 +29,8 @@ export default async function GrowattOpenApiSemanticModelPage() {
       activeSlug={semanticEn.slug}
       headingByLocale={{ en: semanticEn.title, "zh-CN": semanticZh.title }}
       subheadingByLocale={{
-        en: "Public semantic model and dispatch validation standard.",
-        "zh-CN": "公开语义模型与调度校验标准。",
+        en: "Customer reference for ESS telemetry semantics and dispatch interpretation.",
+        "zh-CN": "面向客户的 ESS 遥测语义与调度解释参考。",
       }}
       contentMarkdownByLocale={{
         en: semanticEn.displayMarkdown,

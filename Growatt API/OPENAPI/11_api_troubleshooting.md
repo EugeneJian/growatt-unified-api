@@ -1,98 +1,71 @@
 # Troubleshooting FAQ
 
-This page is split into two layers:
+## 1. Can `client_credentials` call `getDeviceList`?
 
-- Published API notes: user-facing rules captured in the endpoint docs.
-- Integration observations: findings from environment reports under `test/`, kept as implementation references only.
+No. `POST /oauth2/getDeviceList` is available only in `authorization_code` mode. A call made with an unsupported grant type may return `code=103` and `message="WRONG_GRANT_TYPE"`.
 
-## Published API Notes
+For `client_credentials`, bind devices directly with `POST /oauth2/bindDevice`, including the required PIN code for each device.
 
-### 1. Can `client_credentials` call `getDeviceList` directly?
+## 2. When is `pinCode` required for `bindDevice`?
 
-No.
+`deviceSnList[].pinCode` is required in client-credentials mode. In authorization-code mode, bind the devices selected through the end-user authorization flow.
 
-- `POST /oauth2/getDeviceList` is supported only in `authorization_code` mode.
-- In the 2026-04-23 AU full run, calling this endpoint with `client_credentials` returned `code=103` and `message="WRONG_GRANT_TYPE"`.
+## 3. Is `requestId` required for `readDeviceDispatch`?
 
-### 2. When is `pinCode` required in `bindDevice`?
+Yes. Include a unique `requestId` in every `deviceDispatch` and `readDeviceDispatch` request. A 32-character value built from a timestamp plus random data is recommended.
 
-The published parameter table states:
+## 4. Which authorization header should protected endpoints use?
 
-- `deviceSnList[].pinCode`: required in client mode.
-- In authorization-code mode, the field is accepted when supplied; some environments or devices may require object form plus `pinCode`.
+Use:
 
-### 3. Is `requestId` required in `readDeviceDispatch`?
+```http
+Authorization: Bearer <access_token>
+```
 
-Yes in the parameter table. The original vendor request sample omits it, but the published split docs continue to treat it as required because the table marks it as required.
+Do not send the access token in a custom `token` header or URL query string.
 
-### 4. Should `getDeviceData` use `token` or `Authorization` as the header name?
+## 5. What are the per-device request limits?
 
-The current published materials contain an internal wording mismatch:
+- `getDeviceData`: `1 request / min / device`
+- `deviceDispatch` and `readDeviceDispatch`: `1 request / 5 sec / device` (`12 RPM`)
 
-- The local header table in section `3.7` uses `token`
-- Section `4 Global Parameters` standardizes `Authorization: Bearer xxxxxxx`
+If the limit is exceeded, the API may return `code` `105` with `TOO_MANY_REQUEST`. Rate-limit by device SN and apply backoff before retrying.
 
-The published split docs follow the global section.
+## 6. Should device-level APIs use `deviceSn` or `datalogSn`?
 
-### 5. What are the per-device request limits for telemetry and dispatch?
+Use `deviceSn`. `datalogSn` identifies the datalogger and is not a substitute for the device serial number in device-level request bodies.
 
-- Telemetry polling via `getDeviceData`: `1 request / min / device`
-- Dispatch and dispatch read-back via `deviceDispatch` / `readDeviceDispatch`: `1 request / 5 sec / device` (`12 RPM`)
-- If the per-device limit is exceeded, the API may return `TOO_MANY_REQUEST` with `code` `105`.
+## 7. How should a `bindDevice` success response be evaluated?
 
-## Integration Observations
+Use `code=0` as the success condition. Keep the parser tolerant of endpoint-dependent `data` values instead of requiring a single fixed success payload.
 
-The following observations come from environment reports under `test/` and are kept for implementation reference only:
+## 8. Can token TTL values be copied from the examples?
 
-- The latest global authorization-code run on 2026-03-27 used `GET /#/login?...`, `POST /prod-api/login`, and `GET /prod-api/auth` before `POST /oauth2/token`.
-- Multiple environment reports use JSON bodies for `bindDevice`, `getDeviceInfo`, `getDeviceData`, `deviceDispatch`, `readDeviceDispatch`, and `unbindDevice`.
-- Multiple reports recommend using the raw `deviceSn` for device-level APIs and avoiding `datalogSn` or display-prefixed values.
-- The 2026-04-23 AU full report observed `client_credentials` token responses with and without `redirect_uri`; both returned only `access_token`, `token_type`, and `expires_in`.
-- The 2026-04-23 AU full report observed `WRONG_GRANT_TYPE` (`code=103`) when `client_credentials` called `getDeviceList`.
-- The 2026-04-23 AU full report used authorization-code `bindDevice` with object form plus `pinCode` and succeeded.
-- Some reports observe object-shaped `readDeviceDispatch.data` payloads for particular `setType` values.
+No. Always read `expires_in` and, when returned, `refresh_expires_in` from the current response. Schedule renewal using those values with a safety margin for clock skew and in-flight requests.
 
-### 6. Which entry points were observed in the latest global authorization-code run?
+## 9. What should happen after a token refresh?
 
-The 2026-03-27 global environment report recorded this path:
+Replace the stored access token and refresh token immediately and atomically. All subsequent protected requests must use the newly returned access token.
 
-- Frontend login page: `GET /#/login?...`
-- User login submit: `POST /prod-api/login`
-- Authorization-code step: `GET /prod-api/auth`
-- Token exchange: `POST /oauth2/token`
+## 10. Why does `readDeviceDispatch.data` have different shapes?
 
-### 7. Should device-level APIs use `deviceSn` or `datalogSn`?
+The shape depends on `setType`:
 
-Use `deviceSn`.
+- Array: `time_slot_charge_discharge`
+- Object: `duration_and_power_charge_discharge`, `export_limit`
+- Number: `enable_control`, `active_power_derating_percentage`, `active_power_percentage`, `remote_charge_discharge_power`
 
-- The latest global report returned `deviceSn=WCK6584462` and `datalogSn=ZGQ0E820UH`.
-- The same run used `deviceSn` for `bindDevice`, `getDeviceInfo`, `getDeviceData`, and `unbindDevice`.
+Select the parser from the requested `setType`; do not assume that `data` is always a string.
 
-### 8. Can `bindDevice` succeed with `data: 1` instead of `null`?
+## 11. How should dispatch timeouts be retried?
 
-Yes.
-
-- The latest global success sample returned `{"code":0,"data":1,"message":"SUCCESSFUL_OPERATION"}`.
-- Treat `code=0` as success and do not hard-code the success shape to `data: null` only.
-
-### 9. Should TTL logic rely on sample numbers such as `7200`?
-
-No.
-
-- The latest global token run observed `expires_in=604733` and `refresh_expires_in=2585309`.
-- The subsequent refresh observed `expires_in=604800` and `refresh_expires_in=2592000`.
-- Always read TTL values from the live response.
-
-### 10. Can the old access token still be used after `refresh` succeeds?
-
-No in the latest global run.
-
-- After `POST /oauth2/refresh` succeeded on 2026-03-27, the previous access token immediately returned `TOKEN_IS_INVALID`.
-- Follow-up reads and unbinds had to switch to the fresh token.
+When dispatch returns a timeout or no-response code, first call `readDeviceDispatch` after respecting the per-device rate limit. Retry the original dispatch only if the read-back confirms that the requested setting was not applied.
 
 ## Related Documentation
 
+- [Authentication Guide](./01_authentication.md)
 - [Device Authorization API](./04_api_device_auth.md)
+- [Device Dispatch API](./05_api_device_dispatch.md)
 - [Read Device Dispatch Parameters API](./06_api_read_dispatch.md)
-- [Device Data Query API](./08_api_device_data.md)
+- [Global Parameters](./10_global_params.md)
 - [ESS Terminology Glossary](./12_ess_terminology.md)

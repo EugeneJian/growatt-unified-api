@@ -47,14 +47,14 @@ stateDiagram-v2
 
 ## 请求参数说明
 
-| 参数名 | 厂商表格类型 | 是否必选 | 说明 |
+| 参数名 | 类型 | 是否必选 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | 是 | 设备 SN |
 | `setType` | string | 是 | 设置的参数枚举，例如 `export_limit` |
-| `value` | string | 是 | 设置的参数值。厂商表格写为 `string`，但实际请求形态会随 `setType` 而变化，可能是数组、对象或数值。详见 [全局参数说明](./10_global_params.md) |
+| `value` | array \| object \| number | 是 | 设置值，其结构随 `setType` 变化。详见[全局参数](./10_global_params.md) |
 | `requestId` | string | 是 | 本次调用唯一标识，32 位字符串 |
 
-## 公开 `setType` 范围
+## 支持的 `setType`
 
 | `setType` | `value` 形态 | 说明 |
 | :--- | :--- | :--- |
@@ -97,10 +97,10 @@ stateDiagram-v2
 
 ## 返回参数说明
 
-| 参数名 | 厂商表格类型 | 说明 |
+| 参数名 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 |
-| `data` | string | 厂商表格原文写作 `string`，但成功与失败示例均为 `null` |
+| `data` | null | 当前文档列出的结果场景无额外返回数据 |
 | `message` | string | 返回说明 |
 
 ## 返回格式示例
@@ -124,10 +124,11 @@ stateDiagram-v2
 | 参数设置失败 | `6` | `null` | `PARAMETER_SETTING_FAILED` |
 | 请求次数限制 | `105` | `null` | `TOO_MANY_REQUEST` |
 
-## 实现说明
+## 客户端实现建议
 
-- 厂商表格把 `value` 标为 `string`，但最新基线公开的 `setType` 请求形态实际包含数组、对象和数值。
-- 本页在保留原表格口径的同时，把最新日期快照中发布的公开形态一并列出。
+- 根据 `setType` 表选择 `value` 结构，不要将数组或对象再次序列化为 JSON 字符串。
+- 每次调度请求都生成唯一的 `requestId`。
+- 通过 `code=0` 判断成功；响应超时时，先调用 `readDeviceDispatch` 核对实际设置再决定是否重试。
 
 ## 相关文档
 

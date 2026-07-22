@@ -1,58 +1,57 @@
 # Growatt Open API Professional Integration Guide
 
-This is an entry guide. Endpoint parameters, examples, and response codes are maintained in `Growatt API/OPENAPI/*.md`. Environment-specific findings are kept in dedicated observation sections as implementation references.
+This guide helps platform customers, aggregators, and VPP partners plan a reliable Growatt Open API integration. Follow the linked endpoint pages for the complete request parameters, response fields, and examples.
 
-## 1 Document Layers
+## 1 Choose an Authorization Model
 
-- Chinese split publication docs: `Growatt API/OPENAPI.zh-CN/*.md`
-- English split publication docs: `Growatt API/OPENAPI/*.md`
-- Appendix B Glossary: [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
-- Integration observations: environment reports under `test/`
+| Model | Use it when | Device authorization path |
+| :--- | :--- | :--- |
+| `authorization_code` | A Growatt end user grants your application access to devices | Obtain an authorization code, exchange it for a token, call `getDeviceList`, and bind selected devices |
+| `client_credentials` | Your server-to-server integration uses credentials issued for the platform | Obtain a token and call `bindDevice` with each device SN and PIN code |
 
-## 2 Supported Integration Paths
+Keep `client_secret`, access tokens, and refresh tokens on a trusted backend. Do not expose them in browser code, mobile applications, logs, or URLs.
 
-### Integration Flow
+## 2 Integration Flow
 
 ```mermaid
 flowchart TD
-    A["Obtain client_id / client_secret"] --> B{"Choose OAuth mode"}
-    B -->|"authorization_code"| C["User logs into Growatt and exchanges a token pair"]
-    B -->|"client_credentials"| D["Obtain access token directly"]
-    C --> E["getDeviceList -> bindDevice"]
-    D --> F["bindDevice"]
-    E --> G["getDeviceInfo / getDeviceData"]
-    F --> G
-    G --> H["deviceDispatch -> readDeviceDispatch"]
-    G --> I["Receive dfcData push"]
+    A["Obtain client credentials"] --> B{"Choose OAuth grant type"}
+    B -->|"authorization_code"| C["Direct the user to Growatt authorization"]
+    C --> D["Receive the authorization code"]
+    D --> E["Exchange the code for a token"]
+    E --> F["List and bind selected devices"]
+    B -->|"client_credentials"| G["Request an access token"]
+    G --> H["Bind devices with PIN codes"]
+    F --> I["Query device information and data"]
+    H --> I
+    I --> J["Dispatch settings and read them back"]
+    I --> K["Receive device-data push messages"]
 ```
 
 ### `authorization_code`
 
-Observed global flow on 2026-03-27:
-
-1. Open the frontend login page `GET /#/login?...`
-2. Submit credentials through `POST /prod-api/login`
-3. Obtain the authorization code through `GET /prod-api/auth`
-4. Exchange the code through `POST /oauth2/token`
-5. Call `POST /oauth2/getDeviceList`
-6. Call `POST /oauth2/bindDevice`
-7. Continue with device query, dispatch, and read-back APIs
+1. Direct the user to the Growatt authorization entry provided for your application.
+2. Receive the authorization code at the registered `redirect_uri`.
+3. Exchange the code through `POST /oauth2/token`.
+4. Call `POST /oauth2/getDeviceList` and let the user select devices.
+5. Call `POST /oauth2/bindDevice`.
+6. Continue with device query, dispatch, read-back, and push integration.
 
 ### `client_credentials`
 
-1. Call `POST /oauth2/token`
-2. Call `POST /oauth2/bindDevice` directly
-3. Call `POST /oauth2/getDeviceListAuthed`
-4. Continue with device query, dispatch, and read-back APIs
+1. Call `POST /oauth2/token` with the credentials issued to your platform.
+2. Call `POST /oauth2/bindDevice` with `deviceSn` and `pinCode` for each device.
+3. Call `POST /oauth2/getDeviceListAuthed` to confirm the authorized device set.
+4. Continue with device query, dispatch, read-back, and push integration.
 
 ## 3 API Matrix
 
-| Capability | Endpoint | Required Inputs |
+| Capability | Endpoint | Required inputs or prerequisite |
 | :--- | :--- | :--- |
-| Get token | `/oauth2/token` | `grant_type`, `client_id`, `client_secret`, `redirect_uri` |
-| Refresh token | `/oauth2/refresh` | `refresh_token`, client credentials |
-| Get candidate devices | `/oauth2/getDeviceList` | Bearer token, `authorization_code` only |
-| Bind devices | `/oauth2/bindDevice` | `deviceSnList`; `pinCode` required in client mode |
+| Get token | `/oauth2/token` | `grant_type`, `client_id`, `client_secret`, `redirect_uri`; `code` for authorization-code mode |
+| Refresh token | `/oauth2/refresh` | A previously issued `refresh_token` plus client credentials |
+| Get candidate devices | `/oauth2/getDeviceList` | Bearer token from `authorization_code` mode |
+| Bind devices | `/oauth2/bindDevice` | `deviceSnList`; `pinCode` is required in client-credentials mode |
 | Get authorized devices | `/oauth2/getDeviceListAuthed` | Bearer token |
 | Unbind devices | `/oauth2/unbindDevice` | `deviceSnList` |
 | Device information | `/oauth2/getDeviceInfo` | `deviceSn` |
@@ -60,39 +59,41 @@ Observed global flow on 2026-03-27:
 | Device dispatch | `/oauth2/deviceDispatch` | `deviceSn`, `setType`, `value`, `requestId` |
 | Dispatch read-back | `/oauth2/readDeviceDispatch` | `deviceSn`, `setType`, `requestId` |
 
-## 4 Items That Need Extra Attention
+## 4 Request and Response Rules
 
-- Both published examples for `POST /oauth2/token` include `redirect_uri`.
-- The parameter table for `POST /oauth2/readDeviceDispatch` requires `requestId`, while the published request sample omits it.
-- The public dispatch surface now publishes seven `setType` entries in `10_global_params.md`: `time_slot_charge_discharge`, `duration_and_power_charge_discharge`, `export_limit`, `enable_control`, `active_power_derating_percentage`, `active_power_percentage`, and `remote_charge_discharge_power`.
-- `readDeviceDispatch.data` is `setType`-dependent and may be an array, object, or scalar number.
-- The parameter table for `POST /oauth2/deviceDispatch` labels `value` as `string`, while the public `setType` surface includes array, object, and scalar-number payloads.
-- The local header table for `POST /oauth2/getDeviceData` uses `token`, while the global section uses `Authorization: Bearer xxxxxxx`.
+- Send protected requests with `Authorization: Bearer <access_token>`.
+- Send JSON request bodies where the endpoint page specifies `Content-Type: application/json`.
+- Use `deviceSn`, not `datalogSn`, for device-level API requests.
+- Generate a unique 32-character `requestId` for each dispatch or read-back request.
+- Implement only the documented `setType` values and use the corresponding `value` shape: array, object, or scalar number.
+- Treat `code=0` as success. Do not assume that every successful response has the same `data` shape.
+- Read `expires_in` and `refresh_expires_in` from each token response; example TTL values are illustrative.
+- When refresh succeeds, atomically store the new token response before making further protected calls.
 
-## 5 Integration Observations
+## 5 Reliability and Error Handling
 
-The following findings come from environment reports under `test/` and are kept for implementation reference only:
-
-- The latest global authorization-code run on 2026-03-27 used `GET /#/login?...`, `POST /prod-api/login`, and `GET /prod-api/auth` before `POST /oauth2/token`.
-- Multiple reports use JSON bodies for device-level APIs.
-- The latest global candidate-device report returned `deviceSn=WCK6584462` and `datalogSn=ZGQ0E820UH`; device-level APIs used `deviceSn`.
-- The latest global `bindDevice` run succeeded with `{"deviceSnList":[{"deviceSn":"WCK6584462"}]}` and returned `data: 1`.
-- In that same authorization-code run, the tested global device did not require `pinCode`; this does not change the published client-mode requirement.
-- The latest global token run returned `expires_in=604733` and `refresh_expires_in=2585309`; the subsequent refresh returned `expires_in=604800` and `refresh_expires_in=2592000`.
-- After a successful `POST /oauth2/refresh`, the previous access token immediately returned `TOKEN_IS_INVALID`; follow-up reads and unbinds had to switch to the fresh token.
-- Some reports observe `WRONG_GRANT_TYPE` when `client_credentials` calls `getDeviceList`.
-
-These findings should not replace the endpoint-level API descriptions.
+| Condition | Customer action |
+| :--- | :--- |
+| `TOKEN_IS_INVALID` | Refresh the token if a refresh token is available; otherwise obtain a new access token |
+| `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` | Confirm that the device is bound to the current authorization |
+| `WRONG_GRANT_TYPE` | Verify that the endpoint supports the selected OAuth grant type |
+| `DEVICE_OFFLINE` | Retry after the device reconnects; avoid immediate repeated dispatch attempts |
+| `TOO_MANY_REQUEST` | Apply per-device rate limiting and exponential backoff |
+| Dispatch timeout or no response | Reconcile with `readDeviceDispatch` before deciding whether to retry |
 
 ## 6 Integration Checklist
 
-- [ ] Separated the capability boundary between `authorization_code` and `client_credentials`
-- [ ] Kept `redirect_uri` in both token request examples
-- [ ] Treated `bindDevice.pinCode` as required in client mode
-- [ ] Treated `readDeviceDispatch.requestId` as required
-- [ ] For global authorization-code integrations, handled `/#/login`, `/prod-api/login`, and `/prod-api/auth`
-- [ ] Read `expires_in` and `refresh_expires_in` from runtime responses instead of hard-coding sample values
-- [ ] Replaced the old access token immediately after a successful `refresh`
-- [ ] Implemented the seven public `setType` entries published in `10_global_params.md`
-- [ ] Aligned public ESS terminology to [/growatt-openapi/appendix-terminology](/growatt-openapi/appendix-terminology)
-- [ ] Kept integration observations in the compatibility layer instead of promoting them into endpoint descriptions
+- [ ] Selected the correct OAuth grant type for the customer journey
+- [ ] Registered and supplied the exact `redirect_uri`
+- [ ] Stored credentials and tokens only on a trusted backend
+- [ ] Implemented token expiry handling from response TTL values
+- [ ] Used `Authorization: Bearer <access_token>` on protected endpoints
+- [ ] Used `deviceSn` for device-level calls
+- [ ] Included `pinCode` for client-credentials device binding
+- [ ] Generated a unique `requestId` for every dispatch and read-back call
+- [ ] Implemented the documented `setType` value shapes
+- [ ] Applied per-device rate limits and retry backoff
+- [ ] Treated additive response fields as backward-compatible and tolerated unknown fields
+- [ ] Validated webhook request handling and returned a timely success response
+
+For detailed field definitions, continue with [Authentication](./OPENAPI/01_authentication.md), [Device Authorization](./OPENAPI/04_api_device_auth.md), [Global Parameters](./OPENAPI/10_global_params.md), the [Troubleshooting FAQ](./OPENAPI/11_api_troubleshooting.md), and the [ESS Terminology Glossary](./OPENAPI/12_ess_terminology.md).

@@ -2,57 +2,42 @@
 
 ## Brief Description
 
-- Use `refresh_token` to refresh `access_token`.
-- This endpoint applies only when the previous token response issued a `refresh_token`.
-- In the 2026-04-23 AU full run, `authorization_code` issued a refresh token and `client_credentials` did not.
+Use this endpoint to replace an access token by presenting a previously issued `refresh_token`. Do not call it when the token response did not include a refresh token.
 
-## Request URL
+## Request
 
-- `/oauth2/refresh`
+- URL: `/oauth2/refresh`
+- Method: `POST`
+- Content type: `application/x-www-form-urlencoded`
 
-## Request Method
-
-- `POST`
-- `Content-Type: application/x-www-form-urlencoded`
-
-## Refresh Lifecycle (Concept)
+## Refresh Lifecycle
 
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 flowchart TD
-    A["API call with access token"] --> B{"Token valid"}
-    B -->|"Yes"| C["Continue business API calls"]
-    B -->|"No"| D["Call oauth2 refresh API"]
-    D --> E{"Refresh success"}
-    E -->|"Yes"| F["Store new access token and refresh token"]
-    F --> C
-    E -->|"No"| G["Trigger re authorization flow"]
+    A["Protected API call"] --> B{"Access token valid?"}
+    B -->|"Yes"| C["Continue API calls"]
+    B -->|"No"| D{"Refresh token available?"}
+    D -->|"Yes"| E["POST /oauth2/refresh"]
+    E --> F{"Refresh successful?"}
+    F -->|"Yes"| G["Atomically replace stored token pair"]
+    G --> C
+    F -->|"No"| H["Restart the applicable authorization flow"]
+    D -->|"No"| H
 ```
 
-## Refresh Lifecycle (Sequence)
-
 ```mermaid
-%% 本代码严格遵循AI生成Mermaid代码的终极准则v4.1（Mermaid终极大师）
 sequenceDiagram
-    participant Service as ServiceAPI
-    participant OAuth as OAuthServer
-    participant API as API
+    participant Backend as CustomerBackend
+    participant OAuth as GrowattOAuthAPI
+    participant Store as SecureTokenStore
+    participant API as GrowattDeviceAPI
 
-    Service->>API: Call API with access token
-    alt Token valid
-        API-->>Service: Return response
-    else Token invalid
-        API-->>Service: Return token invalid
-        Service->>OAuth: POST /oauth2/refresh
-        alt Refresh success
-            OAuth-->>Service: Return new token pair
-            Service->>API: Retry API call
-            API-->>Service: Return response
-        else Refresh failed
-            OAuth-->>Service: Return refresh error
-            Service-->>Service: Trigger re-authorization
-        end
-    end
+    Backend->>Store: Read refresh token
+    Backend->>OAuth: POST /oauth2/refresh
+    OAuth-->>Backend: Return new token response
+    Backend->>Store: Replace old token data
+    Backend->>API: Call with new access token
+    API-->>Backend: Return API response
 ```
 
 ## Request Parameters
@@ -60,19 +45,19 @@ sequenceDiagram
 | Parameter | Required | Description |
 | :--- | :--- | :--- |
 | `grant_type` | Yes | Must be `refresh_token` |
-| `refresh_token` | Yes | Previous refresh token used to obtain a new access token; normally from an `authorization_code` token response |
-| `client_id` | Yes | The `client_id` issued to the third-party platform |
-| `client_secret` | Yes | The `client_secret` issued to the third-party platform |
+| `refresh_token` | Yes | Refresh token from the previous token response |
+| `client_id` | Yes | Client ID issued to your platform |
+| `client_secret` | Yes | Client secret issued to your platform |
 
 ## Request Example
 
-```json
-{
-    "grant_type": "refresh_token",
-    "refresh_token": "<masked_refresh_token>",
-    "client_id": "<example_client_id>",
-    "client_secret": "<masked_client_secret>"
-}
+```bash
+curl --request POST '<api-base-url>/oauth2/refresh' \
+  --header 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'grant_type=refresh_token' \
+  --data-urlencode 'refresh_token=<masked_refresh_token>' \
+  --data-urlencode 'client_id=<example_client_id>' \
+  --data-urlencode 'client_secret=<masked_client_secret>'
 ```
 
 ## Response Parameters
@@ -80,10 +65,10 @@ sequenceDiagram
 | Parameter | Description |
 | :--- | :--- |
 | `access_token` | Newly issued access token |
-| `refresh_token` | Newly issued refresh token; the old one becomes invalid |
-| `refresh_expires_in` | New refresh-token TTL in seconds |
-| `token_type` | Fixed as `Bearer` |
-| `expires_in` | New access-token TTL in seconds |
+| `refresh_token` | Newly issued refresh token; replace the previous refresh token |
+| `refresh_expires_in` | New refresh-token lifetime in seconds |
+| `token_type` | Token type; `Bearer` |
+| `expires_in` | New access-token lifetime in seconds |
 
 ## Response Example
 
@@ -93,18 +78,17 @@ sequenceDiagram
     "refresh_token": "<masked_refresh_token>",
     "refresh_expires_in": 2592000,
     "token_type": "Bearer",
-    "expires_in": 604800
+    "expires_in": 7200
 }
 ```
 
-## Implementation Note
+## Customer Implementation Guidance
 
-- The original source sample mixes JSON and inline comments in a malformed way; this page rewrites it into equivalent readable JSON without changing the field contract.
-- Do not call this endpoint for a `client_credentials` token unless the token response explicitly included `refresh_token`.
-- The 2026-04-23 AU full run confirmed that `client_credentials` token responses did not include `refresh_token` or `refresh_expires_in`.
-- The latest global refresh run on 2026-03-27 returned `expires_in=604800` and `refresh_expires_in=2592000`.
-- In that same run, the previous access token immediately returned `TOKEN_IS_INVALID` after a successful refresh.
-- Replace the old access token immediately after refresh, and always treat the live response as the TTL source of truth.
+- Send form-encoded parameters even though the example is displayed as JSON for readability.
+- Replace both stored tokens immediately after a successful refresh; do not continue using the previous token values.
+- Update token storage atomically so concurrent requests cannot overwrite the new token pair with stale data.
+- Read both lifetime values from the response and refresh early enough to account for clock skew and in-flight requests.
+- If refresh fails, restart the authorization flow appropriate to your grant type.
 
 ## Related Documentation
 

@@ -32,8 +32,8 @@ export default async function GrowattOpenApiGrowattCodesPage() {
         "zh-CN": "附录A Growatt Codes",
       }}
       subheadingByLocale={{
-        en: `Source file: ${codesEn.sourceFileName}`,
-        "zh-CN": `源文件：${codesZh.sourceFileName}`,
+        en: "Fault, protection, and warning code reference for customer integrations.",
+        "zh-CN": "面向客户集成的故障、保护与告警代码参考。",
       }}
       contentMarkdownByLocale={{
         en: codesEn.markdown,

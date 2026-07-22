@@ -1,97 +1,71 @@
-# 常见问题与排查 FAQ
+# 常见问题与排查
 
-本页分成两部分：
+## 1. `client_credentials` 能否调用 `getDeviceList`？
 
-- 公开 API 说明：面向使用者的接口规则与已发布说明。
-- 联调观察：来自仓库 `test/` 目录的环境记录，仅供实现时参考。
+不能。`POST /oauth2/getDeviceList` 仅支持 `authorization_code` 模式。使用不支持的授权模式调用时，接口可能返回 `code=103`、`message="WRONG_GRANT_TYPE"`。
 
-## 公开 API 说明
+`client_credentials` 模式应直接调用 `POST /oauth2/bindDevice`，并为每台设备提供必填的 PIN Code。
 
-### 1. `client_credentials` 可以直接调用 `getDeviceList` 吗？
+## 2. `bindDevice` 何时必须提供 `pinCode`？
 
-不可以。
+客户端凭证模式下，`deviceSnList[].pinCode` 必填。授权码模式应绑定终端用户在授权流程中选择的设备。
 
-- `POST /oauth2/getDeviceList` 仅在 `authorization_code` 模式下支持。
-- 2026-04-23 AU 全量实测中，使用 `client_credentials` 调用该接口返回 `code=103`、`message="WRONG_GRANT_TYPE"`。
+## 3. `readDeviceDispatch` 是否必须提供 `requestId`？
 
-### 2. `bindDevice` 什么时候必须传 `pinCode`？
+是。每次调用 `deviceDispatch` 和 `readDeviceDispatch` 都应提供唯一的 `requestId`。建议使用时间戳与随机数据组合成 32 位字符串。
 
-公开参数表中明确写明：
+## 4. 受保护接口应使用哪个认证请求头？
 
-- `deviceSnList[].pinCode`：客户端模式下必填。
-- 在授权码模式下，该字段携带时可被接受；部分环境或设备可能要求对象数组并携带 `pinCode`。
+统一使用：
 
-### 3. `readDeviceDispatch` 的 `requestId` 是必填吗？
+```http
+Authorization: Bearer <access_token>
+```
 
-请求参数表将 `requestId` 标记为必填。虽然原始请求示例漏写了它，但公开拆分文档仍按参数表保留为必填字段。
+不要通过自定义 `token` 请求头或 URL 查询参数传递 access token。
 
-### 4. `getDeviceData` 的鉴权头到底叫 `token` 还是 `Authorization`？
+## 5. 按设备计算的请求频率限制是多少？
 
-当前公开材料中存在局部写法差异：
+- `getDeviceData`：`1 request / min / device`
+- `deviceDispatch` 与 `readDeviceDispatch`：`1 request / 5 sec / device`（`12 RPM`）
 
-- `3.7` 小节的局部 HTTP 头表写作 `token`
-- `4 全局参数说明` 明确要求 `Authorization: Bearer xxxxxxx`
+超过限制时，接口可能返回 `code` `105` 与 `TOO_MANY_REQUEST`。请按设备 SN 限流，并在重试前执行退避。
 
-公开拆分文档采用全局章节的统一写法。
+## 6. 设备级 API 应使用 `deviceSn` 还是 `datalogSn`？
 
-### 5. 遥测与下发的设备级请求频率上限是多少？
+使用 `deviceSn`。`datalogSn` 标识数据采集器，不能替代设备级请求体中的设备序列号。
 
-- 遥测轮询 `getDeviceData`：`1 request / min / device`
-- 下发与下发回读 `deviceDispatch` / `readDeviceDispatch`：`1 request / 5 sec / device`（`12 RPM`）
-- 超过设备级频率限制时，接口可能返回 `TOO_MANY_REQUEST`，对应 `code` `105`。
+## 7. 如何判断 `bindDevice` 是否成功？
 
-## 联调观察
+以 `code=0` 作为成功条件。解析器应允许接口相关的 `data` 值，不要把成功响应限定为单一固定结构。
 
-以下内容来自仓库 `test/` 目录中的环境联调记录，仅供实现参考：
+## 8. 能否直接使用示例中的 token 有效期？
 
-- 2026-03-27 最新全球授权码联调在 `POST /oauth2/token` 之前，实际经过了 `GET /#/login?...`、`POST /prod-api/login`、`GET /prod-api/auth`。
-- 多份联调记录将 `bindDevice`、`getDeviceInfo`、`getDeviceData`、`deviceDispatch`、`readDeviceDispatch`、`unbindDevice` 作为 JSON body 接口处理。
-- 多份联调记录建议在设备级接口中使用纯 `deviceSn`，避免误用 `datalogSn` 或展示前缀值。
-- 2026-04-23 AU 全量报告观察到 `client_credentials` token 请求无论是否携带 `redirect_uri`，响应都仅包含 `access_token`、`token_type`、`expires_in`。
-- 2026-04-23 AU 全量报告观察到 `client_credentials` 调用 `getDeviceList` 返回 `WRONG_GRANT_TYPE`（`code=103`）。
-- 2026-04-23 AU 全量报告中，授权码模式使用对象数组并携带 `pinCode` 执行 `bindDevice` 成功。
-- 个别联调记录观察到 `readDeviceDispatch.data` 会随 `setType` 出现对象结构；该现象保留为实现观察，不作为端点规范。
+不能。每次都从当前响应读取 `expires_in`，并在返回时读取 `refresh_expires_in`。请根据这些数值安排续期，并为时钟偏差和在途请求预留安全余量。
 
-### 6. 最新全球授权码联调实际经过了哪些入口？
+## 9. Token 刷新成功后应如何处理？
 
-2026-03-27 全球环境记录的实际链路是：
+立即、原子化地替换已保存的 access token 与 refresh token。之后所有受保护请求都必须使用新返回的 access token。
 
-- 前端登录页：`GET /#/login?...`
-- 用户登录提交：`POST /prod-api/login`
-- 授权码步骤：`GET /prod-api/auth`
-- token 兑换：`POST /oauth2/token`
+## 10. 为什么 `readDeviceDispatch.data` 有多种结构？
 
-### 7. 设备级接口到底该用 `deviceSn` 还是 `datalogSn`？
+返回结构由 `setType` 决定：
 
-应使用 `deviceSn`。
+- 数组：`time_slot_charge_discharge`
+- 对象：`duration_and_power_charge_discharge`、`export_limit`
+- 数值：`enable_control`、`active_power_derating_percentage`、`active_power_percentage`、`remote_charge_discharge_power`
 
-- 最新全球记录返回的是 `deviceSn=WCK6584462`、`datalogSn=ZGQ0E820UH`。
-- 同一轮联调用 `deviceSn` 调了 `bindDevice`、`getDeviceInfo`、`getDeviceData`、`unbindDevice`。
+请根据请求使用的 `setType` 选择解析器，不要假设 `data` 始终为字符串。
 
-### 8. `bindDevice` 成功时为什么会返回 `data: 1`？
+## 11. 调度超时后应如何重试？
 
-这是最新全球实测里出现过的成功形态。
-
-- 该次成功响应为 `{"code":0,"data":1,"message":"SUCCESSFUL_OPERATION"}`。
-- 实现上应以 `code=0` 作为成功判断，不要把成功结果写死成只接受 `data: null`。
-
-### 9. TTL 逻辑能不能直接照抄 `7200` 这类示例值？
-
-不建议。
-
-- 最新全球 `token` 实测返回 `expires_in=604733`、`refresh_expires_in=2585309`。
-- 随后的 `refresh` 实测返回 `expires_in=604800`、`refresh_expires_in=2592000`。
-- 代码里应始终读取接口实时返回的 TTL。
-
-### 10. `refresh` 成功后还能继续用旧 access token 吗？
-
-在最新全球联调里不能。
-
-- 2026-03-27 的 `POST /oauth2/refresh` 成功后，旧 access token 立即返回 `TOKEN_IS_INVALID`。
-- 后续读取和解绑调用都必须切换到 fresh token。
+调度返回超时或设备无响应时，应先遵守按设备限流要求并调用 `readDeviceDispatch`。只有回读确认目标设置未生效时，才重试原调度请求。
 
 ## 相关文档
 
+- [身份认证说明](./01_authentication.md)
 - [设备授权 API](./04_api_device_auth.md)
+- [设备调度 API](./05_api_device_dispatch.md)
 - [读取设备调度参数 API](./06_api_read_dispatch.md)
-- [设备数据查询 API](./08_api_device_data.md)
+- [全局参数](./10_global_params.md)
+- [ESS 术语表](./12_ess_terminology.md)

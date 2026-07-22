@@ -19,7 +19,6 @@ interface LocaleText {
   overviewLabel: string;
   browseLabel: string;
   navAriaLabel: string;
-  sourceFileLabel: string;
   sidebarTitle: string;
   sidebarDescription: string;
   languageLabel: string;
@@ -42,7 +41,6 @@ const LOCALE_TEXT: Record<GrowattDocLocale, LocaleText> = {
     overviewLabel: "Overview",
     browseLabel: "Browse API Docs",
     navAriaLabel: "Growatt API navigation",
-    sourceFileLabel: "Source file",
     sidebarTitle: "Growatt Open API",
     sidebarDescription: "Published bilingual Growatt Open API documentation.",
     languageLabel: "Language",
@@ -66,7 +64,6 @@ const LOCALE_TEXT: Record<GrowattDocLocale, LocaleText> = {
     overviewLabel: "总览",
     browseLabel: "浏览 API 文档",
     navAriaLabel: "Growatt API 导航",
-    sourceFileLabel: "源文件",
     sidebarTitle: "Growatt Open API",
     sidebarDescription: "Growatt Open API 中英双语公开文档。",
     languageLabel: "语言",

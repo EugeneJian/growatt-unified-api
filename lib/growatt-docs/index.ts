@@ -94,8 +94,8 @@ const APPENDIX_A_LABELS: Record<GrowattDocLocale, string> = {
 };
 
 const PROTOCOL_MAPPING_LABELS: Record<GrowattDocLocale, string> = {
-  en: "Protocol SSOT",
-  "zh-CN": "协议 SSOT",
+  en: "Protocol Mapping",
+  "zh-CN": "协议映射",
 };
 
 const APPENDIX_B_LABELS: Record<GrowattDocLocale, string> = {
@@ -109,8 +109,8 @@ const APPENDIX_C_LABELS: Record<GrowattDocLocale, string> = {
 };
 
 const APPENDIX_D_LABELS: Record<GrowattDocLocale, string> = {
-  en: "Appendix D OpenAPI Product Support Scope",
-  "zh-CN": "\u9644\u5f55 D OpenAPI \u4ea7\u54c1\u652f\u6301\u8303\u56f4",
+  en: "Appendix D Supported Inverter Models",
+  "zh-CN": "附录 D 支持的逆变器型号",
 };
 
 export interface GrowattDocMeta {

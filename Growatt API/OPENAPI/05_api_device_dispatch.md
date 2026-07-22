@@ -47,14 +47,14 @@ stateDiagram-v2
 
 ## Request Parameters
 
-| Parameter | Vendor-table Type | Required | Description |
+| Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
 | `deviceSn` | string | Yes | Device SN |
 | `setType` | string | Yes | Parameter enum, for example `export_limit` |
-| `value` | string | Yes | Parameter value. The vendor table says `string`, but the actual payload shape depends on `setType` and may be an array, object, or scalar number. See [Global Parameters](./10_global_params.md) |
+| `value` | array \| object \| number | Yes | Parameter value; its shape depends on `setType`. See [Global Parameters](./10_global_params.md) |
 | `requestId` | string | Yes | Unique request identifier, 32-character string |
 
-## Public `setType` Surface
+## Supported `setType` Values
 
 | `setType` | `value` shape | Summary |
 | :--- | :--- | :--- |
@@ -97,10 +97,10 @@ stateDiagram-v2
 
 ## Response Parameters
 
-| Parameter | Vendor-table Type | Description |
+| Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure |
-| `data` | string | The vendor table says `string`, while both success and failure samples return `null` |
+| `data` | null | No response payload for the documented result cases |
 | `message` | string | Response description |
 
 ## Response Format Example
@@ -124,10 +124,11 @@ stateDiagram-v2
 | Parameter-setting failed | `6` | `null` | `PARAMETER_SETTING_FAILED` |
 | Too many requests | `105` | `null` | `TOO_MANY_REQUEST` |
 
-## Implementation Note
+## Customer Implementation Guidance
 
-- The vendor table labels `value` as `string`, but the published public `setType` surface includes array, object, and scalar-number payloads.
-- This page keeps the vendor table wording while documenting the actual payload shapes published in the latest dated baseline snapshot.
+- Select the `value` shape from the `setType` table; do not serialize arrays or objects into JSON strings.
+- Generate a unique `requestId` for every dispatch request.
+- Treat `code=0` as success and use `readDeviceDispatch` to reconcile the effective setting when a response times out.
 
 ## Related Documentation
 

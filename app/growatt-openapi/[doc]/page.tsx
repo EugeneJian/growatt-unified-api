@@ -60,8 +60,8 @@ export default async function GrowattOpenApiDocPage({
       activeSlug={currentDocEn.slug}
       headingByLocale={{ en: currentDocEn.title, "zh-CN": currentDocZh.title }}
       subheadingByLocale={{
-        en: `Source file: ${currentDocEn.fileName}`,
-        "zh-CN": `源文件：${currentDocZh.fileName}`,
+        en: "Growatt Open API endpoint and integration reference.",
+        "zh-CN": "Growatt Open API 接口与集成参考。",
       }}
       contentMarkdownByLocale={{
         en: currentDocEn.displayMarkdown,

@@ -46,6 +46,17 @@ const UNMASKED_AUTH_CODE_PATTERN =
 const NON_PLACEHOLDER_CLIENT_ID_PATTERN =
   /"client_id"\s*:\s*"(?!<example_client_id>")[^"]+"/;
 
+const CUSTOMER_DOC_FORBIDDEN_MARKERS = [
+  { label: "internal test-report path", pattern: /(?:^|[\s`(])test\//i },
+  { label: "internal login endpoint", pattern: /\/prod-api\//i },
+  { label: "non-customer test domain", pattern: /opencloud-test/i },
+  { label: "real integration device identifier", pattern: /\b(?:WCK6584462|ZGQ0E820UH)\b/ },
+  { label: "internal test observation heading", pattern: /(?:Integration Observations|Recent Live Observations|联调观察|近期实测观察)/i },
+  { label: "unfinished publication marker", pattern: /(?:\bTBD\b|Pending Confirmation|待确认)/i },
+  { label: "internal validation code", pattern: /\bV00[1-7]\b/ },
+  { label: "editorial source comparison", pattern: /(?:vendor[- ]table|厂商表格)/i },
+  { label: "generation instruction", pattern: /(?:AI生成Mermaid|Mermaid SSOT)/i },
+];
 function removeHash(url) {
   const hashIndex = url.indexOf("#");
   if (hashIndex === -1) {
@@ -104,6 +115,14 @@ function scanOfficialDocForForbiddenMarkers(content, relativePath, label) {
       errors.push(
         `[${label}] Official docs must use a placeholder for client_id examples: ${relativePath}:${index + 1}`,
       );
+    }
+
+    for (const marker of CUSTOMER_DOC_FORBIDDEN_MARKERS) {
+      if (marker.pattern.test(line)) {
+        errors.push(
+          `[${label}] Customer docs must not expose ${marker.label}: ${relativePath}:${index + 1}`,
+        );
+      }
     }
   }
 
