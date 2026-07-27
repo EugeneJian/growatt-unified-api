@@ -24,6 +24,7 @@ const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "12_ess_terminology.md";
 const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "13_ess_semantic_model.md";
 const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME =
   "14_appendix_d_openapi_support_scope.md";
+const GROWATT_APPENDIX_E_API_RATE_LIMITING_FILE_NAME = "15_api_rate_limiting.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
 
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
@@ -32,6 +33,7 @@ export const GROWATT_APPENDIX_TERMINOLOGY_SLUG = "appendix-terminology";
 export const GROWATT_SEMANTIC_MODEL_SLUG = "semantic-model";
 export const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG =
   "appendix-d-openapi-support-scope";
+export const GROWATT_APPENDIX_E_API_RATE_LIMITING_SLUG = "appendix-e-api-rate-limiting";
 export const GROWATT_PROTOCOL_MAPPING_SLUG = "protocol-mapping";
 export const GROWATT_PROTOCOL_MAPPING_HREF =
   "/growatt-openapi/protocol-mapping/index.html";
@@ -111,6 +113,11 @@ const APPENDIX_C_LABELS: Record<GrowattDocLocale, string> = {
 const APPENDIX_D_LABELS: Record<GrowattDocLocale, string> = {
   en: "Appendix D Supported Inverter Models",
   "zh-CN": "附录 D 支持的逆变器型号",
+};
+
+const APPENDIX_E_LABELS: Record<GrowattDocLocale, string> = {
+  en: "Appendix E API Rate Limiting",
+  "zh-CN": "附录 E 接口限流说明",
 };
 
 export interface GrowattDocMeta {
@@ -202,6 +209,14 @@ export function getGrowattSpecialPages(): GrowattSpecialPageNavMeta[] {
       },
       placement: "afterDocs",
     },
+    {
+      slug: GROWATT_APPENDIX_E_API_RATE_LIMITING_SLUG,
+      labelByLocale: {
+        en: APPENDIX_E_LABELS.en,
+        "zh-CN": APPENDIX_E_LABELS["zh-CN"],
+      },
+      placement: "afterDocs",
+    },
   ];
 }
 
@@ -251,6 +266,10 @@ function buildGrowattInternalSlugMap(fileNames: string[]): Map<string, string> {
     GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME,
     GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
   );
+  slugByFileName.set(
+    GROWATT_APPENDIX_E_API_RATE_LIMITING_FILE_NAME,
+    GROWATT_APPENDIX_E_API_RATE_LIMITING_SLUG,
+  );
 
   return slugByFileName;
 }
@@ -279,7 +298,8 @@ export const getGrowattDocMetas = cache(
           fileName !== README_FILE_NAME &&
           fileName !== GROWATT_TERMINOLOGY_DOC_FILE_NAME &&
           fileName !== GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME &&
-          fileName !== GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME,
+          fileName !== GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME &&
+          fileName !== GROWATT_APPENDIX_E_API_RATE_LIMITING_FILE_NAME,
       )
       .sort(compareDocFiles);
 
@@ -447,6 +467,28 @@ export const getGrowattAppendixDOpenApiSupportScopePage = cache(
       slug: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_SLUG,
       fileName: GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME,
       title: APPENDIX_D_LABELS[locale],
+      markdown,
+      displayMarkdown,
+      html,
+    };
+  },
+);
+
+export const getGrowattAppendixEApiRateLimitingPage = cache(
+  async (locale: GrowattDocLocale = "en"): Promise<GrowattSpecialMarkdownPage> => {
+    const [docMetas, markdown] = await Promise.all([
+      getGrowattDocMetas(locale),
+      readOpenApiFile(GROWATT_APPENDIX_E_API_RATE_LIMITING_FILE_NAME, locale),
+    ]);
+
+    const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
+    const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
+    const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
+
+    return {
+      slug: GROWATT_APPENDIX_E_API_RATE_LIMITING_SLUG,
+      fileName: GROWATT_APPENDIX_E_API_RATE_LIMITING_FILE_NAME,
+      title: APPENDIX_E_LABELS[locale],
       markdown,
       displayMarkdown,
       html,

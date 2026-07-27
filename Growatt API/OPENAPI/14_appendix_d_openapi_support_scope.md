@@ -1,6 +1,6 @@
 # Appendix D OpenAPI Supported Inverter Models
 
-**Version**: v1.0
+**Version**: v1.1
 
 **Status**: Customer Integration Reference
 
@@ -33,7 +33,7 @@ Model names are shown as code labels, one model per line.
 
 ## 3. Supported Inverter / PCE Models
 
-This matrix contains 12 confirmed inverter / PCE model groups. Use the constraints and notes in each row when determining deployment compatibility.
+This matrix contains 14 confirmed inverter / all-in-one ESS model groups. Use the constraints and notes in each row when determining deployment compatibility.
 
 ### 3.1 Inverters / PCE
 
@@ -104,5 +104,5 @@ Published model difference: SPH models do not provide `maxChargePower` or `maxDi
 - [Device Information Query API](./07_api_device_info.md)
 - [Device Data Query API](./08_api_device_data.md)
 - [Device Dispatch API](./05_api_device_dispatch.md)
-- [Appendix E API Rate Limiting](./15_api_rate_limiting.md)
 - [Global Parameters](./10_global_params.md)
+- [Appendix E API Rate Limiting](./15_api_rate_limiting.md)
