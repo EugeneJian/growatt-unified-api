@@ -71,7 +71,7 @@ This matrix contains 12 confirmed inverter / PCE model groups. Use the constrain
 | Reference ID | Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | AIO-001 | MINA | `MINA 3-10KTL-HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
-| AIO-002 | MODA | `MODA 4-15KTL3-HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
+| AIO-002 | MODA | `MODA 4-15KTL3 HU` `MODA 10-15KTL3 H` `MODA 10-15KTL3 HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 
 ---
 
