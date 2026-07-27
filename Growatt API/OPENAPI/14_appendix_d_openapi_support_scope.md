@@ -92,9 +92,7 @@ Published model difference: SPH models do not provide `maxChargePower` or `maxDi
 
 | Date | Change |
 | :--- | :--- |
-| `2026-07-27` | Restructured document: moved VPP integration exclusions to standalone section 4; renumbered original sections 4-5 to 5-6 |
-| `2026-07-27` | Expanded MODA series models: added MODA 10-15KTL3 H and MODA 10-15KTL3 HU to AIO-002; normalized naming format |
-| `2026-07-27` | Added all-in-one energy storage support: created section 3.2 for MINA and MODA series; model group count updated from 10 to 12 |
+| `2026-07-27` | 1) Restructured document: moved VPP integration exclusions to standalone section 4; renumbered original sections 4-5 to 5-6; 2) Expanded MODA series models: added MODA 10-15KTL3 H and MODA 10-15KTL3 HU to AIO-002; normalized naming format; 3) Added all-in-one energy storage support: created section 3.2 for MINA and MODA series; model group count updated from 10 to 12 |
 | `2026-07-23` | Added VPP integration exclusion guidance: clarified SPA/WIT/WIS series and PV-only inverters do not support VPP dispatch |
 | `2026-07-23` | Removed all SPA, WIT, WIS models; updated series names and renumbered INV references; count from 15 to 10 |
 | `2026-07-22` | Published the inverter-only support matrix with compact status icons, SPA/SPH field-limitation indicators, and one-model-per-line labels |
