@@ -33,7 +33,7 @@ Model names are shown as code labels, one model per line.
 
 ## 3. Supported Inverter / PCE Models
 
-This matrix contains 14 confirmed inverter / all-in-one ESS model groups. Use the constraints and notes in each row when determining deployment compatibility.
+This matrix contains 12 confirmed inverter / all-in-one ESS model groups. Use the constraints and notes in each row when determining deployment compatibility.
 
 ### 3.1 Inverters / PCE
 
