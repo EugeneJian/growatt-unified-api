@@ -77,7 +77,6 @@ sequenceDiagram
         "ppv": 14.30,
         "epvToday": 0.00,
         "epvTotal": 0.00,
-        "smartLoadPower": 0.00,
         "status": 6
     },
     "dataType": "dfcData"
@@ -110,7 +109,6 @@ sequenceDiagram
 | `data.epvToday` | double | PV generation today in kWh | `0.00` |
 | `data.epvTotal` | double | Total PV generation in kWh | `0.00` |
 | `data.payLoadPower` | double | Total load power (calculated) in W | `14.50` |
-| `data.smartLoadPower` | double | Smart-load power when the device reports a dedicated smart-load channel, unit: W | `0.00` |
 | `data.batteryStatus` | int | Overall battery status | `0` |
 | `data.batPower` | double | Battery power. Positive = charging, negative = discharging, `0` = idle, unit: W | `0.00` |
 | `data.maxChargePower` | int | Maximum battery charge power in W. Not available on SPA/SPH models | `2344` |

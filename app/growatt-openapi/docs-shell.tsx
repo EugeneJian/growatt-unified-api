@@ -177,7 +177,7 @@ function DocsNav({
           className={`growatt-docs-nav-link ${activeSlug === doc.slug ? "active" : ""}`.trim()}
           href={withLocaleHref(`/growatt-openapi/${doc.slug}`)}
         >
-          {doc.fileName} - {doc.title}
+          {doc.fileName === "15_api_rate_limiting.md" ? doc.title : `${doc.fileName} - ${doc.title}`}
         </Link>
       ))}
       {afterDocsPages.length > 0 && <div className="growatt-docs-nav-divider" aria-hidden="true" />}

@@ -34,8 +34,7 @@ This page standardizes the bilingual ESS terminology used in Growatt Open API do
 | PV power | PV 功率 | PV power | `ppv` | Use for device-local PV telemetry. In AC-couple topologies, it remains auxiliary and does not replace external-generation boundary semantics. |
 | Total PV generation | PV 累计发电量 | total PV generation | `epvTotal` | Keep units in the surrounding field description. |
 | Export limit | 防逆流 | Export Limit | `export_limit` | Preferred customer-facing term for API design and VPP contexts; keep the API key unchanged. |
-| Load power | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | Keep the published key spelling unchanged in field names. |
-| Smart-load power | Smart Load 负载功率 | smart-load power | `smartLoadPower` | Use for the dedicated smart-load channel when it is present. |
+| Load power | 负载功率 | load power | `payLoadPower` | Keep the published key spelling unchanged in field names. |
 | Operating priority | 工作优先级 | operating priority | `priority` | Keep the value labels `load priority`, `battery priority`, and `grid priority`. |
 
 ## Related Documentation
