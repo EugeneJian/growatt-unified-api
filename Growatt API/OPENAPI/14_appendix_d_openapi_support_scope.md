@@ -19,15 +19,6 @@
 
 ---
 
-## 1.1 VPP Integration Exclusions
-
-The following product categories are excluded from VPP integration scope:
-
-- **SPA, WIT, WIS series and balcony storage products**: These residential storage inverter models and balcony storage systems do not support VPP dispatch capabilities.
-- **PV-only inverters**: Not recommended for VPP integration as they lack battery interface and cannot provide dispatchable storage services.
-
----
-
 ## 2. Capability Legend
 
 | Icon | Location | Meaning |
@@ -75,7 +66,16 @@ This matrix contains 12 confirmed inverter / PCE model groups. Use the constrain
 
 ---
 
-## 4. Customer Compatibility Check
+## 4. VPP Integration Exclusions
+
+The following product categories are excluded from VPP integration scope:
+
+- **SPA, WIT, WIS series and balcony storage products**: These residential storage inverter models and balcony storage systems do not support VPP dispatch capabilities.
+- **PV-only inverters**: Not recommended for VPP integration as they lack battery interface and cannot provide dispatchable storage services.
+
+---
+
+## 5. Customer Compatibility Check
 
 For a deployment-specific decision:
 
@@ -88,7 +88,7 @@ For a deployment-specific decision:
 
 Published model difference: SPH models do not provide `maxChargePower` or `maxDischargePower`.
 
-## 5. Change Record
+## 6. Change Record
 
 | Date | Change |
 | :--- | :--- |
