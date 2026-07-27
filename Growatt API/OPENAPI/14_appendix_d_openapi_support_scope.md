@@ -19,6 +19,15 @@
 
 ---
 
+## 1.1 VPP Integration Exclusions
+
+The following product categories are excluded from VPP integration scope:
+
+- **SPA, WIT, WIS series and balcony storage products**: These residential storage inverter models and balcony storage systems do not support VPP dispatch capabilities.
+- **PV-only inverters**: Not recommended for VPP integration as they lack battery interface and cannot provide dispatchable storage services.
+
+---
+
 ## 2. Capability Legend
 
 | Icon | Location | Meaning |
