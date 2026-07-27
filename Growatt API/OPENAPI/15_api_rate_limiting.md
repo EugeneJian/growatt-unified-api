@@ -1,4 +1,4 @@
-# API Rate Limiting
+# Appendix E API Rate Limiting
 
 ## Rate Limiting Modes
 

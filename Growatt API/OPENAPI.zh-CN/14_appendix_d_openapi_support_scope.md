@@ -104,5 +104,5 @@
 - [设备信息查询 API](./07_api_device_info.md)
 - [设备数据查询 API](./08_api_device_data.md)
 - [设备调度 API](./05_api_device_dispatch.md)
-- [接口限流说明](./15_api_rate_limiting.md)
+- [附录 E 接口限流说明](./15_api_rate_limiting.md)
 - [全局参数](./10_global_params.md)

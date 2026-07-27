@@ -104,5 +104,5 @@ Published model difference: SPH models do not provide `maxChargePower` or `maxDi
 - [Device Information Query API](./07_api_device_info.md)
 - [Device Data Query API](./08_api_device_data.md)
 - [Device Dispatch API](./05_api_device_dispatch.md)
-- [API Rate Limiting](./15_api_rate_limiting.md)
+- [Appendix E API Rate Limiting](./15_api_rate_limiting.md)
 - [Global Parameters](./10_global_params.md)
