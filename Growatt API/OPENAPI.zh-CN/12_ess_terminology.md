@@ -34,8 +34,7 @@
 | PV 功率 | PV 功率 | PV power | `ppv` | 用于设备本地 PV 遥测；在 AC-couple 拓扑中它仍是辅助信号，不替代外部发电边界语义。 |
 | PV 累计发电量 | PV 累计发电量 | total PV generation | `epvTotal` | 单位在字段说明上下文中保留。 |
 | 防逆流 | 防逆流 | Export Limit | `export_limit` | 客户文档与 API 设计语境优先使用 `Export Limit`，API 字段名保持不变。 |
-| 负载功率 | 负载功率 | load power | `payLoadPower`, `smartLoadPower` | 字段名保持已发布的原拼写。 |
-| Smart Load 负载功率 | Smart Load 负载功率 | smart-load power | `smartLoadPower` | 用于设备上报独立 smart-load 通道功率的场景。 |
+| 负载功率 | 负载功率 | load power | `payLoadPower` | 字段名保持已发布的原拼写。 |
 | 工作优先级 | 工作优先级 | operating priority | `priority` | 值标签继续使用 `load priority`、`battery priority`、`grid priority`。 |
 
 ## 相关文档

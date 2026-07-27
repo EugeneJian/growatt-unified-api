@@ -77,7 +77,6 @@ sequenceDiagram
         "ppv": 14.30,
         "epvToday": 0.00,
         "epvTotal": 0.00,
-        "smartLoadPower": 0.00,
         "status": 6
     },
     "dataType": "dfcData"
@@ -110,7 +109,6 @@ sequenceDiagram
 | `data.epvToday` | double | PV 今日发电量，单位 kWh | `0.00` |
 | `data.epvTotal` | double | PV 总发电能量，单位 kWh | `0.00` |
 | `data.payLoadPower` | double | 总负载功率（计算值），单位 W | `14.50` |
-| `data.smartLoadPower` | double | 设备具备独立 smart load 通道时上报的负载功率，单位 W | `0.00` |
 | `data.batteryStatus` | int | 电池总体状态 | `0` |
 | `data.batPower` | double | 电池总充/放电功率（正值充电，负值放电，0 为空闲），单位 W | `0.00` |
 | `data.maxChargePower` | int | 电池最大充电功率，单位 W；SPA/SPH 机型暂不支持 | `2344` |
