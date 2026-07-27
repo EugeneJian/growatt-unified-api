@@ -40,7 +40,7 @@ This matrix contains 12 confirmed inverter / PCE model groups. Use the constrain
 #### 3.1.1 Residential Hybrid Inverters
 
 | Reference ID | Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| :---: | :---: | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | INV-001 | SPH TL | `SPH 3000-6000TL BL` `SPH 3000-6000 TL BL-UP` `SPH 6000 TL US` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH models do not provide `maxChargePower` or `maxDischargePower` |
 | INV-002 | SPH TL-HU | `SPH 3000-6000TL HU` `SPH 3000-6000TL HUB` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH models do not provide `maxChargePower` or `maxDischargePower` |
 | INV-003 | SPH TL3-UP | `SPH 4000-10000TL3 BH` `SPH 4000-10000TL3 BH-UP` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH models do not provide `maxChargePower` or `maxDischargePower` |
@@ -50,7 +50,7 @@ This matrix contains 12 confirmed inverter / PCE model groups. Use the constrain
 #### 3.1.2 Residential Battery-Ready Inverters
 
 | Reference ID | Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| :---: | :---: | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | INV-006 | MIN-XH | `MIN 2500-6000TL-XH2` `MIN 2500-6000TL-XH/XE/XA` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 | INV-007 | MIN-XH US | `MIN 3000-11400TL-XH US` `MIN 3000-11400TL-XH2 US` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 | INV-008 | MIN-XH JP | `MIN 6000TL-XH-JP` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
@@ -60,7 +60,7 @@ This matrix contains 12 confirmed inverter / PCE model groups. Use the constrain
 ### 3.2 All-in-one Energy Storage
 
 | Reference ID | Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| :---: | :---: | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | AIO-001 | MINA | `MINA 3-10KTL-HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 | AIO-002 | MODA | `MODA 4-15KTL3 HU` `MODA 10-15KTL3 H` `MODA 10-15KTL3 HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 
@@ -92,6 +92,10 @@ Published model difference: SPH models do not provide `maxChargePower` or `maxDi
 
 | Date | Change |
 | :--- | :--- |
+| `2026-07-27` | Restructured document: moved VPP integration exclusions to standalone section 4; renumbered original sections 4-5 to 5-6 |
+| `2026-07-27` | Expanded MODA series models: added MODA 10-15KTL3 H and MODA 10-15KTL3 HU to AIO-002; normalized naming format |
+| `2026-07-27` | Added all-in-one energy storage support: created section 3.2 for MINA and MODA series; model group count updated from 10 to 12 |
+| `2026-07-23` | Added VPP integration exclusion guidance: clarified SPA/WIT/WIS series and PV-only inverters do not support VPP dispatch |
 | `2026-07-23` | Removed all SPA, WIT, WIS models; updated series names and renumbered INV references; count from 15 to 10 |
 | `2026-07-22` | Published the inverter-only support matrix with compact status icons, SPA/SPH field-limitation indicators, and one-model-per-line labels |
 | `2026-07-20` | Updated inverter / PCE entries from the DTC model register |
