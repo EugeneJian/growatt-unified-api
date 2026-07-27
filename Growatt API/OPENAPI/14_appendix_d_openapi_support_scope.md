@@ -42,7 +42,7 @@ Model names are shown as code labels, one model per line.
 
 ## 3. Supported Inverter / PCE Models
 
-This matrix contains 10 confirmed inverter / PCE model groups. Use the constraints and notes in each row when determining deployment compatibility.
+This matrix contains 12 confirmed inverter / PCE model groups. Use the constraints and notes in each row when determining deployment compatibility.
 
 ### 3.1 Inverters / PCE
 
@@ -65,6 +65,13 @@ This matrix contains 10 confirmed inverter / PCE model groups. Use the constrain
 | INV-008 | MIN-XH JP | `MIN 6000TL-XH-JP` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 | INV-009 | MOD-XH/MID-XH | `MOD 3-10KTL3-XH/BP` `MID 11-30KTL3-XH` `MID 8-15KTL3-XHL/JP` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 | INV-010 | MOD/MID-HU | `MOD 3-15KTL3-HU` `MID 33-50KTL3-HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
+
+### 3.2 All-in-one Energy Storage
+
+| Reference ID | Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| AIO-001 | MINA | `MINA 3-10KTL-HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
+| AIO-002 | MODA | `MODA 4-15KTL3-HU` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 
 ---
 
