@@ -28,11 +28,28 @@ flowchart TD
 | `authorization_code` | Growatt 终端用户授权您的应用访问设备 | 支持 `POST /oauth2/getDeviceList` |
 | `client_credentials` | 平台后端使用获发的 `client_id` 与 `client_secret` 认证 | 绑定设备时必须提供 `pinCode` |
 
+## 授权码模式前置要求
+
+使用 `authorization_code` 授权模式时，您必须在向 Growatt 注册应用时提供 **回调URL（redirectURL）**。这是一个 HTTPS 端点，终端用户完成授权流程后，Growatt 会携带授权信息将页面重定向到该地址。
+
+**回调URL（redirectURL）格式要求：**
+- 生产环境必须使用 HTTPS
+- 必须是完整的 URL，包含协议、域名和路径
+- 在 token 交换时传入的 `redirect_uri` 参数必须与此完全一致
+
+**redirectURL 示例：**
+```
+https://your-domain.com/oauth/redirect
+https://api.your-service.com/integrations/growatt/auth
+```
+
+未注册 redirectURL 时，无法启动授权码流程。
+
 ## Token 规则
 
 - 两种模式都通过 `POST /oauth2/token` 获取 token。
 - 必须传入与客户端登记信息完全一致的 `redirect_uri`。
-- 授权码模式还需传入回调收到的 authorization `code`。
+- 授权码模式还需传入重定向返回的 authorization `code`。
 - 按实际响应保存 token 字段；仅在响应返回 `refresh_token` 时保存并使用它。
 - 只有上一次 token 响应包含 `refresh_token` 时，才调用 `POST /oauth2/refresh`。
 - 每次从响应读取 `expires_in` 和 `refresh_expires_in`，不要固化示例值。
@@ -58,7 +75,7 @@ sequenceDiagram
 
     User->>App: 发起授权
     App->>Growatt: 打开 Growatt 授权入口
-    Growatt-->>Backend: 携带授权码回调
+    Growatt-->>Backend: 携带授权码重定向
     Backend->>Growatt: POST /oauth2/token
     Growatt-->>Backend: 返回 token 响应
     Backend->>Growatt: 携带 bearer token 调用 API
@@ -73,7 +90,7 @@ sequenceDiagram
 - `client_secret`、access token 与 refresh token 只能保存在可信后端。
 - 不得在 URL、客户端代码、截图或应用日志中记录凭证与 token。
 - 校验 OAuth `state`，并将其与发起授权的用户会话绑定。
-- 正式接入仅允许使用预先登记的 HTTPS 回调地址。
+- 正式接入仅允许使用预先登记的 HTTPS 回调URL。
 
 ## 后续步骤
 
