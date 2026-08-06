@@ -17,13 +17,6 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## 支持的设备机型
-
-- 全系储能逆变器：
-  - SPA 系列
-  - SPH 系列（包括 SPH TL-HUB）
-  - MOD 系列（包括 MOD TL3-XH）
-
 ## HTTP 头部参数及说明
 
 | 参数名 | 必选 | 类型 | 说明 | 示例 |
@@ -34,21 +27,17 @@
 
 | 参数名 | 必选 | 类型 | 说明 | 示例 |
 | :--- | :--- | :--- | :--- | :--- |
-| `deviceSn` | 是 | string | 设备唯一序列号（SN） | `"DEVICE_SN_1"` |
+| `deviceSn` | 是 | string | 设备唯一序列号（SN） | `"PGP0A12367"` |
+| `setType` | 是 | string | 请求类型 | `"duration_and_power_charge_discharge"` |
+| `requestId` | 是 | string | 唯一请求标识符 | `"20260806180530123abcdef123456789"` |
 
 ## 接口返回参数和说明
 
 | 参数名 | 类型 | 说明 | 示例 |
 | :--- | :--- | :--- | :--- |
 | `code` | int | 接口返回状态码，`0` 成功，其余失败 | `0` |
-| `data` | object | 运行模式数据对象；成功时返回 | `{...}` |
+| `data` | string | 当前电池运行模式值 | `"IMPORT_FOCUS"` |
 | `message` | string | 返回说明 | `"SUCCESSFUL_OPERATION"` |
-
-### Data 对象字段说明
-
-| 字段名 | 类型 | 说明 | 可能取值 |
-| :--- | :--- | :--- | :--- |
-| `operationMode` | string | 当前电池运行模式 | 见下方运行模式取值说明 |
 
 ## 运行模式取值说明
 
@@ -60,13 +49,13 @@
 | `EXPORT_FOCUS` | 优先放电模式：优先放电给家庭负载，多余能量可向电网输出（如允许） | VPP 调度、需求响应、削峰填谷 |
 | `IDLE` | 待机模式：阻止电池充放电，保持当前电量（SoC） | 电池保护、锁定 SoC、策略切换过渡 |
 
-> **说明**：电池是否可向电网输出取决于当地法规和并网协议。
-
 ## 请求示例
 
 ```json
 {
-    "deviceSn": "DEVICE_SN_1"
+  "deviceSn": "PGP0A12367",
+  "setType": "duration_and_power_charge_discharge",
+  "requestId": "${__time(yyyyMMddHmmssSSS)}${__RandomString(15,15)}"
 }
 ```
 
@@ -74,23 +63,11 @@
 
 ```json
 {
-    "code": 0,
-    "data": {
-        "operationMode": "TIME_OF_USE"
-    },
-    "message": "SUCCESSFUL_OPERATION"
+  "code": 0,
+  "data": "IMPORT_FOCUS",
+  "message": "SUCCESSFUL_OPERATION"
 }
 ```
-
-## 返回场景说明
-
-| 场景 | `code` | `message` |
-| :--- | :--- | :--- |
-| 查询成功 | `0` | `SUCCESSFUL_OPERATION` |
-| Token 无效或过期 | `2` | `TOKEN_EXPIRED_OR_INVALID` |
-| 设备未授权 | `12` | `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` |
-| 设备离线 | `5` | `DEVICE_OFFLINE` |
-| 请求过于频繁 | `105` | `TOO_MANY_REQUEST` |
 
 ## 客户端实现指南
 

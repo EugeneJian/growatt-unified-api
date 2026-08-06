@@ -17,13 +17,6 @@
 - `Content-Type: application/json`
 - `Authorization: Bearer <token>`
 
-## Supported Device Models
-
-- All energy storage inverter series:
-  - SPA Series
-  - SPH Series (including SPH TL-HUB)
-  - MOD Series (including MOD TL3-XH)
-
 ## HTTP Header Parameters
 
 | Parameter | Required | Type | Description | Example |
@@ -34,21 +27,17 @@
 
 | Parameter | Required | Type | Description | Example |
 | :--- | :--- | :--- | :--- | :--- |
-| `deviceSn` | Yes | string | Unique device serial number (SN) | `"DEVICE_SN_1"` |
+| `deviceSn` | Yes | string | Unique device serial number (SN) | `"PGP0A12367"` |
+| `setType` | Yes | string | Request type | `"duration_and_power_charge_discharge"` |
+| `requestId` | Yes | string | Unique request identifier | `"20260806180530123abcdef123456789"` |
 
 ## Response Parameters
 
 | Parameter | Type | Description | Example |
 | :--- | :--- | :--- | :--- |
 | `code` | int | `0` means success; any other value means failure | `0` |
-| `data` | object | Operation mode data object; returned on success | `{...}` |
+| `data` | string | Current battery operation mode value | `"IMPORT_FOCUS"` |
 | `message` | string | Response description | `"SUCCESSFUL_OPERATION"` |
-
-### Data Object Fields
-
-| Field | Type | Description | Possible Values |
-| :--- | :--- | :--- | :--- |
-| `operationMode` | string | Current battery operation mode | See Operation Mode Values below |
 
 ## Operation Mode Values
 
@@ -60,13 +49,13 @@
 | `EXPORT_FOCUS` | Discharge priority mode: prioritize discharging battery to household loads, with surplus energy potentially exported to grid | VPP dispatch, demand response, peak shaving |
 | `IDLE` | Idle mode: prevent battery charge or discharge, maintain current state of charge (SoC) | Battery preservation, SoC locking, strategy transition protection |
 
-> **Note**: Whether the battery can export to the grid depends on local regulations and grid interconnection agreements.
-
 ## Request Example
 
 ```json
 {
-    "deviceSn": "DEVICE_SN_1"
+  "deviceSn": "PGP0A12367",
+  "setType": "duration_and_power_charge_discharge",
+  "requestId": "${__time(yyyyMMddHmmssSSS)}${__RandomString(15,15)}"
 }
 ```
 
@@ -74,23 +63,11 @@
 
 ```json
 {
-    "code": 0,
-    "data": {
-        "operationMode": "TIME_OF_USE"
-    },
-    "message": "SUCCESSFUL_OPERATION"
+  "code": 0,
+  "data": "IMPORT_FOCUS",
+  "message": "SUCCESSFUL_OPERATION"
 }
 ```
-
-## Response Cases
-
-| Scenario | `code` | `message` |
-| :--- | :--- | :--- |
-| Successful query | `0` | `SUCCESSFUL_OPERATION` |
-| Invalid or missing token | `2` | `TOKEN_EXPIRED_OR_INVALID` |
-| Device not authorized | `12` | `DEVICE_SN_DOES_NOT_HAVE_PERMISSION` |
-| Device offline | `5` | `DEVICE_OFFLINE` |
-| Too many requests | `105` | `TOO_MANY_REQUEST` |
 
 ## Customer Implementation Guidance
 
