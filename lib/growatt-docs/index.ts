@@ -20,11 +20,11 @@ const EN_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guid
 const ZH_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.zh-CN.md";
 const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-07-17.en.md";
 const ZH_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-07-17.md";
-const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "12_ess_terminology.md";
-const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "13_ess_semantic_model.md";
+const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "13_ess_terminology.md";
+const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "14_ess_semantic_model.md";
 const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME =
-  "14_appendix_d_openapi_support_scope.md";
-const GROWATT_APPENDIX_E_API_RATE_LIMITING_FILE_NAME = "15_api_rate_limiting.md";
+  "15_appendix_d_openapi_support_scope.md";
+const GROWATT_APPENDIX_E_API_RATE_LIMITING_FILE_NAME = "16_api_rate_limiting.md";
 const NUMBERED_DOC_PATTERN = /^(\d+)_([a-z0-9_]+)\.md$/i;
 
 export const GROWATT_QUICK_GUIDE_SLUG = "quick-guide";
