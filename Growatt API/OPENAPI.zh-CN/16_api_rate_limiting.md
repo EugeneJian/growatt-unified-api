@@ -14,7 +14,8 @@
 | 接口路径 | 方法名 | 限流窗口 | 限流模式 |
 |---|---|---|---|
 | `POST /oauth2/getDeviceInfo` | `getDeviceInfo` | 60s | `CLIENT_AND_DEVICE` |
-| `POST /oauth2/getDeviceData` | `getDeviceData` | 60s | `CLIENT_AND_DEVICE` |
+| `POST /oauth2/getDeviceData` | `getDeviceData` | 10s | `CLIENT_AND_DEVICE` |
+| `POST /oauth2/getDeviceOperationMode` | `getDeviceOperationMode` | 60s | `CLIENT_AND_DEVICE` |
 | `POST /oauth2/deviceDispatch` | `deviceDispatch` | 5s | `CLIENT_AND_DEVICE` |
 | `POST /oauth2/readDeviceDispatch` | `readDeviceDispatch` | 5s | `CLIENT_AND_DEVICE` |
 | `POST /oauth2/getDeviceList` | `getApiDeviceList` | 60s | `CLIENT_ONLY` |
@@ -43,6 +44,7 @@
 
 - [设备信息查询 API](./07_api_device_info.md)
 - [设备数据查询 API](./08_api_device_data.md)
+- [设备运行模式查询 API](./12_api_operation_mode.md)
 - [设备调度 API](./05_api_device_dispatch.md)
 - [读取调度 API](./06_api_read_dispatch.md)
 - [API 故障排查](./11_api_troubleshooting.md)
