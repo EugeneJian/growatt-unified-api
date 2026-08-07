@@ -28,11 +28,28 @@ flowchart TD
 | `authorization_code` | A Growatt end user grants your application access to devices | Supports `POST /oauth2/getDeviceList` |
 | `client_credentials` | A platform backend authenticates with its issued `client_id` and `client_secret` | Device binding requires `pinCode` |
 
+## Authorization Code Prerequisites
+
+To use the `authorization_code` grant type, you must provide a **redirectURL** when registering your application with Growatt. This is the HTTPS endpoint where Growatt will redirect the page with authorization information after the end user completes the authorization flow.
+
+**redirectURL format requirements:**
+- Must use HTTPS in production
+- Must be a fully qualified URL including protocol, domain, and path
+- The exact URL must match what you send in the `redirect_uri` parameter during token exchange
+
+**Example redirectURL:**
+```
+https://your-domain.com/oauth/redirect
+https://api.your-service.com/integrations/growatt/auth
+```
+
+Without a registered redirectURL, the authorization code flow cannot be initiated.
+
 ## Token Rules
 
 - Both grant types use `POST /oauth2/token`.
 - Supply the exact `redirect_uri` registered for your client.
-- In authorization-code mode, include the authorization `code` returned to your callback.
+- In authorization-code mode, include the authorization `code` returned to your redirectURL.
 - A token response always includes the fields documented for that response. Store a `refresh_token` only when one is returned.
 - Call `POST /oauth2/refresh` only when the previous token response included a `refresh_token`.
 - Read `expires_in` and `refresh_expires_in` from every response; do not hard-code example values.
@@ -73,7 +90,7 @@ sequenceDiagram
 - Keep `client_secret`, access tokens, and refresh tokens on a trusted backend.
 - Do not place credentials or tokens in URLs, client-side code, screenshots, or application logs.
 - Validate the OAuth `state` value and bind it to the initiating user session.
-- Allow only pre-registered HTTPS callback URLs in production.
+- Allow only pre-registered HTTPS redirect URLs in production.
 
 ## Next Steps
 

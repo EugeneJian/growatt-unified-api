@@ -29,9 +29,9 @@
 
 ```json
 {
-  "code": 429,
+  "code": 105,
   "data": null,
-  "message": "API-level rate limited for clientId=client***, retry after 43217ms"
+  "message": "Endpoint rate limited for clientId=client***, retry after 43217ms"
 }
 ```
 
