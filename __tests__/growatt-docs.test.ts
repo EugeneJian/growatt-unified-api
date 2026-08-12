@@ -603,8 +603,9 @@ describe("growatt docs source-of-truth loader", () => {
     expect(loaderSource).not.toContain("growatt-ess-semantic-model-preliminary-review.md");
     expect(loaderSource).toContain('const GROWATT_DOCS_ROOT_DIR = path.join(process.cwd(), "docs");');
     expect(loaderSource).toContain(
-      'const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-07-17.en.md";',
+      'RELEASE_NOTES_FILE_PATTERN',
     );
+    expect(loaderSource).toContain("buildReleaseNotesFileName");
     expect(semanticPageSource).toContain("面向客户的 ESS 遥测语义与调度解释参考。");
     expect(semanticPageSource).not.toContain("鍏紑");
   });
