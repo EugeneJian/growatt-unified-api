@@ -18,8 +18,14 @@ const ZH_OPENAPI_ROOT_DIR = path.join(GROWATT_API_ROOT_DIR, "OPENAPI.zh-CN");
 const README_FILE_NAME = "README.md";
 const EN_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.md";
 const ZH_QUICK_GUIDE_FILE_NAME = "Growatt Open API Professional Integration Guide.zh-CN.md";
-const EN_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-07-17.en.md";
-const ZH_RELEASE_NOTES_FILE_NAME = "customer-api-doc-change-note-2026-07-17.md";
+const RELEASE_NOTES_FILE_PATTERN = /^customer-api-doc-change-note-(\d{4}-\d{2}-\d{2})(?:\.en)?\.md$/;
+
+function buildReleaseNotesFileName(version: string, locale: GrowattDocLocale): string {
+  if (locale === "en") {
+    return `customer-api-doc-change-note-${version}.en.md`;
+  }
+  return `customer-api-doc-change-note-${version}.md`;
+}
 const GROWATT_TERMINOLOGY_DOC_FILE_NAME = "13_ess_terminology.md";
 const GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME = "14_ess_semantic_model.md";
 const GROWATT_APPENDIX_D_OPENAPI_SUPPORT_SCOPE_FILE_NAME =
@@ -52,8 +58,6 @@ interface LocaleSourceConfig {
   openApiRootDir: string;
   quickGuideFileName: string;
   quickGuidePath: string;
-  releaseNotesFileName: string;
-  releaseNotesPath: string;
   semanticModelFileName: string;
   overviewFallbackTitle: string;
   quickGuideFallbackTitle: string;
@@ -65,8 +69,6 @@ const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = 
     openApiRootDir: EN_OPENAPI_ROOT_DIR,
     quickGuideFileName: EN_QUICK_GUIDE_FILE_NAME,
     quickGuidePath: path.join(GROWATT_API_ROOT_DIR, EN_QUICK_GUIDE_FILE_NAME),
-    releaseNotesFileName: EN_RELEASE_NOTES_FILE_NAME,
-    releaseNotesPath: path.join(GROWATT_DOCS_ROOT_DIR, EN_RELEASE_NOTES_FILE_NAME),
     semanticModelFileName: GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
     overviewFallbackTitle: "Growatt Open API Documentation",
     quickGuideFallbackTitle: "Quick Guide",
@@ -76,8 +78,6 @@ const GROWATT_DOC_SOURCE_CONFIG: Record<GrowattDocLocale, LocaleSourceConfig> = 
     openApiRootDir: ZH_OPENAPI_ROOT_DIR,
     quickGuideFileName: ZH_QUICK_GUIDE_FILE_NAME,
     quickGuidePath: path.join(GROWATT_API_ROOT_DIR, ZH_QUICK_GUIDE_FILE_NAME),
-    releaseNotesFileName: ZH_RELEASE_NOTES_FILE_NAME,
-    releaseNotesPath: path.join(GROWATT_DOCS_ROOT_DIR, ZH_RELEASE_NOTES_FILE_NAME),
     semanticModelFileName: GROWATT_SEMANTIC_MODEL_DOC_FILE_NAME,
     overviewFallbackTitle: "Growatt Open API 文档",
     quickGuideFallbackTitle: "快速指南",
@@ -251,13 +251,18 @@ function getLocaleSourceConfig(locale: GrowattDocLocale): LocaleSourceConfig {
   return GROWATT_DOC_SOURCE_CONFIG[locale];
 }
 
-function buildGrowattInternalSlugMap(fileNames: string[]): Map<string, string> {
+function buildGrowattInternalSlugMap(
+  fileNames: string[],
+  opts?: { releaseNotesFileName?: string },
+): Map<string, string> {
   const slugByFileName = buildGrowattSlugByFileName(fileNames);
 
   slugByFileName.set(EN_QUICK_GUIDE_FILE_NAME, GROWATT_QUICK_GUIDE_SLUG);
   slugByFileName.set(ZH_QUICK_GUIDE_FILE_NAME, GROWATT_QUICK_GUIDE_SLUG);
-  slugByFileName.set(EN_RELEASE_NOTES_FILE_NAME, GROWATT_RELEASE_NOTES_SLUG);
-  slugByFileName.set(ZH_RELEASE_NOTES_FILE_NAME, GROWATT_RELEASE_NOTES_SLUG);
+
+  if (opts?.releaseNotesFileName) {
+    slugByFileName.set(opts.releaseNotesFileName, GROWATT_RELEASE_NOTES_SLUG);
+  }
 
   // Keep appendix aliases stable even though these files are not part of the numbered doc nav.
   slugByFileName.set(GROWATT_TERMINOLOGY_DOC_FILE_NAME, GROWATT_APPENDIX_TERMINOLOGY_SLUG);
@@ -385,26 +390,71 @@ export const getGrowattQuickGuide = cache(
   },
 );
 
-export const getGrowattReleaseNotesPage = cache(
-  async (locale: GrowattDocLocale = "en"): Promise<GrowattSpecialMarkdownPage> => {
+export const getGrowattReleaseNoteVersions = cache(
+  async (): Promise<string[]> => {
+    const entries = await fs.readdir(GROWATT_DOCS_ROOT_DIR, { withFileTypes: true });
+    const versions = new Set<string>();
+
+    for (const entry of entries) {
+      if (!entry.isFile()) continue;
+      const match = entry.name.match(RELEASE_NOTES_FILE_PATTERN);
+      if (match) {
+        versions.add(match[1]);
+      }
+    }
+
+    return Array.from(versions).sort((a, b) => b.localeCompare(a));
+  },
+);
+
+export const getGrowattReleaseNotesPageByVersion = cache(
+  async (
+    version: string,
+    locale: GrowattDocLocale = "en",
+  ): Promise<GrowattSpecialMarkdownPage> => {
     const sourceConfig = getLocaleSourceConfig(locale);
+    const fileName = buildReleaseNotesFileName(version, locale);
+    const filePath = path.join(GROWATT_DOCS_ROOT_DIR, fileName);
+
     const [docMetas, markdown] = await Promise.all([
       getGrowattDocMetas(locale),
-      fs.readFile(sourceConfig.releaseNotesPath, "utf8"),
+      fs.readFile(filePath, "utf8"),
     ]);
 
-    const slugByFileName = buildGrowattInternalSlugMap(docMetas.map((doc) => doc.fileName));
+    const slugByFileName = buildGrowattInternalSlugMap(
+      docMetas.map((doc) => doc.fileName),
+      { releaseNotesFileName: fileName },
+    );
     const displayMarkdown = prepareGrowattMarkdown(markdown, { slugByFileName });
     const html = await renderGrowattMarkdownToHtml(displayMarkdown, { slugByFileName });
 
     return {
       slug: GROWATT_RELEASE_NOTES_SLUG,
-      fileName: sourceConfig.releaseNotesFileName,
+      fileName,
       title: extractMarkdownTitle(markdown, sourceConfig.releaseNotesFallbackTitle),
       markdown,
       displayMarkdown,
       html,
     };
+  },
+);
+
+export const getGrowattReleaseNotesPage = cache(
+  async (locale: GrowattDocLocale = "en"): Promise<GrowattSpecialMarkdownPage> => {
+    const versions = await getGrowattReleaseNoteVersions();
+    const latestVersion = versions[0];
+    if (!latestVersion) {
+      const sourceConfig = getLocaleSourceConfig(locale);
+      return {
+        slug: GROWATT_RELEASE_NOTES_SLUG,
+        fileName: "",
+        title: sourceConfig.releaseNotesFallbackTitle,
+        markdown: "",
+        displayMarkdown: "",
+        html: "",
+      };
+    }
+    return getGrowattReleaseNotesPageByVersion(latestVersion, locale);
   },
 );
 

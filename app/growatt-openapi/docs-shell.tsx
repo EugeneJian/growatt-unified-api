@@ -94,6 +94,7 @@ interface GrowattDocsShellProps {
   contentMarkdownByLocale: Record<GrowattDocLocale, string>;
   contentHtmlByLocale: Record<GrowattDocLocale, string>;
   buildInfo?: BuildInfo;
+  headerExtra?: React.ReactNode;
 }
 
 function normalizeLocale(rawLocale: string | null | undefined): GrowattDocLocale {
@@ -203,6 +204,7 @@ export function GrowattDocsShell({
   contentMarkdownByLocale,
   contentHtmlByLocale,
   buildInfo,
+  headerExtra,
 }: GrowattDocsShellProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -332,6 +334,9 @@ export function GrowattDocsShell({
               </div>
               <CopyMarkdownButton markdown={contentMarkdown} labels={localeText.copyButton} />
             </div>
+            {headerExtra && (
+              <div className="growatt-docs-header-extra">{headerExtra}</div>
+            )}
             {buildInfo && (
               <div className="growatt-docs-header-meta">
                 <span className="build-info">

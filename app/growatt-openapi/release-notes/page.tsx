@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { GrowattDocsShell } from "../docs-shell";
+import type { GrowattDocLocale, GrowattSpecialMarkdownPage } from "@/lib/growatt-docs";
 import "../docs.css";
 import {
   getGrowattDocMetas,
-  getGrowattReleaseNotesPage,
+  getGrowattReleaseNoteVersions,
+  getGrowattReleaseNotesPageByVersion,
   getGrowattSpecialPages,
 } from "@/lib/growatt-docs";
+import { ReleaseNotesViewer } from "./release-notes-viewer";
 
 export const metadata: Metadata = {
   title: "Release Notes | Growatt Open API Docs",
@@ -15,28 +17,42 @@ export const metadata: Metadata = {
 export const dynamic = "force-static";
 
 export default async function GrowattOpenApiReleaseNotesPage() {
-  const [docsEn, docsZh, releaseNotesEn, releaseNotesZh] = await Promise.all([
+  const versions = await getGrowattReleaseNoteVersions();
+
+  const locales: GrowattDocLocale[] = ["en", "zh-CN"];
+
+  const [docsEn, docsZh] = await Promise.all([
     getGrowattDocMetas("en"),
     getGrowattDocMetas("zh-CN"),
-    getGrowattReleaseNotesPage("en"),
-    getGrowattReleaseNotesPage("zh-CN"),
   ]);
 
+  const pagesByVersion: Record<string, Record<GrowattDocLocale, GrowattSpecialMarkdownPage>> = {};
+
+  await Promise.all(
+    versions.map(async (version) => {
+      const entries = await Promise.all(
+        locales.map(async (locale) => {
+          const page = await getGrowattReleaseNotesPageByVersion(version, locale);
+          return { locale, page };
+        }),
+      );
+      const map: Record<GrowattDocLocale, GrowattSpecialMarkdownPage> = {} as Record<
+        GrowattDocLocale,
+        GrowattSpecialMarkdownPage
+      >;
+      for (const { locale, page } of entries) {
+        map[locale] = page;
+      }
+      pagesByVersion[version] = map;
+    }),
+  );
+
   return (
-    <GrowattDocsShell
+    <ReleaseNotesViewer
+      versions={versions}
       docsByLocale={{ en: docsEn, "zh-CN": docsZh }}
       specialPages={getGrowattSpecialPages()}
-      activeSlug={releaseNotesEn.slug}
-      headingByLocale={{ en: releaseNotesEn.title, "zh-CN": releaseNotesZh.title }}
-      subheadingByLocale={{
-        en: "Customer-facing version summary and website announcement entry.",
-        "zh-CN": "面向客户的版本说明与官网公告入口。",
-      }}
-      contentMarkdownByLocale={{
-        en: releaseNotesEn.displayMarkdown,
-        "zh-CN": releaseNotesZh.displayMarkdown,
-      }}
-      contentHtmlByLocale={{ en: releaseNotesEn.html, "zh-CN": releaseNotesZh.html }}
+      pagesByVersion={pagesByVersion}
     />
   );
 }
