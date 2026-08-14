@@ -1,4 +1,4 @@
-# Growatt Open API 文档变更说明（面向客户）
+# Growatt Open API 文档变更说明
 
 发布日期：2026-07-27
 

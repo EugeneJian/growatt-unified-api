@@ -103,6 +103,7 @@ sequenceDiagram
         "latitude": "22.500753663248",
         "longitude": "113.89838917200",
         "timezone": "8.0",
+        "systemId": "afcfc8f7f79e9f8137d2f8129aefd5e3",
         "dischargeCutOffSOC": 20,
         "backupCutOffSOC": 10,
         "batteryList": [
@@ -146,6 +147,7 @@ sequenceDiagram
 | `batteryCapacity` | int | 电池额定容量，单位 Wh | `5000` |
 | `batteryNominalPower` | int | 电池额定功率，单位 W | `2500` |
 | `authFlag` | boolean | 是否已授权 | `true` |
+| `systemId` | string | 电站全局唯一标识，由 Growatt 云端生成；同一电站下所有设备返回相同值，电站生命周期内保持不变 | `"afcfc8f7f79e9f8137d2f8129aefd5e3"` |
 | `siteName` | string | 设备所属站点（电站）名称 | `"SITE_NAME_1"` |
 | `latitude` | string | 站点纬度（十进制度） | `"22.500753663248"` |
 | `longitude` | string | 站点经度（十进制度） | `"113.89838917200"` |

@@ -84,12 +84,20 @@ Protected endpoints require an access token.
 | `setType` | Description | `value` format |
 | :--- | :--- | :--- |
 | `time_slot_charge_discharge` | Time-slot charging/discharging. `percentage` range `[-100,100]`; positive means charging and negative means discharging. Times use UTC, and up to 16 slots may be configured | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
-| `duration_and_power_charge_discharge` | Charge/discharge duration and power percentage. `percentage` range `[0,100]`; supported types are `selfConsumptionCommand`, `chargeOnlySelfConsumptionCommand`, `chargeCommand`, and `dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
+| `duration_and_power_charge_discharge` | Charge/discharge by duration and power percentage; see below for the `duration`, `percentage`, and `type` field values | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
 | `export_limit` | Export Limit. `exportLimitEnabled` enables the setting; `percentage` range is `[-100,100]`. Positive values apply export limiting and negative values apply forward-flow control | `{ "exportLimitEnabled": 1, "percentage": 20 }` |
 | `enable_control` | Enables or disables VPP control | `1` = enable, `0` = disable |
 | `active_power_derating_percentage` | Active-power derating percentage | Number in `[0,100]`, for example `50` |
 | `active_power_percentage` | Active-power percentage | Number in `[0,100]`, for example `60` |
 | `remote_charge_discharge_power` | Remote charge/discharge power | Number in `[-100,100]`; positive means charging and negative means discharging |
+
+### `duration_and_power_charge_discharge` Field Values
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `duration` | int | Duration in minutes. `0` means unlimited; `1~1440` minutes controls by the set duration |
+| `percentage` | int | Percentage of rated battery charge/discharge power, range `[-100,100]`; positive means charging and negative means discharging |
+| `type` | string | Command type: `selfConsumptionCommand`, `chargeOnlySelfConsumptionCommand`, `chargeCommand`, or `dischargeCommand`; the first two charge/discharge at the maximum available power by default, in which case `percentage` is ignored |
 
 ## Read-Back Shapes by `setType`
 

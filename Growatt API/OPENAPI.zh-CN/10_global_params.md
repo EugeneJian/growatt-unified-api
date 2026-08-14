@@ -84,12 +84,20 @@ sequenceDiagram
 | `setType` | 说明 | `value` 格式 |
 | :--- | :--- | :--- |
 | `time_slot_charge_discharge` | 分时段充放电。`percentage` 范围 `[-100,100]`，正值充电、负值放电；时间使用 UTC，最多可设置 16 个时段 | `[{ "percentage": 100, "startTime": "00:00", "endTime": "23:59" }]` |
-| `duration_and_power_charge_discharge` | 按时长与功率百分比充放电。`percentage` 范围 `[0,100]`；支持 `selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand` | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
+| `duration_and_power_charge_discharge` | 按时长与功率百分比充放电；`duration`、`percentage`、`type` 字段取值见下文 | `{ "duration": 10, "percentage": 20, "type": "dischargeCommand" }` |
 | `export_limit` | Export Limit。`exportLimitEnabled` 用于启用设置；`percentage` 范围 `[-100,100]`，正值表示逆流限制，负值表示顺流控制 | `{ "exportLimitEnabled": 1, "percentage": 20 }` |
 | `enable_control` | 启用或关闭 VPP 控制 | `1` = 开启，`0` = 关闭 |
 | `active_power_derating_percentage` | 有功功率降额百分比 | `[0,100]` 范围的数值，例如 `50` |
 | `active_power_percentage` | 有功功率百分比 | `[0,100]` 范围的数值，例如 `60` |
 | `remote_charge_discharge_power` | 远程充放电功率 | `[-100,100]` 范围的数值，正值充电、负值放电 |
+
+### `duration_and_power_charge_discharge` 字段说明
+
+| 字段 | 类型 | 说明 |
+| :--- | :--- | :--- |
+| `duration` | int | 持续时长（分钟）。`0` 表示不限时，`1~1440` 分钟按设定时长控制 |
+| `percentage` | int | 基于电池额定充放电功率的百分比，范围 `[-100,100]`，正值充电、负值放电 |
+| `type` | string | 指令类型：`selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand`；其中前两者默认以最大可充放电功率充放电，此时 `percentage` 不生效 |
 
 ## 各 `setType` 的回读结构
 
