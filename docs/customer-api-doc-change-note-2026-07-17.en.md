@@ -1,4 +1,4 @@
-# Growatt Open API Documentation Change Notice (Customer-Facing)
+# Growatt Open API Documentation Change Notice
 
 Release date: 2026-07-17
 

@@ -318,12 +318,11 @@
 /* Tables */
 .growatt-docs-content table {
   width: 100%;
-  display: table;
+  display: block;
   overflow-x: auto;
   border-collapse: collapse;
   margin: 20px 0 24px;
   border-radius: 12px;
-  overflow: hidden;
   border: 1px solid var(--docs-border);
 }
 
