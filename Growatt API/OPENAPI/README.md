@@ -51,6 +51,7 @@ sequenceDiagram
 | [Device information](./07_api_device_info.md) | Query device identity, capability, and site metadata |
 | [Device data](./08_api_device_data.md) | Query device telemetry |
 | [Device data push](./09_api_device_push.md) | Receive `dfcData` webhook payloads |
+| [Historical data](./17_api_historical_data.md) | Query historical energy statistics and daily sampling data |
 | [Global parameters](./10_global_params.md) | Use base URLs, headers, response codes, and `setType` values |
 | [Troubleshooting FAQ](./11_api_troubleshooting.md) | Resolve common integration issues |
 

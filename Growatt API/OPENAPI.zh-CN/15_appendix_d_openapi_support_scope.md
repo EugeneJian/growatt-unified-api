@@ -41,10 +41,10 @@
 
 | 清单编号 | 系列 | 型号 | OpenAPI 支持状态 | OAuth2 接入 | 设备信息 / 数据 | 下发调度 | 回读校验 | 数据推送 | 限制条件 / 备注 |
 | :---: | :---: | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| INV-001 | SPH TL | `SPH 3000-6000TL BL` `SPH 3000-6000 TL BL-UP` `SPH 6000 TL US` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH 机型不提供 `maxChargePower` 或 `maxDischargePower` |
-| INV-002 | SPH TL-HU | `SPH 3000-6000TL HU` `SPH 3000-6000TL HUB` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH 机型不提供 `maxChargePower` 或 `maxDischargePower` |
-| INV-003 | SPH TL3-UP | `SPH 4000-10000TL3 BH` `SPH 4000-10000TL3 BH-UP` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH 机型不提供 `maxChargePower` 或 `maxDischargePower` |
-| INV-004 | SPH-HU | `SPH 8-10KTL-HU-US` `SPH 8-10KTL-HU-US(B)` `SPH 8-10KTL-HU` `SPH 12-18KTL-HU-US` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH 机型不提供 `maxChargePower` 或 `maxDischargePower` |
+| INV-001 | SPH TL | `SPH 3000-6000TL BL` `SPH 3000-6000 TL BL-UP` `SPH 6000 TL US` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 无 |
+| INV-002 | SPH TL-HU | `SPH 3000-6000TL HU` `SPH 3000-6000TL HUB` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 无 |
+| INV-003 | SPH TL3-UP | `SPH 4000-10000TL3 BH` `SPH 4000-10000TL3 BH-UP` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 无 |
+| INV-004 | SPH-HU | `SPH 8-10KTL-HU-US` `SPH 8-10KTL-HU-US(B)` `SPH 8-10KTL-HU` `SPH 12-18KTL-HU-US` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 无 |
 | INV-005 | SPM-HU | `SPM 8-10KTL-HU(AU)` `SPM 6-10KTL-HU(EU)` `SPM 8-10KTL-HU(UK)` `SPM 3000-6000TL-HU` `SPM 3000-6000TL-HU(BR)` `SPM 3000-6000TL-HU2` `SPM 8-10KTL-HU2` `SPM 3000-6000TL-HU(IT)` `SPM 2500-6000TL-HU(EU)` `SPM 8-10KTL-HU(CL)` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | 无 |
 
 #### 3.1.2 户用预备储能逆变器
@@ -86,7 +86,7 @@
 5. 正式调度前，在目标型号验证每个所需 `setType` 并回读设置值。
 6. 遵守文档规定的按设备频率限制。
 
-已发布的机型差异：SPH 机型不提供 `maxChargePower` 或 `maxDischargePower`。
+已发布的机型差异：无。
 
 ## 6. 变更记录
 

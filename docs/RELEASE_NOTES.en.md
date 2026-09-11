@@ -1,5 +1,27 @@
 # Growatt Open API Release Notes
 
+## 2026-09-11
+
+### Historical Data
+
+| Update | Affected APIs | Type |
+|--------|--------------|------|
+| Added historical data query API supporting monthly daily energy statistics and intraday sampling detail | `HistoricalData` | new API |
+
+### Device Information
+
+| Update | Affected APIs | Type |
+|--------|---------------|------|
+| Added `siteAddress` and `installationDate` fields | `getDeviceInfo` | new fields |
+
+### Device Data
+
+| Update | Affected APIs | Type |
+|--------|---------------|------|
+| SPH models now support `maxChargePower` and `maxDischargePower` fields | `getDeviceData`, push messages | field support expansion |
+
+---
+
 ## 2026-09-09
 
 ### Global Parameters

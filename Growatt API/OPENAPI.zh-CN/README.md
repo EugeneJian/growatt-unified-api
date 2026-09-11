@@ -51,6 +51,7 @@ sequenceDiagram
 | [设备信息](./07_api_device_info.md) | 查询设备标识、能力与站点信息 |
 | [设备数据](./08_api_device_data.md) | 查询设备遥测数据 |
 | [设备数据推送](./09_api_device_push.md) | 接收 `dfcData` Webhook 报文 |
+| [历史数据](./17_api_historical_data.md) | 查询历史能量统计与每日采样数据 |
 | [全局参数](./10_global_params.md) | 查看基础地址、请求头、返回码和 `setType` |
 | [常见问题与排查](./11_api_troubleshooting.md) | 处理常见接入问题 |
 

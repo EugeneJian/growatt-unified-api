@@ -111,8 +111,8 @@ sequenceDiagram
 | `data.payLoadPower` | double | 总负载功率（计算值），单位 W | `14.50` |
 | `data.batteryStatus` | int | 电池总体状态 | `0` |
 | `data.batPower` | double | 电池总充/放电功率（正值充电，负值放电，0 为空闲），单位 W | `0.00` |
-| `data.maxChargePower` | int | 电池最大充电功率，单位 W；SPA/SPH 机型暂不支持 | `2344` |
-| `data.maxDischargePower` | int | 电池最大放电功率，单位 W；SPA/SPH 机型暂不支持 | `2344` |
+| `data.maxChargePower` | int | 电池最大充电功率，单位 W；SPA 机型暂不支持 | `2344` |
+| `data.maxDischargePower` | int | 电池最大放电功率，单位 W；SPA 机型暂不支持 | `2344` |
 | `data.soc` | int | 系统级电池荷电状态（SOC），表示整个 ESS 电池系统的总 SOC（百分比） | `67` |
 | `data.priority` | int | 工作优先级 | `0` |
 | `data.status` | int | 设备运行状态码 | `6` |

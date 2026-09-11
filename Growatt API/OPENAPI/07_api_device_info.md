@@ -103,6 +103,8 @@ sequenceDiagram
         "latitude": "22.500753663248",
         "longitude": "113.89838917200",
         "timezone": "8.0",
+        "siteAddress": "18 Lawrence Cl, MacGregor ACT 2615 Australia",
+        "installationDate": "2026-08-31",
         "systemId": "afcfc8f7f79e9f8137d2f8129aefd5e3",
         "dischargeCutOffSOC": 20,
         "backupCutOffSOC": 10,
@@ -152,6 +154,8 @@ sequenceDiagram
 | `latitude` | string | Site latitude in decimal degrees | `"22.500753663248"` |
 | `longitude` | string | Site longitude in decimal degrees | `"113.89838917200"` |
 | `timezone` | string | Site UTC offset in hours | `"8.0"` |
+| `siteAddress` | string | Site address | `"18 Lawrence Cl, MacGregor ACT 2615 Australia"` |
+| `installationDate` | string | Installation date in `yyyy-MM-dd` format | `"2026-08-31"` |
 | `dischargeCutOffSOC` | int | Battery discharge cut-off SOC in percent | `20` |
 | `backupCutOffSOC` | int | Off-grid (backup) discharge cut-off SOC in percent | `10` |
 | `batteryList` | array | Battery list | `[{...}]` |

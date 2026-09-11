@@ -1,0 +1,25 @@
+<table>
+<thead>
+<tr>
+<th>产品系列</th>
+<th>系列</th>
+<th>型号</th>
+<th>拓扑/设备类型</th>
+<th>OpenAPI支持状态</th>
+<th>OAuth2接入</th>
+<th>设备信息/数据</th>
+<th>调度</th>
+<th>回读</th>
+<th>推送</th>
+<th>约束条件/备注</th>
+<th>证据来源</th>
+<th>生效日期</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>Inverter / PCE</td><td>MIN 7000-10000TL-X2</td><td>MIN 7000TL-X2 (AS4777-2 2020)</td><td>并网光伏逆变器</td><td>Pending Confirmation</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>CEC AU基线于2026-04-24建立；OpenAPI待确认</td><td>CEC approved inverters list</td><td>TBD</td></tr>
+<tr><td>Inverter / PCE</td><td>MIN 7000-10000TL-X2</td><td>MIN 8000TL-X2 (AS4777-2 2020)</td><td>并网光伏逆变器</td><td>Pending Confirmation</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>CEC AU基线于2026-04-24建立；OpenAPI待确认</td><td>CEC approved inverters list</td><td>TBD</td></tr>
+<tr><td>Inverter / PCE</td><td>MIN 7000-10000TL-X2</td><td>MIN 9000TL-X2 (AS4777-2 2020)</td><td>并网光伏逆变器</td><td>Pending Confirmation</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>CEC AU基线于2026-04-24建立；OpenAPI待确认</td><td>CEC approved inverters list</td><td>TBD</td></tr>
+<tr><td>Inverter / PCE</td><td>MIN 7000-10000TL-X2</td><td>MIN 10000TL-X2 (AS4777-2 2020)</td><td>并网光伏逆变器</td><td>Pending Confirmation</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>TBD</td><td>CEC AU基线于2026-04-24建立；OpenAPI待确认</td><td>CEC approved inverters list</td><td>TBD</td></tr>
+</tbody>
+</table>
