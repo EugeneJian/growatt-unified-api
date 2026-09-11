@@ -41,10 +41,10 @@ This matrix contains 12 confirmed inverter / all-in-one ESS model groups. Use th
 
 | Reference ID | Series | Models | OpenAPI Support Status | OAuth2 Access | Device Info / Data | Dispatch | Readback Verification | Data Push | Constraints / Notes |
 | :---: | :---: | :---: | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| INV-001 | SPH TL | `SPH 3000-6000TL BL` `SPH 3000-6000 TL BL-UP` `SPH 6000 TL US` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH models do not provide `maxChargePower` or `maxDischargePower` |
-| INV-002 | SPH TL-HU | `SPH 3000-6000TL HU` `SPH 3000-6000TL HUB` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH models do not provide `maxChargePower` or `maxDischargePower` |
-| INV-003 | SPH TL3-UP | `SPH 4000-10000TL3 BH` `SPH 4000-10000TL3 BH-UP` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH models do not provide `maxChargePower` or `maxDischargePower` |
-| INV-004 | SPH-HU | `SPH 8-10KTL-HU-US` `SPH 8-10KTL-HU-US(B)` `SPH 8-10KTL-HU` `SPH 12-18KTL-HU-US` | ✓ | ✓ | ! | ✓ | ✓ | ✓ | SPH models do not provide `maxChargePower` or `maxDischargePower` |
+| INV-001 | SPH TL | `SPH 3000-6000TL BL` `SPH 3000-6000 TL BL-UP` `SPH 6000 TL US` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
+| INV-002 | SPH TL-HU | `SPH 3000-6000TL HU` `SPH 3000-6000TL HUB` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
+| INV-003 | SPH TL3-UP | `SPH 4000-10000TL3 BH` `SPH 4000-10000TL3 BH-UP` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
+| INV-004 | SPH-HU | `SPH 8-10KTL-HU-US` `SPH 8-10KTL-HU-US(B)` `SPH 8-10KTL-HU` `SPH 12-18KTL-HU-US` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 | INV-005 | SPM-HU | `SPM 8-10KTL-HU(AU)` `SPM 6-10KTL-HU(EU)` `SPM 8-10KTL-HU(UK)` `SPM 3000-6000TL-HU` `SPM 3000-6000TL-HU(BR)` `SPM 3000-6000TL-HU2` `SPM 8-10KTL-HU2` `SPM 3000-6000TL-HU(IT)` `SPM 2500-6000TL-HU(EU)` `SPM 8-10KTL-HU(CL)` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | None |
 
 #### 3.1.2 Residential Battery-Ready Inverters
@@ -86,7 +86,7 @@ For a deployment-specific decision:
 5. Validate every required `setType` on the target model and read the value back before production dispatch.
 6. Apply documented per-device rate limits.
 
-Published model difference: SPH models do not provide `maxChargePower` or `maxDischargePower`.
+Published model difference: None.
 
 ## 6. Change Record
 

@@ -103,6 +103,8 @@ sequenceDiagram
         "latitude": "22.500753663248",
         "longitude": "113.89838917200",
         "timezone": "8.0",
+        "siteAddress": "18 Lawrence Cl, MacGregor ACT 2615 Australia",
+        "installationDate": "2026-08-31",
         "systemId": "afcfc8f7f79e9f8137d2f8129aefd5e3",
         "dischargeCutOffSOC": 20,
         "backupCutOffSOC": 10,
@@ -152,6 +154,8 @@ sequenceDiagram
 | `latitude` | string | 站点纬度（十进制度） | `"22.500753663248"` |
 | `longitude` | string | 站点经度（十进制度） | `"113.89838917200"` |
 | `timezone` | string | 站点时区（UTC 偏移小时数） | `"8.0"` |
+| `siteAddress` | string | 电站地址 | `"18 Lawrence Cl, MacGregor ACT 2615 Australia"` |
+| `installationDate` | string | 安装日期，格式 `yyyy-MM-dd` | `"2026-08-31"` |
 | `dischargeCutOffSOC` | int | 电池放电截止 SOC（百分比） | `20` |
 | `backupCutOffSOC` | int | 离网（备用）放电截止 SOC（百分比） | `10` |
 | `batteryList` | array | 电池列表 | `[{...}]` |

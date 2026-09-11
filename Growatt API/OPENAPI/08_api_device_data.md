@@ -165,8 +165,8 @@ sequenceDiagram
 | `data.payLoadPower` | double | Total load power (calculated) in W | `14.50` |
 | `data.batteryStatus` | int | Overall battery status | `0` |
 | `data.batPower` | double | Battery power. Positive = charging, negative = discharging, `0` = idle, unit: W | `0.00` |
-| `data.maxChargePower` | int | Maximum battery charge power in W. Not available on SPA/SPH models | `2344` |
-| `data.maxDischargePower` | int | Maximum battery discharge power in W. Not available on SPA/SPH models | `2344` |
+| `data.maxChargePower` | int | Maximum battery charge power in W. Not available on SPA models | `2344` |
+| `data.maxDischargePower` | int | Maximum battery discharge power in W. Not available on SPA models | `2344` |
 | `data.soc` | int | System-level battery state of charge (SOC) in percent; represents the overall ESS battery system SOC | `67` |
 | `data.priority` | int | Operating priority | `0` |
 | `data.status` | int | Runtime status code | `6` |
