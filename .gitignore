@@ -136,6 +136,14 @@ dist
 .DS_Store
 *.pem
 
+# AI agent tooling (not part of the API project)
+.claude/
+.agents/
+.codex-temp/
+
+# local scratch files
+tmp/
+
 # vercel
 .vercel
 
