@@ -20,12 +20,6 @@
 |--------|---------------|------|
 | SPH models now support `maxChargePower` and `maxDischargePower` fields | `getDeviceData`, push messages | field support expansion |
 
-### Product Support
-
-| Update | Affected APIs | Type |
-|--------|---------------|------|
-| Removed field limitations for SPH models in device info/data queries | / | documentation |
-
 ---
 
 ## 2026-09-09
