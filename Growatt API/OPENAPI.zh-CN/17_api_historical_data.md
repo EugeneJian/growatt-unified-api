@@ -77,16 +77,13 @@ flowchart TD
 }
 ```
 
-### 响应结构（DeviceHistoricalData）
+### 响应结构
 
 ```json
 {
     "code": 0,
-    "msg": "success",
-    "data": {
-        "deviceSn": "DEVICE_SN_1",
-        "list": [
-            {
+    "data": [
+        {
                 "date": "2026-07-01",
                 "epv": 30.13,
                 "etoUser": 5.2,
@@ -102,8 +99,8 @@ flowchart TD
                 "echarge": 9.3,
                 "edischarge": 8.3
             }
-        ]
-    }
+    ],
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
@@ -112,16 +109,14 @@ flowchart TD
 | 字段 | 类型 | 单位 | 说明 |
 | :--- | :--- | :--- | :--- |
 | `code` | int | - | API 状态码；`0` 表示成功 |
-| `msg` | string | - | 响应信息 |
-| `data` | object | - | 主数据对象 |
-| `data.deviceSn` | string | - | 设备序列号 |
-| `data.list` | array | - | 每日能量记录数组 |
-| `data.list[].date` | string | - | 日期，格式 `YYYY-MM-DD` |
-| `data.list[].epv` | double | kWh | 当日 PV 发电量（对应 `epvToday`） |
-| `data.list[].etoUser` | double | kWh | 当日电网取电量（对应 `etoUserToday`） |
-| `data.list[].etoGrid` | double | kWh | 当日电网送电量（对应 `etoGridToday`） |
-| `data.list[].echarge` | double | kWh | 当日电池充电量（对应 `echargeToday`） |
-| `data.list[].edischarge` | double | kWh | 当日电池放电量（对应 `edischargeToday`） |
+| `message` | string | - | 响应信息 |
+| `data` | array | - | 每日能量记录数组 |
+| `data[].date` | string | - | 日期，格式 `YYYY-MM-DD` |
+| `data[].epv` | double | kWh | 当日 PV 发电量（对应 `epvToday`） |
+| `data[].etoUser` | double | kWh | 当日电网取电量（对应 `etoUserToday`） |
+| `data[].etoGrid` | double | kWh | 当日电网送电量（对应 `etoGridToday`） |
+| `data[].echarge` | double | kWh | 当日电池充电量（对应 `echargeToday`） |
+| `data[].edischarge` | double | kWh | 当日电池放电量（对应 `edischargeToday`） |
 
 **能量字段映射：**
 
@@ -172,11 +167,9 @@ flowchart TD
 ```json
 {
     "code": 0,
-    "msg": "success",
-    "data": {
-        "deviceSn": "DEVICE_SN_1",
-        "list": [
-            {
+    "data": [
+        {
+            "deviceSn": "DEVICE_SN_1",
                 "utcTime": "2026-08-19 03:19:09",
                 "ppv": 0.0,
                 "pac": 0.0,
@@ -206,9 +199,9 @@ flowchart TD
                 "maxChargePower": 6000,
                 "maxDischargePower": 6000,
                 "batteryList": [...]
-            }
-        ]
-    }
+        }
+    ],
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 

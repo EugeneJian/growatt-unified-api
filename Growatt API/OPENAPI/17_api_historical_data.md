@@ -77,16 +77,13 @@ Query daily or monthly aggregated energy statistics.
 }
 ```
 
-### Response Structure (DeviceHistoricalData)
+### Response Structure
 
 ```json
 {
     "code": 0,
-    "msg": "success",
-    "data": {
-        "deviceSn": "DEVICE_SN_1",
-        "list": [
-            {
+    "data": [
+        {
                 "date": "2026-07-01",
                 "epv": 30.13,
                 "etoUser": 5.2,
@@ -102,8 +99,8 @@ Query daily or monthly aggregated energy statistics.
                 "echarge": 9.3,
                 "edischarge": 8.3
             }
-        ]
-    }
+    ],
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
@@ -112,16 +109,14 @@ Query daily or monthly aggregated energy statistics.
 | Field | Type | Unit | Description |
 | :--- | :--- | :--- | :--- |
 | `code` | int | - | API status code; `0` means success |
-| `msg` | string | - | Response message |
-| `data` | object | - | Main data object |
-| `data.deviceSn` | string | - | Device serial number |
-| `data.list` | array | - | Array of daily energy records |
-| `data.list[].date` | string | - | Date in `YYYY-MM-DD` format |
-| `data.list[].epv` | double | kWh | Daily PV generation (corresponds to `epvToday`) |
-| `data.list[].etoUser` | double | kWh | Daily energy imported from grid (corresponds to `etoUserToday`) |
-| `data.list[].etoGrid` | double | kWh | Daily energy exported to grid (corresponds to `etoGridToday`) |
-| `data.list[].echarge` | double | kWh | Daily battery charge energy (corresponds to `echargeToday`) |
-| `data.list[].edischarge` | double | kWh | Daily battery discharge energy (corresponds to `edischargeToday`) |
+| `message` | string | - | Response message |
+| `data` | array | - | Array of daily energy records |
+| `data[].date` | string | - | Date in `YYYY-MM-DD` format |
+| `data[].epv` | double | kWh | Daily PV generation (corresponds to `epvToday`) |
+| `data[].etoUser` | double | kWh | Daily energy imported from grid (corresponds to `etoUserToday`) |
+| `data[].etoGrid` | double | kWh | Daily energy exported to grid (corresponds to `etoGridToday`) |
+| `data[].echarge` | double | kWh | Daily battery charge energy (corresponds to `echargeToday`) |
+| `data[].edischarge` | double | kWh | Daily battery discharge energy (corresponds to `edischargeToday`) |
 
 **Energy Field Mapping:**
 
@@ -172,11 +167,9 @@ Query intraday sampling sequence for a single day.
 ```json
 {
     "code": 0,
-    "msg": "success",
-    "data": {
-        "deviceSn": "DEVICE_SN_1",
-        "list": [
-            {
+    "data": [
+        {
+            "deviceSn": "DEVICE_SN_1",
                 "utcTime": "2026-08-19 03:19:09",
                 "ppv": 0.0,
                 "pac": 0.0,
@@ -206,9 +199,9 @@ Query intraday sampling sequence for a single day.
                 "maxChargePower": 6000,
                 "maxDischargePower": 6000,
                 "batteryList": [...]
-            }
-        ]
-    }
+        }
+    ],
+    "message": "SUCCESSFUL_OPERATION"
 }
 ```
 
