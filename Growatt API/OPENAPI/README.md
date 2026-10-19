@@ -1,5 +1,7 @@
 # Growatt Open API Documentation
 
+Documentation version: `2026-10-19`.
+
 Use this documentation to authenticate your application, authorize devices, query device information and telemetry, send dispatch commands, read dispatch settings, and receive device-data push messages.
 
 ## Integration Roadmap
@@ -48,7 +50,7 @@ sequenceDiagram
 | [Device authorization](./04_api_device_auth.md) | List, bind, review, and unbind authorized devices |
 | [Device dispatch](./05_api_device_dispatch.md) | Send device-setting commands |
 | [Read dispatch settings](./06_api_read_dispatch.md) | Read back device-setting values |
-| [Device information](./07_api_device_info.md) | Query device identity, capability, and site metadata |
+| [Device information](./07_api_device_info.md) | Query device identity, capability, coupling type (`coupleType`), and site metadata |
 | [Device data](./08_api_device_data.md) | Query device telemetry |
 | [Device data push](./09_api_device_push.md) | Receive `dfcData` webhook payloads |
 | [Historical data](./17_api_historical_data.md) | Query historical energy statistics and daily sampling data |

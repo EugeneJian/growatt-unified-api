@@ -108,6 +108,7 @@ sequenceDiagram
         "systemId": "afcfc8f7f79e9f8137d2f8129aefd5e3",
         "dischargeCutOffSOC": 20,
         "backupCutOffSOC": 10,
+        "coupleType": "DC_COUPLE",
         "batteryList": [
             {
                 "batterySn": "BATTERY_SN_1",
@@ -158,6 +159,7 @@ sequenceDiagram
 | `installationDate` | string | Installation date in `yyyy-MM-dd` format | `"2026-08-31"` |
 | `dischargeCutOffSOC` | int | Battery discharge cut-off SOC in percent | `20` |
 | `backupCutOffSOC` | int | Off-grid (backup) discharge cut-off SOC in percent | `10` |
+| `coupleType` | string \| null | Device coupling type: `DC_COUPLE` (DC coupling), `AC_COUPLE` (AC coupling), or `null` | `"DC_COUPLE"` |
 | `batteryList` | array | Battery list | `[{...}]` |
 | `batteryList[].batterySn` | string | Battery serial number in the battery list | `"BATTERY_SN_1"` |
 | `batteryList[].batteryModel` | string | Battery model in the battery list | `"ARK 5.12-25.6XH-A1"` |

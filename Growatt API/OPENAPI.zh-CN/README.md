@@ -1,5 +1,7 @@
 # Growatt Open API 文档
 
+文档版本：`2026-10-19`。
+
 本套文档用于帮助您完成应用认证、设备授权、设备信息与遥测查询、调度下发与回读，以及设备数据推送接收。
 
 ## 集成路线图
@@ -48,7 +50,7 @@ sequenceDiagram
 | [设备授权](./04_api_device_auth.md) | 查询、绑定、查看和解除授权设备 |
 | [设备调度](./05_api_device_dispatch.md) | 下发设备设置命令 |
 | [读取调度设置](./06_api_read_dispatch.md) | 回读设备设置值 |
-| [设备信息](./07_api_device_info.md) | 查询设备标识、能力与站点信息 |
+| [设备信息](./07_api_device_info.md) | 查询设备标识、能力、耦合类型（`coupleType`）与站点信息 |
 | [设备数据](./08_api_device_data.md) | 查询设备遥测数据 |
 | [设备数据推送](./09_api_device_push.md) | 接收 `dfcData` Webhook 报文 |
 | [历史数据](./17_api_historical_data.md) | 查询历史能量统计与每日采样数据 |

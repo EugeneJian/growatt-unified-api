@@ -108,6 +108,7 @@ sequenceDiagram
         "systemId": "afcfc8f7f79e9f8137d2f8129aefd5e3",
         "dischargeCutOffSOC": 20,
         "backupCutOffSOC": 10,
+        "coupleType": "DC_COUPLE",
         "batteryList": [
             {
                 "batterySn": "BATTERY_SN_1",
@@ -158,6 +159,7 @@ sequenceDiagram
 | `installationDate` | string | 安装日期，格式 `yyyy-MM-dd` | `"2026-08-31"` |
 | `dischargeCutOffSOC` | int | 电池放电截止 SOC（百分比） | `20` |
 | `backupCutOffSOC` | int | 离网（备用）放电截止 SOC（百分比） | `10` |
+| `coupleType` | string \| null | 设备耦合类型：`DC_COUPLE`（直流耦合）、`AC_COUPLE`（交流耦合）或 `null` | `"DC_COUPLE"` |
 | `batteryList` | array | 电池列表 | `[{...}]` |
 | `batteryList[].batterySn` | string | 电池列表中的电池序列号 | `"BATTERY_SN_1"` |
 | `batteryList[].batteryModel` | string | 电池列表中的电池型号 | `"ARK 5.12-25.6XH-A1"` |

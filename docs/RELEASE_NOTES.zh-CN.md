@@ -1,5 +1,15 @@
 # Growatt Open API Release Notes
 
+## 2026-10-19
+
+### 设备信息
+
+| 更新内容 | 受影响的 API | 类型 |
+|---------|-------------|------|
+| 新增响应字段 `coupleType`，取值为 `DC_COUPLE`、`AC_COUPLE` 或 `null` | `getDeviceInfo` | 新增字段 |
+
+---
+
 ## 2026-09-24
 
 ### 全局参数
