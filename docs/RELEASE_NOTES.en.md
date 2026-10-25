@@ -1,5 +1,15 @@
 # Growatt Open API Release Notes
 
+## 2026-10-19
+
+### Device Information
+
+| Update | Affected APIs | Type |
+|--------|---------------|------|
+| Added the `coupleType` response field: `DC_COUPLE`, `AC_COUPLE`, or `null` | `getDeviceInfo` | new field |
+
+---
+
 ## 2026-09-24
 
 ### Global Parameters
