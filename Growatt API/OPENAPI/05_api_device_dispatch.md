@@ -59,7 +59,7 @@ stateDiagram-v2
 | `setType` | `value` shape | Summary |
 | :--- | :--- | :--- |
 | `time_slot_charge_discharge` | Array | Time-slot charge/discharge schedule |
-| `duration_and_power_charge_discharge` | Object | Duration, percentage, and command type |
+| `duration_and_power_charge_discharge` | Object | Duration, percentage, and command type, including `fillOnly`; see [Global Parameters](./10_global_params.md) |
 | `export_limit` | Object | Export-limit enable flag plus percentage |
 | `enable_control` | Scalar number | VPP control enable switch |
 | `active_power_derating_percentage` | Scalar number | Active-power derating percentage |

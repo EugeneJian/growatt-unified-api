@@ -1,6 +1,6 @@
 # Growatt Open API Documentation
 
-Documentation version: `2026-10-19`.
+Documentation version: `2026-10-26`.
 
 Use this documentation to authenticate your application, authorize devices, query device information and telemetry, send dispatch commands, read dispatch settings, and receive device-data push messages.
 

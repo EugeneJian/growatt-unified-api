@@ -1,5 +1,15 @@
 # Growatt Open API Release Notes
 
+## 2026-10-26
+
+### Device Dispatch
+
+| Update | Affected APIs | Type |
+|--------|---------------|------|
+| Added the `fillOnly` enum value to `value.type` for `setType=duration_and_power_charge_discharge`.<br />In `fillOnly` mode, the battery can charge from surplus PV, but does not power loads or export energy to the grid. | `deviceDispatch` | new enum value |
+
+---
+
 ## 2026-10-19
 
 ### Device Information

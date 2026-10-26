@@ -1,5 +1,15 @@
 # Growatt Open API Release Notes
 
+## 2026-10-26
+
+### 设备调度
+
+| 更新内容 | 受影响的 API | 类型 |
+|---------|-------------|------|
+| `setType=duration_and_power_charge_discharge` 的 `value.type` 新增枚举值 `fillOnly`。<br />`fillOnly` 模式下，电池可以利用光伏余电充电，但不会给负载供电，也不会向电网放电。 | `deviceDispatch` | 新增枚举值 |
+
+---
+
 ## 2026-10-19
 
 ### 设备信息

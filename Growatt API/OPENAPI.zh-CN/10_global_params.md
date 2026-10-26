@@ -132,8 +132,8 @@ sequenceDiagram
 | 字段 | 类型 | 说明 |
 | :--- | :--- | :--- |
 | `duration` | int | 持续时长（分钟）。`0` 表示不限时，`1~1440` 分钟按设定时长控制 |
-| `percentage` | int | 基于电池额定充放电功率的百分比，范围 `[-100,100]`，正值充电、负值放电 |
-| `type` | string | 指令类型：`selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand` |
+| `percentage` | int | 基于电池额定充放电功率的百分比，范围 `[-100,100]`，正值充电、负值放电。`fillOnly` 忽略此参数，使用该类型时可省略 |
+| `type` | string | 指令类型：`selfConsumptionCommand`、`chargeOnlySelfConsumptionCommand`、`chargeCommand`、`dischargeCommand`、`fillOnly` |
 
 **`type` 指令类型说明：**
 
@@ -143,6 +143,17 @@ sequenceDiagram
 | `chargeOnlySelfConsumptionCommand` | 该模式类似于自发自用，区别在于，电池只能从光伏取电而不能从电网取电。光伏充足时：光伏先满足负载，多余电量给电池充电。光伏不足时：电池不充不放，负载从市电取电。 | 充电功率由系统自动控制（最大功率），`percentage` 参数无效 |
 | `chargeCommand` | 强制以指定功率充电。电池从可用电源（光伏和/或市电）以指定功率充电。 | 遵循 `percentage` 设定 |
 | `dischargeCommand` | 强制以指定功率放电。电池以指定功率放电，供给负载或向电网输出。 | 遵循 `percentage` 设定 |
+| `fillOnly` | 电池可以利用光伏余电充电，但不会给负载供电，也不会向电网放电。各供电场景见下表。 | 充电取决于可用光伏余电；`percentage` 被忽略，可省略 |
+
+#### `fillOnly` 运行行为
+
+| 光伏供能情况 | 负载供电 | 电池行为 |
+| :--- | :--- | :--- |
+| 光伏功率大于负载需求 | 光伏供负载 | 剩余光伏功率给电池充电 |
+| 光伏功率刚好满足负载需求 | 光伏供负载 | 不充不放 |
+| 光伏功率小于负载需求 | 可用光伏供负载，不足部分从电网取电补足 | 不放电 |
+
+`duration` 沿用现有规则：`0` 表示不限时，`1~1440` 表示持续分钟数。
 
 ## 各 `setType` 的回读结构
 

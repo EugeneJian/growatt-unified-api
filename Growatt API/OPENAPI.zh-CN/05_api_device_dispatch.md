@@ -59,7 +59,7 @@ stateDiagram-v2
 | `setType` | `value` 形态 | 说明 |
 | :--- | :--- | :--- |
 | `time_slot_charge_discharge` | 数组 | 分时段充放电时间表 |
-| `duration_and_power_charge_discharge` | 对象 | 时长、百分比与指令类型 |
+| `duration_and_power_charge_discharge` | 对象 | 时长、百分比与指令类型，包含 `fillOnly`；详见[全局参数](./10_global_params.md) |
 | `export_limit` | 对象 | 防逆流开关和百分比 |
 | `enable_control` | 数值 | VPP 控制开关 |
 | `active_power_derating_percentage` | 数值 | 有功功率降额百分比 |

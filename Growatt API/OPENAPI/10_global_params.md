@@ -132,8 +132,8 @@ The following response codes and messages are currently used by Growatt. A respo
 | Field | Type | Description |
 | :--- | :--- | :--- |
 | `duration` | int | Duration in minutes. `0` means unlimited; `1~1440` minutes controls by the set duration |
-| `percentage` | int | Percentage of rated battery charge/discharge power, range `[-100,100]`; positive means charging and negative means discharging |
-| `type` | string | Command type: `selfConsumptionCommand`, `chargeOnlySelfConsumptionCommand`, `chargeCommand`, or `dischargeCommand` |
+| `percentage` | int | Percentage of rated battery charge/discharge power, range `[-100,100]`; positive means charging and negative means discharging. Ignored for `fillOnly` and may be omitted for that type |
+| `type` | string | Command type: `selfConsumptionCommand`, `chargeOnlySelfConsumptionCommand`, `chargeCommand`, `dischargeCommand`, or `fillOnly` |
 
 **`type` Command Type Descriptions:**
 
@@ -143,6 +143,17 @@ The following response codes and messages are currently used by Growatt. A respo
 | `chargeOnlySelfConsumptionCommand` | Similar to self-consumption mode, but battery can only charge from PV, not from grid. When PV is sufficient: PV powers loads first, surplus charges battery. When PV is insufficient: battery remains idle (no charging or discharging), loads draw from grid. | Charge power is automatically controlled by the system (max power); `percentage` parameter is ignored |
 | `chargeCommand` | Forced charging at specified power. Battery charges from available sources (PV and/or grid) at the commanded rate. | Respects `percentage` setting |
 | `dischargeCommand` | Forced discharging at specified power. Battery discharges at the commanded rate to supply loads or export to grid. | Respects `percentage` setting |
+| `fillOnly` | The battery can charge from surplus PV, but does not power loads or export energy to the grid. See the operating scenarios below. | Charging follows available surplus PV; `percentage` is ignored and may be omitted |
+
+#### `fillOnly` Operating Behavior
+
+| PV availability | Load supply | Battery behavior |
+| :--- | :--- | :--- |
+| PV exceeds load demand | PV supplies loads | Surplus PV charges the battery |
+| PV exactly meets load demand | PV supplies loads | Neither charges nor discharges |
+| PV is below load demand | Available PV supplies loads; grid import covers the shortfall | Does not discharge |
+
+`duration` retains the existing rules: `0` means unlimited, and `1~1440` specifies the duration in minutes.
 
 ## Read-Back Shapes by `setType`
 
